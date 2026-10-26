@@ -1,0 +1,33 @@
+[Unit]
+Description=Autopost private AI API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=autopost
+Group=autopost
+WorkingDirectory=/opt/autopost/current
+EnvironmentFile=/etc/autopost/environment
+Environment=NODE_ENV=production
+ExecStart=/opt/node/bin/node --experimental-strip-types --max-old-space-size=192 vps/server.mjs
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+UMask=0077
+MemoryMax=300M
+TasksMax=64
+LimitNOFILE=1024
+
+[Install]
+WantedBy=multi-user.target

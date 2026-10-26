@@ -7,6 +7,7 @@
   try { response = await chrome.runtime.sendMessage({ kind: 'GET_TASK' }); } catch { return; }
   let task = response?.task;
   if (!task || task.expiresAt <= Date.now()) return;
+  const isParts = task.listing.category === 'parts';
   let stopped = false;
   let busy = false;
   let autoAttempted = false;
@@ -14,6 +15,16 @@
   let scheduled = null;
   const filledKeys = new Set(task.filledKeys || []);
   const fields = {
+    partName: { label: 'Название детали', aliases: ['part name', 'название детали', 'наименование детали', 'название запчасти'] },
+    partNumber: { label: 'Артикул / OEM', aliases: ['part number', 'oem', 'oem number', 'артикул', 'номер запчасти', 'оригинальный номер', 'номер детали'] },
+    manufacturer: { label: 'Производитель детали', aliases: ['manufacturer', 'производитель запчасти', 'производитель детали'] },
+    condition: { label: 'Состояние', aliases: ['condition', 'состояние', 'состояние запчасти', 'состояние товара'] },
+    compatibility: { label: 'Совместимость', aliases: ['compatibility', 'совместимость', 'применимость'] },
+    fitYears: { label: 'Годы применимости', aliases: ['годы применимости', 'совместимые годы'] },
+    position: { label: 'Расположение', aliases: ['position', 'расположение', 'сторона установки'] },
+    quantity: { label: 'Количество', aliases: ['quantity', 'количество', 'количество штук'] },
+    priceUnit: { label: 'Цена указана', aliases: ['price unit', 'цена указана', 'единица продажи'] },
+    availability: { label: 'Наличие', aliases: ['availability', 'наличие'] },
     title: { label: 'Заголовок', aliases: ['title', 'subject', 'ad title', 'заголовок', 'название объявления', 'заголовок объявления'] },
     description: { label: 'Описание', aliases: ['description', 'ad description', 'описание', 'описание автомобиля', 'описание объявления', 'дополнительная информация'] },
     brand: { label: 'Марка', aliases: ['brand', 'brand id', 'make', 'make id', 'марка', 'марка автомобиля'] },
@@ -32,7 +43,13 @@
     phone: { label: 'Телефон', aliases: ['phone', 'phone number', 'telephone', 'телефон', 'номер телефона', 'контактный телефон'] },
     vin: { label: 'VIN', aliases: ['vin', 'vin number', 'вин', 'vin номер', 'vin код', 'номер кузова vin'] },
   };
+  if (isParts) {
+    fields.brand.aliases = ['car brand', 'марка автомобиля', 'марка авто'];
+    fields.model.aliases = ['car model', 'модель автомобиля', 'модель авто'];
+    fields.year.aliases = ['donor year', 'год автомобиля донора', 'год донора'];
+  }
   const valueGroups = {
+    condition: [['Новая', 'новый', 'новое'], ['Б/у', 'бывший в употреблении', 'бывшая в употреблении'], ['На восстановление', 'под восстановление']],
     fuel: [['бензин', 'petrol', 'gasoline'], ['дизель', 'diesel'], ['электро', 'электричество', 'электромобиль', 'electric'], ['гибрид', 'hybrid'], ['газ бензин', 'газ/бензин', 'lpg']],
     transmission: [['автомат', 'автоматическая', 'акпп', 'automatic'], ['механика', 'механическая', 'мкпп', 'manual'], ['робот', 'роботизированная', 'robot'], ['вариатор', 'cvt']],
     drive: [['передний', 'передний привод', 'fwd'], ['задний', 'задний привод', 'rwd'], ['полный', 'полный привод', 'awd', '4wd']],
@@ -69,6 +86,11 @@
   const counts = element('p', 'Перенесено полей: 0.');
   const photoNode = element('p', 'Фото: ещё не переданы.', 'muted tiny');
   const actions = element('div', undefined, 'actions');
+  const categoryLabel = element('label', undefined, 'muted tiny');
+  const categoryConfirmed = document.createElement('input');
+  categoryConfirmed.type = 'checkbox';
+  categoryLabel.append(categoryConfirmed, document.createTextNode(' На площадке выбрана категория «Запчасти» и нужный подраздел'));
+  if (isParts) body.append(categoryLabel);
   const retry = element('button', 'Повторить заполнение', 'primary');
   retry.type = 'button';
   const copy = element('button', 'Скопировать текст');
@@ -94,7 +116,7 @@
   function listingText() {
     if (!task) return '';
     const lines = [task.listing.title, '', task.listing.description, ''];
-    for (const key of ['brand', 'model', 'year', 'mileage', 'engine', 'fuel', 'transmission', 'body', 'drive', 'color', 'price', 'currency', 'city', 'phone', 'vin']) {
+    for (const key of ['partName', 'partNumber', 'manufacturer', 'condition', 'compatibility', 'fitYears', 'position', 'quantity', 'priceUnit', 'availability', 'brand', 'model', 'year', 'mileage', 'engine', 'fuel', 'transmission', 'body', 'drive', 'color', 'price', 'currency', 'city', 'phone', 'vin']) {
       if (task.listing[key]) lines.push(`${fields[key].label}: ${task.listing[key]}`);
     }
     return lines.join('\n');
@@ -102,7 +124,7 @@
   manualText.textContent = listingText();
   copy.addEventListener('click', async () => {
     if (stopped) return;
-    try { await navigator.clipboard.writeText(`${task.listing.title}\n\n${task.listing.description}`); copy.textContent = 'Текст скопирован'; }
+    try { await navigator.clipboard.writeText(listingText()); copy.textContent = 'Текст скопирован'; }
     catch { manual.open = true; statusNode.textContent = 'Браузер не разрешил копирование. Выделите текст в раскрытом блоке вручную.'; }
   });
   function visible(node) {
@@ -247,7 +269,7 @@
   const statusText = {
     authorization_required: 'Войдите в аккаунт площадки. Затем откройте подачу объявления и повторите заполнение.',
     captcha_required: 'Пройдите капчу самостоятельно. После проверки нажмите «Повторить заполнение».',
-    manual_required: 'Откройте «Подать объявление» и выберите категорию «Автомобили». Затем повторите заполнение.',
+    manual_required: isParts ? 'Выберите на Kufar категорию «Запчасти» и нужный подраздел, отметьте это в панели и нажмите «Повторить заполнение».' : 'Откройте «Подать объявление» и выберите категорию «Автомобили». Затем повторите заполнение.',
     review_required: 'Проверьте каждое поле, валюту и фото. Финальную публикацию выполните на площадке вручную.',
     error: 'Не удалось заполнить форму. Скопируйте текст и заполните её вручную.',
   };
@@ -266,6 +288,7 @@
   }
   async function fill(manualRequest = false) {
     if (busy || stopped || !task) return;
+    if (isParts && (!categoryConfirmed.checked || !manualRequest)) { if (lastState !== 'manual_required') await report('manual_required'); return; }
     if (task.expiresAt <= Date.now()) { stop('Истекли 2 часа. Данные сеанса удалены из панели; запустите передачу заново.'); return; }
     const gate = pageGate();
     if (gate !== 'review_required') { if (lastState !== gate || manualRequest) await report(gate); return; }

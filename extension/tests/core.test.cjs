@@ -15,7 +15,10 @@ test('canonical platform URL is fixed and caller URL is discarded', () => {
   assert.equal(valid.listing.price, '10000');
 });
 
-test('only the three exact application origins are permitted', () => {
+test('only the exact application origins are permitted', () => {
+  assert.equal(core.isAppOrigin('https://87.199.205.227'), true);
+  assert.equal(core.isAppOrigin('http://87.199.205.227'), false);
+  assert.equal(core.isAppOrigin('https://87.199.205.227.evil.invalid'), false);
   assert.equal(core.isAppOrigin('http://localhost:5173'), true);
   assert.equal(core.isAppOrigin('http://localhost:5174'), false);
   assert.equal(core.isAppOrigin('https://autopost-belarus-mvp.sunlit-lemur-2753.chatgpt.site.evil.invalid'), false);
@@ -24,6 +27,19 @@ test('only the three exact application origins are permitted', () => {
   assert.equal(core.platformForOrigin('https://cars.av.by').id, 'av');
   assert.equal(core.platformForOrigin('https://auto.kufar.by').id, 'kufar');
   assert.equal(core.platformForOrigin('https://login.av.by'), undefined);
+});
+
+test('parts go only to Kufar and retain exact OEM and pricing unit', () => {
+  const payload=listing({category:'parts',partName:'Фара',partNumber:'000123-AB',condition:'Б/у',priceUnit:'За штуку'});
+  payload.platforms=[{id:'kufar-parts'}];
+  const result=core.validateRun(payload);
+  assert.equal(result.listing.partNumber,'000123-AB');
+  assert.equal(result.listing.priceUnit,'За штуку');
+  assert.equal(result.platforms[0].canonicalId,'kufar');
+  payload.platforms=[{id:'avby'}];
+  assert.throws(()=>core.validateRun(payload),/только на Kufar/);
+  payload.platforms=[{id:'kufar-parts'}];payload.listing.category='unknown';
+  assert.throws(()=>core.validateRun(payload),/товарная группа/);
 });
 
 test('unsupported platforms, aliases repeated twice and object prototype keys are rejected', () => {

@@ -1,12 +1,13 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.1.0';
+  const VERSION = '0.2.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
   const APP_ORIGINS = Object.freeze([
     'https://autopost-belarus-mvp.sunlit-lemur-2753.chatgpt.site',
+    'https://87.199.205.227',
     'http://localhost:5173',
     'http://127.0.0.1:5173',
   ]);
@@ -16,6 +17,8 @@
     kufar: Object.freeze({ id: 'kufar', name: 'Kufar', origins: Object.freeze(['https://www.kufar.by', 'https://auto.kufar.by']), url: 'https://www.kufar.by/' }),
   });
   const FIELD_LIMITS = Object.freeze({
+    category: 12, partName: 100, partNumber: 100, manufacturer: 100, condition: 40,
+    compatibility: 500, fitYears: 100, position: 100, quantity: 12, priceUnit: 40, availability: 40,
     title: 180, description: 12000, brand: 80, model: 100, year: 4,
     mileage: 12, engine: 40, fuel: 60, transmission: 60, body: 80,
     drive: 60, color: 60, price: 16, currency: 6, city: 100, phone: 40, vin: 17,
@@ -27,7 +30,7 @@
   function isAppOrigin(origin) { return APP_ORIGINS.includes(origin); }
   function platformForOrigin(origin) { return Object.values(PLATFORMS).find((item) => item.origins.includes(origin)); }
   function platformId(value) {
-    const aliases = { av: 'av', 'av.by': 'av', avby: 'av', kufar: 'kufar', 'kufar.by': 'kufar' };
+    const aliases = { av: 'av', 'av.by': 'av', avby: 'av', kufar: 'kufar', 'kufar.by': 'kufar', 'kufar-parts': 'kufar' };
     return typeof value === 'string' && own(aliases, value) ? aliases[value] : null;
   }
   function text(value, limit, name) {
@@ -66,6 +69,12 @@
     if (!batchId || !/^[a-zA-Z0-9_.:-]+$/u.test(batchId)) throw new Error('Неверный идентификатор пакета.');
     const listing = {};
     for (const [key, limit] of Object.entries(FIELD_LIMITS)) listing[key] = text(payload.listing[key], limit, key);
+    listing.category = listing.category || 'cars';
+    if (!['cars', 'parts'].includes(listing.category)) throw new Error('Неизвестная товарная группа.');
+    if (listing.category === 'parts') {
+      if (!listing.partName || !['Новая', 'Б/у', 'На восстановление'].includes(listing.condition)) throw new Error('Укажите название и состояние запчасти.');
+      if (!['За штуку', 'За комплект', 'За пару'].includes(listing.priceUnit)) throw new Error('Укажите, за что назначена цена запчасти.');
+    }
     if (!listing.title || !listing.description) throw new Error('Заполните заголовок и описание объявления.');
     if (listing.year && (!/^\d{4}$/u.test(listing.year) || Number(listing.year) < 1886 || Number(listing.year) > new Date().getFullYear() + 1)) throw new Error('Проверьте год автомобиля.');
     if (listing.price && (!/^\d+(?:[.,]\d{1,2})?$/u.test(listing.price) || Number(listing.price.replace(',', '.')) <= 0)) throw new Error('Проверьте цену автомобиля.');
@@ -78,6 +87,7 @@
     for (const item of payload.platforms) {
       const canonicalId = object(item) ? platformId(item.id) : null;
       if (!canonicalId || seen.has(canonicalId)) throw new Error('Площадка не поддерживается или указана дважды.');
+      if (listing.category === 'parts' && canonicalId !== 'kufar') throw new Error('Для запчастей автозаполнение поддерживается только на Kufar.');
       seen.add(canonicalId);
       platforms.push({ id: item.id, canonicalId });
     }

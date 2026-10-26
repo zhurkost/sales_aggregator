@@ -1,6 +1,6 @@
 {
   "name": "autopost-belarus",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -9,6 +9,9 @@
     "install:ci": "node scripts/install-ci.mjs",
     "dev": "node scripts/run-framework.mjs dev",
     "build": "node scripts/package-extension.mjs && node scripts/run-framework.mjs build",
+    "build:vps": "node scripts/package-extension.mjs && vite build --config vite.vps.config.ts",
+    "start:vps": "node --experimental-strip-types vps/server.mjs",
+    "package:vps": "npm run build:vps && node scripts/package-vps.mjs",
     "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",

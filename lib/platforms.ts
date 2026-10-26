@@ -1,3 +1,4 @@
+import type {Listing,ProductGroup} from './listing.ts';
 export type Platform={id:string;name:string;short:string;domain:string;color:string;kind:'extension'|'manual'|'import';tag:string;description:string;note:string;url:string;source:string;sourceLabel:string};
 export const platforms:Platform[] = [
  {id:'avby',name:'av.by',short:'av',domain:'av.by',color:'#e93d3a',kind:'extension',tag:'Автозаполнение · beta',description:'Специализированная автомобильная площадка',note:'Расширение заполняет распознанные поля. Вход, сложные списки и подтверждение — на площадке. Работа в авторизованной форме ещё не проверена.',url:'https://av.by/',source:'https://av.by/',sourceLabel:'Сайт площадки'},
@@ -7,5 +8,23 @@ export const platforms:Platform[] = [
  {id:'flagma',name:'Flagma',short:'F',domain:'flagma.by',color:'#ea7b34',kind:'manual',tag:'Подготовленный пакет',description:'Дополнительная универсальная площадка',note:'Поддерживает официальный импорт XLSX/YML/XML. Настройка импорта и проверка категории выполняются в кабинете Flagma; в MVP — текстовый пакет.',url:'https://flagma.by/podat-obyavlenie.html',source:'https://flagma.by/import',sourceLabel:'Официальный импорт'},
  {id:'drom',name:'Дром',short:'д',domain:'auto.drom.ru',color:'#dc3738',kind:'manual',tag:'Условия нужно уточнить',description:'Дополнительный канал · объявления в Беларуси',note:'Минск есть в каталоге и форме подачи. Предусмотрена XML-автозагрузка, но условия для белорусского аккаунта нужно уточнить у поддержки. В MVP — готовый текст и переход.',url:'https://auto.drom.ru/minsk/addbull/',source:'https://www.drom.ru/misc/autoload/',sourceLabel:'Официальная автозагрузка'},
 ];
+export const partsPlatforms:Platform[] = [
+ {id:'bamper',name:'Bamper.by',short:'B',domain:'bamper.by',color:'#2973cf',kind:'manual',tag:'Карточка для кабинета',description:'Специализированная площадка автозапчастей',note:'Одна деталь и один автомобиль: укажите марку, модель и год. Характеристики, артикул, цену и контакты перенесите в отдельные поля, в описание — только сведения о детали. Есть импорт Excel/CSV; его схема доступна после входа, загрузка в MVP не подключена.',url:'https://bamper.by/cabinet/',source:'https://bamper.by/contacts/',sourceLabel:'Размещение, импорт и правила'},
+ {id:'kufar-parts',name:'Куфар',short:'k',domain:'kufar.by',color:'#207c56',kind:'extension',tag:'Автозаполнение · beta',description:'Запчасти и автомобильные аксессуары',note:'В форме вручную выберите запчасти и подходящую подкатегорию. Помощник переносит общие поля, артикул и явно распознанные параметры. Цена Kufar — в BYN; пересчёта валют нет. Применимость детали проверяет продавец.',url:'https://www.kufar.by/',source:'https://helpcenter.kufar.by/knowledge_base/item/276424',sourceLabel:'Правила «Авто и запчасти»'},
+ {id:'onliner-parts',name:'Onlíner',short:'O',domain:'baraholka.onliner.by',color:'#ffbe29',kind:'manual',tag:'Подготовленная карточка',description:'Барахолка: запчасти и автоаксессуары',note:'На Барахолке есть отдельные разделы для кузова, оптики, двигателя, подвески и других деталей. Выберите соответствующий раздел и перенесите карточку. Автоматическая подача и подтверждение публикации не подключены.',url:'https://baraholka.onliner.by/',source:'https://baraholka.onliner.by/',sourceLabel:'Разделы автозапчастей'},
+ {id:'abw-parts',name:'АБW',short:'abw',domain:'abw.by/carparts',color:'#263b68',kind:'manual',tag:'Ручная подача',description:'Каталог новых и бывших в употреблении деталей',note:'Действующий раздел запчастей. Подготовьте карточку и завершите подачу в аккаунте ABW. Автоматическая подача скриптами без разрешения запрещена правилами площадки; адаптер не включён.',url:'https://abw.by/carparts',source:'https://abw.by/submitting-advert',sourceLabel:'Правила подачи объявлений'},
+ {id:'flagma-parts',name:'Flagma',short:'F',domain:'flagma.by',color:'#ea7b34',kind:'manual',tag:'Подготовленная карточка',description:'Дополнительный канал для деталей и комплектующих',note:'Выберите категорию «Авто → Запчасти» и перенесите готовые сведения. Для продавцов с ассортиментом предусмотрен импорт, который настраивается отдельно в кабинете; экспорт JSON в Автопосте не является импортным фидом Flagma.',url:'https://flagma.by/podat-obyavlenie.html',source:'https://flagma.by/import',sourceLabel:'Официальный импорт'},
+];
+export function getPlatforms(category:ProductGroup){return category==='parts'?partsPlatforms:platforms;}
+export function defaultPlatforms(category:ProductGroup){return category==='parts'?['bamper','kufar-parts']:['avby','kufar'];}
+export function platformValidation(listing:Listing,selected:string[]){
+ const errors:string[]=[];
+ const allowed=getPlatforms(listing.category);
+ if(selected.some(id=>!allowed.some(p=>p.id===id)))errors.push('Площадка не подходит выбранной товарной группе');
+ if(listing.category==='parts'&&selected.includes('bamper')){
+  for(const [key,label] of [['brand','марка автомобиля'],['model','модель автомобиля'],['year','год автомобиля']] as const)if(!listing[key])errors.push(`Для Bamper: ${label} (если неизвестен — снимите эту площадку)`);
+ }
+ return errors;
+}
 export type Job={platformId:string;status:string;message:string;tabId?:number;url?:string};
 export const statusLabel:Record<string,string>={ready:'Готово к переносу',queued:'В очереди',opening:'Открываем площадку',authorization_required:'Нужен вход',captcha_required:'Нужна CAPTCHA',review_required:'Проверьте на площадке',manual_required:'Нужен ручной шаг',error:'Нужна помощь',filled:'Поля заполнены',cancelled:'Остановлено'};
