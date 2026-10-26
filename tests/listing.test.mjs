@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {emptyListing,parseLocally,sanitizeListing,validateListing,listingText,sample} from '../lib/listing.ts';
+test('extracts sample without inventing contact or VIN',()=>{const d=parseLocally(sample);assert.equal(d.brand,'Volkswagen');assert.equal(d.model,'Passat B8');assert.equal(d.year,'2018');assert.equal(d.mileage,'164000');assert.equal(d.price,'18900');assert.equal(d.currency,'USD');assert.equal(d.engine,'2.0');assert.equal(d.phone,'');assert.equal(d.vin,'');assert.match(d.description,/царапина/);});
+test('unknown data stays empty',()=>{const d=parseLocally('Продам свою машину, подробности по телефону.');for(const field of ['brand','model','year','price','currency','phone'])assert.equal(d[field],'');});
+test('supports thousands of kilometers and BYN',()=>{const d=parseLocally('Audi A4, 2019. Пробег 75 тыс км, 42000 BYN, Брест.');assert.equal(d.mileage,'75000');assert.equal(d.currency,'BYN');assert.equal(d.price,'42000');});
+test('validates phone, VIN, date, money and numeric mileage',()=>{const d={...parseLocally(sample),phone:'+375 (29) 123-45-67'};assert.deepEqual(validateListing(d),[]);assert.ok(validateListing({...d,year:'3018',price:'-1',mileage:'2e6',vin:'IOQ',phone:'+7 1'}).length>=5);});
+test('sanitizes AI object and bounds strings',()=>{const d=sanitizeListing({year:2018,price:'18 900',currency:'rub',description:'a'.repeat(10000),brand:{value:'fake'}});assert.equal(d.year,'2018');assert.equal(d.price,'18900');assert.equal(d.currency,'');assert.equal(d.brand,'');assert.equal(d.description.length,8000);assert.deepEqual(sanitizeListing(null),emptyListing);});
+test('text package retains defects and contacts',()=>{const result=listingText({...parseLocally(sample),phone:'+375291234567'});assert.match(result,/царапина/);assert.match(result,/18900 USD/);assert.match(result,/\+375291234567/);});

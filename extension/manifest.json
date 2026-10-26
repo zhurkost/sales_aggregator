@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Автопост • помощник заполнения (beta)",
+  "description": "Передаёт подготовленное объявление в формы av.by и Kufar. Вход, капча, проверка и публикация — вручную.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "112",
+  "permissions": ["storage", "tabs"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://autopost-belarus-mvp.sunlit-lemur-2753.chatgpt.site/*",
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*"
+      ],
+      "js": ["core.js", "bridge.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://av.by/*", "https://cars.av.by/*", "https://www.kufar.by/*", "https://auto.kufar.by/*"],
+      "js": ["core.js", "marketplace.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "action": { "default_title": "Автопост beta: запуск со страницы объявления" }
+}

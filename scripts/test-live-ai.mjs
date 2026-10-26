@@ -1,0 +1,15 @@
+import {readFileSync,mkdirSync,writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+import {POST} from '../app/api/analyze/route.ts';
+import {runWithAISettings} from '../lib/ai-context.ts';
+import {sample} from '../lib/listing.ts';
+const key=readFileSync(process.argv[2],'utf8').trim();
+if(!/^sk-or-v1-[A-Za-z0-9]+$/.test(key))throw new Error('Unexpected OpenRouter key format.');
+const model='deepseek/deepseek-v4.1-flash-1017';
+const started=Date.now();
+const result=await runWithAISettings({AI_API_KEY:key,AI_PROVIDER:'openrouter',AI_MODEL:model},()=>POST(new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{origin:'http://localhost:5173','content-type':'application/json'},body:JSON.stringify({text:sample})})));
+const data=await result.json();
+if(result.status!==200)throw new Error(`AI check failed: ${data.error||result.status}`);
+assert.equal(data.listing.brand,'Volkswagen');assert.equal(data.listing.year,'2018');assert.equal(data.listing.price,'18900');assert.equal(data.listing.currency,'USD');assert.equal(data.listing.phone,'');assert.match(data.listing.description,/царапин/i);
+const summary={passed:true,provider:'OpenRouter',model,elapsedMs:Date.now()-started,assertions:['brand','year','price','currency','no invented phone','defect preserved'],date:new Date().toISOString()};
+mkdirSync('work',{recursive:true});writeFileSync('work/live-ai-check.json',JSON.stringify(summary,null,2));console.log(JSON.stringify(summary));

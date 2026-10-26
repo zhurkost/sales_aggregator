@@ -1,0 +1,8 @@
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import path from 'node:path';
+const files=['manifest.json','core.js','bridge.js','background.js','marketplace.js','README.md'];
+const table=Array.from({length:256},(_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0;});
+const crc32=b=>{let crc=0xffffffff;for(const byte of b)crc=table[(crc^byte)&255]^(crc>>>8);return (crc^0xffffffff)>>>0;};
+const records=[],directory=[];let offset=0;
+for(const filename of files){const name=Buffer.from(filename);const body=readFileSync(path.join('extension',filename));const crc=crc32(body);const header=Buffer.alloc(30);header.writeUInt32LE(0x04034b50);header.writeUInt16LE(20,4);header.writeUInt16LE(0x800,6);header.writeUInt16LE(33,12);header.writeUInt32LE(crc,14);header.writeUInt32LE(body.length,18);header.writeUInt32LE(body.length,22);header.writeUInt16LE(name.length,26);records.push(header,name,body);const dir=Buffer.alloc(46);dir.writeUInt32LE(0x02014b50);dir.writeUInt16LE(20,4);dir.writeUInt16LE(20,6);dir.writeUInt16LE(0x800,8);dir.writeUInt16LE(33,14);dir.writeUInt32LE(crc,16);dir.writeUInt32LE(body.length,20);dir.writeUInt32LE(body.length,24);dir.writeUInt16LE(name.length,28);dir.writeUInt32LE(offset,42);directory.push(dir,name);offset+=header.length+name.length+body.length;}
+const central=Buffer.concat(directory);const end=Buffer.alloc(22);end.writeUInt32LE(0x06054b50);end.writeUInt16LE(files.length,8);end.writeUInt16LE(files.length,10);end.writeUInt32LE(central.length,12);end.writeUInt32LE(offset,16);mkdirSync('public',{recursive:true});writeFileSync('public/autopost-extension.zip',Buffer.concat([...records,central,end]));console.log('Extension package: public/autopost-extension.zip');
