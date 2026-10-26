@@ -314,9 +314,11 @@ export function Workspace({
   function persist(snapshot: AdRecord = current.current) {
     let result: AdRecord;
     const operation = saveQueue.current.then(async () => {
+      if (!alive.current) throw new Error("Профиль закрыт. Войдите снова.");
       if (alive.current) setSaveState("Сохраняем…");
       const r = await api<{ ad: AdRecord }>("workspace/ads", {
         ...snapshot,
+        profileId: profile.id,
         revision: revisions.current.get(snapshot.id) ?? snapshot.revision,
       });
       result = r.ad;
@@ -336,7 +338,12 @@ export function Workspace({
             current.current.listing === snapshot.listing &&
               current.current.text === snapshot.text &&
               current.current.photos === snapshot.photos &&
-              current.current.jobs === snapshot.jobs
+              current.current.jobs === snapshot.jobs &&
+              current.current.selected === snapshot.selected &&
+              current.current.categoryConfirmed === snapshot.categoryConfirmed &&
+              current.current.prepared === snapshot.prepared &&
+              current.current.archived === snapshot.archived &&
+              current.current.batchId === snapshot.batchId
               ? "Сохранено в профиле"
               : "Есть несохранённые изменения",
           );
@@ -439,7 +446,7 @@ export function Workspace({
     const listener = (e: BeforeUnloadEvent) => {
       if (
         saveState === "Сохраняем…" ||
-        saveState === "Есть несохранённые изменения"
+        saveState === "Есть несохранённые изменения" || saveState === "Не удалось сохранить"
       ) {
         e.preventDefault();
         e.returnValue = "";

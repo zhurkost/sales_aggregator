@@ -63,6 +63,7 @@ export function createWorkspace(config) {
     return row ? JSON.parse(row.data) : null;
   };
   function saveAd(profile, input) {
+    if(input?.profileId && input.profileId!==profile)throw Object.assign(new Error("Профиль изменился. Откройте кабинет заново."),{status:403});
     if (!input || !uuid(input.id))
       throw new Error("Некорректный идентификатор карточки.");
     const old = getAd(profile, input.id);

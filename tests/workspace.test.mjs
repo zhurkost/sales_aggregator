@@ -15,6 +15,7 @@ test('profiles enforce password, origin, owner isolation, concurrency and logout
   const denied=await request(store,'login',{login:'alice',password:'wrong-password'});assert.equal(denied.status,401);
   assert.equal((await request(store,'ads',undefined)).status,401);
   assert.equal((await request(store,'ads',ad(),alice.cookie,'https://evil.invalid')).status,403);
+  assert.equal((await request(store,'ads',{...ad(),profileId:alice.profile.id},bob.cookie)).status,403);
   const original=ad();const saved=await request(store,'ads',original,alice.cookie);assert.equal(saved.status,200);const {ad:record}=await saved.json();assert.equal(record.revision,1);assert.equal(record.listing.partNumber,'000123-AB');
   const bobs=await (await request(store,'ads',undefined,bob.cookie)).json();assert.equal(bobs.ads.length,0);
   assert.equal((await request(store,'ads/'+record.id,undefined,bob.cookie)).status,404);
