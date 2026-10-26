@@ -1,15 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {categories,sanitizeCandidates,suggestCategories,categoryById} from '../lib/taxonomy.ts';
+import {categories,taxonomy,categoryMapping,mappingOptions,sanitizeCategoryOverrides,sanitizeCandidates,suggestCategories,categoryById} from '../lib/taxonomy.ts';
 import {parseDelimited,normalizeImport,guessColumns,csvExport,flagmaRows,matchingPhotos,flagmaXlsx,readImport} from '../lib/bulk.ts';
 import {safePublicationUrl,getPlatforms} from '../lib/platforms.ts';
 test('taxonomy identifiers are unique; unknown AI categories never reach the flow',()=>{
- assert.equal(new Set(categories.map(c=>c.id)).size,categories.length);assert.ok(categories.length>350);
+ assert.equal(new Set(categories.map(c=>c.id)).size,categories.length);assert.ok(categories.length>300);
  assert.deepEqual(sanitizeCandidates([{id:'made.up',confidence:1}]),[]);
  assert.equal(sanitizeCandidates([{id:'auto.parts.optics',confidence:200},{id:'auto.parts.optics'}]).length,1);
  assert.equal(suggestCategories('Продам фару для Volkswagen Passat, OEM 000123')[0].id,'auto.parts.optics');
  assert.equal(categoryById('auto.cars').mappings.kufar.id,'2010');
  assert.equal(getPlatforms('general','goods.17010').length,3);
+});
+
+test('one GPU category routes to Kufar, Onliner and Flagma without marketplace-specific suggestions',()=>{
+ assert.deepEqual(suggestCategories('видеокарты, 570').map(c=>c.id),['computers.gpu']);
+ assert.equal(categoryById('onliner.286').id,'computers.gpu');
+ assert.deepEqual(sanitizeCandidates([{id:'goods.16010'},{id:'onliner.286'},{id:'computers.gpu'}]).map(c=>c.id),['computers.gpu']);
+ const gpu=categoryById('computers.gpu');
+ assert.equal(gpu.mappings.kufar.id,'16010');
+ assert.deepEqual(gpu.mappings.kufar.attributes,[{key:'computers_component_type',value:'11',label:'Видеокарты'}]);
+ assert.equal(gpu.mappings.onliner.id,'286');assert.equal(gpu.mappings.flagma.id,'Видеокарты');
+ assert.equal(getPlatforms('general','onliner.286').length,3);
+ assert.equal(categories.some(c=>c.id.startsWith('onliner.')||c.parent.includes('Onlíner')),false);
+ for(const section of taxonomy.directories.onliner)assert.ok(categoryById('onliner.'+section.id),section.name);
+ for(const c of categories)for(const [platform,m]of Object.entries(c.mappings))assert.ok(mappingOptions(platform).some(o=>o.optionId===m.optionId),c.id+' / '+platform);
+ assert.equal(mappingOptions('flagma').length,8881);
+ // Known past mistakes must never silently reappear when importing directories.
+ for(const [id,forum]of Object.entries({'goods.16030':'185','goods.16040':'63','goods.12050':'554','goods.21070':'1045','goods.21040':'1051'}))assert.equal(categoryById(id).mappings.onliner.id,forum);
+});
+
+test('marketplace correction changes only that route and uses allowlisted options',()=>{
+ const overrides=sanitizeCategoryOverrides({onliner:'17',kufar:'unknown',evil:'286',flagma:{id:'made-up'}});
+ assert.deepEqual(overrides,{onliner:'17'});
+ assert.equal(categoryMapping('computers.gpu','onliner',overrides).id,'17');
+ assert.equal(categoryMapping('computers.gpu','kufar',overrides).attributes[0].value,'11');
+ const {rows,errors}=flagmaRows([{id:'gpu',listing:{title:'Видеокарта RX 570',description:'Рабочая видеокарта',taxonomyId:'computers.gpu',currency:'BYN',price:'150'}}],{});
+ assert.deepEqual(errors,[]);assert.equal(rows[0]['Конечный подраздел'],'Видеокарты');
 });
 test('CSV accepts quoted delimiters, embedded newlines, BOM and escaped quotes',()=>{
  assert.deepEqual(parseDelimited('\ufeffНазвание;Описание;Артикул\r\nФара;"Есть; царапина\nи ""скол""";000123-AB'),[['Название','Описание','Артикул'],['Фара','Есть; царапина\nи "скол"','000123-AB']]);

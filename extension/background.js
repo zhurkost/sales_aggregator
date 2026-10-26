@@ -290,7 +290,7 @@ async function marketplaceRequest(message, sender) {
         filledKeys: job.filledKeys,
         photosAttempted: job.photosAttempted,
         photosTransferred: job.photosTransferred,
-        mapping: node?.mappings?.[job.canonicalId],
+        mapping: globalThis.AutopostCategoryOptions?.[job.canonicalId]?.[batch.categoryOverrides?.[job.canonicalId]] || node?.mappings?.[job.canonicalId],
         paused: batch.paused,
         complete: terminal(job.status),
       },

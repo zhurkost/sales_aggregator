@@ -8,6 +8,7 @@
       .replace(/[\s_*:(),.\-\/]+/g, " ")
       .trim();
   const aliases = {
+    category: ["категория", "конечный подраздел", "подраздел"],
     title: ["subject", "title", "название объявления", "заголовок"],
     description: [
       "description",
@@ -251,8 +252,8 @@
     if (labels.length !== 1) return null;
     return labels[0].closest("fieldset") || labels[0].parentElement;
   }
-  async function custom(key, value, listing, platform) {
-    const scope = scopeFor(key, listing, platform);
+  async function custom(key, value, listing, platform, explicitScope) {
+    const scope = explicitScope || scopeFor(key, listing, platform);
     if (!scope) return "Поле пока не появилось";
     const native = scope.querySelector(
       "input:not([type=hidden]):not([type=radio]):not([type=checkbox]),textarea,select",
@@ -382,7 +383,7 @@
         }
         await pause(300);
       }
-      if (task.listing.category === "parts") {
+      if (task.listing.category === "parts" && !mapping?.attributes?.some(a=>a.key==="spares_type")) {
         const type = document.querySelector('[data-name="spares_type"]');
         const selected = type?.querySelector(
           '[aria-checked="true"],[aria-pressed="true"],[class*="chip__filled"]',
@@ -395,9 +396,14 @@
           }
         }
       }
-      return normalize(
-        document.querySelector('[data-name="category"]')?.textContent,
-      ).includes(normalize(path.at(-1)));
+      const categorySelected=normalize(document.querySelector('[data-name="category"]')?.textContent).includes(normalize(path.at(-1)));
+      if(!categorySelected)return false;
+      for(const attribute of mapping?.attributes||[]){
+        if(!/^[a-z][a-z0-9_]*$/.test(attribute.key))return false;
+        const scope=document.querySelector(`[data-name="${attribute.key}"]`);
+        if(!scope||await custom(attribute.key,attribute.label,task.listing,platform,scope))return false;
+      }
+      return true;
     }
     if (
       platform === "onliner" &&
@@ -414,6 +420,12 @@
         if (option) return !setNative(category, "category", option.textContent);
       }
     }
+    if(platform==='flagma'&&mapping){
+      const control=findNative('category',platform);
+      if(control)return !setNative(control,'category',mapping.path.at(-1));
+      return !await custom('category',mapping.path.at(-1),task.listing,platform);
+    }
+    if(platform==='onliner'&&task.listing.category!=='cars')return false;
     return true;
   }
   async function fillFields(task, platform) {

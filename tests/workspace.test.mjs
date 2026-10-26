@@ -9,6 +9,15 @@ const config={PUBLIC_ORIGIN:'https://autopost.test',DATA_DIR:':memory:'};
 const request=(store,route,body,cookie='',origin=config.PUBLIC_ORIGIN)=>store.handle(new Request(config.PUBLIC_ORIGIN+'/api/workspace/'+route,{method:body===undefined?'GET':'POST',headers:{origin,'content-type':'application/json',cookie},...(body===undefined?{}:{body:JSON.stringify(body)})}));
 async function register(store,login){const r=await request(store,'register',{login,password:'test-password-123',name:login});assert.equal(r.status,200);const cookie=r.headers.get('set-cookie').split(';')[0];assert.match(r.headers.get('set-cookie'),/HttpOnly/);assert.match(r.headers.get('set-cookie'),/Secure/);assert.match(r.headers.get('set-cookie'),/SameSite=Strict/);return {cookie,...await r.json()};}
 const ad=()=>({id:crypto.randomUUID(),revision:0,listing:{...emptyListing,category:'parts',taxonomyId:'auto.parts.optics',title:'Фара',description:'Царапина на стекле',partName:'Фара',partNumber:'000123-AB',price:'450',currency:'BYN'},photos:[],selected:['bamper','kufar-parts'],jobs:[],text:'Фара с царапиной',categoryConfirmed:true});
+
+test('legacy GPU cards reopen with canonical category and marketplace corrections survive saving',async()=>{
+ const store=createWorkspace(config);try{
+  const user=await register(store,'routing');const old={...ad(),listing:{...emptyListing,category:'general',taxonomyId:'onliner.286',title:'RX 570'},selected:['onliner-general'],categoryOverrides:{onliner:'17',kufar:'not-in-catalog'}};
+  const saved=await request(store,'ads',old,user.cookie);assert.equal(saved.status,200);const record=(await saved.json()).ad;
+  assert.equal(record.listing.taxonomyId,'computers.gpu');assert.deepEqual(record.categoryOverrides,{onliner:'17'});
+  const restored=(await (await request(store,'ads/'+record.id,undefined,user.cookie)).json()).ad;assert.deepEqual(restored.categoryOverrides,{onliner:'17'});assert.equal(restored.listing.title,'RX 570');
+ }finally{store.close();}
+});
 test('profiles enforce password, origin, owner isolation, concurrency and logout',async()=>{
  const store=createWorkspace(config);try{
   const alice=await register(store,'alice');const bob=await register(store,'bob');

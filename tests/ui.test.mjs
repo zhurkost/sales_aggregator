@@ -29,7 +29,7 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    if(path==='/api/analyze')return Response.json(body.task==='classify'?{candidates:[{id:'auto.parts.optics',confidence:.9,reason:'Фара — автомобильная оптика'}]}:{listing:{category:'parts',title:'Фара Passat',partName:'Фара',partNumber:'3G1941035D',description:'Есть царапина',currency:'BYN',price:'450',condition:'Б/у',priceUnit:'За штуку'}});
    throw new Error('Unexpected API '+path);
  };
- window.postMessage=message=>queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.3.0'}:{batches:[]}}})));
+ window.postMessage=message=>queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.4.0'}:{batches:[]}}})));
  mkdirSync(new URL('../work/',import.meta.url),{recursive:true});
  const code=ts.transpileModule(readFileSync(new URL('../components/workspace-ui.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2');
  const generated=new URL('../work/ui-test.generated.mjs',import.meta.url);writeFileSync(generated,code);
@@ -47,7 +47,11 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    await click('Пример запчасти');await click('Определить категорию');
    assert.equal(stored.size,0,'classification alone does not prepare a listing');
    assert.match(window.document.body.textContent,/Фара — автомобильная оптика/);
+   const routing=window.document.querySelector('[aria-label="Категории площадок"]');assert.ok(routing);assert.match(routing.textContent,/Куфар/);assert.match(routing.textContent,/Onlíner/);
+   const correction=routing.querySelector('[aria-label="Категория Onlíner"]');
+   await act(async()=>{correction.value='20';correction.dispatchEvent(new window.Event('change',{bubbles:true}));});
    await click('Подтвердить и продолжить');
+   assert.equal([...stored.values()][0].categoryOverrides.onliner,'20');
    assert.equal([...stored.values()][0].categoryConfirmed,true);assert.equal([...stored.values()][0].listing.taxonomyId,'auto.parts.optics');
    assert.ok(requests.filter(r=>r.path==='/api/analyze').every(r=>!('photos'in r.body)));
    const original=[...stored.values()][0];
@@ -55,6 +59,7 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    await click('Мои объявления');assert.equal(entries().length,4);assert.ok(entries().every(visible),'All four saved cards must be visible');
    const saved=entries().find(e=>e.textContent.includes('Сохранённая фара 2'));await click('Открыть карточку',saved);
    assert.ok(requests.some(r=>r.path==='/api/workspace/ads/existing-2'));
+   assert.equal(window.document.querySelector('[aria-label="Категория Onlíner"]').value,'20');
    assert.match(window.document.body.textContent,/Подготовьте объявление/);
    // Change a real editor control, then navigate away to flush the save.
    const selectedPlatform=window.document.querySelector('.platform-card input[type=checkbox]');assert.ok(selectedPlatform);
@@ -67,6 +72,17 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    // Simulate closing/reopening the app: every card is fetched from the profile again.
    await act(async()=>root.render(null));await act(async()=>render());await click('Мои объявления');
    assert.equal(entries().length,4);assert.ok(entries().every(visible));await click('Открыть карточку',entries()[0]);
+   // A primary category change resets site corrections and previews every universal marketplace.
+   const primary=window.document.querySelector('.category-search select');
+   await act(async()=>{primary.value='computers.gpu';primary.dispatchEvent(new window.Event('change',{bubbles:true}));});
+   const gpuRoutes=window.document.querySelector('[aria-label="Категории площадок"]');
+   assert.equal(gpuRoutes.querySelectorAll('.routing-entry').length,3);
+   assert.match(gpuRoutes.textContent,/Комплектующие → Видеокарты/);
+   assert.match(gpuRoutes.textContent,/Flagma/);
+   assert.equal(gpuRoutes.querySelector('[aria-label="Категория Onlíner"]').value,'');
+   await click('Подтвердить и продолжить');
+   const gpuRecord=[...stored.values()].find(r=>r.listing.taxonomyId==='computers.gpu');assert.ok(gpuRecord);
+   assert.deepEqual(gpuRecord.selected,['kufar-general','onliner-general']);assert.deepEqual(gpuRecord.categoryOverrides,{});
    assert.equal(notices.some(n=>/ошиб|не удалось/i.test(n)),false);
  }finally{
    await act(async()=>root.unmount());globalThis.fetch=realFetch;

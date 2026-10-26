@@ -1,5 +1,5 @@
 import type { Listing, ProductGroup } from "./listing.ts";
-import { categoryById } from "./taxonomy.ts";
+import { categoryMapping, type CategoryOverrides } from "./taxonomy.ts";
 export type Platform = {
   id: string;
   canonicalId: string;
@@ -148,12 +148,10 @@ export function getPlatforms(
 ): Platform[] {
   if (category === "parts") return partsPlatforms;
   if (category === "cars") return platforms;
-  const mapping = categoryById(taxonomyId)?.mappings;
   return catalog
     .filter(
       (p) =>
-        ["kufar", "onliner", "flagma"].includes(p.id) &&
-        (!mapping || p.id === "flagma" || mapping[p.canonicalId]),
+        ["kufar", "onliner", "flagma"].includes(p.id),
     )
     .map((p) => ({
       ...p,
@@ -164,22 +162,24 @@ export function getPlatforms(
           : p.url,
     }));
 }
-export function defaultPlatforms(category: ProductGroup, taxonomyId = "") {
+export function defaultPlatforms(category: ProductGroup, taxonomyId = "", overrides:CategoryOverrides={}) {
   return getPlatforms(category, taxonomyId)
     .filter((p) =>
       category === "parts"
         ? ["bamper", "kufar-parts"].includes(p.id)
         : category === "cars"
           ? ["avby", "kufar"].includes(p.id)
-          : p.canonicalId === "kufar" || p.canonicalId === "onliner",
+          : ["kufar", "onliner"].includes(p.canonicalId) && !!categoryMapping(taxonomyId,p.canonicalId,overrides),
     )
     .map((p) => p.id);
 }
-export function platformValidation(listing: Listing, selected: string[]) {
+export function platformValidation(listing: Listing, selected: string[], overrides:CategoryOverrides={}) {
   const errors: string[] = [];
   const allowed = getPlatforms(listing.category, listing.taxonomyId);
   if (selected.some((id) => !allowed.some((p) => p.id === id)))
     errors.push("Площадка не подходит категории");
+  for(const p of allowed.filter(p=>selected.includes(p.id)&&['kufar','onliner'].includes(p.canonicalId)))
+    if(!categoryMapping(listing.taxonomyId||(listing.category==='cars'?'auto.cars':listing.category==='parts'?'auto.parts':''),p.canonicalId,overrides))errors.push(`${p.name}: выберите категорию площадки на шаге 0`);
   if (listing.category === "parts" && selected.includes("bamper"))
     for (const [key, label] of [
       ["brand", "марка автомобиля"],

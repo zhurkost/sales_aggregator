@@ -4,7 +4,7 @@ import {
   validateListing,
   type Listing,
 } from "./listing.ts";
-import { categoryById, suggestCategories } from "./taxonomy.ts";
+import { categoryById, suggestCategories, categoryMapping } from "./taxonomy.ts";
 import { newRecord, type AdRecord } from "./workspace.ts";
 import { defaultPlatforms } from "./platforms.ts";
 
@@ -252,7 +252,7 @@ export function flagmaRows(
 ) {
   const errors: string[] = [];
   const rows = records.map((r) => {
-    const c = categories[r.id]?.trim();
+    const c = categories[r.id]?.trim() || categoryMapping(r.listing.taxonomyId,'flagma',r.categoryOverrides)?.id;
     if (!c)
       errors.push(
         (r.listing.title || r.id) + ": укажите конечный подраздел Flagma",

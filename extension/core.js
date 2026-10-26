@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.3.0';
+  const VERSION = '0.4.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -100,7 +100,15 @@
     if (!Array.isArray(payload.photos) || payload.photos.length > 12) throw new Error('Можно передать до 12 фотографий.');
     const photos = payload.photos.map(validatePhoto);
     if (photos.reduce((sum, photo) => sum + photoBytes(photo.dataUrl), 0) > MAX_TOTAL_PHOTO_BYTES) throw new Error('Уменьшите общий размер фото до 3,25 МиБ для временного хранения в расширении.');
-    return { batchId, listing, photos, platforms, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
+    const categoryOverrides = {};
+    if(payload.categoryOverrides!==undefined&&!object(payload.categoryOverrides))throw new Error('Некорректные категории площадок.');
+    for(const [platform,id] of Object.entries(payload.categoryOverrides||{})) {
+      const options=root.AutopostCategoryOptions;
+      if(!options||!own(options,platform)||typeof id!=='string'||!own(options[platform],id))throw new Error('Категория площадки отсутствует в справочнике. Обновите расширение.');
+      categoryOverrides[platform]=id;
+    }
+    if(root.AutopostCategoryAliases&&own(root.AutopostCategoryAliases,listing.taxonomyId))listing.taxonomyId=root.AutopostCategoryAliases[listing.taxonomyId];
+    return { batchId, listing, photos, platforms, categoryOverrides, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
   }
   function publicJob(job) {
     return {

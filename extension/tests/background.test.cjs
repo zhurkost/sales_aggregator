@@ -7,6 +7,7 @@ const vm = require('node:vm');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
 const core = require('../core.js');
+require('../taxonomy.js');
 const APP = core.APP_ORIGINS[0];
 function createWorker() {
   const data = {};
@@ -32,7 +33,7 @@ function createWorker() {
     },
   };
   chrome.storage.local=chrome.storage.session;
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), { chrome, AutopostCore: core, importScripts() {}, crypto: { randomUUID }, URL, Date, console });
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), { chrome, AutopostCore: core, AutopostTaxonomy:globalThis.AutopostTaxonomy,AutopostCategoryOptions:globalThis.AutopostCategoryOptions, importScripts() {}, crypto: { randomUUID }, URL, Date, console });
   function request(message, url = `${APP}/`, tabId = 1, frameId = 0) {
     return new Promise((resolve) => {
       const listening = onMessage(message, { id: 'test-id', frameId, url, tab: { id: tabId } }, resolve);
@@ -145,4 +146,14 @@ test('bulk queue serializes each marketplace and only advances after completion'
  await worker.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'link_recorded',url:'https://evil.invalid/ad',userConfirmed:true}},worker.created[0].url,10);assert.equal(worker.created.length,1);
  await worker.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'link_recorded',url:'https://www.kufar.by/item/123456',userConfirmed:true}},worker.created[0].url,10);assert.equal(worker.created.length,2);
  const duplicate=await worker.request({kind:'APP_REQUEST',type:'RUN_QUEUE',payload:{profileId:'owner',items:[first,second]},userGesture:true});assert.equal(duplicate.batches.length,2);assert.equal(worker.created.length,2);
+});
+
+test('default GPU mappings and per-marketplace corrections survive the worker queue',async()=>{
+ const w=createWorker();const gpu={...payload(),batchId:'gpu-routing',listing:{...payload().listing,category:'general',taxonomyId:'onliner.286'},platforms:[{id:'kufar-general'},{id:'onliner-general'}],categoryOverrides:{onliner:'17'}};
+ const result=await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:gpu});assert.ok(!result.error,result.error);
+ const k=await w.request({kind:'GET_TASK'},'https://www.kufar.by/ain/create',w.created[0].id);
+ const o=await w.request({kind:'GET_TASK'},'https://baraholka.onliner.by/fleamarketposting.php',w.created[1].id);
+ assert.equal(k.task.listing.taxonomyId,'computers.gpu');assert.equal(k.task.mapping.attributes[0].value,'11');assert.equal(o.task.mapping.id,'17');
+ assert.equal(w.data.autopostSessionV1.batches[0].categoryOverrides.onliner,'17');
+ const bad=await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:{...gpu,batchId:'bad-routing',categoryOverrides:{onliner:'javascript:attack'}}});assert.match(bad.error,/справочнике/);assert.equal(w.created.length,2);
 });

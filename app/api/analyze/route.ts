@@ -19,7 +19,7 @@ export async function POST(request:Request){
   const classify=body.task==='classify';
   const category=body.category==='parts'?'parts':body.category==='general'?'general':'cars';
   if(body.taxonomyId&&!categoryById(body.taxonomyId))return fail('Категория отсутствует в справочнике.');
-  if(typeof body.text!=='string'||body.text.trim().length<15||body.text.length>8000)return fail('Введите описание от 15 до 8000 символов.');
+  if(typeof body.text!=='string'||body.text.trim().length<3||body.text.length>8000)return fail('Введите описание от 3 до 8000 символов.');
   const config=getAISettings();const useServer=!body.key&&!!config.AI_API_KEY;
   if(useServer&&!isAuthorized(request))return fail('Для серверного ИИ войдите в аккаунт владельца сайта.',401);
   const apiKey=useServer?config.AI_API_KEY:body.key;
@@ -38,7 +38,7 @@ export async function POST(request:Request){
     const parsed=JSON.parse(choice.message.content);if(!parsed||Array.isArray(parsed)||typeof parsed!=='object')return fail('ИИ вернул некорректную карточку.',502);
     if(classify)return Response.json({candidates:sanitizeCandidates(parsed.candidates),question:typeof parsed.question==='string'?parsed.question.slice(0,200):'',mode:'ai',model},{headers});
     const listing=sanitizeListing(parsed,category);
-    listing.taxonomyId=body.taxonomyId||'';
+    listing.taxonomyId=categoryById(body.taxonomyId)?.id||'';
     const explicit=parseLocally(body.text,category);
     // Critical structured facts must be grounded in the seller's text, not model guesses.
     const phones=body.text.match(/(?:\+?375)[\s()\d-]{9,18}/g)||[];

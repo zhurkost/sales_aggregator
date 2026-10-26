@@ -2,7 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Window} from 'happy-dom';
+import {categoryById} from '../lib/taxonomy.ts';
 const script=readFileSync(new URL('../extension/dom.js',import.meta.url),'utf8');
+
+test('GPU category waits for the dependent type control, selects the exact type, and preserves seller edits',async()=>{
+ const {window,document,dom}=environment('<div data-name="category">Компьютерная техника Комплектующие</div>');
+ try{
+  const task={listing:{category:'general'},mapping:categoryById('computers.gpu').mappings.kufar};
+  assert.equal(await dom.category(task,'kufar'),false,'Cannot report category done before required type mounts');
+  const field=document.createElement('div');field.dataset.name='computers_component_type';field.innerHTML='<div data-testid="base-dropdown-ui">Выберите тип</div>';document.body.append(field);
+  const control=field.firstChild;control.onclick=()=>{const option=document.createElement('div');option.className='DefaultItem-styles-module__x__item';option.textContent='Видеокарты';option.onclick=()=>{control.textContent='Видеокарты';option.remove();};document.body.append(option);};
+  assert.equal(await dom.category(task,'kufar'),true);assert.equal(control.textContent,'Видеокарты');
+  control.textContent='Процессоры';assert.equal(await dom.category(task,'kufar'),false);assert.equal(control.textContent,'Процессоры');
+ }finally{window.happyDOM.abort();window.close();}
+});
 function environment(html){const window=new Window({url:'https://www.kufar.by/ain/create',settings:{enableJavaScriptEvaluation:true}});window.document.body.innerHTML=html;window.HTMLElement.prototype.getBoundingClientRect=function(){return {width:100,height:30,top:0,left:0,right:100,bottom:30};};window.eval(script);return {window,document:window.document,dom:window.AutopostDOM};}
 // Names and DOM attributes observed in the public Kufar creation form on 2026-10-26.
 const base=`<div data-name="category">Авто и запчасти Легковые авто<button data-testid="ain-show-all-categories">Изменить категорию</button></div>

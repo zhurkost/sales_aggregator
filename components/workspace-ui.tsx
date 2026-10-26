@@ -38,6 +38,10 @@ import {
   categoryById,
   suggestCategories,
   taxonomy,
+  categoryMapping,
+  mappingLabel,
+  mappingOptions,
+  type CategoryOverrides,
   type Candidate,
 } from "../lib/taxonomy";
 import {
@@ -106,7 +110,7 @@ function CategorySelect({
         />
       </label>
       <label className="full-label">
-        Категория товара
+        Категория Автопоста
         <select value={value} onChange={(e) => onChange(e.target.value)}>
           <option value="">Выберите категорию</option>
           {filtered.map((c) => (
@@ -118,6 +122,33 @@ function CategorySelect({
       </label>
     </div>
   );
+}
+function MarketplaceCategories({categoryId,overrides,onChange}:{categoryId:string;overrides:CategoryOverrides;onChange:(value:CategoryOverrides)=>void}) {
+  const category=categoryById(categoryId);
+  const [search,setSearch]=useState<Record<string,string>>({});
+  if(!category)return null;
+  return <section className="category-routing" aria-label="Категории площадок">
+    <h3>Категории на площадках</h3>
+    <p className="hint">Одна категория Автопоста — соответствия для всех площадок. При необходимости измените отдельное соответствие.</p>
+    {getPlatforms(category.group,category.id).map(p=>{
+      const mapping=categoryMapping(category.id,p.canonicalId,overrides);
+      const options=mappingOptions(p.canonicalId);
+      return <div className="routing-entry" key={p.id}>
+        <b>{p.name}</b>
+        <div><span>{mapping?mappingLabel(mapping):options.length?'Нет подтверждённого соответствия — выберите категорию ниже':'Справочник пока не подключён; категория выбирается на площадке'}</span>
+          {mapping?.match==='broader'&&<small>Более общий раздел площадки; уточнения зависят от характеристик товара.</small>}
+          {options.length>0&&<details><summary>{overrides[p.canonicalId]?'Изменено вручную':'Изменить для этой площадки'}</summary>
+            <input aria-label={`Поиск категории ${p.name}`} placeholder="Поиск по категориям площадки" value={search[p.id]||''} onChange={e=>setSearch({...search,[p.id]:e.target.value})}/>
+            <small>Поиск по полному справочнику. Показано до 100 совпадений.</small>
+            <select aria-label={`Категория ${p.name}`} value={overrides[p.canonicalId]||''} onChange={e=>{const next={...overrides};if(e.target.value)next[p.canonicalId]=e.target.value;else delete next[p.canonicalId];onChange(next);}}>
+              <option value="">Автоматически{category.mappings[p.canonicalId]?': '+mappingLabel(category.mappings[p.canonicalId]):' — соответствие не найдено'}</option>
+              {options.filter(m=>m.optionId===overrides[p.canonicalId]||mappingLabel(m).toLowerCase().includes((search[p.id]||'').toLowerCase())).sort((a,b)=>Number(b.optionId===overrides[p.canonicalId])-Number(a.optionId===overrides[p.canonicalId])).slice(0,100).map(m=><option key={m.optionId} value={m.optionId}>{mappingLabel(m)}</option>)}
+            </select>
+          </details>}
+        </div>
+      </div>;
+    })}
+  </section>;
 }
 export function Auth({
   profiles,
@@ -290,6 +321,7 @@ export function Workspace({
     [serverAI, setServerAI] = useState(false),
     [candidates, setCandidates] = useState<Candidate[]>([]),
     [categoryId, setCategoryId] = useState(""),
+    [pendingOverrides,setPendingOverrides] = useState<CategoryOverrides>({}),
     [errors, setErrors] = useState<string[]>([]),
     [showExtension, setShowExtension] = useState(false);
   const current = useRef(ad),
@@ -343,6 +375,7 @@ export function Workspace({
               current.current.categoryConfirmed === snapshot.categoryConfirmed &&
               current.current.prepared === snapshot.prepared &&
               current.current.archived === snapshot.archived &&
+              current.current.categoryOverrides === snapshot.categoryOverrides &&
               current.current.batchId === snapshot.batchId
               ? "Сохранено в профиле"
               : "Есть несохранённые изменения",
@@ -391,7 +424,7 @@ export function Workspace({
       .then((r) =>
         setExt(
           typeof r.version === "string" &&
-            r.version.split(".").map(Number)[1] >= 3,
+            r.version.split(".").map(Number)[1] >= 4,
         ),
       )
       .catch(() => {});
@@ -490,6 +523,7 @@ export function Workspace({
       setAd(r.ad);
       setDirty(0);
       setCategoryId(r.ad.listing.taxonomyId);
+      setPendingOverrides(r.ad.categoryOverrides||{});
       setCandidates([]);
       setChecked(false);
       setErrors([]);
@@ -504,28 +538,34 @@ export function Workspace({
       setAd(value);
       setDirty(0);
       setCategoryId("");
+      setPendingOverrides({});
       setCandidates([]);
       setErrors([]);
       setChecked(false);
       setView("editor");
     }, "Сохраняем");
   }
+  function selectCategory(id:string){
+    if(current.current.prepared&&id!==current.current.listing.taxonomyId)change(r=>({...r,categoryConfirmed:false}));
+    setCategoryId(id);
+    setPendingOverrides(id===current.current.listing.taxonomyId?current.current.categoryOverrides||{}:{});
+  }
   async function classify() {
     await guarded(async () => {
-      if (current.current.text.trim().length < 15)
-        throw new Error("Опишите товар хотя бы в 15 символах.");
+      if (current.current.text.trim().length < 3)
+        throw new Error("Опишите товар хотя бы в 3 символах.");
       if (serverAI) {
         const r = await api<{ candidates: Candidate[]; question?: string }>(
           "analyze",
           { task: "classify", text: current.current.text },
         );
         setCandidates(r.candidates);
-        setCategoryId(r.candidates[0]?.id || "");
+        selectCategory(r.candidates[0]?.id || "");
         if (r.question) notify(r.question);
       } else {
         const result = suggestCategories(current.current.text);
         setCandidates(result);
-        setCategoryId(result[0]?.id || "");
+        selectCategory(result[0]?.id || "");
         notify(
           "Сейчас доступен поиск по словам. Выберите категорию из справочника.",
         );
@@ -546,13 +586,14 @@ export function Workspace({
         });
         listing = sanitizeListing(result.listing, category.group);
       } else listing = parseLocally(source.text, category.group);
-      listing.taxonomyId = id;
+      listing.taxonomyId = category.id;
       change({
         ...source,
         listing,
         categoryConfirmed: true,
+        categoryOverrides: pendingOverrides,
         prepared: true,
-        selected: defaultPlatforms(category.group, id),
+        selected: defaultPlatforms(category.group, category.id, pendingOverrides),
         jobs: [],
         batchId: "",
       });
@@ -576,6 +617,7 @@ export function Workspace({
       batchId: record.batchId,
       recordId: record.id,
       profileId: profile.id,
+      categoryOverrides: record.categoryOverrides||{},
       listing: { ...record.listing, title: listingTitle(record.listing) },
       photos: record.photos.map(({ name, type, dataUrl }) => ({
         name,
@@ -589,7 +631,7 @@ export function Workspace({
     const r = current.current;
     const invalid = [
       ...validateListing(r.listing),
-      ...platformValidation(r.listing, r.selected),
+      ...platformValidation(r.listing, r.selected, r.categoryOverrides),
       ...(!r.categoryConfirmed ? ["Подтвердите категорию"] : []),
       ...(!r.prepared ? ["Подготовьте карточку"] : []),
       ...(!r.photos.length ? ["Добавьте фотографии"] : []),
@@ -690,7 +732,7 @@ export function Workspace({
           ))}
         </nav>
         <div className="sidebar-note">
-          <b>Автопост · MVP 0.3</b>
+          <b>Автопост · MVP 0.4</b>
           <p>Карточки и статусы хранятся в вашем профиле на сервере.</p>
         </div>
         <div className="sidebar-bottom">
@@ -725,7 +767,7 @@ export function Workspace({
               className="text-button"
               onClick={() => setShowExtension(true)}
             >
-              {ext ? "Помощник подключён" : "Расширение 0.3.0"}
+              {ext ? "Помощник подключён" : "Расширение 0.4.0"}
             </button>
           </div>
         </header>
@@ -830,11 +872,15 @@ export function Workspace({
                         <span>{ad.text.length} / 8000</span>
                       </div>
                     </div>
+                    <MarketplaceCategories categoryId={categoryId} overrides={pendingOverrides} onChange={value=>{
+                      setPendingOverrides(value);
+                      if(categoryId===ad.listing.taxonomyId)change(r=>({...r,categoryOverrides:value}));
+                    }}/>
                     <div className="prepare-row">
                       <span className="hint">ИИ использует только текст</span>
                       <button
                         className="primary"
-                        disabled={!!busy || ad.text.trim().length < 15}
+                        disabled={!!busy || ad.text.trim().length < 3}
                         onClick={classify}
                       >
                         <Sparkles size={16} />
@@ -856,7 +902,7 @@ export function Workspace({
                                 type="radio"
                                 name="suggested-category"
                                 checked={categoryId === c.id}
-                                onChange={() => setCategoryId(c.id)}
+                                onChange={() => selectCategory(c.id)}
                               />
                               <span>
                                 <b>{n.name}</b>
@@ -871,7 +917,7 @@ export function Workspace({
                     )}
                     <CategorySelect
                       value={categoryId}
-                      onChange={setCategoryId}
+                      onChange={selectCategory}
                     />
                     <div className="prepare-row">
                       <span className="hint">
@@ -880,7 +926,7 @@ export function Workspace({
                       <button
                         className="primary"
                         disabled={
-                          !categoryId || !!busy || ad.text.trim().length < 15
+                          !categoryId || !!busy || ad.text.trim().length < 3
                         }
                         onClick={() => prepare(categoryId)}
                       >
@@ -1132,7 +1178,7 @@ export function Workspace({
                     <div className="extension-card">
                       <b>
                         {ext
-                          ? "Помощник 0.3 подключён"
+                          ? "Помощник 0.4 подключён"
                           : "Нужно обновить расширение"}
                       </b>
                       <p>
@@ -1239,7 +1285,7 @@ export function Workspace({
           )}
           <footer>
             <Logo />
-            <span>MVP 0.3 · {taxonomy.version}</span>
+            <span>MVP 0.4 · {taxonomy.version}</span>
             <button onClick={() => setShowExtension(true)}>
               Помощник для браузера
             </button>
@@ -1261,7 +1307,7 @@ export function Workspace({
             >
               <X size={22} />
             </button>
-            <h2>Расширение Автопост 0.3.0</h2>
+            <h2>Расширение Автопост 0.4.0</h2>
             <ol className="instructions">
               <li>Скачайте ZIP и распакуйте, заменив файлы старой версии.</li>
               <li>
@@ -1297,12 +1343,12 @@ export function Workspace({
                 onClick={() =>
                   extension("PING", undefined, 2000)
                     .then((r) => {
-                      const ok = String(r.version).startsWith("0.3.");
+                      const ok = String(r.version).startsWith("0.4.");
                       setExt(ok);
                       notify(
                         ok
-                          ? "Версия 0.3 подключена."
-                          : "Обновите расширение до версии 0.3.0.",
+                          ? "Версия 0.4 подключена."
+                          : "Обновите расширение до версии 0.4.0.",
                       );
                     })
                     .catch((e) => notify(errorText(e)))
@@ -1565,7 +1611,7 @@ function TaxonomyView() {
       <h1>Справочник категорий</h1>
       <p className="subtitle">
         {categories.length} категорий · {taxonomy.directories.kufar.length}{" "}
-        узлов Куфар · {taxonomy.directories.onliner.length} разделов Onlíner
+        узлов Куфар · {taxonomy.directories.onliner.length} разделов Onlíner · {mappingOptions("flagma").length} подразделов Flagma
       </p>
       <p className="callout">{taxonomy.coverage}</p>
       <label className="full-label">
@@ -1585,7 +1631,7 @@ function TaxonomyView() {
             <div className="taxonomy-mappings">
               {Object.entries(c.mappings).map(([p, m]) => (
                 <span key={p}>
-                  <strong>{p}</strong> {m.path.join(" → ")}{" "}
+                  <strong>{p}</strong> {mappingLabel(m)}{" "}
                   <small>
                     {m.verified ? "Источник проверен" : "Требуется уточнение"}
                   </small>{" "}
@@ -2022,12 +2068,12 @@ function Bulk({
             disabled={!selected.length || selected.length > 20 || !!busy}
             onClick={() =>
               work("Проверяем очередь", async () => {
-                if (!ext) throw new Error("Установите расширение 0.3.0.");
+                if (!ext) throw new Error("Установите расширение 0.4.0.");
                 const records = await loadSelected();
                 const problems = records.flatMap((r) => {
                   const e = [
                     ...validateListing(r.listing),
-                    ...platformValidation(r.listing, r.selected),
+                    ...platformValidation(r.listing, r.selected, r.categoryOverrides),
                     ...(!r.categoryConfirmed
                       ? ["категория не подтверждена"]
                       : []),
@@ -2146,21 +2192,21 @@ function Bulk({
           Активация выполняется на площадке.
         </p>
         <label className="full-label">
-          Конечный подраздел Flagma для выбранных карточек
+          Переопределить подраздел Flagma для всей выгрузки (необязательно)
           <input
             value={flagmaCategory}
             onChange={(e) => setFlagmaCategory(e.target.value)}
-            placeholder="Точное название из справочника Flagma"
+            placeholder="По умолчанию — категория каждой карточки"
           />
         </label>
         <p className="fine-print">
-          Выбирайте здесь товары одного подраздела. Если они относятся к разным
-          категориям, экспортируйте отдельными группами.
+          Категория подставляется из настроек каждой карточки на шаге 0. Это поле
+          используйте только для общего подраздела всей выгрузки.
         </p>
         <div className="job-actions">
           <button
             className="primary"
-            disabled={!selected.length || !flagmaCategory || !!busy}
+            disabled={!selected.length || !!busy}
             onClick={() =>
               work("Готовим XLSX", async () => {
                 const records = await loadSelected();

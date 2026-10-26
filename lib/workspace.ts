@@ -13,6 +13,7 @@ export type AdRecord = {
   selected: string[];
   prepared: boolean;
   categoryConfirmed: boolean;
+  categoryOverrides?: import('./taxonomy.ts').CategoryOverrides;
   archived: boolean;
   jobs: Job[];
   batchId?: string;
@@ -94,7 +95,7 @@ export function extension(
       window.removeEventListener("message", listener);
       reject(
         new Error(
-          "Расширение не ответило. Установите версию 0.3.0 и обновите страницу.",
+          "Расширение не ответило. Установите версию 0.4.0 и обновите страницу.",
         ),
       );
     }, timeout);

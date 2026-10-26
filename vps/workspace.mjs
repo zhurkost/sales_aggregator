@@ -9,7 +9,7 @@ import {
 } from "node:crypto";
 import { promisify } from "node:util";
 import { sanitizeListing } from "../lib/listing.ts";
-import { categoryById } from "../lib/taxonomy.ts";
+import { categoryById, sanitizeCategoryOverrides } from "../lib/taxonomy.ts";
 import {
   getPlatforms,
   safePublicationUrl,
@@ -28,6 +28,14 @@ const summary = (r) => {
   return { ...rest, photoCount: photos.length };
 };
 
+// Resolve legacy marketplace IDs on read. Original records remain intact until saved.
+function normalizeCategory(record){
+  const category=categoryById(record.listing?.taxonomyId);
+  if(!category||category.id===record.listing.taxonomyId)return record;
+  const platforms=getPlatforms(category.group,category.id);
+  const platformId=id=>platforms.find(p=>p.canonicalId===id.replace(/-(parts|general)$/, '').replace(/^avby$/, 'av'))?.id||id;
+  return {...record,listing:{...record.listing,taxonomyId:category.id,category:category.group},selected:(record.selected||[]).map(platformId),jobs:(record.jobs||[]).map(j=>({...j,platformId:platformId(j.platformId)}))};
+}
 export function createWorkspace(config) {
   const directory = config.DATA_DIR || "/var/lib/autopost";
   if (directory !== ":memory:")
@@ -60,7 +68,7 @@ export function createWorkspace(config) {
     const row = db
       .prepare("SELECT data FROM ads WHERE profile_id=? AND id=?")
       .get(profile, id);
-    return row ? JSON.parse(row.data) : null;
+    return row ? normalizeCategory(JSON.parse(row.data)) : null;
   };
   function saveAd(profile, input) {
     if(input?.profileId && input.profileId!==profile)throw Object.assign(new Error("Профиль изменился. Откройте кабинет заново."),{status:403});
@@ -81,6 +89,7 @@ export function createWorkspace(config) {
         .get(profile).n >= 500
     )
       throw new Error("Лимит MVP: 500 карточек на профиль.");
+    input = normalizeCategory(input);
     const listing = sanitizeListing(input.listing);
     const category = categoryById(listing.taxonomyId);
     if (listing.taxonomyId && !category)
@@ -152,6 +161,7 @@ export function createWorkspace(config) {
       selected,
       prepared: input.prepared === true,
       categoryConfirmed: !!category && input.categoryConfirmed === true,
+      categoryOverrides: sanitizeCategoryOverrides(input.categoryOverrides),
       archived: input.archived === true,
       jobs,
       batchId: uuid(input.batchId) ? input.batchId : "",
@@ -310,7 +320,7 @@ export function createWorkspace(config) {
             "SELECT summary FROM ads WHERE profile_id=? ORDER BY updated DESC",
           )
           .all(p.id)
-          .map((row) => JSON.parse(row.summary));
+          .map((row) => normalizeCategory(JSON.parse(row.summary)));
         return reply({ ads: records });
       }
       if (path === "/api/workspace/ads" && req.method === "POST")

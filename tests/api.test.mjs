@@ -14,6 +14,12 @@ test('classification sends only text and returns allowlisted categories',async()
  }finally{globalThis.fetch=real;}
 });
 test('rejects foreign origin',async()=>assert.equal((await POST(request({},'https://evil.example'))).status,403));
+
+test('short GPU description is accepted and old duplicate AI identifiers collapse to one internal category',async()=>{
+ const real=globalThis.fetch;
+ globalThis.fetch=async()=>Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({candidates:[{id:'goods.16010'},{id:'onliner.286'},{id:'computers.gpu'}]})}}]});
+ try{const response=await POST(request({task:'classify',text:'видеокарты, 570',key:'test-not-a-real-key',provider:'openrouter'}));assert.equal(response.status,200);assert.deepEqual((await response.json()).candidates.map(c=>c.id),['computers.gpu']);}finally{globalThis.fetch=real;}
+});
 test('requires a real user API key, no silent fake AI',async()=>assert.equal((await POST(request({text:'Продам Volkswagen Passat 2018'}))).status,401));
 test('bounds streamed requests',async()=>assert.equal((await POST(request({text:'a'.repeat(23000)}))).status,413));
 test('rejects arbitrary provider URLs',async()=>assert.equal((await POST(request({text:'Продам Volkswagen Passat 2018',key:'test-not-a-real-key',provider:'http://localhost'}))).status,400));
