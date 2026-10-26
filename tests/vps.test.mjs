@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {createApiServer} from '../vps/server.mjs';
 
 const secret='test-proxy-secret-that-is-more-than-32-characters';
-const config={PUBLIC_ORIGIN:'https://87.199.205.227',VPS_PROXY_SECRET:secret,AI_API_KEY:'server-test-secret',AI_MODEL:'deepseek/test',AI_PROVIDER:'openrouter'};
+const config={DATA_DIR:':memory:',PUBLIC_ORIGIN:'https://87.199.205.227',VPS_PROXY_SECRET:secret,AI_API_KEY:'server-test-secret',AI_MODEL:'deepseek/test',AI_PROVIDER:'openrouter'};
 test('VPS configuration requires HTTPS and a strong proxy credential',()=>{
   assert.throws(()=>createApiServer({...config,PUBLIC_ORIGIN:'http://example.com'}),/HTTPS/);
   assert.throws(()=>createApiServer({...config,VPS_PROXY_SECRET:'short'}),/strong/);

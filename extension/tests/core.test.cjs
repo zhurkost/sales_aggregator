@@ -29,7 +29,7 @@ test('only the exact application origins are permitted', () => {
   assert.equal(core.platformForOrigin('https://login.av.by'), undefined);
 });
 
-test('parts go only to Kufar and retain exact OEM and pricing unit', () => {
+test('parts retain exact OEM and pricing unit on supported parts marketplaces', () => {
   const payload=listing({category:'parts',partName:'Фара',partNumber:'000123-AB',condition:'Б/у',priceUnit:'За штуку'});
   payload.platforms=[{id:'kufar-parts'}];
   const result=core.validateRun(payload);
@@ -37,13 +37,13 @@ test('parts go only to Kufar and retain exact OEM and pricing unit', () => {
   assert.equal(result.listing.priceUnit,'За штуку');
   assert.equal(result.platforms[0].canonicalId,'kufar');
   payload.platforms=[{id:'avby'}];
-  assert.throws(()=>core.validateRun(payload),/только на Kufar/);
+  assert.throws(()=>core.validateRun(payload),/только для автомобилей/);
   payload.platforms=[{id:'kufar-parts'}];payload.listing.category='unknown';
   assert.throws(()=>core.validateRun(payload),/товарная группа/);
 });
 
 test('unsupported platforms, aliases repeated twice and object prototype keys are rejected', () => {
-  for (const id of ['abw', 'onliner', '__proto__', 'constructor', 'https://av.by']) {
+  for (const id of ['unknown', '__proto__', 'constructor', 'https://av.by']) {
     const payload = listing();
     payload.platforms = [{ id }];
     assert.throws(() => core.validateRun(payload), /не поддерживается/u);

@@ -4,6 +4,15 @@ import {POST} from '../app/api/analyze/route.ts';
 import {GET} from '../app/api/ai-settings/route.ts';
 import {runWithAISettings} from '../lib/ai-context.ts';
 const request=(body,origin='http://localhost:5173')=>new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify(body)});
+
+test('classification sends only text and returns allowlisted categories',async()=>{
+ const real=globalThis.fetch;let captured;
+ globalThis.fetch=async(_url,init)=>{captured=JSON.parse(init.body);return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({candidates:[{id:'auto.parts.optics',confidence:.9},{id:'invented.category',confidence:1}],question:'Уточните тип товара'})}}]});};
+ try{
+  const response=await POST(request({task:'classify',text:'Продам фару для Volkswagen Passat',key:'test-not-a-real-key',provider:'openrouter',photos:['DO_NOT_SEND_IMAGE']}));
+  assert.equal(response.status,200);const result=await response.json();assert.deepEqual(result.candidates.map(c=>c.id),['auto.parts.optics']);assert.ok(!JSON.stringify(captured).includes('DO_NOT_SEND_IMAGE'));assert.match(captured.messages[0].content,/auto.parts.optics/);
+ }finally{globalThis.fetch=real;}
+});
 test('rejects foreign origin',async()=>assert.equal((await POST(request({},'https://evil.example'))).status,403));
 test('requires a real user API key, no silent fake AI',async()=>assert.equal((await POST(request({text:'Продам Volkswagen Passat 2018'}))).status,401));
 test('bounds streamed requests',async()=>assert.equal((await POST(request({text:'a'.repeat(23000)}))).status,413));

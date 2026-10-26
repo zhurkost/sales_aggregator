@@ -7,4 +7,4 @@ if (Test-Path -LiteralPath '../openrouter token.txt') {
   if ($LASTEXITCODE -ne 0) { throw 'AI configuration failed.' }
 }
 Write-Host 'Autopost: http://127.0.0.1:5173'
-npm run dev -- --host 127.0.0.1 --port 5173
+npm run dev

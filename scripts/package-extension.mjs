@@ -1,6 +1,8 @@
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import path from 'node:path';
-const files=['manifest.json','core.js','bridge.js','background.js','marketplace.js','README.md'];
+const taxonomy=JSON.parse(readFileSync('data/taxonomy.json','utf8'));
+writeFileSync('extension/taxonomy.js','/* Generated from data/taxonomy.json. */\nglobalThis.AutopostTaxonomy = '+JSON.stringify(Object.fromEntries(taxonomy.nodes.map(n=>[n.id,{mappings:n.mappings}])))+';\n');
+const files=['manifest.json','core.js','taxonomy.js','dom.js','bridge.js','background.js','marketplace.js','README.md'];
 const table=Array.from({length:256},(_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0;});
 const crc32=b=>{let crc=0xffffffff;for(const byte of b)crc=table[(crc^byte)&255]^(crc>>>8);return (crc^0xffffffff)>>>0;};
 const records=[],directory=[];let offset=0;

@@ -1,11 +1,18 @@
 {
   "manifest_version": 3,
   "name": "Автопост • помощник заполнения (beta)",
-  "description": "Автомобили: av.by и Kufar; запчасти: Kufar. Вход, выбор категории, капча, проверка и публикация — вручную.",
-  "version": "0.2.0",
+  "description": "Автопост: категории, формы, фотографии, очередь и ссылки в личном кабинете. Ваша авторизация остаётся в браузере.",
+  "version": "0.3.0",
   "minimum_chrome_version": "112",
-  "permissions": ["storage", "tabs"],
-  "background": { "service_worker": "background.js" },
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "alarms",
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -14,16 +21,40 @@
         "http://localhost:5173/*",
         "http://127.0.0.1:5173/*"
       ],
-      "js": ["core.js", "bridge.js"],
+      "js": [
+        "core.js",
+        "bridge.js"
+      ],
       "run_at": "document_start",
       "all_frames": false
     },
     {
-      "matches": ["https://av.by/*", "https://cars.av.by/*", "https://www.kufar.by/*", "https://auto.kufar.by/*"],
-      "js": ["core.js", "marketplace.js"],
+      "matches": [
+        "https://av.by/*",
+        "https://cars.av.by/*",
+        "https://www.kufar.by/*",
+        "https://auto.kufar.by/*",
+        "https://kufar.by/*",
+        "https://bamper.by/*",
+        "https://www.bamper.by/*",
+        "https://ab.onliner.by/*",
+        "https://baraholka.onliner.by/*",
+        "https://profile.onliner.by/*",
+        "https://abw.by/*",
+        "https://www.abw.by/*",
+        "https://flagma.by/*",
+        "https://auto.drom.ru/*"
+      ],
+      "js": [
+        "core.js",
+        "dom.js",
+        "marketplace.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
   ],
-  "action": { "default_title": "Автопост beta: запуск со страницы объявления" }
+  "action": {
+    "default_title": "Автопост beta: запуск со страницы объявления"
+  }
 }

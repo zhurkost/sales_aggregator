@@ -1,181 +1,403 @@
-'use strict';
-importScripts('core.js');
+"use strict";
+importScripts("core.js", "taxonomy.js");
 const core = globalThis.AutopostCore;
-const STORAGE_KEY = 'autopostSessionV1';
+const STORAGE_KEY = "autopostSessionV1";
+const PHOTO_PREFIX = "autopostPhotos:";
+const MAX_QUEUE_BYTES = 64 * 1024 * 1024;
 let queue = Promise.resolve();
 function serialized(work) {
   const next = queue.then(work, work);
   queue = next.catch(() => undefined);
   return next;
 }
-function safeTabMessage(tabId, message) {
-  return chrome.tabs.sendMessage(tabId, message, { frameId: 0 }).catch(() => undefined);
-}
-async function save(state) { await chrome.storage.session.set({ [STORAGE_KEY]: state }); }
+const send = (id, message) =>
+  chrome.tabs.sendMessage(id, message, { frameId: 0 }).catch(() => undefined);
+const save = (state) => chrome.storage.session.set({ [STORAGE_KEY]: state });
+const terminal = (s) => ["link_recorded", "cancelled", "submitted"].includes(s);
 async function load() {
-  const stored = (await chrome.storage.session.get(STORAGE_KEY))[STORAGE_KEY];
-  const state = stored?.version === 1 && Array.isArray(stored.batches) ? stored : { version: 1, batches: [] };
-  const expired = state.batches.filter((batch) => batch.expiresAt <= Date.now());
+  const raw = (await chrome.storage.session.get(STORAGE_KEY))[STORAGE_KEY];
+  const state =
+    raw?.version === 2 && Array.isArray(raw.batches)
+      ? raw
+      : { version: 2, batches: [] };
+  const expired = state.batches.filter((b) => b.expiresAt <= Date.now());
   if (expired.length) {
-    state.batches = state.batches.filter((batch) => batch.expiresAt > Date.now());
+    state.batches = state.batches.filter((b) => b.expiresAt > Date.now());
     await save(state);
-    for (const batch of expired) {
-      for (const job of batch.jobs) if (Number.isInteger(job.tabId)) await safeTabMessage(job.tabId, { kind: 'TASK_CLEARED', reason: 'expired' });
-    }
+    await chrome.storage.local.remove(
+      expired.map((b) => b.photoKey).filter(Boolean),
+    );
+    for (const b of expired)
+      for (const j of b.jobs)
+        if (Number.isInteger(j.tabId))
+          await send(j.tabId, { kind: "TASK_CLEARED", reason: "expired" });
   }
   return state;
 }
 async function broadcast(batch) {
-  const alive = [];
-  for (const tabId of batch.sourceTabIds) {
+  for (const id of batch.sourceTabIds)
     try {
-      const tab = await chrome.tabs.get(tabId);
-      if (core.originOf(tab.url) !== batch.origin) continue;
-      alive.push(tabId);
-      await safeTabMessage(tabId, { kind: 'APP_PROGRESS', origin: batch.origin, batchId: batch.batchId, jobs: batch.jobs.map(core.publicJob) });
-    } catch { /* The originating tab may have been closed. */ }
-  }
-  batch.sourceTabIds = alive;
+      const t = await chrome.tabs.get(id);
+      if (core.originOf(t.url) === batch.origin)
+        await send(id, {
+          kind: "APP_PROGRESS",
+          origin: batch.origin,
+          batchId: batch.batchId,
+          profileId: batch.profileId,
+          recordId: batch.recordId,
+          jobs: batch.jobs.map(core.publicJob),
+        });
+    } catch {}
 }
-function authorizedSender(sender) {
-  return sender.id === chrome.runtime.id && sender.frameId === 0 && Number.isInteger(sender.tab?.id);
-}
-function findTask(state, sender) {
-  const platform = core.platformForOrigin(core.originOf(sender.url));
-  if (!platform) return null;
-  for (const batch of state.batches) {
-    const job = batch.jobs.find((item) => item.tabId === sender.tab.id && item.canonicalId === platform.id);
-    if (job) return { batch, job };
+function taskFor(state, sender) {
+  const p = core.platformForOrigin(core.originOf(sender.url));
+  if (!p) return null;
+  for (const b of state.batches) {
+    const j = b.jobs.find(
+      (j) => j.tabId === sender.tab.id && j.canonicalId === p.id,
+    );
+    if (j) return { batch: b, job: j };
   }
   return null;
 }
-async function clearBatch(batch, reason = 'cleared') {
-  for (const job of batch.jobs) if (Number.isInteger(job.tabId)) await safeTabMessage(job.tabId, { kind: 'TASK_CLEARED', reason });
+async function openJob(job, batch, active = false) {
+  if (Number.isInteger(job.tabId))
+    try {
+      await chrome.tabs.update(job.tabId, { active: true });
+      return;
+    } catch {
+      job.tabId = null;
+    }
+  try {
+    const tab = await chrome.tabs.create({
+      url: core.startUrl(job.canonicalId, batch.listing),
+      active,
+    });
+    job.tabId = tab.id;
+    job.status = "opening";
+    job.message = "Открываем форму. Вход выполняется в вашей сессии браузера.";
+  } catch {
+    job.status = "error";
+    job.message = "Не удалось открыть вкладку. Нажмите «Открыть с помощником».";
+  }
+}
+async function advance(state) {
+  const occupied = new Set(
+    state.batches.flatMap((b) =>
+      b.jobs
+        .filter((j) => Number.isInteger(j.tabId) && !terminal(j.status))
+        .map((j) => j.canonicalId),
+    ),
+  );
+  for (const b of state.batches) {
+    if (b.paused) continue;
+    for (const j of b.jobs) {
+      if (j.status !== "queued" || occupied.has(j.canonicalId)) continue;
+      occupied.add(j.canonicalId);
+      await openJob(j, b);
+      await broadcast(b);
+    }
+  }
+  await save(state);
 }
 async function appRequest(message, sender) {
   const origin = core.originOf(sender.url);
-  if (!core.isAppOrigin(origin)) throw new Error('Источник запроса не разрешён.');
-  if (message.type === 'PING') return { version: core.VERSION };
-  if (!['RUN', 'STATUS', 'CLEAR'].includes(message.type)) throw new Error('Неизвестный запрос.');
+  if (!core.isAppOrigin(origin)) throw new Error("Источник не разрешён.");
+  if (message.type === "PING")
+    return {
+      version: core.VERSION,
+      capabilities: [
+        "all-platforms",
+        "category-routing",
+        "queue",
+        "profiles",
+        "open-job",
+      ],
+    };
   const state = await load();
-  const existing = state.batches.find((batch) => batch.origin === origin);
-  if (message.type === 'STATUS') {
-    if (existing && !existing.sourceTabIds.includes(sender.tab.id)) {
-      existing.sourceTabIds.push(sender.tab.id);
-      await save(state);
-    }
-    const requestedBatchId = message.payload?.batchId;
-    const matches = requestedBatchId === undefined || requestedBatchId === existing?.batchId;
-    return { batchId: existing?.batchId ?? null, jobs: existing && matches ? existing.jobs.map(core.publicJob) : [] };
-  }
-  if (message.type === 'CLEAR') {
-    state.batches = state.batches.filter((batch) => batch.origin !== origin);
+  const profileId =
+    typeof message.payload?.profileId === "string"
+      ? message.payload.profileId
+      : "legacy";
+  const own = state.batches.filter(
+    (b) => b.origin === origin && b.profileId === profileId,
+  );
+  const batch =
+    own.find((b) => b.batchId === message.payload?.batchId) ||
+    (!message.payload?.batchId ? own.at(-1) : null);
+  if (message.type === "STATUS") {
+    for (const b of own)
+      if (!b.sourceTabIds.includes(sender.tab.id))
+        b.sourceTabIds.push(sender.tab.id);
     await save(state);
-    if (existing) {
-      await clearBatch(existing);
-      existing.jobs = [];
-      await broadcast(existing);
-    }
+    return {
+      batchId: batch?.batchId || null,
+      jobs: batch?.jobs.map(core.publicJob) || [],
+      batches: own.map((b) => ({
+        batchId: b.batchId,
+        recordId: b.recordId,
+        paused: b.paused,
+        jobs: b.jobs.map(core.publicJob),
+      })),
+    };
+  }
+  if (message.type === "CLEAR") {
+    state.batches = state.batches.filter((b) => !own.includes(b));
+    await save(state);
+    await chrome.storage.local.remove(
+      own.map((b) => b.photoKey).filter(Boolean),
+    );
+    for (const b of own)
+      for (const j of b.jobs)
+        if (Number.isInteger(j.tabId))
+          await send(j.tabId, { kind: "TASK_CLEARED", reason: "cleared" });
     return { jobs: [] };
   }
-  if (message.userGesture !== true) throw new Error('Передачу необходимо запускать кнопкой на странице.');
-  const validated = core.validateRun(message.payload);
-  if (existing?.batchId === validated.batchId) {
-    if (!existing.sourceTabIds.includes(sender.tab.id)) existing.sourceTabIds.push(sender.tab.id);
-    await save(state);
-    return { batchId: existing.batchId, jobs: existing.jobs.map(core.publicJob) };
-  }
-  const others = state.batches.filter((batch) => batch.origin !== origin);
-  const photoCharacters = [...others.flatMap((batch) => batch.photos), ...validated.photos].reduce((sum, photo) => sum + photo.dataUrl.length, 0);
-  if (photoCharacters > Math.ceil(core.MAX_TOTAL_PHOTO_BYTES / 3) * 4 + 1024) throw new Error('В расширении уже есть фото другого запуска. Очистите предыдущий пакет либо уменьшите размер фото.');
-  const now = Date.now();
-  const batch = {
-    batchId: validated.batchId, origin, sourceTabIds: [sender.tab.id],
-    createdAt: now, expiresAt: now + core.TTL_MS,
-    listing: validated.listing, photos: validated.photos,
-    jobs: validated.platforms.map((platform) => ({
-      id: crypto.randomUUID(), platformId: platform.id, canonicalId: platform.canonicalId,
-      status: 'manual_required', message: 'Откройте на площадке форму подачи объявления. Заполнение — экспериментальное.',
-      tabId: null, filledFields: 0, filledKeys: [], skippedFields: [], photosTransferred: 0, photosAttempted: false,
-    })),
-  };
-  // Persist before opening tabs. If the session quota is exceeded no site is opened.
-  state.batches = [...others, batch];
-  await save(state);
-  if (existing) await clearBatch(existing, 'replaced');
-  for (let index = 0; index < batch.jobs.length; index += 1) {
-    const job = batch.jobs[index];
-    try {
-      const tab = await chrome.tabs.create({ url: core.PLATFORMS[job.canonicalId].url, active: index === 0 });
-      job.tabId = tab.id;
-    } catch {
-      job.status = 'error';
-      job.message = 'Не удалось открыть площадку. Повторите запуск с новым пакетом.';
+  if (message.userGesture !== true)
+    throw new Error("Запустите действие кнопкой в Автопосте.");
+  if (message.type === "OPEN_JOB") {
+    if (!batch)
+      throw new Error(
+        "Сеанс расширения истёк. Откройте карточку и запустите размещение заново.",
+      );
+    const job = batch.jobs.find(
+      (j) => j.platformId === message.payload.platformId,
+    );
+    if (!job) throw new Error("Задание не найдено.");
+    if (terminal(job.status) && job.url) {
+      await chrome.tabs.create({ url: job.url, active: true });
+      return { jobs: batch.jobs.map(core.publicJob) };
     }
+    await openJob(job, batch, true);
+    await save(state);
+    return { jobs: batch.jobs.map(core.publicJob) };
   }
+  if (["PAUSE", "RESUME"].includes(message.type)) {
+    for (const b of own) b.paused = message.type === "PAUSE";
+    if (message.type === "RESUME") await advance(state);
+    else await save(state);
+    return { ok: true };
+  }
+  if (!["RUN", "RUN_QUEUE"].includes(message.type))
+    throw new Error("Неизвестный запрос.");
+  const items =
+    message.type === "RUN_QUEUE" ? message.payload?.items : [message.payload];
+  if (!Array.isArray(items) || !items.length || items.length > 20)
+    throw new Error("В очереди можно запускать от 1 до 20 карточек за раз.");
+  const validated = items.map(core.validateRun);
+  if (new Set(validated.map((b) => b.batchId)).size !== validated.length)
+    throw new Error("Повторный пакет в очереди.");
+  if (validated.some((b) => b.profileId !== profileId))
+    throw new Error("Профиль очереди не совпадает.");
+  const incoming = validated.filter(
+    (v) =>
+      !state.batches.some(
+        (b) =>
+          b.origin === origin &&
+          b.profileId === profileId &&
+          b.batchId === v.batchId,
+      ),
+  );
+  if (state.batches.length + incoming.length > 30)
+    throw new Error("Завершите или очистите предыдущую очередь.");
+  // Enforce the shared storage quota before opening a single tab.
+  const photoCharacters =
+    state.batches.reduce((n, b) => n + (b.photoCharacters || 0), 0) +
+    incoming.flatMap((b) => b.photos).reduce((n, p) => n + p.dataUrl.length, 0);
+  if (photoCharacters > (MAX_QUEUE_BYTES * 4) / 3)
+    throw new Error(
+      "Фото очереди превышают 64 МиБ. Завершите предыдущие задания или уменьшите пакет.",
+    );
+  const now = Date.now();
+  const added = [];
+  for (const v of incoming) {
+    const { photos, ...metadata } = v;
+    const photoKey = PHOTO_PREFIX + crypto.randomUUID();
+    await chrome.storage.local.set({ [photoKey]: photos });
+    added.push({
+      ...metadata,
+      photoKey,
+      photoCharacters: photos.reduce((n, p) => n + p.dataUrl.length, 0),
+      photoCount: photos.length,
+      origin,
+      sourceTabIds: [sender.tab.id],
+      createdAt: now,
+      expiresAt: now + core.TTL_MS,
+      paused: false,
+      jobs: v.platforms.map((p) => ({
+        id: crypto.randomUUID(),
+        platformId: p.id,
+        canonicalId: p.canonicalId,
+        status: "queued",
+        message:
+          "В очереди. Следующая карточка откроется после завершения предыдущей на этой площадке.",
+        tabId: null,
+        filledFields: 0,
+        filledKeys: [],
+        skippedFields: [],
+        photosTransferred: 0,
+        photosAttempted: false,
+      })),
+    });
+  }
+  state.batches.push(...added);
   await save(state);
-  await broadcast(batch);
-  return { batchId: batch.batchId, jobs: batch.jobs.map(core.publicJob) };
+  // A single listing opens every selected site. Bulk runs keep one active job per site.
+  if (message.type === "RUN")
+    for (const b of added)
+      for (let i = 0; i < b.jobs.length; i++)
+        await openJob(b.jobs[i], b, i === 0);
+  else await advance(state);
+  await save(state);
+  for (const b of added) await broadcast(b);
+  const first = state.batches.find(
+    (b) =>
+      b.origin === origin &&
+      b.profileId === profileId &&
+      b.batchId === validated[0].batchId,
+  );
+  return {
+    batchId: first.batchId,
+    jobs: first.jobs.map(core.publicJob),
+    batches: state.batches
+      .filter((b) => b.origin === origin && b.profileId === profileId)
+      .map((b) => ({
+        batchId: b.batchId,
+        recordId: b.recordId,
+        jobs: b.jobs.map(core.publicJob),
+      })),
+  };
 }
 async function marketplaceRequest(message, sender) {
   const state = await load();
-  const task = findTask(state, sender);
-  if (!task) return { task: null };
-  const { batch, job } = task;
-  if (message.kind === 'GET_TASK') {
+  const found = taskFor(state, sender);
+  if (!found) return { task: null };
+  const { batch, job } = found;
+  if (message.kind === "GET_TASK") {
+    const node = globalThis.AutopostTaxonomy?.[batch.listing.taxonomyId];
+    const photos = batch.photoKey
+      ? (await chrome.storage.local.get(batch.photoKey))[batch.photoKey] || []
+      : [];
     return {
       task: {
-        jobId: job.id, platformId: job.platformId, name: core.PLATFORMS[job.canonicalId].name,
-        listing: batch.listing, photos: batch.photos, expiresAt: batch.expiresAt,
-        filledKeys: job.filledKeys, photosAttempted: job.photosAttempted, photosTransferred: job.photosTransferred,
+        jobId: job.id,
+        platformId: job.platformId,
+        canonicalId: job.canonicalId,
+        name: core.PLATFORMS[job.canonicalId].name,
+        listing: batch.listing,
+        photos,
+        expiresAt: batch.expiresAt,
+        filledKeys: job.filledKeys,
+        photosAttempted: job.photosAttempted,
+        photosTransferred: job.photosTransferred,
+        mapping: node?.mappings?.[job.canonicalId],
+        paused: batch.paused,
+        complete: terminal(job.status),
       },
     };
   }
-  const report = message.report;
-  if (!core.object(report) || report.jobId !== job.id || !core.STATUSES.includes(report.status)) throw new Error('Некорректный отчёт заполнения.');
-  const validKeys = (value) => Array.isArray(value) ? value.filter((key) => typeof key === 'string' && Object.prototype.hasOwnProperty.call(core.FIELD_LIMITS, key)).slice(0, 18) : [];
-  job.filledKeys = [...new Set([...job.filledKeys, ...validKeys(report.filledKeys)])];
+  const r = message.report;
+  if (
+    !core.object(r) ||
+    r.jobId !== job.id ||
+    !core.STATUSES.includes(r.status)
+  )
+    throw new Error("Некорректный отчёт.");
+  if (terminal(job.status)) return { ok: true };
+  const keys = (v) =>
+    Array.isArray(v)
+      ? v.filter((k) => Object.hasOwn(core.FIELD_LIMITS, k)).slice(0, 40)
+      : [];
+  job.filledKeys = [...new Set([...job.filledKeys, ...keys(r.filledKeys)])];
   job.filledFields = job.filledKeys.length;
-  job.skippedFields = validKeys(report.skippedFields);
-  job.photosAttempted = job.photosAttempted || report.photosAttempted === true;
-  if (Number.isInteger(report.photosTransferred)) job.photosTransferred = Math.max(job.photosTransferred, Math.min(batch.photos.length, Math.max(0, report.photosTransferred)));
-  job.status = report.status;
-  job.message = {
-    authorization_required: 'Войдите в аккаунт площадки, откройте форму объявления и повторите заполнение.',
-    captcha_required: 'Площадка показывает капчу. Пройдите её самостоятельно, затем повторите заполнение.',
-    review_required: `Перенесено полей: ${job.filledFields}. Проверьте все данные, фото и опубликуйте объявление вручную.`,
-    manual_required: 'Откройте форму объявления и выберите категорию. Нераспознанные поля заполните вручную.',
-    error: 'Автозаполнение прервалось. Скопируйте текст из панели и проверьте форму вручную.',
-  }[job.status];
+  job.skippedFields = keys(r.skippedFields);
+  job.photosAttempted = job.photosAttempted || r.photosAttempted === true;
+  if (Number.isInteger(r.photosTransferred))
+    job.photosTransferred = Math.max(
+      job.photosTransferred,
+      Math.min(batch.photoCount || 0, Math.max(0, r.photosTransferred)),
+    );
+  if (r.status === "link_recorded") {
+    const url = core.safeLink(job.canonicalId, r.url);
+    if (!url || r.userConfirmed !== true)
+      throw new Error("Укажите ссылку этой площадки и подтвердите её.");
+    job.url = url;
+  }
+  job.status = r.status;
+  job.message =
+    typeof r.message === "string"
+      ? r.message.slice(0, 500)
+      : r.status === "review_required"
+        ? "Проверьте поля и фото перед публикацией."
+        : r.status === "link_recorded"
+          ? "Ссылка сохранена пользователем. Модерация и текущий статус требуют проверки."
+          : "Ожидается действие на площадке.";
+  if (batch.jobs.every((j) => terminal(j.status))) {
+    if (batch.photoKey) await chrome.storage.local.remove(batch.photoKey);
+    batch.photoCharacters = 0;
+  }
   await save(state);
   await broadcast(batch);
+  if (terminal(job.status)) await advance(state);
   return { ok: true };
 }
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (!authorizedSender(sender) || !core.object(message)) return false;
-  if (!['APP_REQUEST', 'GET_TASK', 'REPORT_TASK'].includes(message.kind)) return false;
-  serialized(async () => {
-    if (message.kind === 'APP_REQUEST') return appRequest(message, sender);
-    if (!core.platformForOrigin(core.originOf(sender.url))) throw new Error('Площадка не разрешена.');
-    return marketplaceRequest(message, sender);
-  }).then(sendResponse, () => sendResponse({ error: 'Не удалось обработать запрос. Проверьте данные, размер фото и перезагрузите расширение.', code: 'EXTENSION_REQUEST_FAILED' }));
+chrome.runtime.onMessage.addListener((message, sender, respond) => {
+  if (
+    sender.id !== chrome.runtime.id ||
+    sender.frameId !== 0 ||
+    !Number.isInteger(sender.tab?.id) ||
+    !core.object(message) ||
+    !["APP_REQUEST", "GET_TASK", "REPORT_TASK"].includes(message.kind)
+  )
+    return false;
+  serialized(() =>
+    message.kind === "APP_REQUEST"
+      ? appRequest(message, sender)
+      : marketplaceRequest(message, sender),
+  ).then(respond, (e) =>
+    respond({
+      error: e.message || "Расширение не ответило.",
+      code: "EXTENSION_REQUEST_FAILED",
+    }),
+  );
   return true;
 });
-chrome.tabs.onRemoved.addListener((tabId) => {
+chrome.tabs.onRemoved.addListener((id) => {
   void serialized(async () => {
     const state = await load();
-    for (const batch of state.batches) {
-      batch.sourceTabIds = batch.sourceTabIds.filter((id) => id !== tabId);
-      const job = batch.jobs.find((item) => item.tabId === tabId);
-      if (job) {
-        job.tabId = null;
-        job.status = 'manual_required';
-        job.message = 'Вкладка площадки закрыта. Публикация не подтверждена.';
-        await broadcast(batch);
+    for (const b of state.batches) {
+      b.sourceTabIds = b.sourceTabIds.filter((i) => i !== id);
+      const j = b.jobs.find((j) => j.tabId === id);
+      if (j) {
+        j.tabId = null;
+        if (!terminal(j.status)) {
+          j.status = "manual_required";
+          j.message = "Вкладка закрыта. Возобновите задание в личном кабинете.";
+        }
+        await broadcast(b);
       }
     }
     await save(state);
   }).catch(() => undefined);
 });
-// Only the service worker can read session storage. Content scripts receive their own task.
-void chrome.storage.session.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' }).catch(() => undefined);
+void chrome.storage.session
+  .setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
+  .catch(() => undefined);
+void chrome.storage.local
+  .setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
+  .catch(() => undefined);
+// Session metadata disappears when the browser closes; orphaned photos are removed on restart.
+async function cleanPhotos() {
+  const state = await load();
+  const live = new Set(state.batches.map((b) => b.photoKey));
+  const all = await chrome.storage.local.get(null);
+  await chrome.storage.local.remove(
+    Object.keys(all).filter((k) => k.startsWith(PHOTO_PREFIX) && !live.has(k)),
+  );
+}
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "autopost-cleanup")
+    void serialized(cleanPhotos).catch(() => undefined);
+});
+void chrome.alarms.create("autopost-cleanup", { periodInMinutes: 5 });
+void serialized(cleanPhotos).catch(() => undefined);

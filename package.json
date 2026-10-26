@@ -1,13 +1,15 @@
 {
   "name": "autopost-belarus",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
   },
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
-    "dev": "node scripts/run-framework.mjs dev",
+    "dev": "node --experimental-strip-types scripts/dev-vps.mjs",
+    "dev:vps": "node --experimental-strip-types scripts/dev-vps.mjs",
+    "dev:sites": "node scripts/run-framework.mjs dev",
     "build": "node scripts/package-extension.mjs && node scripts/run-framework.mjs build",
     "build:vps": "node scripts/package-extension.mjs && vite build --config vite.vps.config.ts",
     "start:vps": "node --experimental-strip-types vps/server.mjs",
@@ -28,6 +30,7 @@
     "date-fns": "^4.4.0",
     "drizzle-orm": "0.45.2",
     "embla-carousel-react": "^8.6.0",
+    "exceljs": "^4.4.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^1.31.0",
     "next": "16.3.4",
@@ -56,6 +59,7 @@
     "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.4",
+    "happy-dom": "^21.0.4",
     "json-rpc-2.0": "1.7.1",
     "raw-body": "3.0.2",
     "react-server-dom-webpack": "19.2.6",

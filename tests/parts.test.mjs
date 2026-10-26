@@ -56,3 +56,12 @@ test('a part number invented by the model is not accepted as a structured OEM',a
     assert.equal((await r.json()).listing.partNumber,'');
   }finally{globalThis.fetch=real;}
 });
+test('AI cannot invent contact or stock and an explicit single price wins over model output',async()=>{
+ const real=globalThis.fetch;
+ globalThis.fetch=async()=>Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({partName:'Фара',price:'999',currency:'USD',phone:'+375291234567',quantity:'1',availability:'В наличии',priceUnit:'За штуку',manufacturer:'Invented Brand'})}}]});
+ try{
+  const r=await POST(new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({category:'parts',text:'Продам фару. Цена 450 BYN. Производитель и количество неизвестны.',provider:'openrouter',key:'test-api-key-not-real'})}));
+  const {listing}=await r.json();assert.equal(listing.price,'450');assert.equal(listing.currency,'BYN');
+  for(const key of ['phone','quantity','availability','priceUnit','manufacturer'])assert.equal(listing[key],'',key);
+ }finally{globalThis.fetch=real;}
+});

@@ -9,6 +9,7 @@ install -d -m 755 "$release"
 tar -xzf "$archive" --no-same-owner -C "$release"
 test -f "$release/vps/server.mjs"
 test -f "$release/dist-vps/client/index.html"
+python3 "$release/vps/backup-workspace.py"
 chmod -R u=rwX,go=rX "$release"
 previous=$(readlink -f /opt/autopost/current || true)
 ln -sfn "$release" /opt/autopost/current

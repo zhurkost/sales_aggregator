@@ -1,0 +1,507 @@
+/* DOM adapter. No credentials/cookies, private API calls, captcha solving or final submit. */
+(function (root) {
+  "use strict";
+  const normalize = (v) =>
+    String(v ?? "")
+      .toLowerCase()
+      .replace(/ё/g, "е")
+      .replace(/[\s_*:(),.\-\/]+/g, " ")
+      .trim();
+  const aliases = {
+    title: ["subject", "title", "название объявления", "заголовок"],
+    description: [
+      "description",
+      "описание",
+      "текст объявления",
+      "message",
+      "comment",
+    ],
+    brand: ["brand", "make", "марка", "марка автомобиля"],
+    model: ["model", "модель", "модель автомобиля"],
+    year: ["year", "год", "год выпуска"],
+    mileage: ["mileage", "пробег", "пробег км"],
+    engine: ["engine", "объем", "объем л", "объем двигателя"],
+    fuel: ["fuel", "тип двигателя", "топливо"],
+    transmission: ["transmission", "gearbox", "коробка передач", "кпп"],
+    drive: ["drive", "привод"],
+    body: ["body_type", "тип кузова", "кузов"],
+    color: ["color", "цвет"],
+    partName: [
+      "partName",
+      "название детали",
+      "наименование запчасти",
+      "запчасть",
+    ],
+    partNumber: [
+      "partNumber",
+      "oem",
+      "артикул",
+      "номер запчасти",
+      "оригинальный номер",
+    ],
+    manufacturer: ["manufacturer", "производитель"],
+    condition: ["condition", "состояние"],
+    price: ["price", "цена", "стоимость"],
+    currency: ["currency", "валюта"],
+    city: ["city", "город", "населенный пункт"],
+    phone: ["phone", "телефон", "номер телефона"],
+    vin: ["vin", "vehicle_vin", "vin номер"],
+    quantity: ["quantity", "количество"],
+    availability: ["availability", "наличие"],
+  };
+  const kufar = {
+    brand: "cars_brand_v2",
+    model: "cars_model_v2",
+    year: "regdate",
+    mileage: "mileage",
+    engine: "cars_capacity",
+    fuel: "cars_engine",
+    transmission: "cars_gearbox",
+    body: "cars_type",
+    drive: "cars_drive",
+    color: "cars_color",
+    partName: "spares_passenger_group",
+    partNumber: "spares_parts_number",
+    condition: "condition",
+    city: "area",
+    currency: "price",
+  };
+  const variants = {
+    fuel: [
+      ["Бензин", "petrol"],
+      ["Дизель", "diesel"],
+      ["Электро", "Электричество"],
+    ],
+    transmission: [
+      ["Автомат", "Автоматическая", "АКПП"],
+      ["Механика", "Механическая", "МКПП"],
+    ],
+    currency: [
+      ["BYN", "руб.", "р.", "Белорусские рубли"],
+      ["USD", "$", "Доллары"],
+      ["EUR", "€", "Евро"],
+    ],
+    condition: [
+      ["Новая", "Новый", "Новое"],
+      ["Б/у", "С пробегом", "Бывший в употреблении"],
+    ],
+  };
+  const values = (key, value) => {
+    let result = [value];
+    for (const group of variants[key] || [])
+      if (group.some((v) => normalize(v) === normalize(value))) result = group;
+    if (key === "engine" && /^\d([.,]\d)?$/.test(value))
+      result.push(
+        Number(value.replace(",", ".")).toFixed(1),
+        String(Number(value.replace(",", "."))),
+      );
+    return result.map(normalize);
+  };
+  function visible(e) {
+    return (
+      !!e &&
+      e.isConnected &&
+      !e.hidden &&
+      getComputedStyle(e).display !== "none" &&
+      getComputedStyle(e).visibility !== "hidden" &&
+      e.getBoundingClientRect().width > 0
+    );
+  }
+  const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+  function metadata(e) {
+    const result = [
+      "name",
+      "id",
+      "aria-label",
+      "placeholder",
+      "data-testid",
+    ].map((k) => e.getAttribute(k) || "");
+    for (const label of e.labels || []) result.push(label.textContent);
+    for (const id of (e.getAttribute("aria-labelledby") || "").split(/\s/))
+      if (id) result.push(document.getElementById(id)?.textContent || "");
+    return result.map(normalize);
+  }
+  function findNative(key, platform) {
+    if (platform === "kufar") {
+      const names = {
+        title: "subject",
+        description: "body",
+        price: "price",
+        vin: "vehicle_vin",
+        mileage: "mileage",
+        partNumber: "spares_parts_number",
+      };
+      if (names[key])
+        return (
+          [...document.querySelectorAll(`[name="${names[key]}"]`)].find(
+            (e) =>
+              ["INPUT", "TEXTAREA"].includes(e.tagName) &&
+              visible(e) &&
+              !e.disabled &&
+              !e.readOnly,
+          ) || null
+        );
+    }
+    const candidates = [];
+    for (const el of document.querySelectorAll(
+      "input:not([type=password]):not([type=hidden]):not([type=checkbox]):not([type=radio]):not([type=file]):not([type=submit]),textarea,select",
+    )) {
+      if (
+        !visible(el) ||
+        el.disabled ||
+        el.readOnly ||
+        el.closest('header,nav,[role="search"]')
+      )
+        continue;
+      const labels = metadata(el);
+      let score = 0;
+      for (const alias of aliases[key] || [])
+        if (labels.includes(normalize(alias))) score = Math.max(score, 100);
+      if (!score) {
+        const label = el.closest("label") || el.parentElement?.parentElement;
+        const t = normalize(label?.textContent).slice(0, 120);
+        if ((aliases[key] || []).some((a) => t === normalize(a))) score = 60;
+      }
+      if (score) candidates.push({ el, score });
+    }
+    candidates.sort((a, b) => b.score - a.score);
+    return candidates[0] && candidates[0].score !== candidates[1]?.score
+      ? candidates[0].el
+      : null;
+  }
+  function setNative(el, key, value) {
+    if (!el) return "Поле пока не появилось";
+    let next = String(value);
+    if (el.tagName === "SELECT") {
+      const options = [...el.options].filter(
+        (o) =>
+          !o.disabled && values(key, value).includes(normalize(o.textContent)),
+      );
+      if (options.length !== 1) return "Нет точного варианта";
+      next = options[0].value;
+      const selected = el.options[el.selectedIndex];
+      if (
+        el.value &&
+        !/^(выберите|любой|не выбран|select|—|--)/i.test(
+          selected?.textContent.trim() || "",
+        )
+      )
+        return el.value === next ? null : "Уже заполнено пользователем";
+    } else if (String(el.value || "").trim())
+      return String(el.value) === next ? null : "Уже заполнено пользователем";
+    if (el.maxLength > 0 && next.length > el.maxLength) {
+      if (key === "title") next = next.slice(0, el.maxLength);
+      else return "Текст длиннее лимита площадки";
+    }
+    if (el.type === "number") {
+      next = next.replace(/\s/g, "").replace(",", ".");
+      if (
+        !/^\d+(\.\d+)?$/.test(next) ||
+        (el.min && +next < +el.min) ||
+        (el.max && +next > +el.max)
+      )
+        return "Число вне допустимого диапазона";
+    }
+    const proto =
+      el.tagName === "TEXTAREA"
+        ? HTMLTextAreaElement.prototype
+        : el.tagName === "SELECT"
+          ? HTMLSelectElement.prototype
+          : HTMLInputElement.prototype;
+    Object.getOwnPropertyDescriptor(proto, "value").set.call(el, next);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+    el.dispatchEvent(new FocusEvent("blur", { bubbles: true }));
+    return el.value === next ? null : "Значение не принято";
+  }
+  function exact(
+    text,
+    scope = document,
+    selector = 'button,[role="button"],[role="option"],li,span,div,a',
+  ) {
+    const wanted = normalize(text);
+    const nodes = [...scope.querySelectorAll(selector)].filter(
+      (e) => visible(e) && normalize(e.textContent) === wanted,
+    );
+    return nodes.filter((e) => !nodes.some((n) => n !== e && e.contains(n)));
+  }
+  function scopeFor(key, listing, platform) {
+    if (platform === "kufar") {
+      let name = kufar[key];
+      if (
+        listing.category === "parts" &&
+        ["year", "engine", "fuel", "transmission", "body"].includes(key)
+      )
+        name = {
+          year: "spares_regdate",
+          engine: "spares_capacity",
+          fuel: "spares_cars_engine",
+          transmission: "spares_gearbox",
+          body: "spares_cars_type",
+        }[key];
+      return name ? document.querySelector(`[data-name="${name}"]`) : null;
+    }
+    const labels = [
+      ...document.querySelectorAll('label,legend,[class*="label" i]'),
+    ].filter(
+      (e) =>
+        visible(e) &&
+        (aliases[key] || []).map(normalize).includes(normalize(e.textContent)),
+    );
+    if (labels.length !== 1) return null;
+    return labels[0].closest("fieldset") || labels[0].parentElement;
+  }
+  async function custom(key, value, listing, platform) {
+    const scope = scopeFor(key, listing, platform);
+    if (!scope) return "Поле пока не появилось";
+    const native = scope.querySelector(
+      "input:not([type=hidden]):not([type=radio]):not([type=checkbox]),textarea,select",
+    );
+    if (
+      native &&
+      visible(native) &&
+      !(platform === "kufar" && key === "currency")
+    ) {
+      const autocomplete =
+        native.getAttribute("role") === "combobox" ||
+        native.getAttribute("aria-autocomplete") === "list" ||
+        native.closest(
+          '.select2-search,.multiselect,.p-autocomplete,[class*="vs__"]',
+        );
+      if (!autocomplete) return setNative(native, key, value);
+      const reason = setNative(native, key, value);
+      if (reason) return reason;
+      for (let i = 0; i < 12; i++) {
+        await pause(150);
+        const matches = [
+          ...document.querySelectorAll(
+            '[role="option"],.multiselect__option,.vs__dropdown-option,.p-autocomplete-option',
+          ),
+        ].filter(
+          (e) =>
+            visible(e) && values(key, value).includes(normalize(e.textContent)),
+        );
+        if (matches.length === 1) {
+          matches[0].click();
+          return null;
+        }
+      }
+      return "Введите точное название и выберите вариант списка";
+    }
+    const desired = values(key, value);
+    const buttons = [
+      ...scope.querySelectorAll('button,[role="button"],[role="radio"]'),
+    ].filter(visible);
+    const match = buttons.filter((e) =>
+      desired.includes(normalize(e.textContent)),
+    );
+    if (match.length === 1) {
+      const selected = buttons.find(
+        (e) =>
+          e.getAttribute("aria-checked") === "true" ||
+          e.getAttribute("aria-pressed") === "true" ||
+          /chip__filled|chip--filled|selected/.test(e.className),
+      );
+      if (selected && selected !== match[0]) return "Уже выбрано пользователем";
+      if (!selected) match[0].click();
+      return null;
+    }
+    const dropdown = scope.querySelector(
+      '[data-testid="base-dropdown-ui"],[role="combobox"],.select2-selection,[class*="multiselect__tags"],[class*="vs__dropdown-toggle"]',
+    );
+    if (
+      !dropdown ||
+      !visible(dropdown) ||
+      dropdown.getAttribute("aria-readonly") === "true"
+    )
+      return "Не распознан список";
+    const current = normalize(dropdown.textContent);
+    if (desired.includes(current)) return null;
+    if (
+      key !== "currency" &&
+      current &&
+      !/выберите|введите|любой|вся беларусь|не выбран|select/i.test(current)
+    )
+      return "Уже выбрано пользователем";
+    dropdown.click();
+    for (let i = 0; i < 10; i++) {
+      await pause(200);
+      const options = [
+        ...document.querySelectorAll(
+          '[role="option"],[class*="DefaultItem"][class*="item"],.select2-results__option,.multiselect__option,.vs__dropdown-option',
+        ),
+      ].filter(visible);
+      const matches = options.filter((e) =>
+        desired.includes(normalize(e.textContent)),
+      );
+      if (matches.length === 1) {
+        matches[0].click();
+        await pause(150);
+        return null;
+      }
+    }
+    // Close only the popup we opened, never select an approximate model or part.
+    const close = [
+      ...document.querySelectorAll('[data-name="kufar_modal_close_icon"]'),
+    ].filter(visible);
+    if (close.length === 1) close[0].click();
+    else dropdown.click();
+    return "Нужен точный выбор из списка";
+  }
+  async function category(task, platform) {
+    const mapping = task.mapping;
+    if (platform === "kufar") {
+      const scope = document.querySelector('[data-name="category"]');
+      const path =
+        mapping?.path ||
+        (task.listing.category === "cars"
+          ? ["Авто и запчасти", "Легковые авто"]
+          : task.listing.category === "parts"
+            ? ["Авто и запчасти", "Запчасти"]
+            : []);
+      if (!path.length) return false;
+      if (!scope) return false;
+      if (!normalize(scope.textContent).includes(normalize(path.at(-1)))) {
+        const chooser = document.querySelector(
+          '[data-testid="ain-show-all-categories"]',
+        );
+        if (!chooser) return false;
+        chooser.click();
+        for (const label of path) {
+          let picked = false;
+          for (let i = 0; i < 12; i++) {
+            await pause(150);
+            const options = exact(label).filter((e) => !scope.contains(e));
+            if (options.length === 1) {
+              options[0].click();
+              picked = true;
+              break;
+            }
+          }
+          if (!picked) return false;
+        }
+        await pause(300);
+      }
+      if (task.listing.category === "parts") {
+        const type = document.querySelector('[data-name="spares_type"]');
+        const selected = type?.querySelector(
+          '[aria-checked="true"],[aria-pressed="true"],[class*="chip__filled"]',
+        );
+        if (!selected) {
+          const options = type ? exact("Запчасти для легковых авто", type) : [];
+          if (options.length === 1) {
+            options[0].click();
+            await pause(300);
+          }
+        }
+      }
+      return normalize(
+        document.querySelector('[data-name="category"]')?.textContent,
+      ).includes(normalize(path.at(-1)));
+    }
+    if (
+      platform === "onliner" &&
+      task.listing.category !== "cars" &&
+      mapping?.id
+    ) {
+      const category = document.querySelector(
+        'select[name="f"],select[name="forum_id"]',
+      );
+      if (category) {
+        const option = [...category.options].find(
+          (o) => o.value === mapping.id,
+        );
+        if (option) return !setNative(category, "category", option.textContent);
+      }
+    }
+    return true;
+  }
+  async function fillFields(task, platform) {
+    const result = { filled: [], skipped: [], details: [] };
+    const keys = [
+      "title",
+      "brand",
+      "model",
+      "year",
+      "body",
+      "engine",
+      "fuel",
+      "transmission",
+      "drive",
+      "color",
+      "mileage",
+      "vin",
+      "partName",
+      "partNumber",
+      "manufacturer",
+      "condition",
+      "quantity",
+      "availability",
+      "description",
+      "currency",
+      "price",
+      "city",
+      "phone",
+    ];
+    for (const key of keys) {
+      const value = task.listing[key];
+      if (!value) continue;
+      const control = findNative(key, platform);
+      let reason;
+      if (key === "price") {
+        const currencyScope = scopeFor("currency", task.listing, platform);
+        const label =
+          platform === "kufar"
+            ? currencyScope?.querySelector('[data-testid="base-dropdown-ui"]')
+                ?.textContent
+            : findNative("currency", platform)?.selectedOptions?.[0]
+                ?.textContent || findNative("currency", platform)?.value;
+        if (
+          !values("currency", task.listing.currency).includes(normalize(label))
+        ) {
+          result.skipped.push(key);
+          result.details.push("Цена: валюта формы не подтверждена");
+          continue;
+        }
+      }
+      task.attempts ||= new Map();
+      const target = control || scopeFor(key, task.listing, platform);
+      const previous = task.attempts.get(key);
+      if (
+        !control &&
+        previous?.target === target &&
+        previous?.value === value
+      ) {
+        result.skipped.push(key);
+        result.details.push(
+          (aliases[key]?.at(-1) || key) + ": " + previous.reason,
+        );
+        continue;
+      }
+      reason = control
+        ? setNative(control, key, value)
+        : await custom(key, value, task.listing, platform);
+      if (reason && !control) task.attempts.set(key, { target, value, reason });
+      else task.attempts.delete(key);
+      if (reason) {
+        result.skipped.push(key);
+        result.details.push((aliases[key]?.at(-1) || key) + ": " + reason);
+      } else result.filled.push(key);
+    }
+    return result;
+  }
+  root.AutopostDOM = {
+    normalize,
+    visible,
+    findNative,
+    setNative,
+    scopeFor,
+    values,
+    exact,
+    category,
+    fillFields,
+    pause,
+  };
+  if (typeof module !== "undefined" && module.exports)
+    module.exports = root.AutopostDOM;
+})(globalThis);

@@ -1,6 +1,7 @@
-import { sanitizeListing } from '../../../lib/listing.ts';
+import { sanitizeListing, parseLocally } from '../../../lib/listing.ts';
 import {getAISettings,isAuthorized} from '../../../lib/ai-context.ts';
 import {systemPrompt} from '../../../lib/ai-prompt.ts';
+import {classificationPrompt,sanitizeCandidates,categoryById} from '../../../lib/taxonomy.ts';
 const windows=new Map<string,{count:number;reset:number}>();
 
 export async function POST(request:Request){
@@ -14,8 +15,10 @@ export async function POST(request:Request){
   if(raw.length>22000)return fail('Слишком большой запрос.',413);
   let body;try{body=JSON.parse(raw);}catch{return fail('Некорректный JSON.');}
   if(!body||typeof body!=='object'||Array.isArray(body))return fail('Нужен объект объявления.');
-  if(body.category!==undefined&&!['cars','parts'].includes(body.category))return fail('Неизвестная товарная группа.');
-  const category=body.category==='parts'?'parts':'cars';
+  if(body.category!==undefined&&!['cars','parts','general'].includes(body.category))return fail('Неизвестная товарная группа.');
+  const classify=body.task==='classify';
+  const category=body.category==='parts'?'parts':body.category==='general'?'general':'cars';
+  if(body.taxonomyId&&!categoryById(body.taxonomyId))return fail('Категория отсутствует в справочнике.');
   if(typeof body.text!=='string'||body.text.trim().length<15||body.text.length>8000)return fail('Введите описание от 15 до 8000 символов.');
   const config=getAISettings();const useServer=!body.key&&!!config.AI_API_KEY;
   if(useServer&&!isAuthorized(request))return fail('Для серверного ИИ войдите в аккаунт владельца сайта.',401);
@@ -28,12 +31,29 @@ export async function POST(request:Request){
   const requestedModel=useServer?config.AI_MODEL:body.model;
   const model=typeof requestedModel==='string'&&/^[a-zA-Z0-9_./:-]{1,120}$/.test(requestedModel)?requestedModel:p.model;
   try{
-    const upstream=await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${apiKey}`},body:JSON.stringify({model,messages:[{role:'system',content:systemPrompt(category)},{role:'user',content:body.text}],response_format:{type:'json_object'},max_tokens:2600,...(provider==='deepseek'?{thinking:{type:'disabled'}}:{reasoning:{enabled:false}})}),signal:AbortSignal.timeout(45000)});
+    const upstream=await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${apiKey}`},body:JSON.stringify({model,messages:[{role:'system',content:classify?classificationPrompt():systemPrompt(category)},{role:'user',content:body.text}],response_format:{type:'json_object'},max_tokens:2600,...(provider==='deepseek'?{thinking:{type:'disabled'}}:{reasoning:{enabled:false}})}),signal:AbortSignal.timeout(45000)});
     if(!upstream.ok)return fail(upstream.status===401?'API-ключ не принят сервисом.':upstream.status===402?'Недостаточно средств на балансе ИИ.':upstream.status===429?'Сервис ИИ ограничил запросы. Повторите позже.':`Сервис ИИ вернул ошибку ${upstream.status}. Проверьте название модели.`,502);
     const output=await upstream.json() as {choices?:{message?:{content?:string};finish_reason?:string}[]};
     const choice=output.choices?.[0];if(!choice?.message?.content||choice.finish_reason==='length')return fail('ИИ не вернул полную карточку. Повторите запрос.',502);
     const parsed=JSON.parse(choice.message.content);if(!parsed||Array.isArray(parsed)||typeof parsed!=='object')return fail('ИИ вернул некорректную карточку.',502);
+    if(classify)return Response.json({candidates:sanitizeCandidates(parsed.candidates),question:typeof parsed.question==='string'?parsed.question.slice(0,200):'',mode:'ai',model},{headers});
     const listing=sanitizeListing(parsed,category);
+    listing.taxonomyId=body.taxonomyId||'';
+    const explicit=parseLocally(body.text,category);
+    // Critical structured facts must be grounded in the seller's text, not model guesses.
+    const phones=body.text.match(/(?:\+?375)[\s()\d-]{9,18}/g)||[];
+    const digits=(v:string)=>v.replace(/\D/g,'');
+    if(listing.phone&&!phones.some((p:string)=>digits(p)===digits(listing.phone)))listing.phone='';
+    if(!listing.phone&&explicit.phone)listing.phone=explicit.phone;
+    if(listing.vin&&!body.text.toUpperCase().includes(listing.vin.toUpperCase()))listing.vin='';
+    const money=body.text.match(/\d[\d\s]*(?:[.,]\d+)?\s*(?:USD|BYN|EUR|\$|€|бел(?:орусских)?\.?\s*руб|доллар)/gi)||[];
+    if(money.length===1&&explicit.price&&explicit.currency){listing.price=explicit.price;listing.currency=explicit.currency;}
+    if(category==='parts'){
+      listing.quantity=explicit.quantity;
+      listing.availability=explicit.availability;
+      listing.priceUnit=explicit.priceUnit;
+      if(listing.manufacturer&&!body.text.toLowerCase().includes(listing.manufacturer.toLowerCase()))listing.manufacturer='';
+    }
     if(category==='parts'&&listing.partNumber){
       const index=body.text.toLowerCase().indexOf(listing.partNumber.toLowerCase());
       listing.partNumber=index<0?'':body.text.slice(index,index+listing.partNumber.length);

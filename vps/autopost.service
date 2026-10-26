@@ -10,6 +10,9 @@ Group=autopost
 WorkingDirectory=/opt/autopost/current
 EnvironmentFile=/etc/autopost/environment
 Environment=NODE_ENV=production
+Environment=DATA_DIR=/var/lib/autopost
+StateDirectory=autopost
+StateDirectoryMode=0700
 ExecStart=/opt/node/bin/node --experimental-strip-types --max-old-space-size=192 vps/server.mjs
 Restart=on-failure
 RestartSec=3

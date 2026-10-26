@@ -15,19 +15,23 @@ function createWorker() {
   const tabs = new Map([[1, { id: 1, url: `${APP}/` }], [2, { id: 2, url: 'http://localhost:5173/' }]]);
   let onMessage;
   const chrome = {
+    alarms:{create(){},onAlarm:{addListener(){}}},
     runtime: { id: 'test-id', onMessage: { addListener(listener) { onMessage = listener; } } },
     storage: { session: {
-      async get(key) { return structuredClone({ [key]: data[key] }); },
+      async get(key) { return structuredClone(key===null?data:{ [key]: data[key] }); },
       async set(value) { Object.assign(data, structuredClone(value)); },
+      async remove(keys){for(const k of Array.isArray(keys)?keys:[keys])delete data[k];},
       async setAccessLevel() {},
     } },
     tabs: {
       async create(options) { const tab = { id: created.length + 10, ...options }; created.push(tab); tabs.set(tab.id, tab); return tab; },
       async get(id) { if (!tabs.has(id)) throw new Error('No tab'); return tabs.get(id); },
+      async update(id,options){if(!tabs.has(id))throw new Error('No tab');Object.assign(tabs.get(id),options);return tabs.get(id);},
       async sendMessage(id, message) { sent.push({ id, message }); },
       onRemoved: { addListener() {} },
     },
   };
+  chrome.storage.local=chrome.storage.session;
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), { chrome, AutopostCore: core, importScripts() {}, crypto: { randomUUID }, URL, Date, console });
   function request(message, url = `${APP}/`, tabId = 1, frameId = 0) {
     return new Promise((resolve) => {
@@ -40,12 +44,26 @@ function createWorker() {
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
 
+test('queue stores photos separately and removes them after completion',async()=>{
+ const w=createWorker();const bytes=Buffer.alloc(800000);bytes[0]=255;bytes[1]=216;bytes[2]=255;
+ const photo={name:'test.jpg',type:'image/jpeg',dataUrl:'data:image/jpeg;base64,'+bytes.toString('base64')};
+ const items=Array.from({length:5},(_,i)=>({...payload(),batchId:'photo-'+i,profileId:'photos',photos:[photo],platforms:[{id:'kufar'}]}));
+ const result=await w.request({kind:'APP_REQUEST',type:'RUN_QUEUE',userGesture:true,payload:{profileId:'photos',items}});
+ assert.ok(!result.error,result.error);assert.equal(result.batches.length,5);assert.equal(w.created.length,1);
+ assert.ok(!JSON.stringify(w.data.autopostSessionV1).includes('base64'));
+ const first=w.data.autopostSessionV1.batches[0];assert.equal(w.data[first.photoKey].length,1);
+ const task=await w.request({kind:'GET_TASK'},'https://www.kufar.by/ain/create',w.created[0].id);
+ assert.equal(task.task.photos[0].dataUrl,photo.dataUrl);
+ await w.request({kind:'REPORT_TASK',report:{jobId:task.task.jobId,status:'cancelled'}},'https://www.kufar.by/ain/create',w.created[0].id);
+ assert.equal(w.data[first.photoKey],undefined);assert.equal(w.created.length,2);
+});
+
 test('RUN opens only fixed origins and duplicate batch is idempotent', async () => {
   const worker = createWorker();
   const result = await run(worker);
   assert.equal(result.jobs.length, 2);
-  assert.deepEqual(worker.created.map((tab) => tab.url), ['https://av.by/', 'https://www.kufar.by/']);
-  assert.ok(result.jobs.every((job) => job.status === 'manual_required'));
+  assert.deepEqual(worker.created.map((tab) => tab.url), ['https://av.by/', 'https://www.kufar.by/ain/create']);
+  assert.ok(result.jobs.every((job) => job.status === 'opening'));
   await run(worker);
   assert.equal(worker.created.length, 2);
 });
@@ -58,7 +76,7 @@ test('batch IDs identify RUN and progress; STATUS excludes jobs from another bat
   assert.equal(own.batchId, 'test-batch');
   assert.equal(own.jobs.length, 2);
   const other = await worker.request({ kind: 'APP_REQUEST', type: 'STATUS', payload: { batchId: 'other-car' } });
-  assert.equal(other.batchId, 'test-batch');
+  assert.equal(other.batchId, null);
   assert.equal(other.jobs.length, 0);
   assert.equal(worker.sent.find((item) => item.message.kind === 'APP_PROGRESS').message.batchId, 'test-batch');
 });
@@ -110,4 +128,21 @@ test('reports cannot claim publication or report another task', async () => {
   const status = await worker.request({ kind: 'APP_REQUEST', type: 'STATUS' });
   assert.equal(status.jobs[0].filledFields, 1);
   assert.equal(status.jobs[0].photosTransferred, 0);
+});
+
+test('all four selected parts marketplaces open and include helper tasks',async()=>{
+ const worker=createWorker();const value=payload();value.profileId='owner';value.recordId='record';value.listing={...value.listing,category:'parts',partName:'Фара',condition:'Б/у',priceUnit:'За штуку'};value.platforms=['bamper','kufar-parts','onliner-parts','abw-parts'].map(id=>({id}));
+ const result=await worker.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:value});assert.equal(result.jobs.length,4);assert.equal(worker.created.length,4);
+ assert.equal(worker.created[1].url,'https://www.kufar.by/ain/create');assert.equal(worker.created[2].url,'https://baraholka.onliner.by/fleamarketposting.php');
+ for(let i=0;i<4;i++)assert.ok((await worker.request({kind:'GET_TASK'},worker.created[i].url,10+i)).task);
+ const other=await worker.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'different'}});assert.equal(other.jobs.length,0);
+ await worker.request({kind:'APP_REQUEST',type:'OPEN_JOB',payload:{profileId:'owner',batchId:value.batchId,platformId:'onliner-parts'},userGesture:true});assert.equal(worker.created.length,4);
+});
+test('bulk queue serializes each marketplace and only advances after completion',async()=>{
+ const worker=createWorker();const first={...payload(),profileId:'owner',recordId:'one',platforms:[{id:'kufar'}]};const second={...first,batchId:'batch-two',recordId:'two'};
+ const result=await worker.request({kind:'APP_REQUEST',type:'RUN_QUEUE',payload:{profileId:'owner',items:[first,second]},userGesture:true});assert.equal(result.batches.length,2);assert.equal(worker.created.length,1);assert.equal(result.batches[1].jobs[0].status,'queued');
+ const {task}=await worker.request({kind:'GET_TASK'},worker.created[0].url,10);await worker.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'review_required',filledKeys:['title']}},worker.created[0].url,10);assert.equal(worker.created.length,1);
+ await worker.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'link_recorded',url:'https://evil.invalid/ad',userConfirmed:true}},worker.created[0].url,10);assert.equal(worker.created.length,1);
+ await worker.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'link_recorded',url:'https://www.kufar.by/item/123456',userConfirmed:true}},worker.created[0].url,10);assert.equal(worker.created.length,2);
+ const duplicate=await worker.request({kind:'APP_REQUEST',type:'RUN_QUEUE',payload:{profileId:'owner',items:[first,second]},userGesture:true});assert.equal(duplicate.batches.length,2);assert.equal(worker.created.length,2);
 });

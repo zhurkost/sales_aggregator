@@ -1,13 +1,14 @@
-export type ProductGroup = 'cars' | 'parts';
+export type ProductGroup = 'cars' | 'parts' | 'general';
 export type Listing = {
   category: ProductGroup;
+  taxonomyId: string;
   title: string; description: string; brand: string; model: string; year: string;
   mileage: string; engine: string; fuel: string; transmission: string; body: string;
   drive: string; color: string; price: string; currency: string; city: string; phone: string; vin: string;
   partName: string; partNumber: string; manufacturer: string; condition: string; compatibility: string;
   fitYears: string; position: string; quantity: string; priceUnit: string; availability: string;
 };
-export const emptyListing: Listing = { category:'cars',title:'',description:'',brand:'',model:'',year:'',mileage:'',engine:'',fuel:'',transmission:'',body:'',drive:'',color:'',price:'',currency:'',city:'',phone:'',vin:'',partName:'',partNumber:'',manufacturer:'',condition:'',compatibility:'',fitYears:'',position:'',quantity:'',priceUnit:'',availability:'' };
+export const emptyListing: Listing = { category:'cars',taxonomyId:'',title:'',description:'',brand:'',model:'',year:'',mileage:'',engine:'',fuel:'',transmission:'',body:'',drive:'',color:'',price:'',currency:'',city:'',phone:'',vin:'',partName:'',partNumber:'',manufacturer:'',condition:'',compatibility:'',fitYears:'',position:'',quantity:'',priceUnit:'',availability:'' };
 export const sample = 'Продам Volkswagen Passat B8, 2018 год. 2.0 дизель, автомат, передний привод, универсал, серый. Пробег 164 000 км. Минск. Цена 18 900 USD. Один владелец, сервисная история, два комплекта шин. Есть царапина на заднем бампере. Торг у автомобиля.';
 export const partsSample = 'Продам левую переднюю фару для Volkswagen Passat B8. Автомобиль-донор 2018 года. Артикул 3G1941035D. Б/у, есть царапина на стекле, одно крепление восстановлено. Совместимость: Volkswagen Passat B8, 2015–2019; сверяйте номер и крепления. Цена 450 BYN за штуку. В наличии 1 шт. Минск.';
 export const fields: {key:keyof Listing;label:string;placeholder?:string;options?:string[]}[] = [
@@ -39,6 +40,7 @@ export const partFields: typeof fields = [
   {key:'city',label:'Город',placeholder:'Минск'},
   {key:'phone',label:'Телефон',placeholder:'+375 …'},
 ];
+export const generalFields:typeof fields=[{key:'condition',label:'Состояние',options:['Новая','Б/у','На восстановление']},...fields.filter(f=>['price','currency','city','phone'].includes(f.key)),{key:'quantity',label:'Количество'},{key:'manufacturer',label:'Производитель'},{key:'model',label:'Модель'}];
 export function sanitizeListing(input: unknown, category?:ProductGroup): Listing {
   const obj = input && typeof input === 'object' ? input as Record<string,unknown> : {};
   const result = {...emptyListing};
@@ -47,7 +49,7 @@ export function sanitizeListing(input: unknown, category?:ProductGroup): Listing
     const v = obj[key];
     result[key] = (typeof v === 'string' || typeof v === 'number') ? String(v).trim().slice(0,key === 'description' ? 8000 : key === 'compatibility' ? 500 : key === 'title' ? 120 : 100) : '';
   }
-  result.category = category || (obj.category === 'parts' ? 'parts' : 'cars');
+  result.category = category || (obj.category === 'parts' ? 'parts' : obj.category==='general'?'general':'cars');
   for(const key of ['year','price','mileage'] as const) result[key] = result[key].replace(/[\s\u00a0]/g,'');
   result.engine = result.engine.replace(',','.');
   result.currency = ['USD','BYN','EUR'].includes(result.currency.toUpperCase()) ? result.currency.toUpperCase() : '';
@@ -61,6 +63,7 @@ export function sanitizeListing(input: unknown, category?:ProductGroup): Listing
 }
 export function parseLocally(text:string, category:ProductGroup='cars'):Listing {
   if(category==='parts') return parsePartsLocally(text);
+  if(category==='general'){const d=parseLocally(text,'cars');return sanitizeListing({...emptyListing,description:text.trim(),title:text.split(/[.!\n]/)[0].slice(0,100),price:d.price,currency:d.currency,city:d.city,phone:d.phone},'general');}
   const d = {...emptyListing, description:text.trim()};
   const brands = ['Volkswagen','Mercedes-Benz','BMW','Audi','Toyota','Renault','Peugeot','Citroen','Skoda','Škoda','Volvo','Kia','Hyundai','Geely','Chery','Belgee','Nissan','Ford','Opel','Mazda','Honda','Chevrolet','Lexus','Tesla','Porsche'];
   for(const brand of brands){
@@ -89,9 +92,9 @@ export function parseLocally(text:string, category:ProductGroup='cars'):Listing 
 }
 export function validateListing(d:Listing):string[]{
   const missing:string[]=[];
-  const required: (keyof Listing)[]=d.category==='parts'?['partName','condition','price','currency','priceUnit','city','phone']:['brand','model','year','price','currency','city','phone'];
+  const required: (keyof Listing)[]=d.category==='general'?['title','price','currency','city','phone']:d.category==='parts'?['partName','condition','price','currency','priceUnit','city','phone']:['brand','model','year','price','currency','city','phone'];
   const definitions=d.category==='parts'?partFields:fields;
-  for(const key of required) if(!d[key]) missing.push(definitions.find(f=>f.key===key)!.label);
+  for(const key of required) if(!d[key]) missing.push(definitions.find(f=>f.key===key)?.label||'Заголовок');
   if(d.year && (!/^\d{4}$/.test(d.year) || +d.year<1900 || +d.year>new Date().getFullYear()+1)) missing.push('Корректный год выпуска');
   if(d.price && (!/^\d+(\.\d{1,2})?$/.test(d.price) || +d.price<=0)) missing.push('Цена больше нуля');
   if(d.mileage && (!/^\d+$/.test(d.mileage) || +d.mileage>9999999)) missing.push('Корректный пробег');
@@ -107,6 +110,7 @@ export function validateListing(d:Listing):string[]{
   return missing;
 }
 export function listingText(d:Listing){
+  if(d.category==='general')return [d.title,`${d.price} ${d.currency}`,d.condition,d.description,d.city,d.phone].filter(Boolean).join('\n\n');
   if(d.category==='parts')return [listingTitle(d),`${d.price} ${d.currency}${d.priceUnit?' · '+d.priceUnit.toLowerCase():''}`.trim(),
     d.partNumber&&`Артикул / OEM: ${d.partNumber}`, d.manufacturer&&`Производитель: ${d.manufacturer}`,
     d.condition&&`Состояние: ${d.condition}`, [d.brand,d.model,d.year].filter(Boolean).length&&`Автомобиль: ${[d.brand,d.model,d.year].filter(Boolean).join(' ')}`,
@@ -116,7 +120,7 @@ export function listingText(d:Listing){
   return [d.title || [d.brand,d.model,d.year].filter(Boolean).join(' '),`${d.price} ${d.currency}`.trim(),[d.year && `${d.year} г.`,d.mileage && `${Number(d.mileage).toLocaleString('ru-RU')} км`,d.engine && `${d.engine} л`,d.fuel,d.transmission,d.body,d.drive].filter(Boolean).join(' · '),d.description,d.city,d.phone,d.vin && `VIN: ${d.vin}`].filter(Boolean).join('\n\n');
 }
 export function listingTitle(d:Listing){return d.title||(d.category==='parts'?[d.partName,d.brand,d.model,d.partNumber]:[d.brand,d.model,d.year]).filter(Boolean).join(' ');}
-export function requiredFields(category:ProductGroup):(keyof Listing)[]{return category==='parts'?['partName','condition','price','currency','priceUnit','city','phone','description']:['brand','model','year','price','currency','city','phone','description'];}
+export function requiredFields(category:ProductGroup):(keyof Listing)[]{return category==='general'?['title','price','currency','city','phone','description']:category==='parts'?['partName','condition','price','currency','priceUnit','city','phone','description']:['brand','model','year','price','currency','city','phone','description'];}
 export function parsePartsLocally(text:string):Listing {
   const base=parseLocally(text);
   const d={...emptyListing,category:'parts' as const,description:text.trim(),price:base.price,currency:base.currency,city:base.city,phone:base.phone};

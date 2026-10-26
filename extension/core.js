@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.2.0';
+  const VERSION = '0.3.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -14,24 +14,30 @@
   // These are deliberate, canonical starting pages. Never use a supplied URL.
   const PLATFORMS = Object.freeze({
     av: Object.freeze({ id: 'av', name: 'av.by', origins: Object.freeze(['https://av.by', 'https://cars.av.by']), url: 'https://av.by/' }),
-    kufar: Object.freeze({ id: 'kufar', name: 'Kufar', origins: Object.freeze(['https://www.kufar.by', 'https://auto.kufar.by']), url: 'https://www.kufar.by/' }),
+    kufar: Object.freeze({ id: 'kufar', name: 'Kufar', origins: Object.freeze(['https://www.kufar.by', 'https://auto.kufar.by','https://kufar.by']), url: 'https://www.kufar.by/ain/create' }),
+    bamper: {id:'bamper',name:'Bamper.by',origins:['https://bamper.by','https://www.bamper.by'],url:'https://bamper.by/personal/add.php?action=add'},
+    onliner: {id:'onliner',name:'Onlíner',origins:['https://ab.onliner.by','https://baraholka.onliner.by','https://profile.onliner.by'],url:'https://baraholka.onliner.by/fleamarketposting.php'},
+    abw: {id:'abw',name:'ABW',origins:['https://abw.by','https://www.abw.by'],url:'https://abw.by/',manual:true},
+    flagma: {id:'flagma',name:'Flagma',origins:['https://flagma.by'],url:'https://flagma.by/podat-obyavlenie.html'},
+    drom: {id:'drom',name:'Дром',origins:['https://auto.drom.ru'],url:'https://auto.drom.ru/minsk/addbull/'},
   });
   const FIELD_LIMITS = Object.freeze({
-    category: 12, partName: 100, partNumber: 100, manufacturer: 100, condition: 40,
+    category: 12, taxonomyId:100, partName: 100, partNumber: 100, manufacturer: 100, condition: 40,
     compatibility: 500, fitYears: 100, position: 100, quantity: 12, priceUnit: 40, availability: 40,
     title: 180, description: 12000, brand: 80, model: 100, year: 4,
     mileage: 12, engine: 40, fuel: 60, transmission: 60, body: 80,
     drive: 60, color: 60, price: 16, currency: 6, city: 100, phone: 40, vin: 17,
   });
-  const STATUSES = Object.freeze(['authorization_required', 'captcha_required', 'review_required', 'manual_required', 'error']);
+  const STATUSES = Object.freeze(['authorization_required', 'captcha_required', 'review_required', 'manual_required', 'error','category_required','link_recorded','submitted','cancelled']);
   const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
   function object(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
   function originOf(url) { try { return new URL(url).origin; } catch { return ''; } }
   function isAppOrigin(origin) { return APP_ORIGINS.includes(origin); }
   function platformForOrigin(origin) { return Object.values(PLATFORMS).find((item) => item.origins.includes(origin)); }
   function platformId(value) {
-    const aliases = { av: 'av', 'av.by': 'av', avby: 'av', kufar: 'kufar', 'kufar.by': 'kufar', 'kufar-parts': 'kufar' };
-    return typeof value === 'string' && own(aliases, value) ? aliases[value] : null;
+    const aliases = { av: 'av', 'av.by': 'av', avby: 'av', kufar: 'kufar', 'kufar.by': 'kufar', bamper:'bamper',onliner:'onliner',abw:'abw',flagma:'flagma',drom:'drom' };
+    const key=typeof value==='string'?value.replace(/-(parts|general)$/,''):'';
+    return own(aliases,key)?aliases[key]:null;
   }
   function text(value, limit, name) {
     if (value == null) return '';
@@ -70,7 +76,7 @@
     const listing = {};
     for (const [key, limit] of Object.entries(FIELD_LIMITS)) listing[key] = text(payload.listing[key], limit, key);
     listing.category = listing.category || 'cars';
-    if (!['cars', 'parts'].includes(listing.category)) throw new Error('Неизвестная товарная группа.');
+    if (!['cars', 'parts','general'].includes(listing.category)) throw new Error('Неизвестная товарная группа.');
     if (listing.category === 'parts') {
       if (!listing.partName || !['Новая', 'Б/у', 'На восстановление'].includes(listing.condition)) throw new Error('Укажите название и состояние запчасти.');
       if (!['За штуку', 'За комплект', 'За пару'].includes(listing.priceUnit)) throw new Error('Укажите, за что назначена цена запчасти.');
@@ -81,32 +87,35 @@
     if (listing.currency && !['BYN', 'USD', 'EUR'].includes(listing.currency.toUpperCase())) throw new Error('Поддерживаются валюты BYN, USD и EUR.');
     listing.currency = listing.currency.toUpperCase();
     if (listing.vin && !/^[A-HJ-NPR-Z0-9]{17}$/iu.test(listing.vin)) throw new Error('VIN должен содержать 17 допустимых символов.');
-    if (!Array.isArray(payload.platforms) || payload.platforms.length < 1 || payload.platforms.length > 2) throw new Error('Выберите av.by и/или Kufar для экспериментального заполнения.');
+    if (!Array.isArray(payload.platforms) || payload.platforms.length < 1 || payload.platforms.length > 7) throw new Error('Выберите от 1 до 7 площадок.');
     const platforms = [];
     const seen = new Set();
     for (const item of payload.platforms) {
       const canonicalId = object(item) ? platformId(item.id) : null;
       if (!canonicalId || seen.has(canonicalId)) throw new Error('Площадка не поддерживается или указана дважды.');
-      if (listing.category === 'parts' && canonicalId !== 'kufar') throw new Error('Для запчастей автозаполнение поддерживается только на Kufar.');
+      if (listing.category === 'parts' && ['av','drom'].includes(canonicalId)) throw new Error('Эта площадка подключена только для автомобилей.');
       seen.add(canonicalId);
       platforms.push({ id: item.id, canonicalId });
     }
     if (!Array.isArray(payload.photos) || payload.photos.length > 12) throw new Error('Можно передать до 12 фотографий.');
     const photos = payload.photos.map(validatePhoto);
     if (photos.reduce((sum, photo) => sum + photoBytes(photo.dataUrl), 0) > MAX_TOTAL_PHOTO_BYTES) throw new Error('Уменьшите общий размер фото до 3,25 МиБ для временного хранения в расширении.');
-    return { batchId, listing, photos, platforms };
+    return { batchId, listing, photos, platforms, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
   }
   function publicJob(job) {
     return {
       platformId: job.platformId, status: job.status, message: job.message,
       tabId: job.tabId ?? null, filledFields: job.filledFields || 0,
       skippedFields: job.skippedFields || [], photosTransferred: job.photosTransferred || 0,
+      ...(job.url?{url:job.url}:{}),
     };
   }
   function normalize(value) {
     return String(value ?? '').toLowerCase().replace(/ё/gu, 'е').replace(/[_\-.[\]/():*]/gu, ' ').replace(/\s+/gu, ' ').trim();
   }
-  const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, publicJob, normalize };
+  function startUrl(id,listing){if(id==='onliner'&&listing.category==='cars')return 'https://ab.onliner.by/';if(id==='abw'&&listing.category==='parts')return 'https://abw.by/carparts';return PLATFORMS[id].url;}
+  function safeLink(id,value){try{const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!PLATFORMS[id]?.origins.includes(u.origin)||u.hostname==='profile.onliner.by')return '';u.hash='';return u.href;}catch{return '';}}
+  const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, publicJob, normalize,startUrl,safeLink };
   root.AutopostCore = Object.freeze(core);
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
 })(globalThis);

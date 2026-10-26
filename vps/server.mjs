@@ -5,6 +5,7 @@ import {pathToFileURL} from 'node:url';
 import {POST} from '../app/api/analyze/route.ts';
 import {GET} from '../app/api/ai-settings/route.ts';
 import {runWithAISettings} from '../lib/ai-context.ts';
+import {createWorkspace} from './workspace.mjs';
 
 export function createApiServer(config) {
   const origin = new URL(config.PUBLIC_ORIGIN).origin;
@@ -15,6 +16,7 @@ export function createApiServer(config) {
     throw new Error('A strong VPS_PROXY_SECRET is required.');
   }
   const expected = Buffer.from(config.VPS_PROXY_SECRET);
+  const workspace=createWorkspace(config);
   const server = createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -28,11 +30,11 @@ export function createApiServer(config) {
     try {
       const url = new URL(req.url, origin);
       if (url.origin !== origin) {fail(400, 'Некорректный адрес.'); return;}
-      const handler = url.pathname === '/api/analyze' && req.method === 'POST' ? POST
+      const handler = url.pathname.startsWith('/api/workspace/') ? workspace.handle : url.pathname === '/api/analyze' && req.method === 'POST' ? POST
         : url.pathname === '/api/ai-settings' && req.method === 'GET' ? GET : null;
       if (!handler) {fail(404, 'Страница не найдена.'); return;}
       const headers = new Headers();
-      for (const name of ['content-type', 'content-length', 'origin']) {
+      for (const name of ['content-type', 'content-length', 'origin','cookie']) {
         if (typeof req.headers[name] === 'string') headers.set(name, req.headers[name]);
       }
       // Only the authenticated reverse proxy can reach this branch. Ignore all client identity headers.
@@ -41,6 +43,8 @@ export function createApiServer(config) {
         method: req.method, headers,
         ...(req.method === 'POST' ? {body: Readable.toWeb(req), duplex: 'half'} : {}),
       });
+      const profile=workspace.user(request);
+      if(profile)request.headers.set('oai-authenticated-user-id',profile.id);
       const response = await runWithAISettings(config, () => handler(request));
       res.statusCode = response.status;
       response.headers.forEach((value, name) => res.setHeader(name, value));
@@ -53,6 +57,7 @@ export function createApiServer(config) {
   server.requestTimeout = 60000;
   server.headersTimeout = 10000;
   server.keepAliveTimeout = 5000;
+  server.on('close',()=>workspace.close());
   return server;
 }
 
