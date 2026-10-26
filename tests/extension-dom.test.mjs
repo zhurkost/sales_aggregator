@@ -17,6 +17,28 @@ test('GPU category waits for the dependent type control, selects the exact type,
  }finally{window.happyDOM.abort();window.close();}
 });
 function environment(html){const window=new Window({url:'https://www.kufar.by/ain/create',settings:{enableJavaScriptEvaluation:true}});window.document.body.innerHTML=html;window.HTMLElement.prototype.getBoundingClientRect=function(){return {width:100,height:30,top:0,left:0,right:100,bottom:30};};window.eval(script);return {window,document:window.document,dom:window.AutopostDOM};}
+
+test('authenticated Onliner price input uses visible BYN hint and preserves USD safety',async()=>{
+ const {window,document,dom}=environment('<div><input id="topic_price" type="text"><input name="topic_price" type="hidden"><div>ƃ</div></div><textarea name="topic_desc"></textarea>');
+ try{const skipped=await dom.fillFields({listing:{price:'100',currency:'USD'}},'onliner');assert.ok(skipped.skipped.includes('price'));assert.equal(document.querySelector('#topic_price').value,'');
+ const result=await dom.fillFields({listing:{price:'300',currency:'BYN'},attributes:[{key:'onliner_short_description',text:'Рабочая RX 570',platform:'onliner'}]},'onliner');assert.ok(result.filled.includes('price'));assert.equal(document.querySelector('#topic_price').value,'300');assert.equal(document.querySelector('textarea').value,'Рабочая RX 570');
+ }finally{window.happyDOM.abort();window.close();}
+});
+test('category attributes fill observed Kufar chips and native text fields, preserving corrections',async()=>{
+ const {window,document,dom}=environment('<div data-name="computers_desktop_ram"><button>4 ГБ</button><button>8-10 ГБ</button></div><div data-name="content_video"><input></div>');
+ try{for(const b of document.querySelectorAll('button'))b.onclick=()=>b.setAttribute('aria-pressed','true');
+ const task={listing:{},attributes:[{key:'computers_desktop_ram',text:'8-10 ГБ',label:'Видеопамять',platform:'kufar'},{key:'content_video',text:'https://www.youtube.com/watch?v=sample',label:'Видео',platform:'kufar'},{key:'onliner_short_description',text:'Only Onliner',platform:'onliner'}]};
+ const result=await dom.fillFields(task,'kufar');assert.deepEqual([...result.filled],['attribute:computers_desktop_ram','attribute:content_video']);assert.equal(document.querySelectorAll('button')[1].getAttribute('aria-pressed'),'true');
+ document.querySelector('input').value='Changed by seller';await dom.fillFields(task,'kufar');assert.equal(document.querySelector('input').value,'Changed by seller');
+ }finally{window.happyDOM.abort();window.close();}
+});
+test('authenticated Bamper names, hidden Select2 controls and default radios transfer without touching activation',async()=>{
+ const {window,document,dom}=environment('<table><tr><td>Марка</td><td><select style="display:none" name="MARKA_ID[]"><option value="">[не указано]</option><option value="1">Volkswagen</option></select></td></tr><tr><td><input name="ORIGINAL_NUM"><textarea name="COMMENT"></textarea><input name="PRICE"><input name="VERSIA"><input type="radio" name="CURRENCY" value="USD" checked><input type="radio" name="CURRENCY" value="BYN"><input type="radio" name="IS_NEW" value="0" checked><input type="radio" name="IS_NEW" value="1"><input type="radio" name="PREORDER" value="0" checked><input type="radio" name="PREORDER" value="1"><input type="checkbox" name="set_active" checked></td></tr></table>');
+ try{const task={listing:{brand:'Volkswagen',partNumber:'000-123',description:'Проверенное состояние',price:'80',currency:'BYN',condition:'Новая',availability:'Под заказ'},attributes:[{key:'bamper_modification',text:'B8',platform:'bamper'}]};const result=await dom.fillFields(task,'bamper');
+ assert.equal(document.querySelector('select').value,'1');assert.equal(document.querySelector('[name="PRICE"]').value,'80');assert.equal(document.querySelector('[name="ORIGINAL_NUM"]').value,'000-123');assert.equal(document.querySelector('[name="VERSIA"]').value,'B8');assert.ok(result.filled.includes('condition'));assert.equal(document.querySelector('[name="IS_NEW"]:checked').value,'1');assert.equal(document.querySelector('[name="set_active"]').checked,true);
+ document.querySelector('[name="CURRENCY"][value="USD"]').click();await dom.fillFields(task,'bamper');assert.equal(document.querySelector('[name="CURRENCY"]:checked').value,'USD','Seller correction wins');
+ }finally{window.happyDOM.abort();window.close();}
+});
 // Names and DOM attributes observed in the public Kufar creation form on 2026-10-26.
 const base=`<div data-name="category">Авто и запчасти Легковые авто<button data-testid="ain-show-all-categories">Изменить категорию</button></div>
 <div data-name="subject"><input id="subject" name="subject" maxlength="50"></div>

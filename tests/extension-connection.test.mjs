@@ -25,24 +25,24 @@ async function page(work) {
 
 test('handshake retries when bridge arrives after the page has loaded', () => page(async ({window,sent,reply}) => {
   const pending = extension('PING',undefined,2000);
-  window.onSend = message => reply(message,'RESPONSE',{version:'0.4.1'});
-  assert.equal((await pending).version,'0.4.1');
+  window.onSend = message => reply(message,'RESPONSE',{version:'0.5.0'});
+  assert.equal((await pending).version,'0.5.0');
   assert.equal(sent.length,2);
   assert.equal(sent[0].requestId,sent[1].requestId);
 }));
 
 test('a cold worker can take longer than two seconds without being marked missing', () => page(async ({window,sent,reply}) => {
   window.onSend = message => {
-    reply(message,'ACK',{version:'0.4.1'});
-    setTimeout(() => reply(message,'RESPONSE',{version:'0.4.1'}),2200);
+    reply(message,'ACK',{version:'0.5.0'});
+    setTimeout(() => reply(message,'RESPONSE',{version:'0.5.0'}),2200);
   };
-  assert.equal((await extension('PING')).version,'0.4.1');
+  assert.equal((await extension('PING')).version,'0.5.0');
   assert.equal(sent.length,1);
 }));
 
 test('worker timeout is distinguished from a missing bridge', () => page(async ({window,reply}) => {
-  window.onSend = message => reply(message,'ACK',{version:'0.4.1'});
-  await assert.rejects(extension('PING',undefined,20),/0\.4\.1 найдено, но его фоновая часть/);
+  window.onSend = message => reply(message,'ACK',{version:'0.5.0'});
+  await assert.rejects(extension('PING',undefined,20),/0\.5\.0 найдено, но его фоновая часть/);
   window.onSend = undefined;
   await assert.rejects(extension('PING',undefined,20),/Нет связи.*Обновите страницу/);
 }));
@@ -57,9 +57,9 @@ test('launch is never retried and unrelated responses are ignored', () => page(a
   assert.equal(sent.length,1);
 }));
 
-test('version check requires the worker startup fix', () => {
+test('version check requires price search and category field support', () => {
   assert.equal(extensionVersionOK('0.4.0'),false);
-  assert.equal(extensionVersionOK('0.4.1'),true);
+  assert.equal(extensionVersionOK('0.4.1'),false);
   assert.equal(extensionVersionOK('0.5.0'),true);
   assert.equal(extensionVersionOK(undefined),false);
   assert.equal(extensionVersionOK('not-a-version'),false);

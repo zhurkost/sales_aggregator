@@ -1,11 +1,14 @@
 "use strict";
-importScripts("core.js", "taxonomy.js", "photo-store.js");
+importScripts("core.js", "taxonomy.js", "attributes.js", "photo-store.js", "prices.js");
 const core = globalThis.AutopostCore;
 const photoStore = globalThis.AutopostPhotos;
 const STORAGE_KEY = "autopostSessionV1";
 const PHOTO_PREFIX = "autopostPhotos:";
 const MAX_QUEUE_BYTES = 64 * 1024 * 1024;
 let queue = Promise.resolve();
+let priceSearchRunning = false;
+let lastPriceSearch = 0;
+const priceCache = new Map();
 function serialized(work) {
   const next = queue.then(work, work);
   queue = next.catch(() => undefined);
@@ -113,8 +116,26 @@ async function appRequest(message, sender) {
         "queue",
         "profiles",
         "open-job",
+        "price-search",
       ],
     };
+  if (message.type === "PRICE_SEARCH") {
+    if (!message.userGesture) throw new Error("Запустите поиск цен кнопкой на странице.");
+    const criteria = globalThis.AutopostPrices.validate(message.payload);
+    const key = origin + JSON.stringify(criteria);
+    const cached = priceCache.get(key);
+    if (cached && Date.now() - cached.time < 5 * 60 * 1000) return {...cached.value,cached:true};
+    if (priceSearchRunning || Date.now() - lastPriceSearch < 10000) throw new Error("Подождите завершения поиска или повторите через 10 секунд.");
+    priceSearchRunning = true; lastPriceSearch = Date.now();
+    try {
+      const result = await globalThis.AutopostPrices.search(criteria);
+      if (result.results.some(item=>item.status==='ok')) {
+        if (priceCache.size >= 5) priceCache.delete(priceCache.keys().next().value);
+        priceCache.set(key,{time:Date.now(),value:result});
+      }
+      return result;
+    } finally { priceSearchRunning = false; }
+  }
   const state = await load();
   const profileId =
     typeof message.payload?.profileId === "string"
@@ -292,6 +313,7 @@ async function marketplaceRequest(message, sender) {
         photosAttempted: job.photosAttempted,
         photosTransferred: job.photosTransferred,
         mapping: globalThis.AutopostCategoryOptions?.[job.canonicalId]?.[batch.categoryOverrides?.[job.canonicalId]] || node?.mappings?.[job.canonicalId],
+        attributes: globalThis.AutopostAttributes.attributeEntries(globalThis.AutopostFields, globalThis.AutopostCategoryOptions?.kufar?.[batch.categoryOverrides?.kufar] || node?.mappings?.kufar,batch.attributes,batch.listing),
         paused: batch.paused,
         complete: terminal(job.status),
       },
@@ -305,9 +327,10 @@ async function marketplaceRequest(message, sender) {
   )
     throw new Error("Некорректный отчёт.");
   if (terminal(job.status)) return { ok: true };
+  const attributeKeys = new Set(Object.keys(batch.attributes || {}).map(key=>'attribute:'+key));
   const keys = (v) =>
     Array.isArray(v)
-      ? v.filter((k) => Object.hasOwn(core.FIELD_LIMITS, k)).slice(0, 40)
+      ? v.filter((k) => Object.hasOwn(core.FIELD_LIMITS, k) || attributeKeys.has(k)).slice(0, 100)
       : [];
   job.filledKeys = [...new Set([...job.filledKeys, ...keys(r.filledKeys)])];
   job.filledFields = job.filledKeys.length;
@@ -356,7 +379,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
       ? appRequest(message, sender)
       : marketplaceRequest(message, sender);
   // A health check must not wait behind photo writes or queue cleanup.
-  const result = message.kind === "APP_REQUEST" && message.type === "PING"
+  const result = message.kind === "APP_REQUEST" && ["PING","PRICE_SEARCH"].includes(message.type)
     ? work() : serialized(work);
   result.then(respond, (e) =>
     respond({

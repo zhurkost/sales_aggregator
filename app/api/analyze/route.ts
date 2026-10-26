@@ -2,6 +2,7 @@ import { sanitizeListing, parseLocally } from '../../../lib/listing.ts';
 import {getAISettings,isAuthorized} from '../../../lib/ai-context.ts';
 import {systemPrompt} from '../../../lib/ai-prompt.ts';
 import {classificationPrompt,sanitizeCandidates,categoryById} from '../../../lib/taxonomy.ts';
+import {identificationPrompt,sanitizeIdentity} from '../../../lib/price-identification.ts';
 const windows=new Map<string,{count:number;reset:number}>();
 
 export async function POST(request:Request){
@@ -17,6 +18,7 @@ export async function POST(request:Request){
   if(!body||typeof body!=='object'||Array.isArray(body))return fail('Нужен объект объявления.');
   if(body.category!==undefined&&!['cars','parts','general'].includes(body.category))return fail('Неизвестная товарная группа.');
   const classify=body.task==='classify';
+  const identify=body.task==='identify';
   const category=body.category==='parts'?'parts':body.category==='general'?'general':'cars';
   if(body.taxonomyId&&!categoryById(body.taxonomyId))return fail('Категория отсутствует в справочнике.');
   if(typeof body.text!=='string'||body.text.trim().length<3||body.text.length>8000)return fail('Введите описание от 3 до 8000 символов.');
@@ -31,11 +33,12 @@ export async function POST(request:Request){
   const requestedModel=useServer?config.AI_MODEL:body.model;
   const model=typeof requestedModel==='string'&&/^[a-zA-Z0-9_./:-]{1,120}$/.test(requestedModel)?requestedModel:p.model;
   try{
-    const upstream=await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${apiKey}`},body:JSON.stringify({model,messages:[{role:'system',content:classify?classificationPrompt():systemPrompt(category)},{role:'user',content:body.text}],response_format:{type:'json_object'},max_tokens:2600,...(provider==='deepseek'?{thinking:{type:'disabled'}}:{reasoning:{enabled:false}})}),signal:AbortSignal.timeout(45000)});
+    const upstream=await fetch(p.url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${apiKey}`},body:JSON.stringify({model,messages:[{role:'system',content:identify?identificationPrompt:classify?classificationPrompt():systemPrompt(category)},{role:'user',content:body.text}],response_format:{type:'json_object'},max_tokens:2600,...(provider==='deepseek'?{thinking:{type:'disabled'}}:{reasoning:{enabled:false}})}),signal:AbortSignal.timeout(45000)});
     if(!upstream.ok)return fail(upstream.status===401?'API-ключ не принят сервисом.':upstream.status===402?'Недостаточно средств на балансе ИИ.':upstream.status===429?'Сервис ИИ ограничил запросы. Повторите позже.':`Сервис ИИ вернул ошибку ${upstream.status}. Проверьте название модели.`,502);
     const output=await upstream.json() as {choices?:{message?:{content?:string};finish_reason?:string}[]};
     const choice=output.choices?.[0];if(!choice?.message?.content||choice.finish_reason==='length')return fail('ИИ не вернул полную карточку. Повторите запрос.',502);
     const parsed=JSON.parse(choice.message.content);if(!parsed||Array.isArray(parsed)||typeof parsed!=='object')return fail('ИИ вернул некорректную карточку.',502);
+    if(identify)return Response.json({identity:sanitizeIdentity(parsed),mode:'ai',model},{headers});
     if(classify)return Response.json({candidates:sanitizeCandidates(parsed.candidates),question:typeof parsed.question==='string'?parsed.question.slice(0,200):'',mode:'ai',model},{headers});
     const listing=sanitizeListing(parsed,category);
     listing.taxonomyId=categoryById(body.taxonomyId)?.id||'';

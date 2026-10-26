@@ -54,6 +54,16 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
 
+test('price requests require app origin and gesture, cache public results, and never create tabs',async()=>{
+ const worker=createWorker();let calls=0;
+ worker.context.AutopostPrices.search=async()=>{calls++;return {results:[{id:'kufar',status:'ok',groups:[]}],checkedAt:new Date().toISOString()};};
+ const message={kind:'APP_REQUEST',type:'PRICE_SEARCH',userGesture:true,payload:{query:'RX 570',terms:['RX 570'],taxonomyId:'computers.gpu'}};
+ assert.ok((await worker.request({...message,userGesture:false})).error);
+ const denied=await worker.request(message,'https://www.kufar.by/');assert.ok(!denied||denied.error);assert.equal(calls,0);
+ assert.equal((await worker.request(message)).results[0].status,'ok');assert.equal((await worker.request(message)).cached,true);assert.equal(calls,1);assert.equal(worker.created.length,0);
+ assert.ok((await worker.request({...message,payload:{...message.payload,query:'RX 580'}})).error);assert.equal(calls,1);
+});
+
 test('worker registers and answers PING when storage.local.setAccessLevel is unavailable', async () => {
   for (const sessionAccessLevel of [true, false]) {
     const worker = createWorker({ accessLevel: false, sessionAccessLevel });

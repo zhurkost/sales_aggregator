@@ -1,0 +1,37 @@
+{
+  "checkedAt": "2026-10-27",
+  "method": "Read authenticated empty forms; never submitted or published. HTML required=false does not establish server-side optionality.",
+  "onliner": {
+    "source": "https://baraholka.onliner.by/fleamarketposting.php",
+    "status": "form_inspected",
+    "categoryIds": ["2","1674","38","1131","177","63","405","180","621","643","50","285","1676","286","184","181","183","17","185","212","186","1178","210","239","30","355","288","606","191","45","189","287","605","281","1284","934","406","1283","645","193","213","283","20","617","619","928","611","612","613","620","614","615","616","610","618","1045","196","1055","1051","1030","1052","972","971","939","241","198","1681","955","134","1682","1679","1680","1683","588","1142","591","195","597","1208","592","1140","593","594","595","596","1206","1141","1210","199","240","560","1306","1305","1675","206","1677","602","237","205","203","242","734","207","279","775","35","34","284","187","1144","214","1143","1209","948","607","608","407","609","208","1198","1197","1061","644","578","584","581","289","1063","913","671","787","788","790","255","794","796","799","672","677","802","680","260","1678","681","687","257","684","690","693","201","695","698","259","699","256","702","705","570","572","575","577","576","574","573","969","1211","554","553","556","558","1251","551","557","559","567","258","408","1256","1257","1258","1259","1260","1261","1263","1264","1265","1266","1267","1268","1269","1270","1271","1272","1273","1274","1275","1276","238","598","599","600","204","603","585","587","586","590","908","655","656","6"],
+    "fields": ["topic_bar_cat","f","subject","region","city","message","topic_desc","topic_price","topic_torg","file"],
+    "note": "All 211 selectable sections had one field signature. No category-specific product inputs. Price is BYN; town depends on region. Requiredness not established by submission. Automotive ab.onliner.by is a separate unaudited form."
+  },
+  "bamper": {
+    "source": "https://bamper.by/personal/add.php?action=add",
+    "status": "form_inspected",
+    "categoryIds": ["parts"],
+    "fields": ["MARKA_ID[]","MODEL_ID[]","YEAR","VERSIA","ENGINE_VALUE","FUEL_ID","ENGINE_MODEL_ID","KUZOV_ID","PRIVOD_ID","TAG_ID","EXT_ID","ORIGINAL_NUM","COMMENT","PRICE","CURRENCY","DISCOUNT","IS_NEW","PREORDER","VIDEO[]","VIN","PHONE","ADDR"],
+    "requiredLabels": ["MARKA_ID[]","MODEL_ID[]","YEAR","TAG_ID"],
+    "diskFields": ["DISK_DIAMETR","DISK_SHIRINA","DISK_KOL_OTVERST","DISK_RAST_OTVERST","DISK_VYLET","DISK_DIA"],
+    "diskTriggerIds": ["1568","1570"],
+    "note": "Parts form inspected, including alloy-wheel dependent inputs. All 2000 part options were not individually exercised. Stock notes SKLADINFO are private and excluded from listing attributes. Contacts are inherited from marketplace account unless overridden.",
+    "additionalForms": [
+      {"source":"https://bamper.by/personal/shiny/edit.php?action=add","fields":["shirina","vysota","diametr","marka","model","sostoyanie","sezon","kolvo","tipavto","god","artikul","COMMENT","PRICE","CURRENCY"],"requiredLabels":["shirina","vysota","diametr","marka","sostoyanie","sezon","kolvo","tipavto"],"note":"Price per ONE tire; separate form observed but not mapped into current Bamper parts adapter."},
+      {"source":"https://bamper.by/personal/bazar/add.php?action=add","sectionsChecked":56,"fieldVariants":1,"fields":["request[NAME]","request[IBLOCK_SECTION_ID]","request[PRICE]","request[SOST]","request[EXCHANGE_POSSIBLE]","request[DEFECT]","request[PREVIEW_TEXT]","request[XML_ID]","request[VIDEO_LINK]"],"requiredLabels":["request[NAME]"],"note":"All 56 selectable sections inspected; not mapped into current Bamper parts adapter."}
+    ]
+  },
+  "kufar": {
+    "source": "https://www.kufar.by/ain/create",
+    "status": "documentation_and_sample",
+    "sampleCategoryIds": ["computers.gpu"],
+    "sampleFields": ["computers_component_type","computers_desktop_ram","computers_component_brand","computers_component_cooling","computers_component_videocard_cpu","condition"],
+    "requiredLabels": ["subject","category","computers_component_type","condition","body","region","area","name","phone","phone_hidden"],
+    "note": "GPU form matches imported dependent attributes. Subject max 50, body max 4000, 9 JPEG/PNG photos up to 10 MB. Seller name/phone are disabled inherited profile fields. Paid promotion and installment controls never automated. Other category forms are documentation coverage only."
+  },
+  "av": {"status":"blocked_vpn","source":"https://av.by/","note":"User reports HTTP 423 due to VPN."},
+  "flagma": {"status":"blocked_vpn","source":"https://flagma.by/podat-obyavlenie.html","note":"User reports redirection to flagma.nl due to VPN; no Belarus form verification."},
+  "abw": {"status":"form_not_verified","source":"https://abw.by/submitting-advert","note":"Automatic posting requires platform permission; no authenticated field audit."},
+  "drom": {"status":"form_not_verified","source":"https://auto.drom.ru/minsk/addbull/","note":"No authenticated field audit."}
+}

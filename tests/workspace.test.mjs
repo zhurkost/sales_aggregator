@@ -10,6 +10,23 @@ const request=(store,route,body,cookie='',origin=config.PUBLIC_ORIGIN)=>store.ha
 async function register(store,login){const r=await request(store,'register',{login,password:'test-password-123',name:login});assert.equal(r.status,200);const cookie=r.headers.get('set-cookie').split(';')[0];assert.match(r.headers.get('set-cookie'),/HttpOnly/);assert.match(r.headers.get('set-cookie'),/Secure/);assert.match(r.headers.get('set-cookie'),/SameSite=Strict/);return {cookie,...await r.json()};}
 const ad=()=>({id:crypto.randomUUID(),revision:0,listing:{...emptyListing,category:'parts',taxonomyId:'auto.parts.optics',title:'Фара',description:'Царапина на стекле',partName:'Фара',partNumber:'000123-AB',price:'450',currency:'BYN'},photos:[],selected:['bamper','kufar-parts'],jobs:[],text:'Фара с царапиной',categoryConfirmed:true});
 
+test('private contacts merge with integration settings, validate phone, and never rewrite existing cards',async()=>{
+ const store=createWorkspace(config);try{
+  const a=await register(store,'contacts-a'),b=await register(store,'contacts-b');
+  await request(store,'settings',{integrations:{kufar:{enabled:true,notes:'Contract'}}},a.cookie);
+  const saved=await request(store,'settings',{phone:'+375 (29) 111-22-33',city:'Минск'},a.cookie);assert.equal(saved.status,200);
+  assert.equal((await saved.json()).settings.integrations.kufar.enabled,true);
+  const card=(await (await request(store,'ads',{...ad(),attributes:{bamper_modification:'B8',unknown:'drop'}},a.cookie)).json()).ad;
+  assert.equal(card.attributes.bamper_modification,'B8');assert.equal(card.attributes.unknown,undefined);
+  await request(store,'settings',{city:'Брест'},a.cookie);
+  const settings=(await (await request(store,'settings',undefined,a.cookie)).json()).settings;assert.equal(settings.phone,'+375 (29) 111-22-33');assert.equal(settings.city,'Брест');
+  assert.deepEqual((await (await request(store,'settings',undefined,b.cookie)).json()).settings,{});
+  const restored=(await (await request(store,'ads/'+card.id,undefined,a.cookie)).json()).ad;assert.equal(restored.listing.city,'');assert.equal(restored.attributes.bamper_modification,'B8');
+  assert.equal((await request(store,'settings',{phone:'invalid'},a.cookie)).status,400);
+  await request(store,'settings',{phone:''},a.cookie);assert.equal((await (await request(store,'settings',undefined,a.cookie)).json()).settings.phone,'');
+ }finally{store.close();}
+});
+
 test('legacy GPU cards reopen with canonical category and marketplace corrections survive saving',async()=>{
  const store=createWorkspace(config);try{
   const user=await register(store,'routing');const old={...ad(),listing:{...emptyListing,category:'general',taxonomyId:'onliner.286',title:'RX 570'},selected:['onliner-general'],categoryOverrides:{onliner:'17',kufar:'not-in-catalog'}};

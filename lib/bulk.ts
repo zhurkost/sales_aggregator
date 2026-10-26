@@ -5,8 +5,9 @@ import {
   type Listing,
 } from "./listing.ts";
 import { categoryById, suggestCategories, categoryMapping } from "./taxonomy.ts";
-import { newRecord, type AdRecord } from "./workspace.ts";
+import { newRecord, withSellerContacts, type SellerContacts, type AdRecord } from "./workspace.ts";
 import { defaultPlatforms } from "./platforms.ts";
+import {descriptionWithAttributes} from "./attributes.ts";
 
 export function parseDelimited(text: string): string[][] {
   const first = text.replace(/^\uFEFF/, "").split(/\r?\n/, 1)[0];
@@ -159,6 +160,7 @@ export function normalizeImport(
   table: ImportTable,
   columns: Record<string, string>,
   categoryOverride = "",
+  contacts: SellerContacts = {},
 ): ImportPreview[] {
   const seen = new Set<string>();
   return table.rows.map((row, index) => {
@@ -181,11 +183,11 @@ export function normalizeImport(
           [mapped.title, mapped.description, mapped.partName].join(" "),
         )[0]?.id || "",
       );
-    const listing = sanitizeListing({
+    const listing = withSellerContacts(sanitizeListing({
       ...mapped,
       taxonomyId: candidate?.id || "",
       category: candidate?.group || "general",
-    });
+    }), contacts);
     const record = newRecord(listing, listing.description);
     record.externalId = mapped.externalId;
     record.photoRefs = (mapped.photoUrls || "")
@@ -238,7 +240,7 @@ export function csvExport(records: AdRecord[]) {
                 ? (r.photoRefs || []).join("|")
                 : k === "externalId"
                   ? r.externalId || r.id
-                  : r.listing[k as keyof Listing],
+                  : k === 'description' ? descriptionWithAttributes(r.listing,r.attributes,r.categoryOverrides) : r.listing[k as keyof Listing],
             ),
           )
           .join(";"),
@@ -271,7 +273,7 @@ export function flagmaRows(
     return {
       Тип: "Продам",
       Название: r.listing.title,
-      Описание: r.listing.description,
+      Описание: descriptionWithAttributes(r.listing,r.attributes,r.categoryOverrides),
       "Конечный подраздел": c || "",
       Цена: r.listing.price ? Number(r.listing.price) : "",
       "Единица измерения": r.listing.priceUnit === "За штуку" ? "шт" : "",

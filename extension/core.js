@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.4.1';
+  const VERSION = '0.5.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -108,7 +108,9 @@
       categoryOverrides[platform]=id;
     }
     if(root.AutopostCategoryAliases&&own(root.AutopostCategoryAliases,listing.taxonomyId))listing.taxonomyId=root.AutopostCategoryAliases[listing.taxonomyId];
-    return { batchId, listing, photos, platforms, categoryOverrides, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
+    const mapping=root.AutopostCategoryOptions?.kufar?.[categoryOverrides.kufar]||root.AutopostTaxonomy?.[listing.taxonomyId]?.mappings?.kufar;
+    const attributes=root.AutopostAttributes?root.AutopostAttributes.sanitizeAttributes(root.AutopostFields,mapping,payload.attributes,listing):{};
+    return { batchId, listing, photos, platforms, categoryOverrides, attributes, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
   }
   function publicJob(job) {
     return {

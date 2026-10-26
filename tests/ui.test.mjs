@@ -18,10 +18,12 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
  for(const [key,value] of Object.entries({window,document:window.document,location:window.location,HTMLElement:window.HTMLElement,createImageBitmap:async(file)=>{optimizedFiles.push(file);return {width:200,height:100,close(){}};},IS_REACT_ACT_ENVIRONMENT:true})){
    previous.set(key,Object.getOwnPropertyDescriptor(globalThis,key));Object.defineProperty(globalThis,key,{value,configurable:true,writable:true});
  }
- const realFetch=globalThis.fetch;const stored=new Map();const requests=[];const notices=[];
+ const realFetch=globalThis.fetch;const stored=new Map();const requests=[];const notices=[];const messages=[];
+ let contactSettings={phone:'+375291112233',city:'Брест'};
  globalThis.fetch=async(path,options={})=>{
    const body=options.body?JSON.parse(options.body):undefined;requests.push({path,body});
    if(path==='/api/ai-settings')return Response.json({serverConfigured:true});
+   if(path==='/api/workspace/settings'){if(body)contactSettings={...contactSettings,...body};return Response.json({settings:contactSettings});}
    if(path==='/api/workspace/ads'){
      if(body){const ad={...body,revision:(stored.get(body.id)?.revision||0)+1,updatedAt:new Date().toISOString()};stored.set(ad.id,ad);return Response.json({ad});}
      return Response.json({ads:[...stored.values()].map(({photos,text,...r})=>({...r,photoCount:photos.length}))});
@@ -29,12 +31,14 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    if(path.startsWith('/api/workspace/ads/')){
      const ad=stored.get(path.split('/').at(-1));return Response.json(ad?{ad}:{error:'Not found'},{status:ad?200:404});
    }
-   if(path==='/api/analyze')return Response.json(body.task==='classify'?{candidates:[{id:'auto.parts.optics',confidence:.9,reason:'Фара — автомобильная оптика'}]}:{listing:{category:'parts',title:'Фара Passat',partName:'Фара',partNumber:'3G1941035D',description:'Есть царапина',currency:'BYN',price:'450',condition:'Б/у',priceUnit:'За штуку'}});
+   if(path==='/api/analyze')return Response.json(body.task==='identify'?{identity:{status:'identified',name:'RX 570',query:'RX 570',terms:['RX 570'],kind:'product',condition:'Б/у'}}:body.task==='classify'?{candidates:[{id:'auto.parts.optics',confidence:.9,reason:'Фара — автомобильная оптика'}]}:{listing:{category:'parts',title:'Фара Passat',partName:'Фара',partNumber:'3G1941035D',description:'Есть царапина',currency:'BYN',price:'450',condition:'Б/у',priceUnit:'За штуку'}});
    throw new Error('Unexpected API '+path);
  };
- window.postMessage=message=>queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.4.1'}:{batches:[]}}})));
+ window.postMessage=message=>{messages.push(message);queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.5.0'}:message.type==='PRICE_SEARCH'?{checkedAt:new Date().toISOString(),results:[{id:'kufar',name:'Kufar',url:'https://www.kufar.by/l',status:'ok',total:42,scanned:30,matched:12,groups:[{currency:'BYN',count:12,min:100,max:250,median:180}]}]}:{batches:[]}}})));};
  mkdirSync(new URL('../work/',import.meta.url),{recursive:true});
- const code=ts.transpileModule(readFileSync(new URL('../components/workspace-ui.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2');
+ const compile=name=>ts.transpileModule(readFileSync(new URL('../components/'+name+'.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2').replace(/(from\s+["']\.\/(?:price-comparison|category-attributes))(["'])/g,'$1.generated.mjs$2');
+ for(const name of ['price-comparison','category-attributes'])writeFileSync(new URL('../work/'+name+'.generated.mjs',import.meta.url),compile(name));
+ const code=compile('workspace-ui');
  const generated=new URL('../work/ui-test.generated.mjs',import.meta.url);writeFileSync(generated,code);
  const {Workspace}=await import(generated.href);const {createRoot}=await import('react-dom/client');
  const root=createRoot(window.document.body);
@@ -58,6 +62,8 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    assert.equal([...stored.values()][0].categoryConfirmed,true);assert.equal([...stored.values()][0].listing.taxonomyId,'auto.parts.optics');
    assert.ok(requests.filter(r=>r.path==='/api/analyze').every(r=>!('photos'in r.body)));
    const original=[...stored.values()][0];
+   assert.equal(original.listing.phone,'+375291112233','Profile phone fills absent AI result');
+   assert.equal(original.listing.city,'Минск','Explicit seller city wins over profile default');
    for(let i=2;i<=4;i++)stored.set('existing-'+i,{...structuredClone(original),id:'existing-'+i,listing:{...original.listing,title:'Сохранённая фара '+i}});
    await click('Мои объявления');assert.equal(entries().length,4);assert.ok(entries().every(visible),'All four saved cards must be visible');
    const saved=entries().find(e=>e.textContent.includes('Сохранённая фара 2'));await click('Открыть карточку',saved);
@@ -109,6 +115,16 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    assert.equal((await paste({items:[imageItem]},window.document.querySelector('main'))).defaultPrevented,false,'Cabinet view does not intercept paste');
    await click('Открыть карточку',entries().find(e=>e.textContent.includes('Видеокарты')));
    assert.equal(window.document.querySelectorAll('.photo-thumb').length,12,'Pasted photos survive reopening');
+   const comparison=window.document.querySelector('[aria-label="Сравнение цен"]');assert.ok(comparison);
+   assert.equal(messages.filter(m=>m.type==='PRICE_SEARCH').length,0);
+   await click('Определить товар для поиска',comparison);assert.match(comparison.textContent,/RX 570/);
+   const identityRequest=requests.find(r=>r.body?.task==='identify');assert.ok(identityRequest);assert.ok(!identityRequest.body.text.includes('+375291112233'));
+   await click('Найти цены на площадках',comparison);assert.match(comparison.textContent,/Найдено площадкой: 42/);assert.match(comparison.textContent,/180 BYN/);
+   const ram=[...window.document.querySelectorAll('[aria-label="Характеристики категории"] select')].find(e=>e.getAttribute('aria-label')==='Видеопамять');assert.ok(ram);
+   await act(async()=>{ram.value=ram.options[1].value;ram.dispatchEvent(new window.Event('change',{bubbles:true}));});
+   assert.doesNotMatch(comparison.textContent,/Найдено площадкой: 42/,'Changing product attributes invalidates the previous comparison');
+   await click('Мои объявления');assert.ok(stored.get(gpuRecord.id).attributes.computers_desktop_ram);
+   await click('Мой профиль');assert.match(window.document.body.textContent,/Телефон/);assert.match(window.document.body.textContent,/Город/);
    assert.equal(notices.some(n=>/ошиб|не удалось/i.test(n)),false);
  }finally{
    await act(async()=>root.unmount());globalThis.fetch=realFetch;

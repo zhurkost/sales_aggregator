@@ -17,7 +17,7 @@
   window.addEventListener('message', async (event) => {
     if (event.source !== window || event.origin !== origin || !core.object(event.data) || event.data.source !== 'autopost-app') return;
     const { type, requestId } = event.data;
-    if (!['PING', 'RUN', 'RUN_QUEUE','OPEN_JOB','PAUSE','RESUME','STATUS', 'CLEAR'].includes(type) || typeof requestId !== 'string' || !/^[a-zA-Z0-9_.:-]{1,120}$/u.test(requestId)) return;
+    if (!['PING', 'PRICE_SEARCH', 'RUN', 'RUN_QUEUE','OPEN_JOB','PAUSE','RESUME','STATUS', 'CLEAR'].includes(type) || typeof requestId !== 'string' || !/^[a-zA-Z0-9_.:-]{1,120}$/u.test(requestId)) return;
     recentRequests = new Map([...recentRequests].filter(([, time]) => Date.now() - time < 60000));
     if (recentRequests.has(requestId) || recentRequests.size > 80) return;
     recentRequests.set(requestId, Date.now());
@@ -25,13 +25,14 @@
     // the site distinguish a missing content script from a worker startup error.
     window.postMessage({ source: 'autopost-extension', type: 'ACK', requestId, payload: { version: core.VERSION } }, origin);
     const userGesture = gestureId > consumedGestureId && Boolean(navigator.userActivation?.isActive || Date.now() - lastGesture < 2000);
-    const mutation=['RUN','RUN_QUEUE','OPEN_JOB','PAUSE','RESUME'].includes(type);
+    const mutation=['RUN','RUN_QUEUE','OPEN_JOB','PAUSE','RESUME','PRICE_SEARCH'].includes(type);
     if (mutation && (!userGesture || running)) {
       respond(requestId, { error: running ? 'Предыдущий запуск ещё выполняется.' : 'Запустите передачу кнопкой на странице.', code: 'USER_GESTURE_REQUIRED' });
       return;
     }
     try {
       let payload=event.data.payload;
+      if (type === 'PRICE_SEARCH') { consumedGestureId = gestureId; }
       if (type === 'RUN') {
         const validated = core.validateRun(event.data.payload);
         payload = { ...validated, platforms: validated.platforms.map(({ id }) => ({ id })) };

@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useMemo, useRef, useState, type ClipboardEvent } from "react";
 import { legacyDrafts } from "../lib/legacy";
+import { PriceComparison } from "./price-comparison";
+import { CategoryAttributes } from "./category-attributes";
+import {cleanAttributes,describeAttributes,descriptionWithAttributes} from "../lib/attributes";
 import {
   ArrowRight,
   Check,
@@ -58,6 +61,8 @@ import {
   extension,
   EXTENSION_VERSION,
   extensionVersionOK,
+  withSellerContacts,
+  type SellerContacts,
   newRecord,
   optimizePhoto,
   type AdRecord,
@@ -320,6 +325,7 @@ export function Workspace({
     [busy, setBusy] = useState(""),
     [checked, setChecked] = useState(false),
     [ext, setExt] = useState(false),
+    [contacts, setContacts] = useState<SellerContacts>({}),
     [extensionChecking, setExtensionChecking] = useState(false),
     [extensionStatus, setExtensionStatus] = useState("Проверяем подключение…"),
     [serverAI, setServerAI] = useState(false),
@@ -338,6 +344,12 @@ export function Workspace({
     photoUploading = useRef(false);
   const extensionCheck = useRef<Promise<void> | null>(null);
   const extensionConnected = useRef(false);
+  const contactDefaults = useRef<SellerContacts>({});
+  const contactsReady = useRef<Promise<SellerContacts> | null>(null);
+  function saveContactDefaults(value: SellerContacts) {
+    contactDefaults.current = value;
+    setContacts(value);
+  }
   function checkExtension(showNotice = false): Promise<void> {
     if (extensionCheck.current) return extensionCheck.current;
     setExtensionChecking(true);
@@ -447,6 +459,17 @@ export function Workspace({
     alive.current = true;
     void refresh().catch((e) => notify(errorText(e)));
     void checkExtension();
+    contactsReady.current = api<{settings: SellerContacts}>("workspace/settings").then(({settings}) => {
+      if (alive.current) {
+        saveContactDefaults(settings);
+        if (!current.current.revision && !current.current.categoryConfirmed) {
+          const next = { ...current.current, listing: withSellerContacts(current.current.listing, settings) };
+          current.current = next;
+          setAd(next);
+        }
+      }
+      return settings;
+    }).catch(error => { if(alive.current) notify(errorText(error)); return {}; });
     api<{ serverConfigured: boolean }>("ai-settings")
       .then((r) => setServerAI(r.serverConfigured))
       .catch(() => {});
@@ -556,7 +579,8 @@ export function Workspace({
   async function fresh() {
     await guarded(async () => {
       if (dirty) await persist();
-      const value = newRecord({ ...emptyListing });
+      await contactsReady.current;
+      const value = newRecord(withSellerContacts({ ...emptyListing }, contactDefaults.current));
       current.current = value;
       setAd(value);
       setDirty(0);
@@ -610,9 +634,16 @@ export function Workspace({
         listing = sanitizeListing(result.listing, category.group);
       } else listing = parseLocally(source.text, category.group);
       listing.taxonomyId = category.id;
+      await contactsReady.current;
+      const explicitContacts = parseLocally(source.text, category.group);
+      listing = withSellerContacts(listing, {
+        phone: explicitContacts.phone || source.listing.phone || contactDefaults.current.phone,
+        city: explicitContacts.city || source.listing.city || contactDefaults.current.city,
+      });
       change({
         ...source,
         listing,
+        attributes: cleanAttributes(listing,source.attributes,pendingOverrides),
         categoryConfirmed: true,
         categoryOverrides: pendingOverrides,
         prepared: true,
@@ -667,7 +698,8 @@ export function Workspace({
       recordId: record.id,
       profileId: profile.id,
       categoryOverrides: record.categoryOverrides||{},
-      listing: { ...record.listing, title: listingTitle(record.listing) },
+      attributes: record.attributes || {},
+      listing: { ...record.listing, title: listingTitle(record.listing), description: descriptionWithAttributes(record.listing,record.attributes,record.categoryOverrides) },
       photos: record.photos.map(({ name, type, dataUrl }) => ({
         name,
         type,
@@ -751,10 +783,11 @@ export function Workspace({
           ? generalFields
           : fields;
   const update = (key: keyof Listing, value: string) =>
-    change((r) => ({ ...r, listing: { ...r.listing, [key]: value } }));
+    change((r) => {const listing={ ...r.listing, [key]: value }; return { ...r, listing, attributes:cleanAttributes(listing,r.attributes,r.categoryOverrides) };});
   const nav = [
     ["editor", "Новое объявление", Plus],
     ["cabinet", "Мои объявления", ClipboardList],
+    ["profile", "Мой профиль", UserRound],
     ["bulk", "Массовая загрузка", FileUp],
     ["taxonomy", "Справочник площадок", Globe2],
     ["integrations", "Интеграции", Settings2],
@@ -781,7 +814,7 @@ export function Workspace({
           ))}
         </nav>
         <div className="sidebar-note">
-          <b>Автопост · MVP 0.4</b>
+          <b>Автопост · MVP 0.5</b>
           <p>Карточки и статусы хранятся в вашем профиле на сервере.</p>
         </div>
         <div className="sidebar-bottom">
@@ -1109,7 +1142,10 @@ export function Workspace({
                             }
                           />
                         </label>
+                        <p className="fine-print">Телефон и город подставляются из «Моего профиля». Здесь их можно изменить только для этой карточки.</p>
                       </section>
+                      <CategoryAttributes listing={ad.listing} values={ad.attributes} overrides={ad.categoryOverrides} onChange={attributes=>change(r=>({...r,attributes}))} />
+                      <PriceComparison key={ad.id} listing={ad.listing} recordId={ad.id} details={describeAttributes(ad.listing,ad.attributes,ad.categoryOverrides)} ext={ext} serverAI={serverAI} onExtension={()=>setShowExtension(true)} />
                       <section className="panel destinations">
                         <div className="section-title">
                           <div>
@@ -1327,10 +1363,12 @@ export function Workspace({
             />
           )}
           {view === "taxonomy" && <TaxonomyView />}
-          {view === "integrations" && <Integrations notify={notify} />}
+          {view === "profile" && <Integrations key="profile" mode="profile" onSaved={saveContactDefaults} notify={notify} />}
+          {view === "integrations" && <Integrations key="integrations" mode="integrations" onSaved={saveContactDefaults} notify={notify} />}
           {view === "bulk" && (
             <Bulk
               profile={profile}
+              contacts={contacts}
               ads={ads}
               ext={ext}
               persist={persist}
@@ -1343,7 +1381,7 @@ export function Workspace({
           )}
           <footer>
             <Logo />
-            <span>MVP 0.4 · {taxonomy.version}</span>
+            <span>MVP 0.5 · {taxonomy.version}</span>
             <button onClick={() => setShowExtension(true)}>
               Помощник для браузера
             </button>
@@ -1703,7 +1741,7 @@ function TaxonomyView() {
     </>
   );
 }
-function Integrations({ notify }: { notify: (s: string) => void }) {
+function Integrations({ notify, mode, onSaved }: { notify: (s: string) => void; mode: "profile" | "integrations"; onSaved: (value: SellerContacts) => void }) {
   const [settings, setSettings] = useState({
       company: "",
       contactPerson: "",
@@ -1711,19 +1749,20 @@ function Integrations({ notify }: { notify: (s: string) => void }) {
       city: "",
       integrations: {} as Record<string, { enabled: boolean; notes: string }>,
     }),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [loaded, setLoaded] = useState(false);
   useEffect(() => {
     api<{ settings: typeof settings }>("workspace/settings")
-      .then((r) => setSettings((s) => ({ ...s, ...r.settings })))
+      .then((r) => { setSettings((s) => ({ ...s, ...r.settings })); setLoaded(true); })
       .catch((e) => notify(errorText(e)));
   }, []);
   return (
     <>
-      <h1>Интеграции и кабинет продавца</h1>
+      <h1>{mode === "profile" ? "Мой профиль" : "Интеграции"}</h1>
       <p className="subtitle">
-        Официальные импорты подключаются к вашему аккаунту на площадке.
+        {mode === "profile" ? "Контакты для новых объявлений. Сохранённые карточки не изменятся." : "Официальные импорты подключаются к вашему аккаунту на площадке."}
       </p>
-      <div className="panel integration-profile">
+      {mode === "profile" && <div className="panel integration-profile">
         <div className="fields-grid">
           {[
             ["company", "Компания"],
@@ -1734,6 +1773,10 @@ function Integrations({ notify }: { notify: (s: string) => void }) {
             <label key={key}>
               {label}
               <input
+                maxLength={key === "phone" ? 40 : 100}
+                disabled={!loaded}
+                type={key === "phone" ? "tel" : "text"}
+                placeholder={key === "phone" ? "+375291234567" : key === "city" ? "Минск" : ""}
                 value={String(settings[key as keyof typeof settings] || "")}
                 onChange={(e) =>
                   setSettings((s) => ({ ...s, [key]: e.target.value }))
@@ -1742,8 +1785,8 @@ function Integrations({ notify }: { notify: (s: string) => void }) {
             </label>
           ))}
         </div>
-      </div>
-      {[
+      </div>}
+      {mode === "integrations" && [
         {
           id: "kufar",
           name: "Куфар · KML",
@@ -1813,13 +1856,14 @@ function Integrations({ notify }: { notify: (s: string) => void }) {
       ))}
       <button
         className="primary"
-        disabled={busy}
+        disabled={busy || !loaded}
         onClick={async () => {
           setBusy(true);
           try {
-            await api("workspace/settings", settings);
+            const response = await api<{settings: typeof settings}>("workspace/settings", mode === "profile" ? {phone:settings.phone,city:settings.city,company:settings.company,contactPerson:settings.contactPerson} : {integrations:settings.integrations});
+            onSaved(response.settings);
             notify(
-              "Настройки сохранены. Отметка не активирует интеграцию автоматически.",
+              mode === "profile" ? "Контакты сохранены. Они будут подставляться в новые карточки." : "Настройки сохранены. Отметка не активирует интеграцию автоматически.",
             );
           } catch (e) {
             notify(errorText(e));
@@ -1841,6 +1885,7 @@ function Integrations({ notify }: { notify: (s: string) => void }) {
 
 function Bulk({
   profile,
+  contacts,
   ads,
   ext,
   persist,
@@ -1851,6 +1896,7 @@ function Bulk({
   onProgress,
 }: {
   profile: Profile;
+  contacts: SellerContacts;
   ads: AdSummary[];
   ext: boolean;
   persist: (r: AdRecord) => Promise<AdRecord>;
@@ -1875,8 +1921,8 @@ function Bulk({
   const [importPhotos, setImportPhotos] = useState<File[]>([]);
   useEffect(() => setPreparedQueue([]), [selected]);
   const preview = useMemo(
-    () => (table ? normalizeImport(table, columns, override) : []),
-    [table, columns, override],
+    () => (table ? normalizeImport(table, columns, override, contacts) : []),
+    [table, columns, override, contacts],
   );
   const valid = preview.filter((p) => !p.duplicate);
   async function work(label: string, fn: () => Promise<void>) {

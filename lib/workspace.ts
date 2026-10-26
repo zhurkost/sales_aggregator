@@ -2,6 +2,10 @@ import type { Listing } from "./listing.ts";
 import type { Job } from "./platforms.ts";
 export type Photo = { id: string; name: string; type: string; dataUrl: string };
 export type Profile = { id: string; login: string; name: string };
+export type SellerContacts = { phone?: string; city?: string };
+export function withSellerContacts(listing: Listing, contacts: SellerContacts): Listing {
+  return { ...listing, phone: listing.phone || contacts.phone || "", city: listing.city || contacts.city || "" };
+}
 export type AdRecord = {
   id: string;
   revision: number;
@@ -14,6 +18,7 @@ export type AdRecord = {
   prepared: boolean;
   categoryConfirmed: boolean;
   categoryOverrides?: import('./taxonomy.ts').CategoryOverrides;
+  attributes?: import('./field-rules.ts').AttributeValues;
   archived: boolean;
   jobs: Job[];
   batchId?: string;
@@ -68,11 +73,11 @@ export function newRecord(listing: Listing, text = ""): AdRecord {
     events: [],
   };
 }
-export const EXTENSION_VERSION = "0.4.1";
+export const EXTENSION_VERSION = "0.5.0";
 export function extensionVersionOK(version: unknown): boolean {
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
-  const [major, minor, patch] = version.split(".").map(Number);
-  return major > 0 || minor > 4 || (minor === 4 && patch >= 1);
+  const [major, minor] = version.split(".").map(Number);
+  return major > 0 || minor >= 5;
 }
 export function extension(
   type: string,

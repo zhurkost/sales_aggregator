@@ -123,6 +123,14 @@
     return result.map(normalize);
   }
   function findNative(key, platform) {
+    if(platform==='onliner'&&key==='price') {
+      const control=document.querySelector('#topic_price:not([type="hidden"])');
+      return visible(control)&&!control.disabled?control:null;
+    }
+    if(platform==='bamper') {
+      const names={brand:'MARKA_ID[]',model:'MODEL_ID[]',year:'YEAR',engine:'ENGINE_VALUE',fuel:'FUEL_ID',body:'KUZOV_ID',transmission:'PRIVOD_ID',partName:'TAG_ID',partNumber:'ORIGINAL_NUM',description:'COMMENT',price:'PRICE',phone:'PHONE',vin:'VIN'};
+      if(names[key])return bamperControl(names[key]);
+    }
     if (platform === "kufar") {
       const names = {
         title: "subject",
@@ -169,6 +177,24 @@
     return candidates[0] && candidates[0].score !== candidates[1]?.score
       ? candidates[0].el
       : null;
+  }
+  function bamperControl(name) {
+    const candidates=[...document.querySelectorAll('input,select,textarea')].filter(e=>e.name===name&&!e.disabled&&!e.readOnly&&e.type!=='hidden'&&visible(e.closest('tr')));
+    return candidates.length===1?candidates[0]:null;
+  }
+  function bamperRadio(task,key,value) {
+    const name={currency:'CURRENCY',condition:'IS_NEW',availability:'PREORDER'}[key];
+    const desired=key==='currency'?value:key==='condition'?({'Новая':'1','Б/у':'0'})[value]:({'В наличии':'0','Под заказ':'1'})[value];
+    if(!desired)return 'Нет точного варианта';
+    const controls=[...document.querySelectorAll('input[type="radio"]')].filter(e=>e.name===name&&visible(e)&&!e.disabled);
+    const target=controls.find(e=>e.value===desired),current=controls.find(e=>e.checked);
+    if(!target)return 'Поле пока не появилось';
+    task.radioChoices ||= new Map();
+    const previous=task.radioChoices.get(key);
+    if(previous&&previous!==current)return 'Уже изменено пользователем';
+    if(current!==target)target.click();
+    if(!target.checked)return 'Значение не принято';
+    task.radioChoices.set(key,target);return null;
   }
   function setNative(el, key, value) {
     if (!el) return "Поле пока не появилось";
@@ -430,6 +456,22 @@
   }
   async function fillFields(task, platform) {
     const result = { filled: [], skipped: [], details: [] };
+    for(const attribute of task.attributes || []) {
+      if(!/^[a-z][a-z0-9_]{0,79}$/.test(attribute.key)) continue;
+      const key = 'attribute:'+attribute.key;
+      let reason;
+      if(platform==='kufar'&&(!attribute.platform||attribute.platform==='kufar')) {
+        const scope = document.querySelector(`[data-name="${attribute.key}"]`);
+        reason = scope ? await custom(attribute.key,attribute.text,task.listing,platform,scope) : 'Поле пока не появилось';
+      } else if(platform==='onliner'&&attribute.key==='onliner_short_description')reason=setNative(document.querySelector('textarea[name="topic_desc"]'),key,attribute.text);
+      else if(platform==='bamper') {
+        const names={bamper_modification:'VERSIA',bamper_engine_code:'ENGINE_MODEL_ID',bamper_vin:'VIN',bamper_stock_code:'EXT_ID',bamper_discount:'DISCOUNT',spares_capacity:'ENGINE_VALUE',spares_cars_engine:'FUEL_ID',spares_gearbox:'PRIVOD_ID',spares_cars_type:'KUZOV_ID',spares_regdate:'YEAR',spares_parts_code:'EXT_ID',content_video:'VIDEO[]'};
+        if(!names[attribute.key])continue;
+        reason=setNative(bamperControl(names[attribute.key]),attribute.key==='spares_gearbox'?'transmission':key,attribute.text);
+      } else continue;
+      if(reason) {result.skipped.push(key);result.details.push(attribute.label+': '+reason);}
+      else result.filled.push(key);
+    }
     const keys = [
       "title",
       "brand",
@@ -458,11 +500,18 @@
     for (const key of keys) {
       const value = task.listing[key];
       if (!value) continue;
+      if(platform==='bamper'&&['currency','condition','availability'].includes(key)) {
+        const reason=bamperRadio(task,key,value);
+        if(reason){result.skipped.push(key);result.details.push(key+': '+reason);}else result.filled.push(key);
+        continue;
+      }
       const control = findNative(key, platform);
       let reason;
       if (key === "price") {
         const currencyScope = scopeFor("currency", task.listing, platform);
         const label =
+          platform==='onliner'&&control?.id==='topic_price'&&/ƃ/.test(control.parentElement.textContent) ? 'BYN' :
+          platform==='bamper' ? document.querySelector('input[name="CURRENCY"]:checked')?.value :
           platform === "kufar"
             ? currencyScope?.querySelector('[data-testid="base-dropdown-ui"]')
                 ?.textContent

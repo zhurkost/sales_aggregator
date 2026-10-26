@@ -10,6 +10,7 @@ import {
 import { promisify } from "node:util";
 import { sanitizeListing } from "../lib/listing.ts";
 import { categoryById, sanitizeCategoryOverrides } from "../lib/taxonomy.ts";
+import {cleanAttributes} from "../lib/attributes.ts";
 import {
   getPlatforms,
   safePublicationUrl,
@@ -162,6 +163,7 @@ export function createWorkspace(config) {
       prepared: input.prepared === true,
       categoryConfirmed: !!category && input.categoryConfirmed === true,
       categoryOverrides: sanitizeCategoryOverrides(input.categoryOverrides),
+      attributes: cleanAttributes(listing,input.attributes,sanitizeCategoryOverrides(input.categoryOverrides)),
       archived: input.archived === true,
       jobs,
       batchId: uuid(input.batchId) ? input.batchId : "",
@@ -342,17 +344,22 @@ export function createWorkspace(config) {
       }
       if (path === "/api/workspace/settings" && req.method === "POST") {
         const input = await body(req);
+        const saved = db.prepare("SELECT data FROM settings WHERE profile_id=?").get(p.id);
+        const previous = saved ? JSON.parse(saved.data) : {};
+        const phone = clean(input.phone === undefined ? previous.phone : input.phone, 40);
+        if (phone && !/^\+375\d{9}$/.test(phone.replace(/[\s()-]/g, "")))
+          throw new Error("Телефон в формате +375XXXXXXXXX.");
         const settings = {
-          company: clean(input.company, 150),
-          contactPerson: clean(input.contactPerson, 100),
-          phone: clean(input.phone, 40),
-          city: clean(input.city, 100),
+          company: clean(input.company === undefined ? previous.company : input.company, 150),
+          contactPerson: clean(input.contactPerson === undefined ? previous.contactPerson : input.contactPerson, 100),
+          phone,
+          city: clean(input.city === undefined ? previous.city : input.city, 100),
           integrations: {},
         };
         for (const platform of ["kufar", "bamper", "flagma"])
           settings.integrations[platform] = {
-            enabled: input.integrations?.[platform]?.enabled === true,
-            notes: clean(input.integrations?.[platform]?.notes, 400),
+            enabled: (input.integrations?.[platform] ?? previous.integrations?.[platform])?.enabled === true,
+            notes: clean((input.integrations?.[platform] ?? previous.integrations?.[platform])?.notes, 400),
           };
         db.prepare(
           "INSERT INTO settings VALUES(?,?) ON CONFLICT(profile_id) DO UPDATE SET data=excluded.data",
