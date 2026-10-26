@@ -21,6 +21,9 @@
     recentRequests = new Map([...recentRequests].filter(([, time]) => Date.now() - time < 60000));
     if (recentRequests.has(requestId) || recentRequests.size > 80) return;
     recentRequests.set(requestId, Date.now());
+    // Acknowledge the page bridge separately from the worker response. This lets
+    // the site distinguish a missing content script from a worker startup error.
+    window.postMessage({ source: 'autopost-extension', type: 'ACK', requestId, payload: { version: core.VERSION } }, origin);
     const userGesture = gestureId > consumedGestureId && Boolean(navigator.userActivation?.isActive || Date.now() - lastGesture < 2000);
     const mutation=['RUN','RUN_QUEUE','OPEN_JOB','PAUSE','RESUME'].includes(type);
     if (mutation && (!userGesture || running)) {
@@ -48,11 +51,19 @@
       const result = await chrome.runtime.sendMessage({ kind: 'APP_REQUEST', type, payload, userGesture });
       respond(requestId, result || { error: 'Расширение не ответило. Обновите страницу.', code: 'EXTENSION_UNAVAILABLE' });
     } catch (error) {
-      respond(requestId, { error: error instanceof Error ? error.message : 'Не удалось связаться с расширением.', code: 'REQUEST_FAILED' });
+      const detail = String(error?.message || error || '');
+      const connectionError = /context invalidated|receiving end does not exist|could not establish connection|message (port|channel) closed/i.test(detail);
+      respond(requestId, {
+        error: connectionError
+          ? 'Обновите вкладку Автопоста после перезагрузки расширения. Если ошибка повторится, откройте «Ошибки» у расширения в браузере.'
+          : detail || 'Не удалось связаться с расширением.',
+        code: connectionError ? 'EXTENSION_RELOAD_REQUIRED' : 'REQUEST_FAILED',
+      });
     } finally { if (type === 'RUN'||type==='RUN_QUEUE') running = false; }
   });
   chrome.runtime.onMessage.addListener((message, sender) => {
     if (sender.id !== chrome.runtime.id || message?.kind !== 'APP_PROGRESS' || message.origin !== origin) return;
     window.postMessage({ source: 'autopost-extension', type: 'PROGRESS', payload: { batchId: message.batchId,recordId:message.recordId,profileId:message.profileId,jobs: message.jobs } }, origin);
   });
+  window.postMessage({ source: 'autopost-extension', type: 'READY', payload: { version: core.VERSION } }, origin);
 })();

@@ -6,11 +6,11 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
+const { IDBFactory } = require('fake-indexeddb');
 const core = require('../core.js');
 require('../taxonomy.js');
 const APP = core.APP_ORIGINS[0];
-function createWorker() {
-  const data = {};
+function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(), accessLevel = true, sessionAccessLevel = true } = {}) {
   const created = [];
   const sent = [];
   const tabs = new Map([[1, { id: 1, url: `${APP}/` }], [2, { id: 2, url: 'http://localhost:5173/' }]]);
@@ -32,31 +32,75 @@ function createWorker() {
       onRemoved: { addListener() {} },
     },
   };
-  chrome.storage.local=chrome.storage.session;
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), { chrome, AutopostCore: core, AutopostTaxonomy:globalThis.AutopostTaxonomy,AutopostCategoryOptions:globalThis.AutopostCategoryOptions, importScripts() {}, crypto: { randomUUID }, URL, Date, console });
+  chrome.storage.local = {
+    async get(key) { return structuredClone(key === null ? localData : { [key]: localData[key] }); },
+    async remove(keys) { for (const key of Array.isArray(keys) ? keys : [keys]) delete localData[key]; },
+    async set() { throw new Error('Photos must not be written to content-script-accessible storage'); },
+    ...(accessLevel ? { async setAccessLevel() {} } : {}),
+  };
+  if (!sessionAccessLevel) delete chrome.storage.session.setAccessLevel;
+  const context = vm.createContext({ chrome, indexedDB, crypto: { randomUUID }, URL, Date, console, atob });
+  // Execute the actual imports: stubbing importScripts hid worker registration failures.
+  context.importScripts = (...files) => files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file }));
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), context, { filename: 'background.js' });
   function request(message, url = `${APP}/`, tabId = 1, frameId = 0) {
     return new Promise((resolve) => {
       const listening = onMessage(message, { id: 'test-id', frameId, url, tab: { id: tabId } }, resolve);
       if (!listening) resolve(undefined);
     });
   }
-  return { data, created, sent, request };
+  return { data, localData, indexedDB, created, sent, request, context };
 }
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
 
+test('worker registers and answers PING when storage.local.setAccessLevel is unavailable', async () => {
+  for (const sessionAccessLevel of [true, false]) {
+    const worker = createWorker({ accessLevel: false, sessionAccessLevel });
+    assert.equal((await worker.request({ kind: 'APP_REQUEST', type: 'PING' })).version, core.VERSION);
+  }
+});
+
 test('queue stores photos separately and removes them after completion',async()=>{
- const w=createWorker();const bytes=Buffer.alloc(800000);bytes[0]=255;bytes[1]=216;bytes[2]=255;
+ const w=createWorker({accessLevel:false});const bytes=Buffer.alloc(800000);bytes[0]=255;bytes[1]=216;bytes[2]=255;
  const photo={name:'test.jpg',type:'image/jpeg',dataUrl:'data:image/jpeg;base64,'+bytes.toString('base64')};
  const items=Array.from({length:5},(_,i)=>({...payload(),batchId:'photo-'+i,profileId:'photos',photos:[photo],platforms:[{id:'kufar'}]}));
  const result=await w.request({kind:'APP_REQUEST',type:'RUN_QUEUE',userGesture:true,payload:{profileId:'photos',items}});
  assert.ok(!result.error,result.error);assert.equal(result.batches.length,5);assert.equal(w.created.length,1);
  assert.ok(!JSON.stringify(w.data.autopostSessionV1).includes('base64'));
- const first=w.data.autopostSessionV1.batches[0];assert.equal(w.data[first.photoKey].length,1);
+ const first=w.data.autopostSessionV1.batches[0];assert.equal((await w.context.AutopostPhotos.get(first.photoKey)).length,1);
+ assert.deepEqual(w.localData,{},'No photos are exposed through storage.local');
  const task=await w.request({kind:'GET_TASK'},'https://www.kufar.by/ain/create',w.created[0].id);
  assert.equal(task.task.photos[0].dataUrl,photo.dataUrl);
  await w.request({kind:'REPORT_TASK',report:{jobId:task.task.jobId,status:'cancelled'}},'https://www.kufar.by/ain/create',w.created[0].id);
- assert.equal(w.data[first.photoKey],undefined);assert.equal(w.created.length,2);
+ assert.equal(await w.context.AutopostPhotos.get(first.photoKey),undefined);assert.equal(w.created.length,2);
+});
+
+test('private photos survive worker restart, then expire with the browser session', async () => {
+  const first = createWorker({accessLevel:false});
+  const photo = {name:'image.jpg',type:'image/jpeg',dataUrl:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2Q=='};
+  await first.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:{...payload(),photos:[photo]}});
+  const photoKey = first.data.autopostSessionV1.batches[0].photoKey;
+  const restarted = createWorker({data:first.data,indexedDB:first.indexedDB,accessLevel:false});
+  await restarted.request({kind:'APP_REQUEST',type:'STATUS'});
+  const task = await restarted.request({kind:'GET_TASK'},'https://av.by/',first.created[0].id);
+  assert.equal(task.task.photos[0].dataUrl,photo.dataUrl);
+  assert.equal((await restarted.request({kind:'GET_TASK'},'https://www.kufar.by/',first.created[0].id)).task,null);
+  const newSession = createWorker({indexedDB:first.indexedDB,accessLevel:false,localData:{'autopostPhotos:old':[photo],unrelated:'keep'}});
+  await newSession.request({kind:'APP_REQUEST',type:'STATUS'});
+  assert.equal(await newSession.context.AutopostPhotos.get(photoKey),undefined);
+  assert.deepEqual(newSession.localData,{unrelated:'keep'});
+});
+
+test('PING answers even while a storage operation is pending', async () => {
+  const worker = createWorker();
+  await worker.request({kind:'APP_REQUEST',type:'STATUS'});
+  const release = vm.runInContext('new Promise(resolve => { globalThis.releaseStorage = resolve; })',worker.context);
+  worker.context.chrome.storage.session.get = () => release;
+  const status = worker.request({kind:'APP_REQUEST',type:'STATUS'});
+  assert.equal((await worker.request({kind:'APP_REQUEST',type:'PING'})).version,core.VERSION);
+  worker.context.releaseStorage({});
+  await status;
 });
 
 test('RUN opens only fixed origins and duplicate batch is idempotent', async () => {

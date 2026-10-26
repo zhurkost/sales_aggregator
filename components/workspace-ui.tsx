@@ -56,6 +56,8 @@ import {
   api,
   download,
   extension,
+  EXTENSION_VERSION,
+  extensionVersionOK,
   newRecord,
   optimizePhoto,
   type AdRecord,
@@ -318,6 +320,8 @@ export function Workspace({
     [busy, setBusy] = useState(""),
     [checked, setChecked] = useState(false),
     [ext, setExt] = useState(false),
+    [extensionChecking, setExtensionChecking] = useState(false),
+    [extensionStatus, setExtensionStatus] = useState("Проверяем подключение…"),
     [serverAI, setServerAI] = useState(false),
     [candidates, setCandidates] = useState<Candidate[]>([]),
     [categoryId, setCategoryId] = useState(""),
@@ -332,6 +336,27 @@ export function Workspace({
     seenProgress = useRef(new Map<string, string>()),
     photoInput = useRef<HTMLInputElement>(null),
     photoUploading = useRef(false);
+  const extensionCheck = useRef<Promise<void> | null>(null);
+  const extensionConnected = useRef(false);
+  function checkExtension(showNotice = false): Promise<void> {
+    if (extensionCheck.current) return extensionCheck.current;
+    setExtensionChecking(true);
+    const operation = extension("PING")
+      .then((result) => {
+        const ok = extensionVersionOK(result.version);
+        const message = ok ? `Расширение ${result.version} подключено.`
+          : `Установлена версия ${result.version}. Обновите расширение до ${EXTENSION_VERSION}.`;
+        extensionConnected.current = ok;
+        if (alive.current) { setExt(ok); setExtensionStatus(message); if (showNotice) notify(message); }
+      })
+      .catch((error) => {
+        extensionConnected.current = false;
+        if (alive.current) { setExt(false); setExtensionStatus(errorText(error)); if (showNotice) notify(errorText(error)); }
+      })
+      .finally(() => { extensionCheck.current = null; if (alive.current) setExtensionChecking(false); });
+    extensionCheck.current = operation;
+    return operation;
+  }
   function change(next: AdRecord | ((r: AdRecord) => AdRecord)) {
     const value = typeof next === "function" ? next(current.current) : next;
     current.current = value;
@@ -421,14 +446,7 @@ export function Workspace({
   useEffect(() => {
     alive.current = true;
     void refresh().catch((e) => notify(errorText(e)));
-    extension("PING", undefined, 1800)
-      .then((r) =>
-        setExt(
-          typeof r.version === "string" &&
-            r.version.split(".").map(Number)[1] >= 4,
-        ),
-      )
-      .catch(() => {});
+    void checkExtension();
     api<{ serverConfigured: boolean }>("ai-settings")
       .then((r) => setServerAI(r.serverConfigured))
       .catch(() => {});
@@ -436,18 +454,21 @@ export function Workspace({
       if (
         event.source !== window ||
         event.origin !== location.origin ||
-        event.data?.source !== "autopost-extension" ||
-        event.data.type !== "PROGRESS"
+        event.data?.source !== "autopost-extension"
       )
         return;
+      if (event.data.type === "READY") { void checkExtension(); return; }
+      if (event.data.type !== "PROGRESS") return;
       progressQueue.current = progressQueue.current
         .then(() => receive(event.data.payload))
         .catch((e) => notify(errorText(e)));
     };
     window.addEventListener("message", listener);
+    const reconnect = () => { void checkExtension(); };
+    window.addEventListener("focus", reconnect);
     const timer = setInterval(
       () =>
-        extension("STATUS", { profileId: profile.id }, 3000)
+        extensionConnected.current && extension("STATUS", { profileId: profile.id }, 5000)
           .then((r) => {
             if (Array.isArray(r.batches))
               for (const b of r.batches)
@@ -462,6 +483,7 @@ export function Workspace({
       alive.current = false;
       clearInterval(timer);
       window.removeEventListener("message", listener);
+      window.removeEventListener("focus", reconnect);
     };
   }, []);
   useEffect(() => {
@@ -794,7 +816,7 @@ export function Workspace({
               className="text-button"
               onClick={() => setShowExtension(true)}
             >
-              {ext ? "Помощник подключён" : "Расширение 0.4.0"}
+              {ext ? "Помощник подключён" : `Расширение ${EXTENSION_VERSION}`}
             </button>
           </div>
         </header>
@@ -1343,7 +1365,8 @@ export function Workspace({
             >
               <X size={22} />
             </button>
-            <h2>Расширение Автопост 0.4.0</h2>
+            <h2>Расширение Автопост {EXTENSION_VERSION}</h2>
+            <p role="status">{extensionChecking ? "Проверяем подключение…" : extensionStatus}</p>
             <ol className="instructions">
               <li>Скачайте ZIP и распакуйте, заменив файлы старой версии.</li>
               <li>
@@ -1354,6 +1377,7 @@ export function Workspace({
               </li>
               <li>
                 Обновите страницу Автопоста и уже открытые вкладки площадок.
+                Расширение и сайт должны быть открыты в одном браузере.
               </li>
               <li>
                 Нажмите «Создать объявления». Откроются все выбранные площадки с
@@ -1370,27 +1394,16 @@ export function Workspace({
               нуждаются в проверке после входа.
             </p>
             <div className="modal-actions">
-              <a className="primary" href="/autopost-extension.zip" download>
+              <a className="primary" href={`/autopost-extension.zip?v=${EXTENSION_VERSION}`} download>
                 <Download size={17} />
                 Скачать ZIP
               </a>
               <button
                 className="secondary"
-                onClick={() =>
-                  extension("PING", undefined, 2000)
-                    .then((r) => {
-                      const ok = String(r.version).startsWith("0.4.");
-                      setExt(ok);
-                      notify(
-                        ok
-                          ? "Версия 0.4 подключена."
-                          : "Обновите расширение до версии 0.4.0.",
-                      );
-                    })
-                    .catch((e) => notify(errorText(e)))
-                }
+                disabled={extensionChecking}
+                onClick={() => void checkExtension(true)}
               >
-                Проверить подключение
+                {extensionChecking ? "Проверяем…" : "Проверить подключение"}
               </button>
             </div>
           </section>
@@ -2104,7 +2117,7 @@ function Bulk({
             disabled={!selected.length || selected.length > 20 || !!busy}
             onClick={() =>
               work("Проверяем очередь", async () => {
-                if (!ext) throw new Error("Установите расширение 0.4.0.");
+                if (!ext) throw new Error(`Подключите расширение ${EXTENSION_VERSION}.`);
                 const records = await loadSelected();
                 const problems = records.flatMap((r) => {
                   const e = [

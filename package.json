@@ -1,6 +1,6 @@
 {
   "name": "autopost-belarus",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -59,6 +59,7 @@
     "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.3.4",
+    "fake-indexeddb": "^6.2.6",
     "happy-dom": "^21.0.4",
     "json-rpc-2.0": "1.7.1",
     "raw-body": "3.0.2",

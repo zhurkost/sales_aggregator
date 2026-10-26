@@ -1,6 +1,7 @@
 "use strict";
-importScripts("core.js", "taxonomy.js");
+importScripts("core.js", "taxonomy.js", "photo-store.js");
 const core = globalThis.AutopostCore;
+const photoStore = globalThis.AutopostPhotos;
 const STORAGE_KEY = "autopostSessionV1";
 const PHOTO_PREFIX = "autopostPhotos:";
 const MAX_QUEUE_BYTES = 64 * 1024 * 1024;
@@ -24,7 +25,7 @@ async function load() {
   if (expired.length) {
     state.batches = state.batches.filter((b) => b.expiresAt > Date.now());
     await save(state);
-    await chrome.storage.local.remove(
+    await photoStore.remove(
       expired.map((b) => b.photoKey).filter(Boolean),
     );
     for (const b of expired)
@@ -144,7 +145,7 @@ async function appRequest(message, sender) {
   if (message.type === "CLEAR") {
     state.batches = state.batches.filter((b) => !own.includes(b));
     await save(state);
-    await chrome.storage.local.remove(
+    await photoStore.remove(
       own.map((b) => b.photoKey).filter(Boolean),
     );
     for (const b of own)
@@ -213,7 +214,7 @@ async function appRequest(message, sender) {
   for (const v of incoming) {
     const { photos, ...metadata } = v;
     const photoKey = PHOTO_PREFIX + crypto.randomUUID();
-    await chrome.storage.local.set({ [photoKey]: photos });
+    await photoStore.set(photoKey, photos);
     added.push({
       ...metadata,
       photoKey,
@@ -276,7 +277,7 @@ async function marketplaceRequest(message, sender) {
   if (message.kind === "GET_TASK") {
     const node = globalThis.AutopostTaxonomy?.[batch.listing.taxonomyId];
     const photos = batch.photoKey
-      ? (await chrome.storage.local.get(batch.photoKey))[batch.photoKey] || []
+      ? (await photoStore.get(batch.photoKey)) || []
       : [];
     return {
       task: {
@@ -333,7 +334,7 @@ async function marketplaceRequest(message, sender) {
           ? "Ссылка сохранена пользователем. Модерация и текущий статус требуют проверки."
           : "Ожидается действие на площадке.";
   if (batch.jobs.every((j) => terminal(j.status))) {
-    if (batch.photoKey) await chrome.storage.local.remove(batch.photoKey);
+    if (batch.photoKey) await photoStore.remove(batch.photoKey);
     batch.photoCharacters = 0;
   }
   await save(state);
@@ -350,11 +351,14 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
     !["APP_REQUEST", "GET_TASK", "REPORT_TASK"].includes(message.kind)
   )
     return false;
-  serialized(() =>
+  const work = () =>
     message.kind === "APP_REQUEST"
       ? appRequest(message, sender)
-      : marketplaceRequest(message, sender),
-  ).then(respond, (e) =>
+      : marketplaceRequest(message, sender);
+  // A health check must not wait behind photo writes or queue cleanup.
+  const result = message.kind === "APP_REQUEST" && message.type === "PING"
+    ? work() : serialized(work);
+  result.then(respond, (e) =>
     respond({
       error: e.message || "Расширение не ответило.",
       code: "EXTENSION_REQUEST_FAILED",
@@ -380,20 +384,19 @@ chrome.tabs.onRemoved.addListener((id) => {
     await save(state);
   }).catch(() => undefined);
 });
-void chrome.storage.session
-  .setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
-  .catch(() => undefined);
-void chrome.storage.local
-  .setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })
-  .catch(() => undefined);
+// storage.session is restricted to trusted extension contexts by default.
+// Do not call setAccessLevel: some Chromium versions expose it only on session,
+// and calling a missing local method prevents the entire worker from registering.
 // Session metadata disappears when the browser closes; orphaned photos are removed on restart.
 async function cleanPhotos() {
   const state = await load();
   const live = new Set(state.batches.map((b) => b.photoKey));
-  const all = await chrome.storage.local.get(null);
-  await chrome.storage.local.remove(
-    Object.keys(all).filter((k) => k.startsWith(PHOTO_PREFIX) && !live.has(k)),
-  );
+  const keys = await photoStore.keys();
+  await photoStore.remove(keys.filter((key) => !live.has(key)));
+  // Updating/reloading clears storage.session. Retire only our old photo keys;
+  // new photos never enter storage.local, even without setAccessLevel support.
+  const legacy = await chrome.storage.local.get(null);
+  await chrome.storage.local.remove(Object.keys(legacy).filter(key => key.startsWith(PHOTO_PREFIX)));
 }
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "autopost-cleanup")

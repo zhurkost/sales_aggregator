@@ -32,7 +32,7 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    if(path==='/api/analyze')return Response.json(body.task==='classify'?{candidates:[{id:'auto.parts.optics',confidence:.9,reason:'Фара — автомобильная оптика'}]}:{listing:{category:'parts',title:'Фара Passat',partName:'Фара',partNumber:'3G1941035D',description:'Есть царапина',currency:'BYN',price:'450',condition:'Б/у',priceUnit:'За штуку'}});
    throw new Error('Unexpected API '+path);
  };
- window.postMessage=message=>queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.4.0'}:{batches:[]}}})));
+ window.postMessage=message=>queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.4.1'}:{batches:[]}}})));
  mkdirSync(new URL('../work/',import.meta.url),{recursive:true});
  const code=ts.transpileModule(readFileSync(new URL('../components/workspace-ui.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2');
  const generated=new URL('../work/ui-test.generated.mjs',import.meta.url);writeFileSync(generated,code);

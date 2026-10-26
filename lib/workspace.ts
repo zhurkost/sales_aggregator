@@ -68,6 +68,12 @@ export function newRecord(listing: Listing, text = ""): AdRecord {
     events: [],
   };
 }
+export const EXTENSION_VERSION = "0.4.1";
+export function extensionVersionOK(version: unknown): boolean {
+  if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
+  const [major, minor, patch] = version.split(".").map(Number);
+  return major > 0 || minor > 4 || (minor === 4 && patch >= 1);
+}
 export function extension(
   type: string,
   payload?: unknown,
@@ -75,35 +81,52 @@ export function extension(
 ): Promise<Record<string, unknown>> {
   return new Promise((resolve, reject) => {
     const requestId = crypto.randomUUID();
+    let bridgeVersion = "";
+    let retry: ReturnType<typeof setInterval> | undefined;
+    const cleanup = () => {
+      clearTimeout(timer);
+      clearInterval(retry);
+      window.removeEventListener("message", listener);
+    };
     const listener = (e: MessageEvent) => {
       if (
         e.source !== window ||
         e.origin !== location.origin ||
         e.data?.source !== "autopost-extension" ||
-        e.data.requestId !== requestId ||
-        e.data.type !== "RESPONSE"
+        e.data.requestId !== requestId
       )
         return;
-      clearTimeout(timer);
-      window.removeEventListener("message", listener);
+      if (e.data.type === "ACK") {
+        bridgeVersion = String(e.data.payload?.version || "").slice(0, 24);
+        clearInterval(retry);
+        return;
+      }
+      if (e.data.type !== "RESPONSE") return;
+      cleanup();
       const r = e.data.payload || {};
       if (e.data.error || r.error)
         reject(new Error(String(e.data.error || r.error)));
       else resolve(r);
     };
     const timer = setTimeout(() => {
-      window.removeEventListener("message", listener);
+      cleanup();
       reject(
         new Error(
-          "Расширение не ответило. Установите версию 0.4.0 и обновите страницу.",
+          bridgeVersion
+            ? `Расширение ${bridgeVersion} найдено, но его фоновая часть не ответила. Перезагрузите расширение; если ошибка повторится, откройте у него «Ошибки» в браузере.`
+            : "Нет связи с расширением в этой вкладке. Обновите страницу после установки или перезагрузки расширения. Проверьте, что оно включено в этом браузере и ему разрешён доступ к сайту Автопоста.",
         ),
       );
     }, timeout);
     window.addEventListener("message", listener);
-    window.postMessage(
+    const send = () => window.postMessage(
       { source: "autopost-app", type, requestId, payload },
       location.origin,
     );
+    // Only repeat a read-only handshake. Never repeat a launch or other mutation.
+    // Reusing the request ID also lets the bridge deduplicate a delayed response.
+    if (type === "PING") retry = setInterval(send, 500);
+    send();
   });
 }
 export function download(
