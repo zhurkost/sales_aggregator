@@ -141,7 +141,7 @@ export async function optimizePhoto(file: File): Promise<Photo> {
     throw new Error("Уменьшите разрешение фотографии.");
   return {
     id: crypto.randomUUID(),
-    name: file.name.replace(/\.[^.]+$/, ".jpg"),
+    name: (file.name || "photo.png").replace(/\.[^.]+$/, ".jpg"),
     type: "image/jpeg",
     dataUrl,
   };

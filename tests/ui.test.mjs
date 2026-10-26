@@ -11,8 +11,11 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
  // EasyList's generic .ad-item rule hid the previous cabinet markup, including all controls.
  // Source: https://github.com/easylist/easylist/blob/master/easylist/easylist_general_hide.txt
  const blocker=window.document.createElement('style');blocker.textContent='.ad-item { display: none !important; }';window.document.head.append(blocker);
+ const optimizedFiles=[];
+ window.HTMLCanvasElement.prototype.getContext=()=>({drawImage(){}});
+ window.HTMLCanvasElement.prototype.toDataURL=()=> 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2Q==';
  const previous=new Map();
- for(const [key,value] of Object.entries({window,document:window.document,location:window.location,HTMLElement:window.HTMLElement,IS_REACT_ACT_ENVIRONMENT:true})){
+ for(const [key,value] of Object.entries({window,document:window.document,location:window.location,HTMLElement:window.HTMLElement,createImageBitmap:async(file)=>{optimizedFiles.push(file);return {width:200,height:100,close(){}};},IS_REACT_ACT_ENVIRONMENT:true})){
    previous.set(key,Object.getOwnPropertyDescriptor(globalThis,key));Object.defineProperty(globalThis,key,{value,configurable:true,writable:true});
  }
  const realFetch=globalThis.fetch;const stored=new Map();const requests=[];const notices=[];
@@ -83,6 +86,29 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    await click('Подтвердить и продолжить');
    const gpuRecord=[...stored.values()].find(r=>r.listing.taxonomyId==='computers.gpu');assert.ok(gpuRecord);
    assert.deepEqual(gpuRecord.selected,['kufar-general','onliner-general']);assert.deepEqual(gpuRecord.categoryOverrides,{});
+   // Paste uses the same photo pipeline as upload, without reading the clipboard in the background.
+   const paste=async({items=[],files=[]},target=window.document.querySelector('.photo-zone'))=>{
+     const event=new window.Event('paste',{bubbles:true,cancelable:true});
+     Object.defineProperty(event,'clipboardData',{value:{items,files}});
+     await act(async()=>{target.dispatchEvent(event);await new Promise(r=>setTimeout(r,15));});
+     return event;
+   };
+   const png=new window.File(['test-image'],'screenshot.png',{type:'image/png'});
+   const imageItem={kind:'file',type:'image/png',getAsFile:()=>png};
+   const zone=window.document.querySelector('.photo-zone');assert.equal(zone.tabIndex,0);
+   const textPaste=await paste({items:[{kind:'string',type:'text/plain'}]},window.document.querySelector('textarea'));
+   assert.equal(textPaste.defaultPrevented,false);assert.equal(optimizedFiles.length,0);
+   const imagePaste=await paste({items:[imageItem],files:[png]},window.document.querySelector('textarea'));
+   assert.equal(imagePaste.defaultPrevented,true);assert.equal(optimizedFiles.length,1,'items and files must not duplicate one pasted image');
+   assert.equal(zone.querySelectorAll('.photo-thumb').length,1);
+   await paste({files:[png]});assert.equal(zone.querySelectorAll('.photo-thumb').length,2,'FileList-only clipboard fallback');
+   await paste({items:Array.from({length:11},()=>imageItem)});assert.equal(zone.querySelectorAll('.photo-thumb').length,12);
+   await paste({items:[imageItem]});assert.equal(optimizedFiles.length,12,'At limit, additional images are not decoded');
+   assert.ok(notices.some(n=>n.includes('12 фотографий')));
+   await click('Мои объявления');assert.equal(stored.get(gpuRecord.id).photos.length,12,'Pasted photos are saved with the card');
+   assert.equal((await paste({items:[imageItem]},window.document.querySelector('main'))).defaultPrevented,false,'Cabinet view does not intercept paste');
+   await click('Открыть карточку',entries().find(e=>e.textContent.includes('Видеокарты')));
+   assert.equal(window.document.querySelectorAll('.photo-thumb').length,12,'Pasted photos survive reopening');
    assert.equal(notices.some(n=>/ошиб|не удалось/i.test(n)),false);
  }finally{
    await act(async()=>root.unmount());globalThis.fetch=realFetch;

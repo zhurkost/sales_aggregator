@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ClipboardEvent } from "react";
 import { legacyDrafts } from "../lib/legacy";
 import {
   ArrowRight,
@@ -330,7 +330,8 @@ export function Workspace({
     progressQueue = useRef(Promise.resolve()),
     alive = useRef(true),
     seenProgress = useRef(new Map<string, string>()),
-    photoInput = useRef<HTMLInputElement>(null);
+    photoInput = useRef<HTMLInputElement>(null),
+    photoUploading = useRef(false);
   function change(next: AdRecord | ((r: AdRecord) => AdRecord)) {
     const value = typeof next === "function" ? next(current.current) : next;
     current.current = value;
@@ -601,16 +602,42 @@ export function Workspace({
       notify("Карточка подготовлена. Проверьте характеристики и контакты.");
     }, "Готовим карточку");
   }
-  async function upload(files: FileList | null) {
-    if (!files) return;
-    await guarded(async () => {
-      const available = 12 - current.current.photos.length;
-      const photos: Photo[] = [];
-      for (const f of Array.from(files).slice(0, available))
-        photos.push(await optimizePhoto(f));
-      change((r) => ({ ...r, photos: [...r.photos, ...photos] }));
-    }, "Обрабатываем фото");
-    if (photoInput.current) photoInput.current.value = "";
+  async function upload(files: FileList | File[] | null) {
+    if (!files?.length) return;
+    if (busy || photoUploading.current) {
+      notify("Дождитесь завершения текущего действия и добавьте фото снова.");
+      return;
+    }
+    photoUploading.current = true;
+    try {
+      await guarded(async () => {
+        const recordId = current.current.id;
+        const available = 12 - current.current.photos.length;
+        if (available <= 0) throw new Error("Можно добавить до 12 фотографий. Удалите лишнее фото и попробуйте снова.");
+        const photos: Photo[] = [];
+        for (const f of Array.from(files).slice(0, available))
+          photos.push(await optimizePhoto(f));
+        if (!alive.current || current.current.id !== recordId) return;
+        change((r) => ({ ...r, photos: [...r.photos, ...photos].slice(0, 12) }));
+        notify(`Добавлено фото: ${photos.length}.${files.length > available ? " Лимит — 12 фотографий на объявление." : ""}`);
+      }, "Обрабатываем фото");
+    } finally {
+      photoUploading.current = false;
+      if (photoInput.current) photoInput.current.value = "";
+    }
+  }
+  function pastePhotos(event: ClipboardEvent<HTMLElement>) {
+    if (view !== "editor" || showExtension) return;
+    const files = Array.from(event.clipboardData.items)
+      .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
+      .filter((file): file is File => file !== null);
+    // Some browsers expose pasted files only through the FileList.
+    if (!files.length)
+      files.push(...Array.from(event.clipboardData.files).filter((file) => file.type.startsWith("image/")));
+    if (!files.length) return; // Ordinary text paste keeps its native behavior.
+    event.preventDefault();
+    void upload(files);
   }
   function launchPayload(record: AdRecord) {
     return {
@@ -789,7 +816,7 @@ export function Workspace({
             <LogOut size={18} />
           </button>
         </div>
-        <main>
+        <main onPaste={pastePhotos}>
           {view === "editor" && (
             <>
               <div className="heading-row">
@@ -951,9 +978,14 @@ export function Workspace({
                       multiple
                       accept="image/jpeg,image/png,image/webp"
                       hidden
+                      disabled={!!busy}
                       onChange={(e) => upload(e.target.files)}
                     />
                     <div
+                      role="group"
+                      aria-label="Фотографии объявления"
+                      aria-describedby="photo-paste-hint"
+                      tabIndex={0}
                       className={
                         "photo-zone " + (ad.photos.length ? "has-photos" : "")
                       }
@@ -991,6 +1023,10 @@ export function Workspace({
                         </button>
                       )}
                     </div>
+                    <p className="photo-paste-hint" id="photo-paste-hint">
+                      Перетащите файлы или нажмите на область фотографий и вставьте
+                      изображение из буфера: Ctrl+V (на Mac — ⌘V). До 12 фото.
+                    </p>
                   </section>
                   {ad.categoryConfirmed && (
                     <>
