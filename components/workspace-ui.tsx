@@ -1489,7 +1489,7 @@ function Cabinet({
           Перенести старые черновики
         </button>
       </div>
-      <div className="ad-list">
+      <div className="listing-records">
         {!filtered.length && (
           <div className="panel empty-state">
             <ClipboardList size={40} />
@@ -1498,7 +1498,7 @@ function Cabinet({
           </div>
         )}
         {filtered.map((a) => (
-          <article className="panel ad-item" key={a.id}>
+          <article className="panel listing-entry" key={a.id}>
             <div>
               <span className="soft-badge">
                 {categoryById(a.listing.taxonomyId)?.name ||
@@ -1514,7 +1514,7 @@ function Cabinet({
                 {new Date(a.updatedAt).toLocaleString("ru-RU")}
               </p>
             </div>
-            <div className="ad-job-chips">
+            <div className="listing-channel-statuses">
               {a.jobs.map((j) => (
                 <span key={j.platformId}>
                   {
