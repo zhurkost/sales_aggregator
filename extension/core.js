@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.8.2';
+  const VERSION = '0.8.3';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -151,7 +151,7 @@
   function normalize(value) {
     return String(value ?? '').toLowerCase().replace(/ё/gu, 'е').replace(/[_\-.[\]/():*]/gu, ' ').replace(/\s+/gu, ' ').trim();
   }
-  function startUrl(id,listing){if(id==='onliner'&&listing.category==='cars')return 'https://ab.onliner.by/';if(id==='abw'&&listing.category==='parts')return 'https://abw.by/carparts';return PLATFORMS[id].url;}
+  function startUrl(id,listing){if(id==='av'&&listing.category==='cars')return 'https://av.by/offer/draft/cars';if(id==='onliner'&&listing.category==='cars')return 'https://ab.onliner.by/';if(id==='abw'&&listing.category==='parts')return 'https://abw.by/carparts';return PLATFORMS[id].url;}
   function safeLink(id,value){try{const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!PLATFORMS[id]?.origins.includes(u.origin)||u.hostname==='profile.onliner.by')return '';u.hash='';return u.href;}catch{return '';}}
   const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, validateRecipe, publicJob, normalize,startUrl,safeLink };
   root.AutopostCore = Object.freeze(core);

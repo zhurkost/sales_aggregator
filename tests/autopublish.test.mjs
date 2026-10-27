@@ -10,7 +10,7 @@ const html=`<form id="ai-form"><input name="subject" value="Видеокарта
 <button type="submit">Подать объявление</button></form>`;
 function setup(){
  const w=new Window({url:'https://www.kufar.by/ain/create',settings:{enableJavaScriptEvaluation:true}});w.document.body.innerHTML=html;
- for(const script of ['core','publication','autopublish'])w.eval(readFileSync(new URL('../extension/'+script+'.js',import.meta.url),'utf8'));
+ for(const script of ['core','navigation','publication','autopublish'])w.eval(readFileSync(new URL('../extension/'+script+'.js',import.meta.url),'utf8'));
  const task={jobId:'job',name:'Kufar',publishMode:'automatic',expiresAt:Date.now()+60000,listing:{category:'general',title:'Видеокарта RX 570',description:'Описание видеокарты',price:'100',currency:'BYN'},photos:[{name:'one.jpg'}],photosAttempted:true,photosTransferred:1,attributes:[]};
  const result={filled:['title','description','price'],skipped:[],details:[]};
  const inspect=()=>w.AutopostAutoPublish.inspect(w.document,'kufar',w.location.href,task,result,true,e=>!e.hidden);

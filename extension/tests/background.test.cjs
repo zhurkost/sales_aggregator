@@ -55,6 +55,35 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
 
+test('navigation claims persist across reloads and worker restarts, with one grant for concurrent requests',async()=>{
+ const w=createWorker();await run(w);
+ const from='https://av.by/new_ad',to='https://av.by/offer/draft/cars';
+ const {task}=await w.request({kind:'GET_TASK'},from,10);
+ const claim={kind:'CLAIM_NAVIGATION',jobId:task.jobId,step:'vehicle-category',to};
+ const results=await Promise.all([w.request(claim,from,10),w.request(claim,from,10)]);
+ assert.equal(results.filter(r=>r.ok).length,1);
+ const restarted=createWorker({data:w.data,indexedDB:w.indexedDB});
+ assert.equal((await restarted.request(claim,from+'?retry=1',10)).ok,false);
+ assert.ok((await restarted.request({kind:'GET_TASK'},from,10)).task.navigationSteps['vehicle-category']);
+ // Redirecting back to the category page cannot revive the entry button.
+ assert.equal((await restarted.request({...claim,step:'entry'},from,10)).ok,false);
+});
+
+test('navigation grants are bound to the assigned tab, job, marketplace and active queue',async()=>{
+ const w=createWorker();await run(w);
+ const from='https://av.by/new_ad';const {task}=await w.request({kind:'GET_TASK'},from,10);
+ const claim={kind:'CLAIM_NAVIGATION',jobId:task.jobId,step:'vehicle-category',to:'https://av.by/offer/draft/cars'};
+ assert.equal((await w.request(claim,from,99)).task,null);
+ assert.equal((await w.request(claim,'https://www.kufar.by/ain/create',10)).task,null);
+ assert.equal(await w.request(claim,from,10,1),undefined);
+ for(const changes of [{jobId:'other'},{step:'__proto__'},{step:'entry'},{to:'https://av.by/new_ad/?retry=1'},{to:'https://www.kufar.by/ain/create'}])
+  assert.equal((await w.request({...claim,...changes},from,10)).ok,false);
+ await w.request({kind:'APP_REQUEST',type:'PAUSE',userGesture:true,payload:{}});
+ assert.equal((await w.request(claim,from,10)).ok,false);
+ await w.request({kind:'APP_REQUEST',type:'RESUME',userGesture:true,payload:{}});
+ assert.equal((await w.request(claim,from,10)).ok,true);
+});
+
 test('record/site duplicate guard, sold cancellation and restored jobs cannot be re-enabled for automatic sending',async()=>{
  const w=createWorker();const input={...payload(),recordId:'card',profileId:'owner',publishMode:'automatic',platforms:[{id:'kufar'}],platformText:{kufar:'Доставка по Минску'}};
  const app=(type,payload)=>w.request({kind:'APP_REQUEST',type,userGesture:true,payload:{profileId:'owner',...payload}});
@@ -231,7 +260,7 @@ test('RUN opens only fixed origins and duplicate batch is idempotent', async () 
   const worker = createWorker();
   const result = await run(worker);
   assert.equal(result.jobs.length, 2);
-  assert.deepEqual(worker.created.map((tab) => tab.url), ['https://av.by/', 'https://www.kufar.by/ain/create']);
+  assert.deepEqual(worker.created.map((tab) => tab.url), ['https://av.by/offer/draft/cars', 'https://www.kufar.by/ain/create']);
   assert.ok(result.jobs.every((job) => job.status === 'opening'));
   await run(worker);
   assert.equal(worker.created.length, 2);

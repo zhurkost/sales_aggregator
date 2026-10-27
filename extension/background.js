@@ -1,5 +1,5 @@
 "use strict";
-importScripts("core.js", "photo-store.js", "prices.js", "publication.js", "status.js");
+importScripts("core.js", "navigation.js", "photo-store.js", "prices.js", "publication.js", "status.js");
 const core = globalThis.AutopostCore;
 const publication = globalThis.AutopostPublication;
 const photoStore = globalThis.AutopostPhotos;
@@ -513,8 +513,21 @@ async function marketplaceRequest(message, sender) {
         autoAttempt: job.autoAttempt || null,
         submission: job.submission || null,
         complete: terminal(job.status),
+        navigationSteps: job.navigationSteps || {},
       },
     };
+  }
+  if (message.kind === "CLAIM_NAVIGATION") {
+    const navigation = globalThis.AutopostNavigation;
+    if (message.jobId !== job.id || batch.paused || batch.cancelled || terminal(job.status) || job.submission ||
+        !navigation.canClaim(job.canonicalId, sender.url, message.step, message.to, batch.listing)) return {ok:false};
+    job.navigationSteps ||= {};
+    if (Object.hasOwn(job.navigationSteps, message.step)) return {ok:false};
+    // A document reload or worker restart must not reset navigation attempts.
+    // Persist before granting the click, even when the response is lost.
+    job.navigationSteps[message.step] = {at:Date.now(),from:navigation.pageKey(sender.url),to:message.to === null ? null : navigation.pageKey(message.to)};
+    await save(state);
+    return {ok:true};
   }
   if (message.kind === 'AUTO_BEGIN') {
     if (message.jobId !== job.id || terminal(job.status)) return {task:null};
@@ -616,7 +629,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
     sender.frameId !== 0 ||
     !Number.isInteger(sender.tab?.id) ||
     !core.object(message) ||
-    !["APP_REQUEST", "GET_TASK", "REPORT_TASK", "ARM_SUBMISSION", "RESET_SUBMISSION", "AUTO_BEGIN", "GET_STATUS_TASK", "REPORT_STATUS"].includes(message.kind)
+    !["APP_REQUEST", "GET_TASK", "REPORT_TASK", "ARM_SUBMISSION", "RESET_SUBMISSION", "AUTO_BEGIN", "CLAIM_NAVIGATION", "GET_STATUS_TASK", "REPORT_STATUS"].includes(message.kind)
   )
     return false;
   const work = () =>

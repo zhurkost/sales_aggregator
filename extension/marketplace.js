@@ -3,7 +3,8 @@
   const core = globalThis.AutopostCore,
     dom = globalThis.AutopostDOM,
     publication = globalThis.AutopostPublication,
-    automatic = globalThis.AutopostAutoPublish;
+    automatic = globalThis.AutopostAutoPublish,
+    navigation = globalThis.AutopostNavigation;
   const platform = core.platformForOrigin(location.origin);
   if (window !== window.top || !platform) return;
   let task;
@@ -19,8 +20,7 @@
     arming = false,
     lastSubmitAt = 0,
     lastReport = "",
-    autoReadySince = 0,
-    navigationAttempts = 0;
+    autoReadySince = 0;
   const filled = new Set(task.filledKeys || []),
     attempted = new Map();
   const node = (tag, text, cls) => {
@@ -368,51 +368,22 @@
   function hasForm() {
     return (
       !!dom.findNative("description", platform.id) ||
-      !!document.querySelector('[data-name=\"category\"]')
+      platform.id !== "av" && !!document.querySelector('[data-name=\"category\"]')
     );
   }
   async function route() {
-    if (hasForm()) return true;
-    if (
-      [...document.querySelectorAll('input[type=\"password\"]')].some(
-        dom.visible,
-      ) ||
-      location.hostname === "profile.onliner.by" ||
-      /\/(?:login|auth|signin)(?:\/|$)/i.test(location.pathname)
-    )
-      return false;
-    if (navigationAttempts >= 2) return false;
-    const names =
-      task.listing.category === "cars"
-        ? [
-            "Подать объявление",
-            "Продать автомобиль",
-            "Разместить объявление",
-            "Добавить объявление",
-          ]
-        : [
-            "Подать объявление",
-            "Добавить запчасть",
-            "Добавить объявление",
-            "Разместить объявление",
-          ];
-    for (const label of names) {
-      const hits = dom.exact(label, document, 'a,button,[role=\"button\"]');
-      if (hits.length === 1) {
-        const href = hits[0].getAttribute("href");
-        if (
-          href &&
-          !core.platformForOrigin(
-            core.originOf(new URL(href, location.href).href),
-          )
-        )
-          continue;
-        navigationAttempts++;
-        hits[0].click();
-        return false;
-      }
-    }
-    return false;
+    const from = location.href;
+    const plan = navigation.plan(document, platform.id, from, task, dom, hasForm());
+    if (!plan.step) return plan;
+    const jobId = task.jobId;
+    const granted = await chrome.runtime.sendMessage({kind:"CLAIM_NAVIGATION",jobId,step:plan.step,to:plan.to});
+    if (!granted?.ok || stopped || !task || task.jobId !== jobId || task.paused || location.href !== from)
+      return {status:"manual_required",message:"Повторный переход остановлен. Продолжите текущий шаг площадки; помощник заполнит появившиеся поля."};
+    task.navigationSteps ||= {};
+    task.navigationSteps[plan.step] = true;
+    if (plan.control?.isConnected) plan.control.click();
+    else if (!plan.control && plan.to) location.assign(plan.to);
+    return plan;
   }
   async function fill(manual = false) {
     if (busy || stopped || !task) return;
@@ -449,12 +420,9 @@
         );
         return;
       }
-      await route();
-      if (!hasForm()) {
-        await report(
-          "authorization_required",
-          "Войдите в аккаунт площадки. Помощник продолжит после входа; если форма не открылась, нажмите кнопку подачи на сайте.",
-        );
+      const routing = await route();
+      if (routing.state !== "form") {
+        await report(routing.status, routing.message);
         return;
       }
       const categoryReady = await dom.category(task, platform.id);
@@ -523,6 +491,7 @@
       task.paused = response.task.paused;
       task.publishMode = response.task.publishMode;
       task.autoAttempt = response.task.autoAttempt;
+      task.navigationSteps = response.task.navigationSteps;
       if (!arming) task.submission = response.task.submission;
       if (response.task.complete) {
         stop("Задание завершено. Сведения сохранены в личном кабинете.");
