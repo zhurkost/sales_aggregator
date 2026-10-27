@@ -48,6 +48,8 @@ test('reimport updates only mapped nonempty fields and preserves links, photos, 
   const updated=await req(s,'import',{sourceId:'crm',expectedRevision:linked.revision,record:{...incoming,photos:[],listing:{...incoming.listing,title:'',price:'200',phone:'wrong',taxonomyId:'auto.cars'}},fields:['price','title']},a.cookie);
   assert.equal(updated.status,200);const r=(await updated.json()).ad;assert.equal(r.id,linked.id);assert.equal(r.listing.price,'200');assert.equal(r.listing.title,'RX 570');assert.equal(r.listing.taxonomyId,'computers.gpu');assert.equal(r.photos.length,1);assert.equal(r.jobs[0].url,linked.jobs[0].url);
   assert.equal((await req(s,'import',{sourceId:'crm',expectedRevision:linked.revision,record:incoming,fields:['price']},a.cookie)).status,409);
+  assert.equal((await req(s,'import',{sourceId:'crm',expectedRevision:r.revision,record:{...incoming,listing:{...incoming.listing,currency:''}},fields:['price','currency']},a.cookie)).status,400,'unsupported currencies cannot relabel an updated price');
+  assert.equal((await req(s,'import',{sourceId:'crm',expectedRevision:r.revision,record:{...incoming,listing:{...incoming.listing,currency:'USD',price:''}},fields:['currency']},a.cookie)).status,400,'currency changes require a matching price');
   const other=(await (await req(s,'import',{sourceId:'crm2',record:{...incoming,id:crypto.randomUUID()},fields:['price']},a.cookie)).json()).ad;assert.notEqual(other.id,r.id);
   assert.equal((await req(s,'ads/'+r.id,undefined,b.cookie)).status,404);
   assert.equal((await (await req(s,'ads',undefined,a.cookie)).json()).ads.length,2);
@@ -106,7 +108,7 @@ test('photo suggestions use a server-selected vision model, allow only bounded d
  globalThis.fetch=async(_url,init)=>{captured=JSON.parse(init.body);return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({description:'Видеокарта с двумя вентиляторами',candidates:[{id:'computers.gpu'},{id:'invented'}],questions:['Укажите объём памяти']})}}]});};
  const photoRequest=body=>new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{origin:'http://localhost:5173','content-type':'application/json'},body:JSON.stringify({task:'photos',text:'Опиши товар',...body})});
  try{
-  const r=await runWithAISettings({AI_API_KEY:'test-server-key',AI_PROVIDER:'openrouter'},()=>POST(photoRequest({photos:[card().photos[0].dataUrl],model:'expensive/model'})));assert.equal(r.status,200);const result=await r.json();assert.deepEqual(result.candidates.map(c=>c.id),['computers.gpu']);assert.equal(captured.model,'google/gemini-3.5-flash-lite');assert.equal(captured.messages[1].content[1].type,'image_url');assert.equal(result.listing,undefined);
+  const r=await runWithAISettings({AI_API_KEY:'test-server-key',AI_PROVIDER:'openrouter'},()=>POST(photoRequest({photos:[card().photos[0].dataUrl],model:'expensive/model'})));assert.equal(r.status,200);const result=await r.json();assert.deepEqual(result.candidates.map(c=>c.id),['computers.gpu']);assert.equal(captured.model,'google/gemini-3.5-flash-lite');assert.equal(captured.reasoning,undefined,'Vision endpoint requires its default reasoning mode');assert.equal(captured.messages[1].content[1].type,'image_url');assert.equal(result.listing,undefined);
   assert.equal((await POST(photoRequest({photos:['https://internal.example/photo']}))).status,400);
  }finally{globalThis.fetch=real;}
 });

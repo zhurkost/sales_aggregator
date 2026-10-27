@@ -445,6 +445,8 @@ export function createWorkspace(config) {
         if(old?.archived || old?.sold)throw new Error('Карточка с этим ID в архиве или продана. Восстановите её явно перед импортом.');
         let record={...incoming,id:'import-'+hash(sourceId+'\0'+(externalId||JSON.stringify(incoming.listing))).slice(0,40),sourceId};
         if(old) {
+          if(input.fields.includes('currency') && !incoming.listing?.currency)throw new Error('В выгрузке неподдерживаемая валюта. Используйте BYN, USD или EUR.');
+          if(input.fields.includes('currency') && incoming.listing.currency!==old.listing.currency && (!input.fields.includes('price')||!incoming.listing.price))throw new Error('При смене валюты укажите новую цену в той же строке. Пересчёт автоматически не выполняется.');
           const listing={...old.listing};
           for(const field of input.fields) if(Object.hasOwn(listing,field) && !['category','taxonomyId'].includes(field) && incoming.listing?.[field])listing[field]=incoming.listing[field];
           record={...old,listing,text:listing.description,photos:incoming.photos?.length?incoming.photos:old.photos,

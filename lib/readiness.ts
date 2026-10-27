@@ -25,6 +25,7 @@ export function readiness(record:AdRecord|AdSummary, connected:boolean) {
       .map(f=>f.label):[];
     const verification=fieldVerification(listing.taxonomyId,platform.canonicalId,record.categoryOverrides);
     const notes=[...(missing.length?['Площадка может запросить: '+missing.join(', ')]:[]),
+      ...(platform.canonicalId==='onliner'&&listing.category!=='cars'&&listing.currency!=='BYN'?['Барахолка Onlíner принимает цену в BYN. Автоматического пересчёта валют нет.']:[]),
       ...(!['form_inspected','documentation_and_sample'].includes(verification.status)?['Живая форма категории проверена не полностью. Дополнительные поля могут появиться на площадке.']:[]),
       'Вход в аккаунт и ограничения площадки проверяются при открытии формы.',
       ...(!['kufar','onliner'].includes(platform.canonicalId)||platform.canonicalId==='onliner'&&listing.category==='cars'?['Финальная отправка на этой площадке — с вашим участием.']:[])];

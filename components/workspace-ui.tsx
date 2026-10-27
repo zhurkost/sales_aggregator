@@ -2291,7 +2291,8 @@ function Bulk({
                     ))
                       photos.push(await optimizePhoto(file));
                     const previous=ads.find(a=>a.sourceId===sourceId&&item.record.externalId&&a.externalId===item.record.externalId);
-                    const result=await api<{action:string}>('workspace/import',{sourceId,record:{...item.record,photos},fields:Object.values(columns),expectedRevision:previous?.revision});
+                    const nonemptyFields=Object.entries(columns).filter(([header,target])=>target && table!.rows[item.sourceRow-2]?.[header]?.trim()).map(([,target])=>target);
+                    const result=await api<{action:string}>('workspace/import',{sourceId,record:{...item.record,photos},fields:nonemptyFields,expectedRevision:previous?.revision});
                     if(result.action==='updated')updated++;
                     count++;
                     setBusy("Сохранено " + count + " из " + valid.length);
