@@ -68,6 +68,7 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    stored.get('existing-2').batchId='cabinet-batch-two';
    stored.get('existing-2').jobs=[{platformId:'kufar-parts',status:'manual_required',message:'Нужен шаг'},{platformId:'onliner-parts',status:'link_recorded',url:'https://baraholka.onliner.by/viewtopic.php?t=12345',message:'Ссылка сохранена'}];
    stored.get('existing-3').batchId='cabinet-batch-three';stored.get('existing-3').jobs=[{platformId:'onliner-parts',status:'manual_required',message:'Нужен шаг'}];
+   stored.get('existing-4').jobs=[{platformId:'kufar-parts',status:'inactive',url:'https://www.kufar.by/item/987654',message:'Неактивно по отметке пользователя'}];
    await click('Мои объявления');assert.equal(entries().length,4);assert.ok(entries().every(visible),'All four saved cards must be visible');
    const secondRow=()=>entries().find(e=>e.textContent.includes('Сохранённая фара 2'));
    const beforeOpen=requests.length;
@@ -82,6 +83,9 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    assert.equal(messages.find(m=>m.type==='CHECK_STATUS').payload.items.length,1,'Only saved links are checked');
    assert.equal(messages.find(m=>m.type==='CHECK_STATUS').payload.items[0].recordId,'existing-2');
    await click('Обновить статусы всех активных');assert.equal(messages.filter(m=>m.type==='CHECK_STATUS').length,2);
+   assert.equal(messages.filter(m=>m.type==='CHECK_STATUS').at(-1).payload.items.length,1,'Global check excludes locally inactive jobs');
+   await click('Обновить статусы',entries().find(e=>e.textContent.includes('Сохранённая фара 4')));
+   assert.equal(messages.filter(m=>m.type==='CHECK_STATUS').at(-1).payload.items[0].recordId,'existing-4','An individual inactive listing can still be checked');
    await act(async()=>{window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'REMOTE_STATUS',payload:{profileId:'ui-profile',recordId:'existing-2',platformId:'onliner-parts',url:stored.get('existing-2').jobs[1].url,receiptId:'receipt-test',remoteStatus:{state:'moderation',checkedAt:new Date().toISOString(),message:'Объявление на модерации'}}}}));await new Promise(resolve=>setTimeout(resolve,15));});
    assert.match(secondRow().textContent,/На модерации/);assert.equal(stored.get('existing-2').jobs[1].remoteStatus.state,'moderation');assert.ok(messages.some(m=>m.type==='ACK_RECEIPT'&&m.payload.receiptId==='receipt-test'));
    await act(async()=>{window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'PROGRESS',payload:{profileId:'ui-profile',recordId:'existing-2',batchId:'cabinet-batch-two',receiptId:'auto-link',jobs:[{platformId:'kufar-parts',status:'link_recorded',url:'https://www.kufar.by/item/123456',message:'Автоматически'}]}}}));await new Promise(resolve=>setTimeout(resolve,15));});

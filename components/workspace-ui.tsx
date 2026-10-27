@@ -480,7 +480,7 @@ export function Workspace({
   }
   async function checkStatuses(records:AdSummary[]) {
     if (!ext) { setShowExtension(true); return; }
-    const items = records.flatMap(record=>record.jobs.filter(j=>j.url && j.status!=="inactive").map(j=>({recordId:record.id,platformId:j.platformId,url:j.url,title:listingTitle(record.listing)})));
+    const items = records.flatMap(record=>record.jobs.filter(j=>j.url).map(j=>({recordId:record.id,platformId:j.platformId,url:j.url,title:listingTitle(record.listing)})));
     if (!items.length) { notify("Сначала сохраните ссылку на объявление. После подачи помощник попробует получить её автоматически."); return; }
     await guarded(async()=>{
       const result = await extension("CHECK_STATUS",{profileId:profile.id,items},25000);
@@ -1690,7 +1690,7 @@ function Cabinet({
           Обновить список
         </button>
         <button className="secondary" disabled={pendingChecks>0 || !ads.some(a=>!a.archived && a.jobs.some(j=>j.url && j.status!=="inactive"))}
-          onClick={()=>onCheckStatuses(ads.filter(a=>!a.archived))}>
+          onClick={()=>onCheckStatuses(ads.filter(a=>!a.archived).map(a=>({...a,jobs:a.jobs.filter(j=>j.status!=="inactive")})))}>
           {pendingChecks ? `Проверяем статусы (${pendingChecks})…` : "Обновить статусы всех активных"}
         </button>
         <button className="text-button" onClick={() => void onLegacy()}>
@@ -1747,7 +1747,7 @@ function Cabinet({
               <button className="primary" onClick={() => onOpen(a.id)}>
                 Открыть карточку
               </button>
-              <button className="secondary" disabled={pendingChecks>0 || !a.jobs.some(j=>j.url && j.status!=="inactive")}
+              <button className="secondary" disabled={pendingChecks>0 || !a.jobs.some(j=>j.url)}
                 title={a.jobs.some(j=>j.url)?"Проверить площадки по сохранённым ссылкам":"Проверка доступна после сохранения ссылки"}
                 onClick={()=>onCheckStatuses([a])}>Обновить статусы</button>
               <button
