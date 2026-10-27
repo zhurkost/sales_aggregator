@@ -22,6 +22,8 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
  let contactSettings={phone:'+375291112233',city:'Брест'};
  globalThis.fetch=async(path,options={})=>{
    const body=options.body?JSON.parse(options.body):undefined;requests.push({path,body});
+   if(path==='/api/workspace/notifications')return Response.json({notifications:[]});
+   if(path==='/api/workspace/team')return Response.json({members:[],workspaces:[],role:'owner'});
    if(path==='/api/ai-settings')return Response.json({serverConfigured:true});
    if(path==='/api/workspace/settings'){if(body)contactSettings={...contactSettings,...body};return Response.json({settings:contactSettings});}
    if(path==='/api/workspace/ads'){
@@ -34,10 +36,10 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    if(path==='/api/analyze')return Response.json(body.task==='identify'?{identity:{status:'identified',name:'RX 570',query:'RX 570',terms:['RX 570'],kind:'product',condition:'Б/у'}}:body.task==='classify'?{candidates:[{id:'auto.parts.optics',confidence:.9,reason:'Фара — автомобильная оптика'}]}:{listing:{category:'parts',title:'Фара Passat',partName:'Фара',partNumber:'3G1941035D',description:'Есть царапина',currency:'BYN',price:'450',condition:'Б/у',priceUnit:'За штуку'}});
    throw new Error('Unexpected API '+path);
  };
- window.postMessage=message=>{messages.push(message);queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.7.0'}:message.type==='OPEN_JOB'&&message.payload.recordId==='existing-3'?{resumeToken:'test-ticket'}:message.type==='RESTORE_JOB'?{jobs:[{platformId:'onliner-parts',status:'opening',message:'Восстановлено'}]}:message.type==='PRICE_SEARCH'?{checkedAt:new Date().toISOString(),results:[{id:'kufar',name:'Kufar',url:'https://www.kufar.by/l',status:'ok',total:42,scanned:30,matched:12,groups:[{currency:'BYN',count:12,min:100,max:250,median:180}]}]}:{batches:[]}}})));};
+ window.postMessage=message=>{messages.push(message);queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.8.0'}:message.type==='OPEN_JOB'&&message.payload.recordId==='existing-3'?{resumeToken:'test-ticket'}:message.type==='RESTORE_JOB'?{jobs:[{platformId:'onliner-parts',status:'opening',message:'Восстановлено'}]}:message.type==='PRICE_SEARCH'?{checkedAt:new Date().toISOString(),results:[{id:'kufar',name:'Kufar',url:'https://www.kufar.by/l',status:'ok',total:42,scanned:30,matched:12,groups:[{currency:'BYN',count:12,min:100,max:250,median:180}]}]}:{batches:[]}}})));};
  mkdirSync(new URL('../work/',import.meta.url),{recursive:true});
- const compile=name=>ts.transpileModule(readFileSync(new URL('../components/'+name+'.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2').replace(/(from\s+["']\.\/(?:price-comparison|category-attributes))(["'])/g,'$1.generated.mjs$2');
- for(const name of ['price-comparison','category-attributes'])writeFileSync(new URL('../work/'+name+'.generated.mjs',import.meta.url),compile(name));
+ const compile=name=>ts.transpileModule(readFileSync(new URL('../components/'+name+'.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2').replace(/(from\s+["']\.\/(?:price-comparison|category-attributes|operations|seller-templates|team|notifications))(["'])/g,'$1.generated.mjs$2');
+ for(const name of ['price-comparison','category-attributes','operations','seller-templates','team','notifications'])writeFileSync(new URL('../work/'+name+'.generated.mjs',import.meta.url),compile(name));
  const code=compile('workspace-ui');
  const generated=new URL('../work/ui-test.generated.mjs',import.meta.url);writeFileSync(generated,code);
  const {Workspace}=await import(generated.href);const {createRoot}=await import('react-dom/client');
@@ -159,6 +161,12 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    await click('Применить режим к запущенной очереди');assert.equal(messages.find(m=>m.type==='SET_MODE').payload.publishMode,'automatic');
    await act(async()=>window.document.querySelector('input[name="publish-mode"][value="manual"]').click());
    await click('Применить режим к запущенной очереди');assert.equal(messages.filter(m=>m.type==='SET_MODE').at(-1).payload.publishMode,'manual');
+   await click('Очередь и уведомления');assert.match(window.document.body.textContent,/Все задания/);assert.match(window.document.body.textContent,/События, требующие внимания/);
+   await click('Приостановить очередь');assert.equal(messages.at(-1).type,'PAUSE');await click('Продолжить очередь');assert.equal(messages.at(-1).type,'RESUME');
+   await click('Массовые изменения');assert.match(window.document.body.textContent,/Предпросмотр изменений/);
+   const batchCheckbox=window.document.querySelector('main input[type="checkbox"]');await act(async()=>batchCheckbox.click());
+   await click('Предпросмотр изменений');assert.match(window.document.body.textContent,/Применить к 1 карточкам/);
+   await click('Команда');assert.match(window.document.body.textContent,/Доступные кабинеты/);
    assert.equal(notices.some(n=>/ошиб|не удалось/i.test(n)),false);
  }finally{
    await act(async()=>root.unmount());globalThis.fetch=realFetch;

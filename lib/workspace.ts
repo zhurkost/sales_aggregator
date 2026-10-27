@@ -1,7 +1,9 @@
 import type { Listing } from "./listing.ts";
 import type { Job } from "./platforms.ts";
 export type Photo = { id: string; name: string; type: string; dataUrl: string };
-export type Profile = { id: string; login: string; name: string };
+export type Profile = { id: string; accountId?:string; login: string; name: string };
+let workspaceContext='';
+export function setWorkspaceContext(id:string){workspaceContext=id;}
 export type SellerContacts = { phone?: string; city?: string };
 export function withSellerContacts(listing: Listing, contacts: SellerContacts): Listing {
   return { ...listing, phone: listing.phone || contacts.phone || "", city: listing.city || contacts.city || "" };
@@ -9,6 +11,7 @@ export function withSellerContacts(listing: Listing, contacts: SellerContacts): 
 export type AdRecord = {
   id: string;
   revision: number;
+  contentVersion?: number;
   createdAt: string;
   updatedAt: string;
   text: string;
@@ -20,11 +23,15 @@ export type AdRecord = {
   categoryOverrides?: import('./taxonomy.ts').CategoryOverrides;
   attributes?: import('./field-rules.ts').AttributeValues;
   archived: boolean;
+  sold?: boolean;
+  assigneeId?:string;
   jobs: Job[];
   batchId?: string;
   externalId?: string;
+  sourceId?: string;
+  platformText?: Record<string,string>;
   photoRefs?: string[];
-  events: { at: string; message: string }[];
+  events: { at: string; message: string; actor?:string }[];
 };
 export type AdSummary = Omit<AdRecord, "photos" | "text"> & {
   photoCount: number;
@@ -37,7 +44,7 @@ export async function api<T = Record<string, unknown>>(
   const response = await fetch("/api/" + path, {
     method: method || (body === undefined ? "GET" : "POST"),
     credentials: "same-origin",
-    headers: body === undefined ? {} : { "Content-Type": "application/json" },
+    headers: {...(body===undefined?{}:{"Content-Type":"application/json"}),...(workspaceContext?{'x-autopost-workspace':workspaceContext}:{})},
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   let result;
@@ -73,11 +80,11 @@ export function newRecord(listing: Listing, text = ""): AdRecord {
     events: [],
   };
 }
-export const EXTENSION_VERSION = "0.7.0";
+export const EXTENSION_VERSION = "0.8.0";
 export function extensionVersionOK(version: unknown): boolean {
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
   const [major, minor] = version.split(".").map(Number);
-  return major > 0 || minor >= 7;
+  return major > 0 || minor >= 8;
 }
 export function extension(
   type: string,

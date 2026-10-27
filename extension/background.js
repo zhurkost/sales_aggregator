@@ -20,6 +20,20 @@ const send = (id, message) =>
   chrome.tabs.sendMessage(id, message, { frameId: 0 }).catch(() => undefined);
 const save = (state) => chrome.storage.session.set({ [STORAGE_KEY]: state });
 const terminal = (s) => ["link_recorded", "cancelled", "submitted"].includes(s);
+async function verifySnapshot(batch,job) {
+  for(const id of batch.sourceTabIds.slice(-3).reverse()) {
+    try {
+      if(core.originOf((await chrome.tabs.get(id)).url)!==batch.origin)continue;
+      let timer;
+      const result=await Promise.race([send(id,{kind:'VERIFY_SNAPSHOT',origin:batch.origin,profileId:batch.profileId,
+        item:{recordId:batch.recordId,batchId:batch.batchId,listing:batch.listing,attributes:batch.attributes,categoryOverrides:batch.categoryOverrides,photoIds:batch.photoIds,platformText:batch.platformText,platforms:[{id:job.platformId}]}}),
+        new Promise(resolve=>{timer=setTimeout(()=>resolve(null),6000);})]).finally(()=>clearTimeout(timer));
+      if(result?.ok)return;
+      if(result?.error)throw Object.assign(new Error(result.error),{verifiedFailure:true});
+    }catch(error){if(error.verifiedFailure)throw error;}
+  }
+  throw new Error('Откройте вкладку Автопоста: перед автоматической отправкой нужно сверить актуальную карточку.');
+}
 async function load() {
   const raw = (await chrome.storage.session.get(STORAGE_KEY))[STORAGE_KEY];
   const state =
@@ -300,6 +314,7 @@ async function appRequest(message, sender) {
       job = newJob(value.platforms[0]); restored.jobs.push(job);
     }
     job.manualOnly = true;
+    job.restored = true;
     state.pendingOpens = state.pendingOpens.filter(item => item !== pending);
     if (!restored.sourceTabIds.includes(sender.tab.id)) restored.sourceTabIds.push(sender.tab.id);
     await save(state);
@@ -330,6 +345,7 @@ async function appRequest(message, sender) {
     return {pendingChecks:state.checks.filter(c=>c.origin===origin && c.profileId===profileId).length};
   }
   if (message.type === "OPEN_JOB") {
+    if(batch?.cancelled)throw new Error('Подача остановлена для проданного товара. Используйте сохранённую ссылку для управления объявлением.');
     if (batch && message.payload.recordId && batch.recordId !== message.payload.recordId)
       throw new Error("Карточка задания не совпадает.");
     const job = batch?.jobs.find(
@@ -357,21 +373,33 @@ async function appRequest(message, sender) {
     return { jobs: batch.jobs.map(core.publicJob) };
   }
   if (["PAUSE", "RESUME"].includes(message.type)) {
-    for (const b of own) b.paused = message.type === "PAUSE";
+    for (const b of own) b.paused = b.cancelled || message.type === "PAUSE";
     for (const b of own) for (const j of b.jobs) if (Number.isInteger(j.tabId))
       await send(j.tabId,{kind:'TASK_MODE',paused:b.paused,publishMode:j.manualOnly?'manual':b.publishMode||'manual'});
     if (message.type === "RESUME") await advance(state);
     else await save(state);
     return { ok: true };
   }
+  if(message.type==='CANCEL_RECORD') {
+    for(const b of own.filter(b=>b.recordId===message.payload.recordId)) {
+      b.paused=true;b.cancelled=true;
+      for(const j of b.jobs) {
+        if(Number.isInteger(j.tabId))await send(j.tabId,{kind:'TASK_MODE',paused:true,publishMode:'manual'});
+        if(!terminal(j.status)) {j.status=j.submission?'manual_required':'cancelled';j.message=j.submission?'Подача могла состояться. Проверьте результат и снимите проданный товар.':'Подача остановлена: товар отмечен проданным.';}
+      }
+      await broadcast(b);
+    }
+    await save(state);await advance(state);return {ok:true};
+  }
   if (message.type === 'SET_MODE') {
     if (!message.userGesture || !['manual','automatic'].includes(message.payload.publishMode))
       throw new Error('Выберите режим кнопкой в Автопосте.');
     for (const b of own) {
+      if(b.cancelled)continue;
       b.publishMode=message.payload.publishMode;
-      for (const j of b.jobs) j.manualOnly=false;
+      for (const j of b.jobs) j.manualOnly=!!j.restored;
       for (const j of b.jobs) if(Number.isInteger(j.tabId))
-        await send(j.tabId,{kind:'TASK_MODE',paused:b.paused,publishMode:b.publishMode});
+        await send(j.tabId,{kind:'TASK_MODE',paused:b.paused,publishMode:j.manualOnly?'manual':b.publishMode});
     }
     await save(state);
     return {ok:true};
@@ -396,6 +424,13 @@ async function appRequest(message, sender) {
           b.batchId === v.batchId,
       ),
   );
+  const pending=new Set();
+  for(const item of incoming) for(const platform of item.platforms) {
+    const key=item.recordId+':'+platform.id;
+    if(pending.has(key) || own.some(b=>b.recordId===item.recordId && b.jobs.some(j=>j.platformId===platform.id)))
+      throw new Error('Задание для этой карточки и площадки уже существует. Продолжите его из кабинета.');
+    pending.add(key);
+  }
   if (state.batches.length + incoming.length > 30)
     throw new Error("Завершите или очистите предыдущую очередь.");
   // Enforce the shared storage quota before opening a single tab.
@@ -465,7 +500,7 @@ async function marketplaceRequest(message, sender) {
         platformId: job.platformId,
         canonicalId: job.canonicalId,
         name: core.PLATFORMS[job.canonicalId].name,
-        listing: batch.listing,
+        listing: {...batch.listing,description:[batch.listing.description,batch.platformText?.[job.canonicalId]].filter(Boolean).join('\n\n')},
         photos,
         expiresAt: batch.expiresAt,
         filledKeys: job.filledKeys,
@@ -483,10 +518,11 @@ async function marketplaceRequest(message, sender) {
   }
   if (message.kind === 'AUTO_BEGIN') {
     if (message.jobId !== job.id || terminal(job.status)) return {task:null};
-    if (batch.paused || batch.publishMode !== 'automatic' || job.manualOnly || job.autoAttempt || job.submission ||
+    if (batch.paused || batch.cancelled || batch.publishMode !== 'automatic' || job.manualOnly || job.restored || job.autoAttempt || job.submission ||
         !['kufar','onliner'].includes(job.canonicalId) || job.canonicalId==='onliner' && batch.listing.category==='cars' ||
         !publication.postingUrl(job.canonicalId,sender.url) || !batch.photoCount || job.photosTransferred !== batch.photoCount)
       throw new Error('Автоматическая отправка не разрешена или уже выполнялась. Проверьте задание в кабинете.');
+    await verifySnapshot(batch,job);
     job.autoAttempt=crypto.randomUUID();
     job.submission={id:job.autoAttempt,automatic:true,at:Date.now(),title:typeof message.title==='string'?message.title.slice(0,160):batch.listing.title,
       existing:Array.isArray(message.existing)?[...new Set(message.existing.map(url=>publication.listingUrl(job.canonicalId,url)).filter(Boolean))].slice(0,100):[]};

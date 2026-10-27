@@ -34,7 +34,7 @@ export function createApiServer(config) {
         : url.pathname === '/api/ai-settings' && req.method === 'GET' ? GET : null;
       if (!handler) {fail(404, 'Страница не найдена.'); return;}
       const headers = new Headers();
-      for (const name of ['content-type', 'content-length', 'origin','cookie']) {
+      for (const name of ['content-type', 'content-length', 'origin','cookie','x-autopost-workspace']) {
         if (typeof req.headers[name] === 'string') headers.set(name, req.headers[name]);
       }
       // Only the authenticated reverse proxy can reach this branch. Ignore all client identity headers.

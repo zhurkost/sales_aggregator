@@ -25,7 +25,8 @@ test('parts do not infer OEM, donor year, stock or unit; keep leading zeroes',()
 test('parts sanitization, text export and channel selection remain separate from cars',()=>{
   const d=sanitizeListing({...parseLocally(partsSample,'parts'),partNumber:'000123-AB',mileage:'100',engine:'3.0',quantity:'0'});
   assert.equal(d.engine,'');assert.equal(d.mileage,'');assert.equal(d.partNumber,'000123-AB');
-  assert.ok(validateListing(d).some(x=>x.includes('Количество')));
+  assert.equal(validateListing(d).some(x=>x.includes('Количество')),false,'Zero stock is stored; publishing preflight blocks it separately');
+  assert.ok(validateListing({...d,quantity:'-1'}).some(x=>x.includes('Количество')));
   const text=listingText(d);assert.match(text,/000123-AB/);assert.match(text,/за штуку/);assert.match(text,/царапина/);
   assert.equal(getPlatforms('parts').length,5);assert.ok(!getPlatforms('parts').some(p=>p.id==='avby'));
   assert.ok(platformValidation(d,['avby']).length);

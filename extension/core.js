@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.7.0';
+  const VERSION = '0.8.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -112,7 +112,10 @@
     if (listing.taxonomyId && !recipe) throw new Error('Не загружены категории с сервера. Обновите страницу Автопоста.');
     if (recipe) { listing.taxonomyId = recipe.taxonomyId; listing.category = recipe.category; }
     const attributes = Object.fromEntries((recipe?.entries||[]).map(e=>[e.key,e.value]));
-    return { batchId, listing, photos, platforms, categoryOverrides, attributes, recipe, publishMode, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
+    const platformText={};
+    for(const id of Object.keys(PLATFORMS))if(payload.platformText?.[id])platformText[id]=text(payload.platformText[id],1000,'текст площадки');
+    const photoIds=Array.isArray(payload.photoIds)?payload.photoIds.slice(0,12).map(id=>text(id,80,'фото')):[];
+    return { batchId, listing, photos, photoIds, platforms, categoryOverrides, attributes, recipe, publishMode, platformText, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
   }
   function validateRecipe(value) {
     if (!object(value) || value.protocol !== 1 || !['cars','parts','general'].includes(value.category) ||

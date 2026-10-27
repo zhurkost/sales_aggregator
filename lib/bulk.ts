@@ -63,6 +63,7 @@ const names: Record<string, string[]> = {
   priceUnit: ["priceunit", "единица продажи", "цена указана"],
   manufacturer: ["manufacturer", "производитель"],
   quantity: ["quantity", "количество"],
+  availability: ["availability", "наличие"],
   mileage: ["mileage", "пробег"],
   externalId: ["id", "externalid", "внешний id"],
   photoUrls: [
@@ -88,6 +89,12 @@ export function guessColumns(headers: string[]) {
 export type ImportTable = { headers: string[]; rows: Record<string, string>[] };
 export async function readImport(file: File): Promise<ImportTable> {
   if (file.size > 5 * 1024 * 1024) throw new Error("Лимит файла — 5 МБ.");
+  if (/\.(xml|yml)$/i.test(file.name)) {
+    const {readYml}=await import('./catalog-import.ts');
+    const bytes=await file.arrayBuffer();
+    const head=new TextDecoder().decode(bytes.slice(0,200));
+    return readYml(new TextDecoder(/encoding\s*=\s*["']windows-1251["']/i.test(head)?'windows-1251':'utf-8').decode(bytes));
+  }
   let rows: Record<string, string>[] = [];
   if (/\.json$/i.test(file.name)) {
     const json = JSON.parse(await file.text());
@@ -130,8 +137,11 @@ export async function readImport(file: File): Promise<ImportTable> {
         });
         matrix.push(values);
       });
-    } else if (/\.(csv|tsv|txt)$/i.test(file.name))
-      matrix = parseDelimited(await file.text());
+    } else if (/\.(csv|tsv|txt)$/i.test(file.name)) {
+      const bytes=await file.arrayBuffer();let source:string;
+      try{source=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}catch{source=new TextDecoder('windows-1251').decode(bytes);}
+      matrix = parseDelimited(source);
+    }
     else
       throw new Error(
         "Поддерживаются XLSX, CSV, TSV и JSON. Старый XLS сохраните как XLSX.",
@@ -184,7 +194,7 @@ export function normalizeImport(
         )[0]?.id || "",
       );
     const listing = withSellerContacts(sanitizeListing({
-      ...mapped,
+      ...mapped,price:(mapped.price||'').replace(',','.'),
       taxonomyId: candidate?.id || "",
       category: candidate?.group || "general",
     }), contacts);

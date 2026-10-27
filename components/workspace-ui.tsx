@@ -3,6 +3,12 @@ import { useEffect, useMemo, useRef, useState, type ClipboardEvent } from "react
 import { legacyDrafts } from "../lib/legacy";
 import { PriceComparison } from "./price-comparison";
 import { CategoryAttributes } from "./category-attributes";
+import {Readiness,QueueView,BulkEdit,History} from './operations';
+import {availablePlatforms} from '../lib/readiness';
+import type {ImportPreset} from '../lib/catalog-import';
+import {SellerTemplates} from './seller-templates';
+import {TeamView,Assignee} from './team';
+import {Notifications} from './notifications';
 import {cleanAttributes,describeAttributes,descriptionWithAttributes} from "../lib/attributes";
 import {
   ArrowRight,
@@ -59,6 +65,7 @@ import {
 } from "../lib/platforms";
 import {
   api,
+  setWorkspaceContext,
   download,
   extension,
   EXTENSION_VERSION,
@@ -329,11 +336,13 @@ export function Workspace({
     [publishMode, setPublishMode] = useState<PublishMode>('manual'),
     [ext, setExt] = useState(false),
     [pendingChecks, setPendingChecks] = useState(0),
+    [queuePaused, setQueuePaused] = useState(false),
     [contacts, setContacts] = useState<SellerContacts>({}),
     [extensionChecking, setExtensionChecking] = useState(false),
     [extensionStatus, setExtensionStatus] = useState("Проверяем подключение…"),
     [serverAI, setServerAI] = useState(false),
     [candidates, setCandidates] = useState<Candidate[]>([]),
+    [photoSuggestion,setPhotoSuggestion]=useState<{description:string;candidates:Candidate[];questions:string[]}|null>(null),
     [categoryId, setCategoryId] = useState(""),
     [pendingOverrides,setPendingOverrides] = useState<CategoryOverrides>({}),
     [errors, setErrors] = useState<string[]>([]),
@@ -382,8 +391,13 @@ export function Workspace({
     setChecked(false);
   }
   async function refresh() {
+    const before=current.current;
     const result = await api<{ ads: AdSummary[] }>("workspace/ads");
     if (alive.current) setAds(result.ads);
+    if(!dirty && current.current===before && (result.ads.find(r=>r.id===before.id)?.revision||0)>before.revision){
+      const fresh=(await api<{ad:AdRecord}>('workspace/ads/'+before.id)).ad;
+      if(alive.current&&current.current===before){current.current=fresh;revisions.current.set(fresh.id,fresh.revision);setAd(fresh);}
+    }
   }
   function persist(snapshot: AdRecord = current.current) {
     let result: AdRecord;
@@ -398,21 +412,26 @@ export function Workspace({
       result = r.ad;
       revisions.current.set(snapshot.id, r.ad.revision);
       if (alive.current) {
+        const unchanged=current.current===snapshot;
+        const jobsUnchanged=current.current.jobs===snapshot.jobs;
         if (current.current.id === snapshot.id) {
           current.current = {
             ...current.current,
             revision: r.ad.revision,
+            contentVersion:r.ad.contentVersion,
+            jobs:current.current.jobs.map(j=>({...j,sentVersion:r.ad.jobs.find(s=>s.platformId===j.platformId)?.sentVersion||j.sentVersion})),
             updatedAt: r.ad.updatedAt,
             events: r.ad.events,
           };
           setAd(current.current);
+          if(unchanged)setDirty(0);
         }
         if (current.current.id === snapshot.id)
           setSaveState(
             current.current.listing === snapshot.listing &&
               current.current.text === snapshot.text &&
               current.current.photos === snapshot.photos &&
-              current.current.jobs === snapshot.jobs &&
+              jobsUnchanged &&
               current.current.selected === snapshot.selected &&
               current.current.categoryConfirmed === snapshot.categoryConfirmed &&
               current.current.prepared === snapshot.prepared &&
@@ -446,11 +465,11 @@ export function Workspace({
       current.current.id === batch.recordId
         ? current.current
         : (await api<{ ad: AdRecord }>("workspace/ads/" + batch.recordId)).ad;
-    if (record.batchId !== batch.batchId) return;
+    if (record.batchId !== batch.batchId && !record.jobs.some(j=>j.batchId===batch.batchId)) return;
     record = {
       ...record,
       jobs: record.jobs.map(
-        (job) => { const next = batch.jobs.find((j) => j.platformId === job.platformId); return next ? {...job,...next,...(next.url && next.url!==job.url?{remoteStatus:undefined}:{})} : job; },
+        (job) => { const next = (job.batchId||record.batchId)===batch.batchId && batch.jobs.find((j) => j.platformId === job.platformId); return next ? {...job,...next,batchId:batch.batchId,...(next.url && next.url!==job.url?{remoteStatus:undefined}:{})} : job; },
       ),
     };
     if (current.current.id === record.id) {
@@ -491,6 +510,7 @@ export function Workspace({
   }
   useEffect(() => {
     alive.current = true;
+    setWorkspaceContext(profile.id);
     void refresh().catch((e) => notify(errorText(e)));
     void checkExtension();
     contactsReady.current = api<{settings: SellerContacts}>("workspace/settings").then(({settings}) => {
@@ -528,6 +548,7 @@ export function Workspace({
         extensionConnected.current && extension("STATUS", { profileId: profile.id }, 5000)
           .then((r) => {
             if (alive.current) setPendingChecks(Number(r.pendingChecks)||0);
+            if (alive.current && Array.isArray(r.batches) && r.batches.length) setQueuePaused(r.batches.every(b=>b.paused));
             if (Array.isArray(r.receipts)) for (const receipt of r.receipts)
               progressQueue.current = progressQueue.current.then(()=>receipt.kind==='status'?receiveStatus(receipt):receive(receipt)).catch(()=>undefined);
             if (Array.isArray(r.batches))
@@ -541,6 +562,7 @@ export function Workspace({
     );
     return () => {
       alive.current = false;
+      setWorkspaceContext('');
       clearInterval(timer);
       window.removeEventListener("message", listener);
       window.removeEventListener("focus", reconnect);
@@ -608,6 +630,7 @@ export function Workspace({
       setCategoryId(r.ad.listing.taxonomyId);
       setPendingOverrides(r.ad.categoryOverrides||{});
       setCandidates([]);
+      setPhotoSuggestion(null);
       setChecked(false);
       setErrors([]);
       setView("editor");
@@ -624,6 +647,7 @@ export function Workspace({
       setCategoryId("");
       setPendingOverrides({});
       setCandidates([]);
+      setPhotoSuggestion(null);
       setErrors([]);
       setChecked(false);
       setView("editor");
@@ -685,8 +709,8 @@ export function Workspace({
         categoryOverrides: pendingOverrides,
         prepared: true,
         selected: defaultPlatforms(category.group, category.id, pendingOverrides),
-        jobs: [],
-        batchId: "",
+        jobs: source.jobs,
+        batchId: source.batchId,
       });
       await persist();
       notify("Карточка подготовлена. Проверьте характеристики и контакты.");
@@ -730,6 +754,7 @@ export function Workspace({
     void upload(files);
   }
   function launchPayload(record: AdRecord) {
+    const listing=sanitizeListing(record.listing);
     return {
       publishMode,
       batchId: record.batchId,
@@ -737,7 +762,9 @@ export function Workspace({
       profileId: profile.id,
       categoryOverrides: record.categoryOverrides||{},
       attributes: record.attributes || {},
-      listing: { ...record.listing, title: listingTitle(record.listing), description: descriptionWithAttributes(record.listing,record.attributes,record.categoryOverrides) },
+      platformText: record.platformText || {},
+      photoIds:record.photos.map(p=>p.id),
+      listing: { ...listing, title: listingTitle(listing), description: descriptionWithAttributes(listing,record.attributes,record.categoryOverrides) },
       photos: record.photos.map(({ name, type, dataUrl }) => ({
         name,
         type,
@@ -748,13 +775,18 @@ export function Workspace({
   }
   async function start() {
     const r = current.current;
+    const targets=availablePlatforms(r);
+    // A different marketplace can be added while existing jobs and links stay intact.
     const invalid = [
+      ...(r.sold?['Товар отмечен проданным']:[]),
+      ...(r.listing.availability==='Нет в наличии'||r.listing.quantity==='0'?['Товар отсутствует в наличии. Уточните наличие перед подачей.']:[]),
       ...validateListing(r.listing),
       ...platformValidation(r.listing, r.selected, r.categoryOverrides),
       ...(!r.categoryConfirmed ? ["Подтвердите категорию"] : []),
       ...(!r.prepared ? ["Подготовьте карточку"] : []),
       ...(!r.photos.length ? ["Добавьте фотографии"] : []),
       ...(!r.selected.length ? ["Выберите площадки"] : []),
+      ...(!targets.length ? ['На выбранных площадках уже есть задания. Продолжите их из раздела «Готовность к размещению».'] : []),
       ...(!checked ? ["Подтвердите проверку данных"] : []),
     ];
     setErrors(invalid);
@@ -764,20 +796,24 @@ export function Workspace({
       return;
     }
     await guarded(async () => {
+      const batchId=crypto.randomUUID();
       const launched = {
         ...r,
-        batchId: crypto.randomUUID(),
-        jobs: r.selected.map((platformId) => ({
+        batchId,
+        jobs: [...r.jobs.filter(j=>!targets.includes(j.platformId)).map(j=>({...j,batchId:j.batchId||r.batchId})),...targets.map((platformId) => ({
+          batchId,
           platformId,
           status: "opening",
           message: "Открываем выбранную площадку.",
-        })),
+        }))],
       };
       current.current = launched;
       setAd(launched);
-      const responsePromise = extension("RUN", launchPayload(launched), 25000);
-      await persist(launched);
+      const responsePromise = extension("RUN", launchPayload({...launched,selected:targets}), 25000);
+      // Attach rejection immediately: network failure can precede the server save.
+      void responsePromise.catch(()=>undefined);
       try {
+        await persist(launched);
         const response = await responsePromise;
         if (Array.isArray(response.jobs)) {
           await receive({
@@ -787,13 +823,15 @@ export function Workspace({
           });
         }
       } catch (e) {
+        const latest=await api<{ad:AdRecord}>('workspace/ads/'+r.id).catch(()=>null);
+        if(latest && latest.ad.batchId!==launched.batchId){revisions.current.set(r.id,latest.ad.revision);current.current=latest.ad;setAd(latest.ad);await refresh();throw e;}
         change((a) => ({
           ...a,
-          jobs: a.jobs.map((j) => ({
+          jobs: a.jobs.map((j) => targets.includes(j.platformId) ? ({
             ...j,
             status: "error",
             message: errorText(e),
-          })),
+          }) : j),
         }));
         throw e;
       }
@@ -805,7 +843,7 @@ export function Workspace({
       return;
     }
     await guarded(async () => {
-      const batchId = record.batchId || crypto.randomUUID();
+      const batchId = job.batchId || record.batchId || crypto.randomUUID();
       const response = await extension("OPEN_JOB", {
         profileId: profile.id,
         batchId,
@@ -818,8 +856,8 @@ export function Workspace({
         let full = current.current.id === record.id ? current.current
           : (await api<{ad: AdRecord}>("workspace/ads/" + record.id)).ad;
         if (!alive.current) return;
-        if (full.batchId !== batchId) {
-          full = {...full,batchId};
+        if (!job.batchId && full.batchId !== batchId) {
+          full = {...full,batchId,jobs:full.jobs.map(j=>j.platformId===job.platformId?{...j,batchId}:j)};
           if (current.current.id === full.id) {current.current=full;setAd(full);}
           full = await persist(full);
         }
@@ -847,8 +885,11 @@ export function Workspace({
   const nav = [
     ["editor", "Новое объявление", Plus],
     ["cabinet", "Мои объявления", ClipboardList],
+    ["queue", "Очередь и уведомления", Layers3],
     ["profile", "Мой профиль", UserRound],
+    ["team", "Команда", UserRound],
     ["bulk", "Массовая загрузка", FileUp],
+    ["edit-many", "Массовые изменения", Settings2],
     ["taxonomy", "Справочник площадок", Globe2],
     ["integrations", "Интеграции", Settings2],
   ] as const;
@@ -874,7 +915,7 @@ export function Workspace({
           ))}
         </nav>
         <div className="sidebar-note">
-          <b>Автопост · MVP 0.6</b>
+          <b>Автопост · MVP 0.8</b>
           <p>Карточки и статусы хранятся в вашем профиле на сервере.</p>
         </div>
         <div className="sidebar-bottom">
@@ -932,6 +973,7 @@ export function Workspace({
           </button>
         </div>
         <main onPaste={pastePhotos}>
+          <Notifications ads={ads} expanded={view==='queue'} onCard={openRecord} notify={notify} />
           {view === "editor" && (
             <>
               <div className="heading-row">
@@ -1085,8 +1127,18 @@ export function Workspace({
                       <h3>
                         Фотографии <span>{ad.photos.length}/12</span>
                       </h3>
-                      <span>На этом шаге ИИ их не анализирует</span>
+                      <span>Анализ фото — по отдельной кнопке</span>
                     </div>
+                    <button className="secondary" disabled={!!busy||!serverAI||!ad.photos.length} onClick={()=>guarded(async()=>{
+                      const result=await api<{description:string;candidates:Candidate[];questions:string[]}>('analyze',{task:'photos',text:ad.text||'Опиши товар на фотографиях для продажи.',photos:ad.photos.slice(0,3).map(p=>p.dataUrl)});
+                      setPhotoSuggestion(result);
+                    },'Анализируем фото')}>Предложить описание по фото</button>
+                    <p className="fine-print">Первые 3 фото будут отправлены в ИИ через OpenRouter. Результат появится для проверки перед добавлением в карточку.</p>
+                    {photoSuggestion&&<div className="panel photo-suggestion"><h3>Проверьте, что распознал ИИ</h3><textarea aria-label="Описание по фото" value={photoSuggestion.description} onChange={e=>setPhotoSuggestion({...photoSuggestion,description:e.target.value})}/>
+                      {!!photoSuggestion.questions.length&&<ul>{photoSuggestion.questions.map(q=><li key={q}>{q}</li>)}</ul>}
+                      <button className="secondary" onClick={()=>{change(r=>({...r,text:[r.text,photoSuggestion.description].filter(Boolean).join('\n').slice(0,8000)}));setCandidates(photoSuggestion.candidates);if(!categoryId)selectCategory(photoSuggestion.candidates[0]?.id||'');setPhotoSuggestion(null);}}>Описание проверено — добавить</button>
+                      <button className="text-button" onClick={()=>setPhotoSuggestion(null)}>Отменить</button>
+                    </div>}
                     <input
                       ref={photoInput}
                       type="file"
@@ -1356,6 +1408,12 @@ export function Workspace({
                 </aside>
               </div>
               {ad.categoryConfirmed && (
+                <Readiness record={ad} connected={ext} onOpen={job=>void openJob(job)} />
+              )}
+              {ad.categoryConfirmed&&<SellerTemplates record={ad} onApply={change} notify={notify} />}
+              {ad.categoryConfirmed&&<Assignee value={ad.assigneeId||''} onChange={assigneeId=>change(r=>({...r,assigneeId}))} notify={notify} />}
+              {ad.revision>0&&<History record={ad} onRestored={async()=>{const r=(await api<{ad:AdRecord}>('workspace/ads/'+ad.id)).ad;revisions.current.set(r.id,r.revision);current.current=r;setAd(r);await refresh();}} notify={notify} />}
+              {ad.categoryConfirmed && (
                 <section className="submit-panel">
                   <div>
                     <PublishModeChoice value={publishMode} onChange={setPublishMode} disabled={!!busy} />
@@ -1391,6 +1449,15 @@ export function Workspace({
           {view === "cabinet" && (
             <Cabinet
               ads={ads}
+              onSold={async(record)=>{
+                await guarded(async()=>{
+                  let stopped=false;
+                  if(ext){await extension('CANCEL_RECORD',{profileId:profile.id,recordId:record.id});stopped=true;}
+                  const r=(await api<{ad:AdRecord}>('workspace/ads/'+record.id)).ad;
+                  await persist({...r,sold:!r.sold});await refresh();
+                  notify(r.sold?'Товар возвращён в работу.':`Товар отмечен проданным. ${stopped?'Очередь этого товара остановлена.':'Подключите помощник, чтобы остановить оставшиеся задания в браузере.'} Проверьте снятие на каждой площадке.`);
+                },'Сохраняем');
+              }}
               onOpenJob={(record, job) => void openJob(job, record)}
               onCheckStatuses={(records) => void checkStatuses(records)}
               pendingChecks={pendingChecks}
@@ -1427,7 +1494,11 @@ export function Workspace({
             />
           )}
           {view === "taxonomy" && <TaxonomyView />}
+          {view === "queue" && <QueueView ads={ads} profileId={profile.id} onOpen={(record,job)=>void openJob(job,record)} onCard={openRecord} notify={notify} paused={queuePaused} onPaused={setQueuePaused} />}
+          {view === "edit-many" && <BulkEdit ads={ads} onSaved={refresh} notify={notify} />}
+          {view === "team" && <TeamView profileId={profile.id} connected={ext} notify={notify} />}
           {view === "profile" && <Integrations key="profile" mode="profile" onSaved={saveContactDefaults} notify={notify} />}
+          {view === "profile" && <SellerTemplates notify={notify} />}
           {view === "integrations" && <Integrations key="integrations" mode="integrations" onSaved={saveContactDefaults} notify={notify} />}
           {view === "bulk" && (
             <Bulk
@@ -1447,7 +1518,7 @@ export function Workspace({
           )}
           <footer>
             <Logo />
-            <span>MVP 0.6 · {taxonomy.version}</span>
+            <span>MVP 0.8 · {taxonomy.version}</span>
             <button onClick={() => setShowExtension(true)}>
               Помощник для браузера
             </button>
@@ -1607,6 +1678,7 @@ function JobCard({
 }
 function Cabinet({
   ads,
+  onSold,
   onOpen,
   onOpenJob,
   onCheckStatuses,
@@ -1617,6 +1689,7 @@ function Cabinet({
   onArchive,
 }: {
   ads: AdSummary[];
+  onSold:(ad:AdSummary)=>Promise<void>;
   onOpen: (id: string) => void;
   onOpenJob: (record: AdSummary, job: Job) => void;
   onCheckStatuses: (records: AdSummary[]) => void;
@@ -1716,6 +1789,7 @@ function Cabinet({
           <article className="panel listing-entry" key={a.id}>
             <div>
               <span className="soft-badge">
+                {a.sold?'Продано · ':''}
                 {categoryById(a.listing.taxonomyId)?.name ||
                   "Категория не выбрана"}
               </span>
@@ -1751,6 +1825,7 @@ function Cabinet({
               {j.remoteStatus!.message} <small>Проверено {new Date(j.remoteStatus!.checkedAt).toLocaleString('ru-RU')}</small>
             </p>)}</div>}
             <div className="job-actions">
+              <button className="secondary" onClick={()=>void onSold(a)}>{a.sold?'Вернуть товар в продажу':'Товар продан'}</button>
               <button className="primary" onClick={() => onOpen(a.id)}>
                 Открыть карточку
               </button>
@@ -1764,6 +1839,7 @@ function Cabinet({
                 {a.archived ? "Вернуть в работу" : "В архив кабинета"}
               </button>
             </div>
+            {a.sold&&<div className="sold-results"><b>Снятие с площадок</b>{a.jobs.map(j=><p key={j.platformId}>{getPlatforms(a.listing.category,a.listing.taxonomyId).find(p=>p.id===j.platformId)?.name}: {j.remoteStatus?.state==='inactive'?'Проверка показала неактивное объявление':j.status==='cancelled'&&!j.url?'Подача отменена':j.url?<><a href={j.url} target="_blank" rel="noreferrer">Откройте объявление и снимите с продажи ↗</a>. Автоматическое снятие не подключено.</>:'Ссылка неизвестна. Проверьте кабинет площадки.'}</p>)}<p>После снятия нажмите «Обновить статусы». Автопост не считает закрытое объявление подтверждённой продажей.</p></div>}
           </article>
         ))}
       </div>
@@ -1977,7 +2053,7 @@ function PublishModeChoice({value,onChange,disabled=false}: {value:PublishMode;o
     <label className="confirm"><input type="radio" name="publish-mode" value="manual" checked={value==='manual'} onChange={()=>onChange('manual')} />С подтверждением на площадке</label>
     <label className="confirm"><input type="radio" name="publish-mode" value="automatic" checked={value==='automatic'} onChange={()=>onChange('automatic')} />Автоматически в фоне · beta</label>
     <p className="fine-print">{value==='automatic'
-      ? 'Запуск разрешает отправку готовых карточек без отдельного клика на площадке. Поддерживаются Kufar и Барахолка Onlíner. Другие формы, ошибки, капча и платные действия требуют вашего участия. На Kufar выбирается вариант без продвижения. Браузер должен быть открыт.'
+      ? 'Запуск разрешает отправку готовых карточек без отдельного клика на площадке. Поддерживаются Kufar и Барахолка Onlíner. Другие формы, ошибки, капча и платные действия требуют вашего участия. На Kufar выбирается вариант без продвижения. Оставьте браузер и вкладку Автопоста открытыми: перед отправкой проверяется актуальная карточка.'
       : 'Помощник заполняет формы. Вы проверяете каждое объявление и нажимаете кнопку подачи на площадке.'}</p>
   </fieldset>;
 }
@@ -2022,6 +2098,12 @@ function Bulk({
     [flagmaCategory, setFlagmaCategory] = useState("");
   const [preparedQueue, setPreparedQueue] = useState<AdRecord[]>([]);
   const [importPhotos, setImportPhotos] = useState<File[]>([]);
+  const [presets,setPresets]=useState<ImportPreset[]>([]);
+  const [sourceId,setSourceId]=useState('main');
+  const [sourceName,setSourceName]=useState('Основной каталог');
+  const [feedUrl,setFeedUrl]=useState('');
+  useEffect(()=>{void api<{settings:{importPresets?:ImportPreset[]}}>('workspace/settings').then(r=>setPresets(r.settings.importPresets||[])).catch(e=>notify(errorText(e)));},[]);
+  function acceptTable(next:ImportTable){setTable(next);const preset=presets.find(p=>p.id===sourceId);setColumns(Object.fromEntries(next.headers.map(h=>[h,preset?.columns[h]||guessColumns(next.headers)[h]||''])));setConfirmed(false);}
   useEffect(() => setPreparedQueue([]), [selected]);
   const preview = useMemo(
     () => (table ? normalizeImport(table, columns, override, contacts) : []),
@@ -2071,26 +2153,34 @@ function Bulk({
       <section className="panel">
         <h2>1. Загрузите выгрузку</h2>
         <p className="section-subtitle">
-          XLSX, CSV, TSV, JSON · до 500 строк и 5 МБ. Названия колонок можно
+          XLSX, CSV, TSV, JSON, YML · до 500 строк и 5 МБ. Названия колонок можно
           сопоставить вручную.
         </p>
         <input
           type="file"
           aria-label="Файл с объявлениями"
-          accept=".xlsx,.csv,.tsv,.txt,.json"
+          accept=".xlsx,.csv,.tsv,.txt,.json,.xml,.yml"
           disabled={!!busy}
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file)
               void work("Читаем файл", async () => {
                 const next = await readImport(file);
-                setTable(next);
-                setColumns(guessColumns(next.headers));
-                setConfirmed(false);
+                acceptTable(next);
               });
             e.target.value = "";
           }}
         />
+        <div className="fields-grid">
+          <label>Источник каталога<select aria-label="Источник каталога" value={sourceId} onChange={e=>{setSourceId(e.target.value);const p=presets.find(p=>p.id===e.target.value);setSourceName(p?.name||'Основной каталог');setFeedUrl(p?.url||'');setOverride(p?.categoryId||'');if(table)setColumns(p?.columns||guessColumns(table.headers));setConfirmed(false);}}>
+            <option value="main">Основной каталог</option>{presets.filter(p=>p.id!=='main').map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
+          </select></label>
+          <label>Название источника<input value={sourceName} onChange={e=>setSourceName(e.target.value)} maxLength={80}/></label>
+        </div>
+        <button className="text-button" onClick={()=>{const id=crypto.randomUUID();setSourceId(id);setSourceName('Новый каталог');setPresets(p=>[...p,{id,name:'Новый каталог',columns:{},categoryId:'',url:''}]);setConfirmed(false);}}>Добавить другой источник</button>
+        <label className="full-label">HTTPS-ссылка на YML<input aria-label="Ссылка на YML" type="url" value={feedUrl} onChange={e=>setFeedUrl(e.target.value)} placeholder="https://shop.example/catalog.xml" /></label>
+        <button className="secondary" disabled={!!busy||!feedUrl} onClick={()=>work('Загружаем каталог',async()=>{const {text}=await api<{text:string}>('workspace/feed',{url:feedUrl});acceptTable(await readImport(new File([text],'catalog.yml')));})}>Загрузить по ссылке</button>
+        <p className="fine-print">Для повторных выгрузок выбирайте тот же источник. Совпавшие externalId обновят существующие карточки. Пустые ячейки не стирают данные; отсутствующие строки не удаляют товары. Без externalId обновление цены создаст новую карточку.</p>
         {table && (
           <>
             <div className="column-mapping">
@@ -2112,6 +2202,7 @@ function Bulk({
               ))}
             </div>
             <CategorySelect value={override} onChange={setOverride} />
+            <button className="secondary" disabled={!!busy||!sourceName.trim()} onClick={()=>work('Сохраняем настройки',async()=>{const next=[...presets.filter(p=>p.id!==sourceId),{id:sourceId,name:sourceName,columns,categoryId:override,url:feedUrl}];await api('workspace/settings',{importPresets:next});setPresets(next);notify('Сопоставление сохранено для следующей выгрузки.');})}>Сохранить настройки источника</button>
             <p className="fine-print">
               Категория выше применяется ко всему файлу. Оставьте пустой для
               смешанного ассортимента: категории из taxonomyId сохранятся,
@@ -2141,6 +2232,7 @@ function Bulk({
                           "Не определена"}
                       </td>
                       <td>
+                        <b>{ads.some(a=>a.sourceId===sourceId&&p.record.externalId&&a.externalId===p.record.externalId)?'Обновление существующей карточки. ':'Новая карточка. '}</b>
                         {p.errors.join(", ") || "Основные поля заполнены"}
                       </td>
                     </tr>
@@ -2190,19 +2282,17 @@ function Bulk({
               onClick={() =>
                 work("Сохраняем карточки", async () => {
                   let count = 0;
+                  let updated=0;
                   for (const item of valid) {
-                    if (
-                      item.record.externalId &&
-                      ads.some((a) => a.externalId === item.record.externalId)
-                    )
-                      continue;
                     const photos: Photo[] = [];
                     for (const file of matchingPhotos(
                       item.record,
                       importPhotos,
                     ))
                       photos.push(await optimizePhoto(file));
-                    await persist({ ...item.record, photos });
+                    const previous=ads.find(a=>a.sourceId===sourceId&&item.record.externalId&&a.externalId===item.record.externalId);
+                    const result=await api<{action:string}>('workspace/import',{sourceId,record:{...item.record,photos},fields:Object.values(columns),expectedRevision:previous?.revision});
+                    if(result.action==='updated')updated++;
                     count++;
                     setBusy("Сохранено " + count + " из " + valid.length);
                   }
@@ -2210,8 +2300,8 @@ function Bulk({
                   setTable(null);
                   setImportPhotos([]);
                   notify(
-                    "Сохранено карточек: " +
-                      count +
+                    "Обработано карточек: " +
+                      count + '. Обновлено: '+updated+
                       ". Проверьте карточки перед запуском очереди.",
                   );
                 })
@@ -2231,7 +2321,7 @@ function Bulk({
           открытым.
         </p>
         {ads
-          .filter((a) => !a.archived)
+          .filter((a) => !a.archived&&!a.sold)
           .map((a) => (
             <div className="bulk-row" key={a.id}>
               <label className="confirm">
@@ -2268,7 +2358,7 @@ function Bulk({
             onClick={() =>
               work("Проверяем очередь", async () => {
                 if (!ext) throw new Error(`Подключите расширение ${EXTENSION_VERSION}.`);
-                const records = await loadSelected();
+                const records = (await loadSelected()).map(r=>({...r,selected:availablePlatforms(r)}));
                 const problems = records.flatMap((r) => {
                   const e = [
                     ...validateListing(r.listing),
@@ -2276,8 +2366,9 @@ function Bulk({
                     ...(!r.categoryConfirmed
                       ? ["категория не подтверждена"]
                       : []),
+                    ...(r.sold||r.listing.availability==='Нет в наличии'||r.listing.quantity==='0'?['товар продан или отсутствует']:[]),
                     ...(!r.photos.length ? ["нет фото"] : []),
-                    ...(!r.selected.length ? ["не выбраны площадки"] : []),
+                    ...(!r.selected.length ? ["нет новых площадок: существующие задания доступны в очереди"] : []),
                   ];
                   return e.length
                     ? [listingTitle(r.listing) + ": " + e.join(", ")]
@@ -2285,16 +2376,17 @@ function Bulk({
                 });
                 if (problems.length)
                   throw new Error(problems.slice(0, 5).join(" · "));
-                const items = records.map((r) => ({
+                const items = records.map((r) => {const batchId=crypto.randomUUID();return ({
                   ...r,
-                  batchId: crypto.randomUUID(),
-                  jobs: r.selected.map((platformId) => ({
+                  batchId,
+                  jobs: [...r.jobs.filter(j=>!r.selected.includes(j.platformId)).map(j=>({...j,batchId:j.batchId||r.batchId})),...r.selected.map((platformId) => ({
+                    batchId,
                     platformId,
                     status: "ready",
                     message:
                       "Проверено. Ожидает запуска очереди пользователем.",
-                  })),
-                }));
+                  }))],
+                });});
                 for (const item of items) await persist(item);
                 setPreparedQueue(items);
                 notify(

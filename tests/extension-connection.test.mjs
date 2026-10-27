@@ -62,7 +62,8 @@ test('version check requires server recipes, link capture and status checks', ()
   assert.equal(extensionVersionOK('0.4.1'),false);
   assert.equal(extensionVersionOK('0.5.0'),false);
   assert.equal(extensionVersionOK('0.6.0'),false);
-  assert.equal(extensionVersionOK('0.7.0'),true);
+  assert.equal(extensionVersionOK('0.7.0'),false);
+  assert.equal(extensionVersionOK('0.8.0'),true);
   assert.equal(extensionVersionOK(undefined),false);
   assert.equal(extensionVersionOK('not-a-version'),false);
 });

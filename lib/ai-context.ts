@@ -1,5 +1,5 @@
 import {AsyncLocalStorage} from 'node:async_hooks';
-export type AISettings={AI_API_KEY?:string;AI_PROVIDER?:string;AI_MODEL?:string};
+export type AISettings={AI_API_KEY?:string;AI_PROVIDER?:string;AI_MODEL?:string;AI_VISION_MODEL?:string};
 const settings=new AsyncLocalStorage<AISettings>();
 export function runWithAISettings<T>(value:AISettings,run:()=>T):T{return settings.run(value,run);}
 export function getAISettings():AISettings{return settings.getStore()||{};}

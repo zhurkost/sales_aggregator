@@ -190,6 +190,8 @@ export function platformValidation(listing: Listing, selected: string[], overrid
   return errors;
 }
 export type Job = {
+  batchId?: string;
+  sentVersion?: number;
   platformId: string;
   status: string;
   message: string;

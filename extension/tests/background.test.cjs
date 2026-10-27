@@ -10,7 +10,7 @@ const { IDBFactory } = require('fake-indexeddb');
 const core = require('../core.js');
 const recipe = require('./recipe-fixture.cjs');
 const APP = core.APP_ORIGINS[0];
-function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(), accessLevel = true, sessionAccessLevel = true } = {}) {
+function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(), accessLevel = true, sessionAccessLevel = true, verifyResult={ok:true} } = {}) {
   const created = [];
   const sent = [];
   const tabs = new Map([[1, { id: 1, url: `${APP}/` }], [2, { id: 2, url: 'http://localhost:5173/' }]]);
@@ -28,7 +28,7 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
       async create(options) { const tab = { id: created.length + 10, ...options }; created.push(tab); tabs.set(tab.id, tab); return tab; },
       async get(id) { if (!tabs.has(id)) throw new Error('No tab'); return tabs.get(id); },
       async update(id,options){if(!tabs.has(id))throw new Error('No tab');Object.assign(tabs.get(id),options);return tabs.get(id);},
-      async sendMessage(id, message) { sent.push({ id, message }); },
+      async sendMessage(id, message) { sent.push({ id, message }); if(message.kind==='VERIFY_SNAPSHOT')return verifyResult; },
       async remove(id) { tabs.delete(id); },
       onRemoved: { addListener() {} },
     },
@@ -40,7 +40,7 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
     ...(accessLevel ? { async setAccessLevel() {} } : {}),
   };
   if (!sessionAccessLevel) delete chrome.storage.session.setAccessLevel;
-  const context = vm.createContext({ chrome, indexedDB, crypto: { randomUUID }, URL, Date, console, atob });
+  const context = vm.createContext({ chrome, indexedDB, crypto: { randomUUID }, URL, Date, console, atob,setTimeout,clearTimeout });
   // Execute the actual imports: stubbing importScripts hid worker registration failures.
   context.importScripts = (...files) => files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file }));
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), context, { filename: 'background.js' });
@@ -54,6 +54,23 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
 }
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
+
+test('record/site duplicate guard, sold cancellation and restored jobs cannot be re-enabled for automatic sending',async()=>{
+ const w=createWorker();const input={...payload(),recordId:'card',profileId:'owner',publishMode:'automatic',platforms:[{id:'kufar'}],platformText:{kufar:'Доставка по Минску'}};
+ const app=(type,payload)=>w.request({kind:'APP_REQUEST',type,userGesture:true,payload:{profileId:'owner',...payload}});
+ await app('RUN',input);
+ const form='https://www.kufar.by/ain/create';
+ assert.match((await w.request({kind:'GET_TASK'},form,10)).task.listing.description,/Доставка/);
+ assert.ok((await app('RUN',{...input,batchId:'another'})).error);assert.equal(w.created.length,1);
+ await app('CANCEL_RECORD',{recordId:'card'});
+ await app('RESUME',{});await app('SET_MODE',{publishMode:'automatic'});
+ const cancelled=(await w.request({kind:'GET_TASK'},form,10)).task;assert.equal(cancelled.paused,true);assert.equal(cancelled.complete,true);
+ assert.ok((await app('OPEN_JOB',{recordId:'card',batchId:input.batchId,platformId:'kufar'})).error);
+ const recovered=createWorker();const ticket=await recovered.request({kind:'APP_REQUEST',type:'OPEN_JOB',userGesture:true,payload:{profileId:'owner',recordId:'card',batchId:input.batchId,platformId:'kufar'}});
+ await recovered.request({kind:'APP_REQUEST',type:'RESTORE_JOB',payload:{profileId:'owner',resumeToken:ticket.resumeToken,item:input}});
+ await recovered.request({kind:'APP_REQUEST',type:'SET_MODE',userGesture:true,payload:{profileId:'owner',publishMode:'automatic'}});
+ assert.equal((await recovered.request({kind:'GET_TASK'},form,10)).task.publishMode,'manual');
+});
 
 test('automatic mode is opt-in, can be switched per profile and grants only one persisted send per job',async()=>{
  const w=createWorker();const form='https://www.kufar.by/ain/create';
@@ -76,6 +93,16 @@ test('automatic mode is opt-in, can be switched per profile and grants only one 
  assert.ok((await w.request(begin,form,10)).error);
  await w.request({kind:'RESET_SUBMISSION',jobId:task.jobId},form,10);assert.ok((await w.request(begin,form,10)).error,'Resetting link tracking cannot grant a second automatic send');
  const restarted=createWorker({data:w.data,indexedDB:w.indexedDB});assert.ok((await restarted.request(begin,form,10)).error,'Worker restart preserves attempt');
+});
+
+test('automatic submission fails closed when the current workspace rejects the queued snapshot',async()=>{
+ const w=createWorker({verifyResult:{error:'Цена карточки изменилась'}});const form='https://www.kufar.by/ain/create';
+ await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:{...payload(),publishMode:'automatic',platforms:[{id:'kufar'}],photos:[{name:'image.jpg',type:'image/jpeg',dataUrl:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2Q=='}]}});
+ const {task}=await w.request({kind:'GET_TASK'},form,10);
+ await w.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'review_required',photosTransferred:1}},form,10);
+ const result=await w.request({kind:'AUTO_BEGIN',jobId:task.jobId},form,10);assert.match(result.error,/изменилась/);
+ assert.equal((await w.request({kind:'GET_TASK'},form,10)).task.autoAttempt,null);
+ assert.ok(w.sent.some(s=>s.message.kind==='VERIFY_SNAPSHOT'&&s.id===1));
 });
 
 test('cabinet click activates the right batch and restores an expired job using a single-use click ticket',async()=>{

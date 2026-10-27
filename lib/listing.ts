@@ -33,14 +33,14 @@ export const partFields: typeof fields = [
   {key:'compatibility',label:'Совместимость · только проверенные данные',placeholder:'Модель, поколение, модификация'},
   {key:'position',label:'Расположение детали',placeholder:'Передняя левая'},
   {key:'quantity',label:'Количество · если известно',placeholder:'1'},
-  {key:'availability',label:'Наличие',options:['В наличии','Под заказ']},
+  {key:'availability',label:'Наличие',options:['В наличии','Под заказ','Нет в наличии']},
   {key:'price',label:'Цена',placeholder:'450'},
   {key:'currency',label:'Валюта',options:['BYN','USD','EUR']},
   {key:'priceUnit',label:'Цена указана',options:['За штуку','За комплект','За пару']},
   {key:'city',label:'Город',placeholder:'Минск'},
   {key:'phone',label:'Телефон',placeholder:'+375 …'},
 ];
-export const generalFields:typeof fields=[{key:'condition',label:'Состояние',options:['Новая','Б/у','На восстановление']},...fields.filter(f=>['price','currency','city','phone'].includes(f.key)),{key:'quantity',label:'Количество'},{key:'manufacturer',label:'Производитель'},{key:'model',label:'Модель'}];
+export const generalFields:typeof fields=[{key:'condition',label:'Состояние',options:['Новая','Б/у','На восстановление']},...fields.filter(f=>['price','currency','city','phone'].includes(f.key)),{key:'quantity',label:'Количество'},{key:'availability',label:'Наличие',options:['В наличии','Под заказ','Нет в наличии']},{key:'manufacturer',label:'Производитель'},{key:'model',label:'Модель'}];
 export function sanitizeListing(input: unknown, category?:ProductGroup): Listing {
   const obj = input && typeof input === 'object' ? input as Record<string,unknown> : {};
   const result = {...emptyListing};
@@ -56,7 +56,7 @@ export function sanitizeListing(input: unknown, category?:ProductGroup): Listing
   if(result.category==='parts') {
     result.condition=['Новая','Б/у','На восстановление'].includes(result.condition)?result.condition:'';
     result.priceUnit=['За штуку','За комплект','За пару'].includes(result.priceUnit)?result.priceUnit:'';
-    result.availability=['В наличии','Под заказ'].includes(result.availability)?result.availability:'';
+    result.availability=['В наличии','Под заказ','Нет в наличии'].includes(result.availability)?result.availability:'';
     for(const key of ['mileage','engine','fuel','transmission','body','drive','vin'] as const) result[key]='';
   }
   return result;
@@ -102,7 +102,7 @@ export function validateListing(d:Listing):string[]{
   if(d.vin && !/^[A-HJ-NPR-Z0-9]{17}$/i.test(d.vin)) missing.push('VIN из 17 символов без I, O, Q');
   if(d.engine && (!/^\d(?:\.\d{1,2})?$/.test(d.engine) || +d.engine>9.9 || +d.engine<=0)) missing.push('Корректный объём двигателя');
   if(d.category==='parts'){
-    if(d.quantity && (!/^\d+$/.test(d.quantity)||+d.quantity<1||+d.quantity>1000000))missing.push('Количество — целое число от 1');
+    if(d.quantity && (!/^\d+$/.test(d.quantity)||+d.quantity<0||+d.quantity>1000000))missing.push('Количество — целое число от 0');
     if(d.condition&&!['Новая','Б/у','На восстановление'].includes(d.condition))missing.push('Состояние детали');
     if(d.priceUnit&&!['За штуку','За комплект','За пару'].includes(d.priceUnit))missing.push('Цена за штуку, комплект или пару');
   }
