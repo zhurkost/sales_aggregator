@@ -7,6 +7,7 @@ export function fieldVerification(taxonomyId:string,platform:string,overrides:Ca
   const mapping=categoryMapping(taxonomyId,platform,overrides);
   if(!mapping)return {status:'not_mapped',source:''};
   const audit=(snapshot.audit as Record<string,unknown>)[platform] as {status:string;source:string;categoryIds?:string[];sampleCategoryIds?:string[]}|undefined;
+  if(audit?.status==='har_inspected'&&audit.categoryIds?.includes(mapping.id))return {status:'har_inspected',source:audit.source};
   if(audit?.categoryIds?.includes(mapping.id))return {status:'form_inspected',source:audit.source};
   if(audit?.status==='blocked_vpn')return {status:'blocked_vpn',source:audit.source};
   if(platform==='kufar'&&fieldCatalog.kufar[mapping.id])return {status:audit?.sampleCategoryIds?.includes(taxonomyId)&&!overrides.kufar?'documentation_and_sample':'documentation',source:fieldCatalog.source};

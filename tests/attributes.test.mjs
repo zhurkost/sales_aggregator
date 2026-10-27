@@ -14,7 +14,7 @@ test('every mapped Kufar category has sourced rules; form coverage remains expli
  assert.equal(fieldVerification('computers.gpu','kufar').status,'documentation_and_sample');
  assert.equal(fieldVerification('computers.gpu','onliner').status,'form_inspected');
  assert.equal(fieldVerification('auto.cars','onliner').status,'form_not_verified');
- assert.equal(fieldVerification('auto.cars','av').status,'blocked_vpn');
+ assert.equal(fieldVerification('auto.cars','av').status,'har_inspected');
  assert.equal(fieldVerification('auto.parts','bamper').status,'form_inspected');
 });
 test('dependent GPU characteristics use fixed type, sanitize codes, and drop when category changes',()=>{

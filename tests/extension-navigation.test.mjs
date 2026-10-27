@@ -7,7 +7,7 @@ function environment(html, url='https://av.by/new_ad') {
   const window=new Window({url,settings:{enableJavaScriptEvaluation:true}});
   window.document.body.innerHTML=html;
   window.HTMLElement.prototype.getBoundingClientRect=function(){return {width:this.hidden?0:100,height:30};};
-  for(const file of ['core.js','navigation.js','dom.js'])window.eval(readFileSync(new URL('../extension/'+file,import.meta.url),'utf8'));
+  for(const file of ['core.js','navigation.js','dom.js','av.js'])window.eval(readFileSync(new URL('../extension/'+file,import.meta.url),'utf8'));
   const task={listing:{category:'cars',brand:'Volkswagen',model:'Passat',year:'2018'},mapping:{id:'cars',path:['Легковые автомобили']}};
   return {window,document:window.document,task,dom:window.AutopostDOM,nav:window.AutopostNavigation,
     plan:()=>window.AutopostNavigation.plan(window.document,'av',url,task,window.AutopostDOM,false)};
@@ -47,11 +47,11 @@ test('navigation rejects self-links including query/hash variations and cross-ma
 
 test('AV draft progresses through fields before description exists and preserves manual corrections',async()=>{
   // Synthetic field structure; the supplied source contains an empty React root.
-  const e=environment('<header><a href="/new_ad">Подать объявление</a></header><main><label>Марка<select name="brand"><option value="">Выберите</option><option>Volkswagen</option><option>Audi</option></select></label></main>','https://av.by/offer/draft/cars');
+  const e=environment('<header><a href="/new_ad">Подать объявление</a></header><main><label>Марка<select id="p-4-brand" name="brand"><option value="">Выберите</option><option>Volkswagen</option><option>Audi</option></select></label></main>','https://av.by/offer/draft/cars');
   try {
     assert.equal(e.plan().state,'form');assert.equal(e.document.querySelector('textarea'),null);
     let result=await e.dom.fillFields(e.task,'av');assert.ok(result.filled.includes('brand'));assert.ok(result.skipped.includes('model'));
-    e.document.querySelector('main').insertAdjacentHTML('beforeend','<label>Модель<select name="model"><option value="">Выберите</option><option>Passat</option></select></label>');
+    e.document.querySelector('main').insertAdjacentHTML('beforeend','<label>Модель<select id="p-5-model" name="model"><option value="">Выберите</option><option>Passat</option></select></label>');
     result=await e.dom.fillFields(e.task,'av');assert.ok(result.filled.includes('model'));
     e.document.querySelector('main').insertAdjacentHTML('beforeend','<label>Год выпуска<select name="year"><option value="">Выберите</option><option>2018</option></select></label>');
     result=await e.dom.fillFields(e.task,'av');assert.ok(result.filled.includes('year'));
@@ -72,7 +72,7 @@ test('login and later AV steps cannot click the header, other marketplaces retai
 });
 
 test('actual marketplace content script fills AV fields before description and resumes on the next poll',async()=>{
-  const e=environment('<header><a href="/new_ad">Подать объявление</a></header><main><label>Марка<select name="brand"><option value="">Выберите</option><option>Volkswagen</option></select></label></main>','https://av.by/offer/draft/cars');
+  const e=environment('<header><a href="/new_ad">Подать объявление</a></header><main><label>Марка<select id="p-4-brand" name="brand"><option value="">Выберите</option><option>Volkswagen</option></select></label></main>','https://av.by/offer/draft/cars');
   try {
     const reports=[],requests=[];let poll;
     e.window.setInterval=callback=>{poll=callback;return 1;};
@@ -87,7 +87,7 @@ test('actual marketplace content script fills AV fields before description and r
     let headerClicks=0;e.document.querySelector('header a').onclick=event=>{event.preventDefault();headerClicks++;};
     await e.window.eval(readFileSync(new URL('../extension/marketplace.js',import.meta.url),'utf8'));
     assert.ok(reports.some(r=>r.filledKeys.includes('brand')),JSON.stringify(reports));
-    e.document.querySelector('main').insertAdjacentHTML('beforeend','<label>Модель<select name="model"><option value="">Выберите</option><option>Passat</option></select></label>');
+    e.document.querySelector('main').insertAdjacentHTML('beforeend','<label>Модель<select id="p-5-model" name="model"><option value="">Выберите</option><option>Passat</option></select></label>');
     await poll();
     for(let i=0;i<20&&!reports.some(r=>r.filledKeys.includes('model'));i++)await new Promise(resolve=>setTimeout(resolve,10));
     assert.ok(reports.some(r=>r.filledKeys.includes('model')),JSON.stringify(reports));

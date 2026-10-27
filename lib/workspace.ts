@@ -80,7 +80,7 @@ export function newRecord(listing: Listing, text = ""): AdRecord {
     events: [],
   };
 }
-export const EXTENSION_VERSION = "0.8.3";
+export const EXTENSION_VERSION = "0.8.4";
 export function extensionError(detail: unknown, code?: unknown): Error & {code: string} {
   const message = String(detail || 'Не удалось связаться с расширением.');
   // Older installed bridges expose a raw TypeError when their extension has

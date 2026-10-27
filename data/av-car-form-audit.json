@@ -1,0 +1,326 @@
+{
+  "checkedAt": "2026-10-27",
+  "source": "user-supplied HAR: used and new cars",
+  "fields": {
+    "salon_offer": {
+      "name": "salon_offer",
+      "label": "Предложение салона",
+      "required": false,
+      "widget": "salon_offer",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "condition_promotion": {
+      "name": "condition_promotion",
+      "label": "Подраздел",
+      "required": true,
+      "widget": "car_condition_promotion",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "brand": {
+      "name": "brand",
+      "label": "Марка",
+      "required": true,
+      "widget": "brand",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "model": {
+      "name": "model",
+      "label": "Модель",
+      "required": true,
+      "widget": "model",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "year": {
+      "name": "year",
+      "label": "Год",
+      "required": true,
+      "widget": "year",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "generation": {
+      "name": "generation",
+      "label": "Поколение",
+      "required": true,
+      "widget": "generation",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "body_type": {
+      "name": "body_type",
+      "label": "Кузов",
+      "required": true,
+      "widget": "body_type_widget",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "number_of_seats": {
+      "name": "number_of_seats",
+      "label": "Количество мест",
+      "required": false,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "transmission_type": {
+      "name": "transmission_type",
+      "label": "Коробка передач",
+      "required": true,
+      "widget": "inline_select",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "engine_type": {
+      "name": "engine_type",
+      "label": "Тип двигателя",
+      "required": true,
+      "widget": "engine_type",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "engine_capacity": {
+      "name": "engine_capacity",
+      "label": "Объем, см³",
+      "required": false,
+      "widget": "engine_capacity",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "engine_endurance": {
+      "name": "engine_endurance",
+      "label": "Запас хода, км",
+      "required": false,
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "drive_type": {
+      "name": "drive_type",
+      "label": "Привод",
+      "required": true,
+      "widget": "drive_type_widget",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "modification": {
+      "name": "modification",
+      "label": "Модификация",
+      "required": true,
+      "widget": "modification_widget",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "vin": {
+      "name": "vin",
+      "label": "Код из 17 символов",
+      "required": false,
+      "widget": "vin",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "condition": {
+      "name": "condition",
+      "label": "Состояние",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "mileage_compound_on_submission_form": {
+      "name": "mileage_compound_on_submission_form",
+      "label": "Пробег",
+      "required": true,
+      "widget": "mileage_compound",
+      "fallbackType": "compound_any",
+      "valueFormat": "value"
+    },
+    "mileage": {
+      "name": "mileage",
+      "label": "Пробег",
+      "required": true,
+      "widget": "mileage_compound_amount",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "mileage_unit": {
+      "name": "mileage_unit",
+      "label": "Единицы измерения пробега",
+      "required": true,
+      "widget": "mileage_compound_unit",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "color": {
+      "name": "color",
+      "label": "Цвет кузова",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "interior_material": {
+      "name": "interior_material",
+      "label": "Материал салона",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "interior_color": {
+      "name": "interior_color",
+      "label": "Цвет салона",
+      "required": true,
+      "widget": "inline_select",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "options": {
+      "name": "options",
+      "label": "Комплектация",
+      "required": false,
+      "widget": "options_checkbox_select",
+      "fallbackType": "select",
+      "valueFormat": "array"
+    },
+    "registration_country": {
+      "name": "registration_country",
+      "label": "Страна регистрации",
+      "required": true,
+      "widget": "registration_country",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "registration_status": {
+      "name": "registration_status",
+      "label": "Учёт",
+      "required": true,
+      "widget": "inline_select",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "description": {
+      "name": "description",
+      "label": "Описание",
+      "required": false,
+      "widget": "textarea",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "price_compound_on_submission_form": {
+      "name": "price_compound_on_submission_form",
+      "label": "Цена",
+      "required": true,
+      "widget": "price_compound",
+      "fallbackType": "compound_any",
+      "valueFormat": "value"
+    },
+    "price_amount": {
+      "name": "price_amount",
+      "label": "Цена",
+      "required": true,
+      "widget": "price_compound_amount",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "price_currency": {
+      "name": "price_currency",
+      "label": "Валюта",
+      "required": true,
+      "widget": "price_compound_currency",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "exchange_options": {
+      "name": "exchange_options",
+      "label": "Обмен",
+      "required": true,
+      "widget": "exchange_type",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "exchange_comment": {
+      "name": "exchange_comment",
+      "label": "Комментарий к обмену",
+      "required": false,
+      "widget": "exchange_comment",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "photo": {
+      "name": "photo",
+      "label": "Фотографии",
+      "required": false,
+      "fallbackType": "image_upload",
+      "valueFormat": "value"
+    },
+    "photo360": {
+      "name": "photo360",
+      "label": "Фото 360°",
+      "required": false,
+      "widget": "photo360",
+      "fallbackType": "image_upload",
+      "valueFormat": "value"
+    },
+    "video_url": {
+      "name": "video_url",
+      "label": "Видео из YouTube",
+      "required": false,
+      "widget": "video",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "place_region": {
+      "name": "place_region",
+      "label": "Область",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "place_city": {
+      "name": "place_city",
+      "label": "Город",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "name": {
+      "name": "name",
+      "label": "Имя продавца",
+      "required": true,
+      "widget": "long_input",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "phones": {
+      "name": "phones",
+      "label": "Номер телефона",
+      "required": true,
+      "widget": "phone_compound",
+      "fallbackType": "compound_any",
+      "valueFormat": "array"
+    },
+    "phone_country": {
+      "name": "phone_country",
+      "label": "Телефонный код страны",
+      "required": true,
+      "widget": "phone_compound_country",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "phone_number": {
+      "name": "phone_number",
+      "label": "Номер телефона",
+      "required": true,
+      "widget": "phone_compound_number",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "number_masking": {
+      "name": "number_masking",
+      "label": "",
+      "required": false,
+      "widget": "number_masking_widget",
+      "fallbackType": "boolean",
+      "valueFormat": "value"
+    }
+  }
+}

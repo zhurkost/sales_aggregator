@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.8.3';
+  const VERSION = '0.8.4';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;

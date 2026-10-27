@@ -398,6 +398,7 @@
       );
       return;
     }
+    let continueFilling = false;
     busy = true;
     retry.disabled = true;
     try {
@@ -426,10 +427,16 @@
         return;
       }
       const categoryReady = await dom.category(task, platform.id);
-      const result = await dom.fillFields(task, platform.id);
+      if (platform.id === 'av') await attachPhotos();
+      const result = platform.id === 'av' ? await globalThis.AutopostAV.fill(task) : await dom.fillFields(task, platform.id);
       result.filled.forEach((k) => filled.add(k));
       list.replaceChildren(...result.details.map((s) => node("li", s)));
       await attachPhotos();
+      if (platform.id === 'av') {
+        continueFilling = result.continue === true;
+        await report(continueFilling || result.waiting ? 'auto_checking' : result.blocked ? 'manual_required' : 'review_required', result.message, result.skipped);
+        return;
+      }
       const login =
         [...document.querySelectorAll('input[type=\"password\"]')].some(
           dom.visible,
@@ -459,6 +466,8 @@
     } finally {
       busy = false;
       retry.disabled = stopped;
+      if (continueFilling && !stopped && !task?.paused && !scheduled)
+        scheduled = setTimeout(() => {scheduled=null;void fill();},600);
     }
   }
   const observer = new MutationObserver(() => {
