@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.6.0';
+  const VERSION = '0.7.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -28,7 +28,7 @@
     mileage: 12, engine: 40, fuel: 60, transmission: 60, body: 80,
     drive: 60, color: 60, price: 16, currency: 6, city: 100, phone: 40, vin: 17,
   });
-  const STATUSES = Object.freeze(['authorization_required', 'captcha_required', 'review_required', 'manual_required', 'error','category_required','link_recorded','submitted','cancelled']);
+  const STATUSES = Object.freeze(['auto_checking', 'submitting', 'authorization_required', 'captcha_required', 'review_required', 'manual_required', 'error','category_required','link_recorded','submitted','cancelled']);
   const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
   function object(value) { return value !== null && typeof value === 'object' && !Array.isArray(value); }
   function originOf(url) { try { return new URL(url).origin; } catch { return ''; } }
@@ -71,6 +71,8 @@
   }
   function validateRun(payload) {
     if (!object(payload) || !object(payload.listing)) throw new Error('Не переданы данные объявления.');
+    const publishMode = payload.publishMode ?? 'manual';
+    if (!['manual','automatic'].includes(publishMode)) throw new Error('Неизвестный режим подачи.');
     const batchId = text(payload.batchId, 120, 'пакет');
     if (!batchId || !/^[a-zA-Z0-9_.:-]+$/u.test(batchId)) throw new Error('Неверный идентификатор пакета.');
     const listing = {};
@@ -110,7 +112,7 @@
     if (listing.taxonomyId && !recipe) throw new Error('Не загружены категории с сервера. Обновите страницу Автопоста.');
     if (recipe) { listing.taxonomyId = recipe.taxonomyId; listing.category = recipe.category; }
     const attributes = Object.fromEntries((recipe?.entries||[]).map(e=>[e.key,e.value]));
-    return { batchId, listing, photos, platforms, categoryOverrides, attributes, recipe, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
+    return { batchId, listing, photos, platforms, categoryOverrides, attributes, recipe, publishMode, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
   }
   function validateRecipe(value) {
     if (!object(value) || value.protocol !== 1 || !['cars','parts','general'].includes(value.category) ||

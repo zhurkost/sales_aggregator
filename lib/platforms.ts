@@ -212,6 +212,8 @@ export const statusLabel: Record<string, string> = {
   ready: "Подготовлено",
   queued: "В очереди",
   opening: "Открываем форму",
+  auto_checking: "Проверяем перед отправкой",
+  submitting: "Ожидаем результат отправки",
   category_required: "Уточните категорию",
   authorization_required: "Нужен вход",
   captcha_required: "Нужна CAPTCHA",

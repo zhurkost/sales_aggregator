@@ -55,6 +55,29 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
 
+test('automatic mode is opt-in, can be switched per profile and grants only one persisted send per job',async()=>{
+ const w=createWorker();const form='https://www.kufar.by/ain/create';
+ const input={...payload(),profileId:'owner',publishMode:'automatic',platforms:[{id:'kufar'}],photos:[{name:'image.jpg',type:'image/jpeg',dataUrl:'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2Q=='}]};
+ assert.equal(core.validateRun({...input,publishMode:undefined}).publishMode,'manual');
+ assert.throws(()=>core.validateRun({...input,publishMode:'any'}));
+ await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:input});assert.equal(w.created[0].active,false);
+ let {task}=await w.request({kind:'GET_TASK'},form,10);assert.equal(task.publishMode,'automatic');
+ const begin={kind:'AUTO_BEGIN',jobId:task.jobId,title:input.listing.title};
+ assert.ok((await w.request(begin,form,10)).error,'Photos must be transferred');
+ await w.request({kind:'REPORT_TASK',report:{jobId:task.jobId,status:'review_required',photosTransferred:1}},form,10);
+ const setMode=(mode,profileId='owner',userGesture=true)=>w.request({kind:'APP_REQUEST',type:'SET_MODE',userGesture,payload:{profileId,publishMode:mode}});
+ assert.ok((await setMode('manual','owner',false)).error);
+ await setMode('manual','other');assert.equal((await w.request({kind:'GET_TASK'},form,10)).task.publishMode,'automatic');
+ await setMode('manual');assert.ok((await w.request(begin,form,10)).error);
+ await setMode('automatic');await w.request({kind:'APP_REQUEST',type:'PAUSE',userGesture:true,payload:{profileId:'owner'}});assert.ok((await w.request(begin,form,10)).error);
+ await w.request({kind:'APP_REQUEST',type:'RESUME',userGesture:true,payload:{profileId:'owner'}});
+ assert.equal((await w.request(begin,form,99)).task,null);
+ const grant=await w.request(begin,form,10);assert.equal(grant.ok,true);assert.equal(grant.submission.automatic,true);
+ assert.ok((await w.request(begin,form,10)).error);
+ await w.request({kind:'RESET_SUBMISSION',jobId:task.jobId},form,10);assert.ok((await w.request(begin,form,10)).error,'Resetting link tracking cannot grant a second automatic send');
+ const restarted=createWorker({data:w.data,indexedDB:w.indexedDB});assert.ok((await restarted.request(begin,form,10)).error,'Worker restart preserves attempt');
+});
+
 test('cabinet click activates the right batch and restores an expired job using a single-use click ticket',async()=>{
   const w=createWorker();await run(w);
   const second={...payload(),batchId:'second',recordId:'record-two',platforms:[{id:'kufar'}]};

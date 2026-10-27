@@ -34,7 +34,7 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    if(path==='/api/analyze')return Response.json(body.task==='identify'?{identity:{status:'identified',name:'RX 570',query:'RX 570',terms:['RX 570'],kind:'product',condition:'Б/у'}}:body.task==='classify'?{candidates:[{id:'auto.parts.optics',confidence:.9,reason:'Фара — автомобильная оптика'}]}:{listing:{category:'parts',title:'Фара Passat',partName:'Фара',partNumber:'3G1941035D',description:'Есть царапина',currency:'BYN',price:'450',condition:'Б/у',priceUnit:'За штуку'}});
    throw new Error('Unexpected API '+path);
  };
- window.postMessage=message=>{messages.push(message);queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.6.0'}:message.type==='OPEN_JOB'&&message.payload.recordId==='existing-3'?{resumeToken:'test-ticket'}:message.type==='RESTORE_JOB'?{jobs:[{platformId:'onliner-parts',status:'opening',message:'Восстановлено'}]}:message.type==='PRICE_SEARCH'?{checkedAt:new Date().toISOString(),results:[{id:'kufar',name:'Kufar',url:'https://www.kufar.by/l',status:'ok',total:42,scanned:30,matched:12,groups:[{currency:'BYN',count:12,min:100,max:250,median:180}]}]}:{batches:[]}}})));};
+ window.postMessage=message=>{messages.push(message);queueMicrotask(()=>window.dispatchEvent(new window.MessageEvent('message',{source:window,origin:window.location.origin,data:{source:'autopost-extension',type:'RESPONSE',requestId:message.requestId,payload:message.type==='PING'?{version:'0.7.0'}:message.type==='OPEN_JOB'&&message.payload.recordId==='existing-3'?{resumeToken:'test-ticket'}:message.type==='RESTORE_JOB'?{jobs:[{platformId:'onliner-parts',status:'opening',message:'Восстановлено'}]}:message.type==='PRICE_SEARCH'?{checkedAt:new Date().toISOString(),results:[{id:'kufar',name:'Kufar',url:'https://www.kufar.by/l',status:'ok',total:42,scanned:30,matched:12,groups:[{currency:'BYN',count:12,min:100,max:250,median:180}]}]}:{batches:[]}}})));};
  mkdirSync(new URL('../work/',import.meta.url),{recursive:true});
  const compile=name=>ts.transpileModule(readFileSync(new URL('../components/'+name+'.tsx',import.meta.url),'utf8'),{compilerOptions:{jsx:ts.JsxEmit.ReactJSX,target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText.replace(/(from\s+["']\.\.\/lib\/[^"']+)(["'])/g,'$1.ts$2').replace(/(from\s+["']\.\/(?:price-comparison|category-attributes))(["'])/g,'$1.generated.mjs$2');
  for(const name of ['price-comparison','category-attributes'])writeFileSync(new URL('../work/'+name+'.generated.mjs',import.meta.url),compile(name));
@@ -60,6 +60,9 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    await click('Подтвердить и продолжить');
    assert.equal([...stored.values()][0].categoryOverrides.onliner,'20');
    assert.equal([...stored.values()][0].categoryConfirmed,true);assert.equal([...stored.values()][0].listing.taxonomyId,'auto.parts.optics');
+   assert.equal(window.document.querySelector('input[name="publish-mode"][value="manual"]').checked,true);
+   await act(async()=>window.document.querySelector('input[name="publish-mode"][value="automatic"]').click());
+   assert.ok([...window.document.querySelectorAll('button')].some(b=>b.textContent.includes('Разместить автоматически')));
    assert.ok(requests.filter(r=>r.path==='/api/analyze').every(r=>!('photos'in r.body)));
    const original=[...stored.values()][0];
    assert.equal(original.listing.phone,'+375291112233','Profile phone fills absent AI result');
@@ -79,6 +82,7 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    const thirdRow=entries().find(e=>e.textContent.includes('Сохранённая фара 3'));
    await click(thirdRow.querySelector('button.listing-channel-link').textContent.trim(),thirdRow);
    const restored=messages.find(m=>m.type==='RESTORE_JOB');assert.equal(restored.payload.item.recordId,'existing-3');assert.deepEqual(restored.payload.item.platforms,[{id:'onliner-parts'}]);assert.equal(entries().length,4);
+   assert.equal(restored.payload.item.publishMode,'manual','Opening an old card never opts into automatic resubmission');
    await click('Обновить статусы',secondRow());
    assert.equal(messages.find(m=>m.type==='CHECK_STATUS').payload.items.length,1,'Only saved links are checked');
    assert.equal(messages.find(m=>m.type==='CHECK_STATUS').payload.items[0].recordId,'existing-2');
@@ -149,6 +153,12 @@ test('cards remain visible with cosmetic ad blocking and can be reopened, edited
    assert.doesNotMatch(comparison.textContent,/Найдено площадкой: 42/,'Changing product attributes invalidates the previous comparison');
    await click('Мои объявления');assert.ok(stored.get(gpuRecord.id).attributes.computers_desktop_ram);
    await click('Мой профиль');assert.match(window.document.body.textContent,/Телефон/);assert.match(window.document.body.textContent,/Город/);
+   await click('Массовая загрузка');
+   assert.equal(window.document.querySelector('input[name="publish-mode"][value="manual"]').checked,true,'Reopening the application starts with manual mode');
+   await act(async()=>window.document.querySelector('input[name="publish-mode"][value="automatic"]').click());
+   await click('Применить режим к запущенной очереди');assert.equal(messages.find(m=>m.type==='SET_MODE').payload.publishMode,'automatic');
+   await act(async()=>window.document.querySelector('input[name="publish-mode"][value="manual"]').click());
+   await click('Применить режим к запущенной очереди');assert.equal(messages.filter(m=>m.type==='SET_MODE').at(-1).payload.publishMode,'manual');
    assert.equal(notices.some(n=>/ошиб|не удалось/i.test(n)),false);
  }finally{
    await act(async()=>root.unmount());globalThis.fetch=realFetch;

@@ -326,6 +326,7 @@ export function Workspace({
     [saveState, setSaveState] = useState("Новая карточка"),
     [busy, setBusy] = useState(""),
     [checked, setChecked] = useState(false),
+    [publishMode, setPublishMode] = useState<PublishMode>('manual'),
     [ext, setExt] = useState(false),
     [pendingChecks, setPendingChecks] = useState(0),
     [contacts, setContacts] = useState<SellerContacts>({}),
@@ -730,6 +731,7 @@ export function Workspace({
   }
   function launchPayload(record: AdRecord) {
     return {
+      publishMode,
       batchId: record.batchId,
       recordId: record.id,
       profileId: profile.id,
@@ -824,7 +826,7 @@ export function Workspace({
         const restored = await extension("RESTORE_JOB", {
           profileId: profile.id,
           resumeToken: response.resumeToken,
-          item: {...launchPayload({...full, batchId}), platforms: [{id: job.platformId}]},
+          item: {...launchPayload({...full, batchId}), publishMode: 'manual', platforms: [{id: job.platformId}]},
         }, 25000);
         if (Array.isArray(restored.jobs)) await receive({batchId, recordId: record.id, jobs: restored.jobs as Job[]});
       } else if (Array.isArray(response.jobs)) {
@@ -1356,6 +1358,7 @@ export function Workspace({
               {ad.categoryConfirmed && (
                 <section className="submit-panel">
                   <div>
+                    <PublishModeChoice value={publishMode} onChange={setPublishMode} disabled={!!busy} />
                     <label className="confirm">
                       <input
                         type="checkbox"
@@ -1373,7 +1376,7 @@ export function Workspace({
                     disabled={!!busy}
                     onClick={start}
                   >
-                    {busy || "Создать объявления"}
+                    {busy || (publishMode==='automatic' ? "Разместить автоматически" : "Создать объявления")}
                     <ArrowRight size={18} />
                   </button>
                 </section>
@@ -1437,6 +1440,8 @@ export function Workspace({
               notify={notify}
               openRecord={openRecord}
               launchPayload={launchPayload}
+              publishMode={publishMode}
+              setPublishMode={setPublishMode}
               onProgress={receive}
             />
           )}
@@ -1484,7 +1489,7 @@ export function Workspace({
               </li>
               <li>
                 Войдите при необходимости. Проверьте заполнение, завершите
-                подачу. Помощник сохранит распознанную ссылку автоматически; запасной способ — кнопка в панели.
+                подачу в обычном режиме. Автоматический режим отправляет готовую карточку на поддерживаемых формах. Помощник сохранит распознанную ссылку; запасной способ — кнопка в панели.
               </li>
             </ol>
             <p className="fine-print">
@@ -1660,6 +1665,8 @@ function Cabinet({
                   [
                     "queued",
                     "opening",
+                    "auto_checking",
+                    "submitting",
                     "authorization_required",
                     "captcha_required",
                     "review_required",
@@ -1963,6 +1970,18 @@ function Integrations({ notify, mode, onSaved }: { notify: (s: string) => void; 
   );
 }
 
+type PublishMode = 'manual' | 'automatic';
+function PublishModeChoice({value,onChange,disabled=false}: {value:PublishMode;onChange:(mode:PublishMode)=>void;disabled?:boolean}) {
+  return <fieldset className="publish-mode" disabled={disabled}>
+    <legend>Режим подачи</legend>
+    <label className="confirm"><input type="radio" name="publish-mode" value="manual" checked={value==='manual'} onChange={()=>onChange('manual')} />С подтверждением на площадке</label>
+    <label className="confirm"><input type="radio" name="publish-mode" value="automatic" checked={value==='automatic'} onChange={()=>onChange('automatic')} />Автоматически в фоне · beta</label>
+    <p className="fine-print">{value==='automatic'
+      ? 'Запуск разрешает отправку готовых карточек без отдельного клика на площадке. Поддерживаются Kufar и Барахолка Onlíner. Другие формы, ошибки, капча и платные действия требуют вашего участия. На Kufar выбирается вариант без продвижения. Браузер должен быть открыт.'
+      : 'Помощник заполняет формы. Вы проверяете каждое объявление и нажимаете кнопку подачи на площадке.'}</p>
+  </fieldset>;
+}
+
 function Bulk({
   profile,
   contacts,
@@ -1973,6 +1992,8 @@ function Bulk({
   notify,
   openRecord,
   launchPayload,
+  publishMode,
+  setPublishMode,
   onProgress,
 }: {
   profile: Profile;
@@ -1984,6 +2005,8 @@ function Bulk({
   notify: (s: string) => void;
   openRecord: (id: string) => void;
   launchPayload: (r: AdRecord) => unknown;
+  publishMode: PublishMode;
+  setPublishMode: (mode: PublishMode) => void;
   onProgress: (b: {
     batchId: string;
     recordId: string;
@@ -2201,6 +2224,7 @@ function Bulk({
       </section>
       <section className="panel bulk-queue">
         <h2>2. Выберите карточки для очереди</h2>
+        <PublishModeChoice value={publishMode} onChange={setPublishMode} disabled={!!busy} />
         <p className="section-subtitle">
           До 20 за запуск. Одна активная карточка на площадку; после сохранения
           ссылки или пропуска открывается следующая. Браузер должен оставаться
@@ -2304,9 +2328,16 @@ function Bulk({
                 })
               }
             >
-              Запустить подготовленную очередь ({preparedQueue.length})
+              {publishMode==='automatic' ? 'Разместить автоматически' : 'Запустить подготовленную очередь'} ({preparedQueue.length})
             </button>
           )}
+          <button
+            className="secondary"
+            disabled={!!busy}
+            onClick={() => extension('SET_MODE',{profileId:profile.id,publishMode})
+              .then(()=>notify('Режим применён к оставшимся заданиям. Уже отправленные объявления не отправляются повторно.'))
+              .catch(e=>notify(errorText(e)))}
+          >Применить режим к запущенной очереди</button>
           <button
             className="secondary"
             onClick={() =>

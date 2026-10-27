@@ -21,3 +21,4 @@
 .listing-channel-statuses .listing-channel-link:focus-visible{outline:3px solid #8faaff;outline-offset:2px}
 .listing-status-details{font-size:12px;color:#51627b;margin:0 0 14px}.listing-status-details p{margin:7px 0}.listing-status-details small{display:block;color:#7b899e;margin-top:3px}
 .table-toolbar{flex-wrap:wrap}.table-toolbar label{flex:1 1 260px;min-width:0}
+.publish-mode{border:1px solid #dce3ef;border-radius:10px;padding:14px;margin:12px 0;min-width:0}.publish-mode legend{font-weight:600;font-size:14px;padding:0 6px}.publish-mode .confirm{margin:8px 0;align-items:center;font-size:13px}.publish-mode input{accent-color:#385bf2;flex-shrink:0}.publish-mode .fine-print{margin:10px 0 0;max-width:740px;line-height:1.6}.submit-panel>div{min-width:0;flex:1}.submit-panel>.primary{flex-shrink:0}

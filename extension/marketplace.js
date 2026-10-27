@@ -2,7 +2,8 @@
   "use strict";
   const core = globalThis.AutopostCore,
     dom = globalThis.AutopostDOM,
-    publication = globalThis.AutopostPublication;
+    publication = globalThis.AutopostPublication,
+    automatic = globalThis.AutopostAutoPublish;
   const platform = core.platformForOrigin(location.origin);
   if (window !== window.top || !platform) return;
   let task;
@@ -18,6 +19,7 @@
     arming = false,
     lastSubmitAt = 0,
     lastReport = "",
+    autoReadySince = 0,
     navigationAttempts = 0;
   const filled = new Set(task.filledKeys || []),
     attempted = new Map();
@@ -154,7 +156,7 @@
     manual,
     node(
       "p",
-      "Используется ваша сессия сайта. Проверка и финальная отправка — на площадке. Пароли в Автопост не передаются.",
+      "Используется ваша сессия сайта. Режим отправки выбирается в Автопосте. Пароли не передаются.",
       "muted",
     ),
     node("p", "После подачи ссылка сохранится автоматически, если площадка покажет готовое объявление или подтверждение со ссылкой. Если открывается список объявлений, откройте своё в этой же вкладке.", "muted"),
@@ -251,6 +253,12 @@
         {url:candidate.url,capture:{...candidate,attemptId:task.submission.id}});
       if (saved) stop("Ссылка сохранена автоматически и появится в кабинете Автопоста. Следующая карточка очереди откроется автоматически.");
     } else {
+      if (task.submission.automatic && (captcha() || automatic?.error(document,dom.visible) || Date.now()-task.submission.at>60000)) {
+        await report(captcha()?'captcha_required':'manual_required',captcha()
+          ? 'Площадка запросила CAPTCHA после отправки. Пройдите её в этой вкладке; повторной автоматической отправки не будет.'
+          : 'Результат отправки не подтверждён. Проверьте форму и список своих объявлений; повторная автоматическая отправка отключена, чтобы не создать дубль.');
+        return true;
+      }
       status.textContent = publication.fresh(task.submission)
         ? "Ожидаем результат подачи. Если форма показывает ошибку, исправьте её и отправьте ещё раз. Готовое объявление откройте в этой вкладке — ссылка сохранится автоматически."
         : "Не удалось однозначно распознать результат подачи. Откройте готовое объявление и нажмите «Сохранить ссылку этой страницы».";
@@ -272,9 +280,10 @@
         ". Проверьте миниатюры на сайте.";
       return;
     }
-    const inputs = [
+    const knownInput = automatic?.fileInput(document,platform.id);
+    const inputs = (knownInput ? [knownInput] : [
       ...document.querySelectorAll('input[type=\"file\"]'),
-    ].filter(
+    ]).filter(
       (e) =>
         !e.disabled && (!e.accept || /image|jpg|jpeg|png|webp/i.test(e.accept)),
     );
@@ -324,6 +333,37 @@
       photos.textContent =
         "Поле загрузки не приняло файлы. Добавьте их на площадке.";
     }
+  }
+  async function autoSubmit(result, categoryReady) {
+    if (task.publishMode!=='automatic') {autoReadySince=0;return false;}
+    if (task.autoAttempt) {
+      await report('manual_required','Автоматическая отправка уже выполнялась. Проверьте результат на площадке; повторная отправка возможна вручную.');
+      return true;
+    }
+    automatic.prepareFree(document,platform.id,task);
+    const ready=automatic.inspect(document,platform.id,location.href,task,result,categoryReady,dom.visible);
+    if (!ready.ready) {
+      autoReadySince=0;
+      await report('manual_required',ready.message,result.skipped);
+      return true;
+    }
+    if (!autoReadySince) autoReadySince=Date.now();
+    if (Date.now()-autoReadySince<4000) {
+      await report('auto_checking','Автоматический режим: данные готовы, проверяем устойчивость формы перед отправкой.',result.skipped);
+      return true;
+    }
+    await report('auto_checking','Автоматический режим: отправляем карточку.',result.skipped);
+    const granted=await chrome.runtime.sendMessage({kind:'AUTO_BEGIN',jobId:task.jobId,
+      title:publication.submissionTitle(document,platform.id,task.listing),
+      existing:publication.existingLinks(document,platform.id,location.href,dom.visible)});
+    if (!granted?.ok) {await report('manual_required',granted?.error||'Отправка не подтверждена. Проверьте задание в кабинете.');return true;}
+    task.submission=granted.submission;task.autoAttempt=granted.submission.id;
+    const recheck=automatic.inspect(document,platform.id,location.href,task,result,categoryReady,dom.visible);
+    if (task.paused || task.publishMode!=='automatic' || !recheck.ready || captcha()) {
+      await report('manual_required','Отправка отменена: режим, форма или проверка площадки изменились. Продолжите вручную.');return true;
+    }
+    recheck.control.click();
+    return true;
   }
   function hasForm() {
     return (
@@ -426,6 +466,7 @@
         [...document.querySelectorAll('input[type=\"password\"]')].some(
           dom.visible,
         ) || !!document.querySelector('[data-name=\"about_seller_mock\"]');
+      if (!login && await autoSubmit(result,categoryReady)) return;
       const state = login
         ? "authorization_required"
         : !categoryReady
@@ -480,6 +521,8 @@
         return;
       }
       task.paused = response.task.paused;
+      task.publishMode = response.task.publishMode;
+      task.autoAttempt = response.task.autoAttempt;
       if (!arming) task.submission = response.task.submission;
       if (response.task.complete) {
         stop("Задание завершено. Сведения сохранены в личном кабинете.");
@@ -489,6 +532,10 @@
     } catch {}
   }, 8000);
   chrome.runtime.onMessage.addListener((m, s) => {
+    if (s.id === chrome.runtime.id && m?.kind === 'TASK_MODE' && task) {
+      task.paused=m.paused;task.publishMode=m.publishMode;autoReadySince=0;
+      if(!busy)void fill();
+    }
     if (s.id === chrome.runtime.id && m?.kind === "TASK_CLEARED")
       stop("Сеанс очищен. Карточка остаётся в личном кабинете.");
   });

@@ -73,11 +73,11 @@ export function newRecord(listing: Listing, text = ""): AdRecord {
     events: [],
   };
 }
-export const EXTENSION_VERSION = "0.6.0";
+export const EXTENSION_VERSION = "0.7.0";
 export function extensionVersionOK(version: unknown): boolean {
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
   const [major, minor] = version.split(".").map(Number);
-  return major > 0 || minor >= 6;
+  return major > 0 || minor >= 7;
 }
 export function extension(
   type: string,

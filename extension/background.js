@@ -197,6 +197,7 @@ async function appRequest(message, sender) {
         "server-recipes",
         "auto-links",
         "status-checks",
+        "automatic-publishing",
       ],
     };
   if (message.type === "PRICE_SEARCH") {
@@ -271,6 +272,8 @@ async function appRequest(message, sender) {
       item.origin === origin && item.profileId === profileId && item.sourceTabId === sender.tab.id);
     if (!pending) throw new Error("Нажмите на статус площадки ещё раз: время открытия истекло.");
     const value = core.validateRun(message.payload.item);
+    // Opening an old task is never fresh consent to publish it again.
+    value.publishMode = 'manual';
     if (value.profileId !== profileId || value.batchId !== pending.batchId || value.recordId !== pending.recordId ||
         value.platforms.length !== 1 || value.platforms[0].id !== pending.platformId)
       throw new Error("Восстанавливаемое задание не совпадает с выбранным.");
@@ -296,6 +299,7 @@ async function appRequest(message, sender) {
       restored.attributes={...restored.attributes,...value.attributes};
       job = newJob(value.platforms[0]); restored.jobs.push(job);
     }
+    job.manualOnly = true;
     state.pendingOpens = state.pendingOpens.filter(item => item !== pending);
     if (!restored.sourceTabIds.includes(sender.tab.id)) restored.sourceTabIds.push(sender.tab.id);
     await save(state);
@@ -354,9 +358,23 @@ async function appRequest(message, sender) {
   }
   if (["PAUSE", "RESUME"].includes(message.type)) {
     for (const b of own) b.paused = message.type === "PAUSE";
+    for (const b of own) for (const j of b.jobs) if (Number.isInteger(j.tabId))
+      await send(j.tabId,{kind:'TASK_MODE',paused:b.paused,publishMode:j.manualOnly?'manual':b.publishMode||'manual'});
     if (message.type === "RESUME") await advance(state);
     else await save(state);
     return { ok: true };
+  }
+  if (message.type === 'SET_MODE') {
+    if (!message.userGesture || !['manual','automatic'].includes(message.payload.publishMode))
+      throw new Error('Выберите режим кнопкой в Автопосте.');
+    for (const b of own) {
+      b.publishMode=message.payload.publishMode;
+      for (const j of b.jobs) j.manualOnly=false;
+      for (const j of b.jobs) if(Number.isInteger(j.tabId))
+        await send(j.tabId,{kind:'TASK_MODE',paused:b.paused,publishMode:b.publishMode});
+    }
+    await save(state);
+    return {ok:true};
   }
   if (!["RUN", "RUN_QUEUE"].includes(message.type))
     throw new Error("Неизвестный запрос.");
@@ -398,7 +416,7 @@ async function appRequest(message, sender) {
   if (message.type === "RUN")
     for (const b of added)
       for (let i = 0; i < b.jobs.length; i++)
-        await openJob(b.jobs[i], b, i === 0);
+        await openJob(b.jobs[i], b, b.publishMode !== 'automatic' && i === 0);
   else await advance(state);
   await save(state);
   for (const b of added) await broadcast(b);
@@ -456,10 +474,26 @@ async function marketplaceRequest(message, sender) {
         mapping: batch.recipe?.mappings[job.canonicalId],
         attributes: batch.recipe?.entries || [],
         paused: batch.paused,
+        publishMode: job.manualOnly ? 'manual' : batch.publishMode || 'manual',
+        autoAttempt: job.autoAttempt || null,
         submission: job.submission || null,
         complete: terminal(job.status),
       },
     };
+  }
+  if (message.kind === 'AUTO_BEGIN') {
+    if (message.jobId !== job.id || terminal(job.status)) return {task:null};
+    if (batch.paused || batch.publishMode !== 'automatic' || job.manualOnly || job.autoAttempt || job.submission ||
+        !['kufar','onliner'].includes(job.canonicalId) || job.canonicalId==='onliner' && batch.listing.category==='cars' ||
+        !publication.postingUrl(job.canonicalId,sender.url) || !batch.photoCount || job.photosTransferred !== batch.photoCount)
+      throw new Error('Автоматическая отправка не разрешена или уже выполнялась. Проверьте задание в кабинете.');
+    job.autoAttempt=crypto.randomUUID();
+    job.submission={id:job.autoAttempt,automatic:true,at:Date.now(),title:typeof message.title==='string'?message.title.slice(0,160):batch.listing.title,
+      existing:Array.isArray(message.existing)?[...new Set(message.existing.map(url=>publication.listingUrl(job.canonicalId,url)).filter(Boolean))].slice(0,100):[]};
+    job.status='submitting';job.message='Автоматическая отправка начата. Ожидаем подтверждение площадки; повторная отправка отключена.';
+    // Persist the attempt before granting a one-shot send, even if this response is lost.
+    await save(state);await broadcast(batch);
+    return {ok:true,submission:job.submission};
   }
   if (["ARM_SUBMISSION","RESET_SUBMISSION"].includes(message.kind)) {
     if (message.jobId !== job.id || terminal(job.status)) return {task:null};
@@ -529,6 +563,14 @@ async function marketplaceRequest(message, sender) {
   }
   await save(state);
   await broadcast(batch);
+  if (job.status==='link_recorded' && batch.publishMode==='automatic' && Number.isInteger(job.tabId)) {
+    try {
+      const tab=await chrome.tabs.get(job.tabId);
+      if (!tab.active && core.platformForOrigin(core.originOf(tab.url))?.id===job.canonicalId) {
+        const id=job.tabId;job.tabId=null;await save(state);await chrome.tabs.remove(id);
+      }
+    } catch {}
+  }
   if (terminal(job.status)) await advance(state);
   return { ok: true };
 }
@@ -538,7 +580,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
     sender.frameId !== 0 ||
     !Number.isInteger(sender.tab?.id) ||
     !core.object(message) ||
-    !["APP_REQUEST", "GET_TASK", "REPORT_TASK", "ARM_SUBMISSION", "RESET_SUBMISSION", "GET_STATUS_TASK", "REPORT_STATUS"].includes(message.kind)
+    !["APP_REQUEST", "GET_TASK", "REPORT_TASK", "ARM_SUBMISSION", "RESET_SUBMISSION", "AUTO_BEGIN", "GET_STATUS_TASK", "REPORT_STATUS"].includes(message.kind)
   )
     return false;
   const work = () =>
