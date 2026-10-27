@@ -16,7 +16,7 @@ test('GPU category waits for the dependent type control, selects the exact type,
   control.textContent='Процессоры';assert.equal(await dom.category(task,'kufar'),false);assert.equal(control.textContent,'Процессоры');
  }finally{window.happyDOM.abort();window.close();}
 });
-function environment(html){const window=new Window({url:'https://www.kufar.by/ain/create',settings:{enableJavaScriptEvaluation:true}});window.document.body.innerHTML=html;window.HTMLElement.prototype.getBoundingClientRect=function(){return {width:100,height:30,top:0,left:0,right:100,bottom:30};};window.eval(script);return {window,document:window.document,dom:window.AutopostDOM};}
+function environment(html){const window=new Window({url:'https://www.kufar.by/ain/create',settings:{enableJavaScriptEvaluation:true}});window.document.body.innerHTML=html;window.HTMLElement.prototype.getBoundingClientRect=function(){let shown=true;for(let el=this;el;el=el.parentElement)if(el.hidden||window.getComputedStyle(el).display==="none")shown=false;return {width:shown?100:0,height:shown?30:0,top:0,left:0,right:100,bottom:30};};window.eval(script);return {window,document:window.document,dom:window.AutopostDOM};}
 
 test('authenticated Onliner price input uses visible BYN hint and preserves USD safety',async()=>{
  const {window,document,dom}=environment('<div><input id="topic_price" type="text"><input name="topic_price" type="hidden"><div>ƃ</div></div><textarea name="topic_desc"></textarea>');
@@ -73,4 +73,98 @@ test('newly mounted controls are filled on a later pass, no one-shot lock',async
  const {window,document,dom}=environment(base);try{
   const task={listing:{category:'parts',partNumber:'000123-AB'}};assert.ok((await dom.fillFields(task,'kufar')).skipped.includes('partNumber'));const input=document.createElement('input');input.name='spares_parts_number';document.body.append(input);const result=await dom.fillFields(task,'kufar');assert.equal(input.value,'000123-AB');assert.ok(result.filled.includes('partNumber'));
  }finally{window.happyDOM.abort();window.close();}
+});
+
+// Dropdown structure observed in the authenticated Kufar car form on 2026-10-27.
+function kufarDropdown(document,key,options,{readonly=false,onSelect=()=>{},accept=true}={}) {
+ const scope=document.createElement('div');scope.dataset.name=key;
+ scope.innerHTML=`<div data-testid="base-dropdown-ui" aria-readonly="${readonly}">Введите название</div><div data-testid="dropdown-popup-ui" style="display:none"><div class="SelectSearch"><input placeholder=""></div></div>`;
+ const dropdown=scope.firstChild,popup=scope.lastChild;
+ dropdown.onclick=()=>{if(dropdown.getAttribute('aria-readonly')!=='true')popup.style.display=popup.style.display==='none'?'block':'none';};
+ const add=label=>{const option=document.createElement('div');option.className='DefaultItem-styles-module-scss-module__test__item';option.textContent=label;option.onclick=()=>{if(accept){dropdown.textContent=label;popup.style.display='none';onSelect(label);}};popup.append(option);return option;};
+ options.forEach(add);document.body.append(scope);return {scope,dropdown,popup,add};
+}
+
+test('Kufar model resumes after brand enables the same wrapper; optional fields fill after the parent',async()=>{
+ const {window,document,dom}=environment('');
+ try {
+  let enableModel;let seats;
+  const brand=kufarDropdown(document,'cars_brand_v2',['Volkswagen'],{onSelect(){
+   seats=kufarDropdown(document,'cars_seats',['5']);
+   enableModel=()=>{model.dropdown.setAttribute('aria-readonly','false');model.add('Passat');};
+  }});
+  const model=kufarDropdown(document,'cars_model_v2',[],{readonly:true});
+  const task={listing:{category:'cars',brand:'Volkswagen',model:'Passat'},attributes:[{key:'cars_seats',text:'5',label:'Количество посадочных мест',platform:'kufar'}]};
+  const first=await dom.fillFields(task,'kufar');
+  assert.equal(brand.dropdown.textContent,'Volkswagen');assert.ok(first.skipped.includes('model'));
+  assert.equal(seats.dropdown.textContent,'5','Optional field mounted by brand selection fills in the same pass');
+  enableModel();
+  const second=await dom.fillFields(task,'kufar');
+  assert.ok(second.filled.includes('model'));assert.equal(model.dropdown.textContent,'Passat');
+  model.dropdown.textContent='Golf';
+  await dom.fillFields(task,'kufar');assert.equal(model.dropdown.textContent,'Golf','Seller correction is preserved');
+ } finally {window.happyDOM.abort();window.close();}
+});
+
+test('late model options invalidate a failed attempt without replacing the field or clicking retry',async()=>{
+ const {window,document,dom}=environment('');
+ try {
+  const model=kufarDropdown(document,'cars_model_v2',[]);
+  const task={listing:{category:'cars',model:'Passat'}};
+  assert.ok((await dom.fillFields(task,'kufar')).skipped.includes('model'));
+  model.add('Passat');
+  assert.ok((await dom.fillFields(task,'kufar')).filled.includes('model'));
+  assert.equal(model.dropdown.textContent,'Passat');
+ } finally {window.happyDOM.abort();window.close();}
+});
+
+test('Kufar search input and a clicked but unaccepted option are not reported as a selected model',async()=>{
+ const {window,document,dom}=environment('');
+ try {
+  const model=kufarDropdown(document,'cars_model_v2',['Passat'],{accept:false});
+  model.dropdown.click();model.popup.querySelector('input').value='Passat';
+  const result=await dom.fillFields({listing:{model:'Passat'}},'kufar');
+  assert.ok(result.skipped.includes('model'));assert.ok(!result.filled.includes('model'));
+  assert.equal(model.dropdown.textContent,'Введите название');
+  assert.ok(result.details.some(s=>s.includes('не подтверждено')));
+ } finally {window.happyDOM.abort();window.close();}
+});
+
+test('Kufar matches only options of its own field and confirms an async React replacement',async()=>{
+ const {window,document,dom}=environment('');
+ try {
+  let wrongClicks=0;
+  const other=kufarDropdown(document,'other_field',['Passat'],{onSelect(){wrongClicks++;}});other.dropdown.click();
+  let replacement;
+  const model=kufarDropdown(document,'cars_model_v2',['Passat'],{onSelect(){
+   // Simulate a controlled component confirming selection on a later render.
+   model.dropdown.textContent='Введите название';
+   window.setTimeout(()=>{model.scope.remove();replacement=kufarDropdown(document,'cars_model_v2',['Passat']);replacement.dropdown.textContent='Passat';},160);
+  }});
+  const result=await dom.fillFields({listing:{model:'Passat'}},'kufar');
+  assert.equal(wrongClicks,0);assert.equal(replacement.dropdown.textContent,'Passat');assert.ok(result.filled.includes('model'));
+ } finally {window.happyDOM.abort();window.close();}
+});
+
+test('unchanged failed fields back off, then retry automatically; a changed parent never selects a wrong model',async()=>{
+ const {window,document,dom}=environment('');
+ try {
+  const brand=kufarDropdown(document,'cars_brand_v2',['Volkswagen']);brand.dropdown.textContent='Audi';
+  const model=kufarDropdown(document,'cars_model_v2',['Passat']);
+  const task={listing:{brand:'Volkswagen',model:'Passat'}};
+  assert.ok((await dom.fillFields(task,'kufar')).skipped.includes('model'));
+  assert.equal(model.dropdown.textContent,'Введите название');
+  brand.dropdown.textContent='Volkswagen';
+  model.dropdown.setAttribute('aria-readonly','true');
+  await dom.fillFields(task,'kufar');
+  const failure=task.attempts.get('model');assert.ok(failure.retryAt>Date.now());
+  await dom.fillFields(task,'kufar');assert.equal(task.attempts.get('model').count,failure.count);
+  failure.retryAt=0;
+  await dom.fillFields(task,'kufar');assert.equal(task.attempts.get('model').count,failure.count+1);
+  model.dropdown.setAttribute('aria-readonly','false');
+  const openModel=model.dropdown.onclick;
+  model.dropdown.onclick=()=>{openModel();brand.dropdown.textContent='Audi';};
+  const changed=await dom.fillFields({listing:task.listing},'kufar');
+  assert.ok(changed.skipped.includes('model'));assert.equal(model.dropdown.textContent,'Введите название');
+ } finally {window.happyDOM.abort();window.close();}
 });

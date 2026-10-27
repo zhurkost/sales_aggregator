@@ -543,7 +543,7 @@
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ["disabled", "hidden"],
+    attributeFilter: ["disabled", "hidden", "aria-disabled", "aria-readonly", "aria-busy"],
   });
   if (task.complete)
     stop("Задание завершено. Сведения сохранены в личном кабинете.");

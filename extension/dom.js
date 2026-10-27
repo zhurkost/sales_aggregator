@@ -109,6 +109,20 @@
     );
   }
   const pause = (ms) => new Promise((r) => setTimeout(r, ms));
+  const dropdownSelector = '[data-testid="base-dropdown-ui"],[role="combobox"],.select2-selection,[class*="multiselect__tags"],[class*="vs__dropdown-toggle"]';
+  function unavailable(el) {
+    return !el || el.disabled || el.readOnly || Boolean(el.closest('[aria-disabled="true"],[aria-readonly="true"],[inert]'));
+  }
+  function fieldState(target) {
+    if (!target) return '';
+    // React can keep the same wrapper while replacing its options, enabling
+    // it, or changing the selected parent. Element identity is not readiness.
+    return JSON.stringify([
+      visible(target), target.textContent,
+      [...target.querySelectorAll('input,select,textarea,' + dropdownSelector)].map(el =>
+        [el.value, unavailable(el), el.getAttribute('aria-busy')]),
+    ]);
+  }
   function metadata(e) {
     const result = [
       "name",
@@ -198,6 +212,7 @@
   }
   function setNative(el, key, value) {
     if (!el) return "Поле пока не появилось";
+    if (unavailable(el)) return "Поле пока недоступно";
     let next = String(value);
     if (el.tagName === "SELECT") {
       const options = [...el.options].filter(
@@ -280,14 +295,16 @@
   }
   async function custom(key, value, listing, platform, explicitScope) {
     const scope = explicitScope || scopeFor(key, listing, platform);
-    if (!scope) return "Поле пока не появилось";
+    if (!scope || !visible(scope)) return "Поле пока не появилось";
+    if (unavailable(scope)) return "Поле пока недоступно";
+    const dropdown = scope.querySelector(dropdownSelector);
     const native = scope.querySelector(
       "input:not([type=hidden]):not([type=radio]):not([type=checkbox]),textarea,select",
     );
     if (
       native &&
       visible(native) &&
-      !(platform === "kufar" && key === "currency")
+      !(platform === "kufar" && (key === "currency" || dropdown?.matches('[data-testid="base-dropdown-ui"]')))
     ) {
       const autocomplete =
         native.getAttribute("role") === "combobox" ||
@@ -333,15 +350,8 @@
       if (!selected) match[0].click();
       return null;
     }
-    const dropdown = scope.querySelector(
-      '[data-testid="base-dropdown-ui"],[role="combobox"],.select2-selection,[class*="multiselect__tags"],[class*="vs__dropdown-toggle"]',
-    );
-    if (
-      !dropdown ||
-      !visible(dropdown) ||
-      dropdown.getAttribute("aria-readonly") === "true"
-    )
-      return "Не распознан список";
+    if (!dropdown || !visible(dropdown)) return "Не распознан список";
+    if (unavailable(dropdown)) return "Поле пока недоступно";
     const current = normalize(dropdown.textContent);
     if (desired.includes(current)) return null;
     if (
@@ -350,11 +360,17 @@
       !/выберите|введите|любой|вся беларусь|не выбран|select/i.test(current)
     )
       return "Уже выбрано пользователем";
-    dropdown.click();
-    for (let i = 0; i < 10; i++) {
-      await pause(200);
+    const popup = scope.querySelector('[data-testid="dropdown-popup-ui"]');
+    const opened = !popup || !visible(popup);
+    if (opened) dropdown.click();
+    for (let i = 0; i < 20; i++) {
+      await pause(150);
+      if (!scope.isConnected || unavailable(dropdown)) return "Поле обновляется, ждём загрузки вариантов";
+      if (platform === 'kufar' && key === 'model' && listing.brand &&
+          !values('brand',listing.brand).includes(normalize(scopeFor('brand',listing,platform)?.querySelector(dropdownSelector)?.textContent)))
+        return "Марка изменилась, проверьте модель автомобиля";
       const options = [
-        ...document.querySelectorAll(
+        ...(platform === 'kufar' && scope.querySelector('[data-testid="dropdown-popup-ui"]') ? scope : document).querySelectorAll(
           '[role="option"],[class*="DefaultItem"][class*="item"],.select2-results__option,.multiselect__option,.vs__dropdown-option',
         ),
       ].filter(visible);
@@ -363,16 +379,26 @@
       );
       if (matches.length === 1) {
         matches[0].click();
-        await pause(150);
-        return null;
+        // A click or text in the dropdown search is not a selected model.
+        // Check the rendered value, including when React replaced the wrapper.
+        for (let confirm = 0; confirm < 15; confirm++) {
+          await pause(100);
+          const field = scope.isConnected ? scope : explicitScope
+            ? [...document.querySelectorAll('[data-name]')].find(el => el.dataset.name === scope.dataset.name)
+            : scopeFor(key, listing, platform);
+          if (desired.includes(normalize(field?.querySelector(dropdownSelector)?.textContent))) return null;
+        }
+        return "Значение ещё не подтверждено площадкой";
       }
     }
     // Close only the popup we opened, never select an approximate model or part.
     const close = [
       ...document.querySelectorAll('[data-name="kufar_modal_close_icon"]'),
     ].filter(visible);
-    if (close.length === 1) close[0].click();
-    else dropdown.click();
+    if (opened) {
+      if (close.length === 1) close[0].click();
+      else if (dropdown.isConnected && (!popup || visible(popup))) dropdown.click();
+    }
     return "Нужен точный выбор из списка";
   }
   async function category(task, platform) {
@@ -456,22 +482,6 @@
   }
   async function fillFields(task, platform) {
     const result = { filled: [], skipped: [], details: [] };
-    for(const attribute of task.attributes || []) {
-      if(!/^[a-z][a-z0-9_]{0,79}$/.test(attribute.key)) continue;
-      const key = 'attribute:'+attribute.key;
-      let reason;
-      if(platform==='kufar'&&(!attribute.platform||attribute.platform==='kufar')) {
-        const scope = document.querySelector(`[data-name="${attribute.key}"]`);
-        reason = scope ? await custom(attribute.key,attribute.text,task.listing,platform,scope) : 'Поле пока не появилось';
-      } else if(platform==='onliner'&&attribute.key==='onliner_short_description')reason=setNative(document.querySelector('textarea[name="topic_desc"]'),key,attribute.text);
-      else if(platform==='bamper') {
-        const names={bamper_modification:'VERSIA',bamper_engine_code:'ENGINE_MODEL_ID',bamper_vin:'VIN',bamper_stock_code:'EXT_ID',bamper_discount:'DISCOUNT',spares_capacity:'ENGINE_VALUE',spares_cars_engine:'FUEL_ID',spares_gearbox:'PRIVOD_ID',spares_cars_type:'KUZOV_ID',spares_regdate:'YEAR',spares_parts_code:'EXT_ID',content_video:'VIDEO[]'};
-        if(!names[attribute.key])continue;
-        reason=setNative(bamperControl(names[attribute.key]),attribute.key==='spares_gearbox'?'transmission':key,attribute.text);
-      } else continue;
-      if(reason) {result.skipped.push(key);result.details.push(attribute.label+': '+reason);}
-      else result.filled.push(key);
-    }
     const keys = [
       "title",
       "brand",
@@ -500,6 +510,14 @@
     for (const key of keys) {
       const value = task.listing[key];
       if (!value) continue;
+      if (platform === 'kufar' && key === 'model' && task.listing.brand) {
+        const brand = scopeFor('brand',task.listing,platform)?.querySelector(dropdownSelector);
+        if (!values('brand',task.listing.brand).includes(normalize(brand?.textContent))) {
+          result.skipped.push(key);
+          result.details.push('Модель: ждём выбора марки ' + task.listing.brand);
+          continue;
+        }
+      }
       if(platform==='bamper'&&['currency','condition','availability'].includes(key)) {
         const reason=bamperRadio(task,key,value);
         if(reason){result.skipped.push(key);result.details.push(key+': '+reason);}else result.filled.push(key);
@@ -528,10 +546,13 @@
       task.attempts ||= new Map();
       const target = control || scopeFor(key, task.listing, platform);
       const previous = task.attempts.get(key);
+      const state = fieldState(target);
       if (
         !control &&
         previous?.target === target &&
-        previous?.value === value
+        previous?.value === value &&
+        previous?.state === state &&
+        Date.now() < previous.retryAt
       ) {
         result.skipped.push(key);
         result.details.push(
@@ -542,12 +563,32 @@
       reason = control
         ? setNative(control, key, value)
         : await custom(key, value, task.listing, platform);
-      if (reason && !control) task.attempts.set(key, { target, value, reason });
+      if (reason && !control) {
+        const count = previous?.target === target && previous?.value === value && previous?.state === state ? previous.count + 1 : 1;
+        task.attempts.set(key, { target, value, reason, state:fieldState(target), count, retryAt:Date.now()+Math.min(30000,2000*2**Math.min(count-1,4)) });
+      }
       else task.attempts.delete(key);
       if (reason) {
         result.skipped.push(key);
         result.details.push((aliases[key]?.at(-1) || key) + ": " + reason);
       } else result.filled.push(key);
+    }
+    // Fill parent fields first; optional attributes may only mount afterwards.
+    for(const attribute of task.attributes || []) {
+      if(!/^[a-z][a-z0-9_]{0,79}$/.test(attribute.key)) continue;
+      const key = 'attribute:'+attribute.key;
+      let reason;
+      if(platform==='kufar'&&(!attribute.platform||attribute.platform==='kufar')) {
+        const scope = document.querySelector(`[data-name="${attribute.key}"]`);
+        reason = scope ? await custom(attribute.key,attribute.text,task.listing,platform,scope) : 'Поле пока не появилось';
+      } else if(platform==='onliner'&&attribute.key==='onliner_short_description')reason=setNative(document.querySelector('textarea[name="topic_desc"]'),key,attribute.text);
+      else if(platform==='bamper') {
+        const names={bamper_modification:'VERSIA',bamper_engine_code:'ENGINE_MODEL_ID',bamper_vin:'VIN',bamper_stock_code:'EXT_ID',bamper_discount:'DISCOUNT',spares_capacity:'ENGINE_VALUE',spares_cars_engine:'FUEL_ID',spares_gearbox:'PRIVOD_ID',spares_cars_type:'KUZOV_ID',spares_regdate:'YEAR',spares_parts_code:'EXT_ID',content_video:'VIDEO[]'};
+        if(!names[attribute.key])continue;
+        reason=setNative(bamperControl(names[attribute.key]),attribute.key==='spares_gearbox'?'transmission':key,attribute.text);
+      } else continue;
+      if(reason) {result.skipped.push(key);result.details.push(attribute.label+': '+reason);}
+      else result.filled.push(key);
     }
     return result;
   }
