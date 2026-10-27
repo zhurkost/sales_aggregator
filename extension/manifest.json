@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Автопост • помощник заполнения (beta)",
   "description": "Автопост: категории, формы, фотографии, очередь и ссылки в личном кабинете. Ваша авторизация остаётся в браузере.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "minimum_chrome_version": "112",
   "permissions": [
     "storage",
@@ -27,8 +27,6 @@
       ],
       "js": [
         "core.js",
-        "taxonomy.js",
-        "attributes.js",
         "bridge.js"
       ],
       "run_at": "document_start",
@@ -53,7 +51,10 @@
       ],
       "js": [
         "core.js",
+        "publication.js",
         "dom.js",
+        "status.js",
+        "status-page.js",
         "marketplace.js"
       ],
       "run_at": "document_idle",

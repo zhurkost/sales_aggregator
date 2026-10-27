@@ -10,6 +10,31 @@ const request=(store,route,body,cookie='',origin=config.PUBLIC_ORIGIN)=>store.ha
 async function register(store,login){const r=await request(store,'register',{login,password:'test-password-123',name:login});assert.equal(r.status,200);const cookie=r.headers.get('set-cookie').split(';')[0];assert.match(r.headers.get('set-cookie'),/HttpOnly/);assert.match(r.headers.get('set-cookie'),/Secure/);assert.match(r.headers.get('set-cookie'),/SameSite=Strict/);return {cookie,...await r.json()};}
 const ad=()=>({id:crypto.randomUUID(),revision:0,listing:{...emptyListing,category:'parts',taxonomyId:'auto.parts.optics',title:'Фара',description:'Царапина на стекле',partName:'Фара',partNumber:'000123-AB',price:'450',currency:'BYN'},photos:[],selected:['bamper','kufar-parts'],jobs:[],text:'Фара с царапиной',categoryConfirmed:true});
 
+test('server returns only the selected category recipe and honors corrections without transferring catalogs',async()=>{
+  const store=createWorkspace(config);try{
+    const account=await register(store,'catalog');
+    const item={listing:{...emptyListing,category:'general',taxonomyId:'onliner.286'},platforms:[{id:'kufar-general'},{id:'onliner-general'}],categoryOverrides:{onliner:'17'}};
+    assert.equal((await request(store,'extension-config',{items:[item]})).status,401);
+    const response=await request(store,'extension-config',{profileId:account.profile.id,items:[item]},account.cookie);
+    assert.equal(response.status,200);const body=await response.json();
+    assert.equal(body.recipes[0].taxonomyId,'computers.gpu');assert.equal(body.recipes[0].mappings.onliner.id,'17');
+    assert.equal(body.recipes[0].mappings.kufar.attributes[0].value,'11');assert.equal(body.recipes[0].mappings.flagma,undefined);
+    assert.ok(JSON.stringify(body).length<5000);
+    assert.equal((await request(store,'extension-config',{items:[{...item,categoryOverrides:{onliner:'999999999'}}]},account.cookie)).status,400);
+    assert.equal((await request(store,'extension-config',{profileId:'someone-else',items:[item]},account.cookie)).status,403);
+  }finally{store.close();}
+});
+test('checked marketplace status persists with the link and rejects unknown states',async()=>{
+  const store=createWorkspace(config);try{
+    const account=await register(store,'status');const input=ad();input.jobs=[{platformId:'kufar-parts',status:'link_recorded',url:'https://www.kufar.by/item/123456',remoteStatus:{state:'rejected',checkedAt:new Date().toISOString(),message:'Исправьте фото'}}];
+    const saved=(await (await request(store,'ads',input,account.cookie)).json()).ad;
+    assert.equal(saved.jobs[0].remoteStatus.state,'rejected');
+    const read=(await (await request(store,'ads/'+saved.id,undefined,account.cookie)).json()).ad;assert.equal(read.jobs[0].remoteStatus.message,'Исправьте фото');
+    const updated=(await (await request(store,'ads',{...saved,jobs:[{...saved.jobs[0],remoteStatus:{...saved.jobs[0].remoteStatus,state:'invented'}}]},account.cookie)).json()).ad;
+    assert.equal(updated.jobs[0].remoteStatus,undefined);
+  }finally{store.close();}
+});
+
 test('private contacts merge with integration settings, validate phone, and never rewrite existing cards',async()=>{
  const store=createWorkspace(config);try{
   const a=await register(store,'contacts-a'),b=await register(store,'contacts-b');

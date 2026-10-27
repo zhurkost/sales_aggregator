@@ -11,10 +11,12 @@ import { promisify } from "node:util";
 import { sanitizeListing } from "../lib/listing.ts";
 import { categoryById, sanitizeCategoryOverrides } from "../lib/taxonomy.ts";
 import {cleanAttributes} from "../lib/attributes.ts";
+import {extensionRecipe} from "../lib/extension-config.ts";
 import {
   getPlatforms,
   safePublicationUrl,
   statusLabel,
+  cleanRemoteStatus,
 } from "../lib/platforms.ts";
 const scrypt = promisify(scryptCallback);
 const hash = (s) => createHash("sha256").update(s).digest("hex");
@@ -123,6 +125,7 @@ export function createWorkspace(config) {
           ? j.status
           : "manual_required",
         message: clean(j.message, 600),
+        ...(safePublicationUrl(j.platformId,j.url) && cleanRemoteStatus(j.remoteStatus) ? {remoteStatus:cleanRemoteStatus(j.remoteStatus)} : {}),
         ...(safePublicationUrl(j.platformId, j.url)
           ? { url: safePublicationUrl(j.platformId, j.url) }
           : {}),
@@ -316,6 +319,13 @@ export function createWorkspace(config) {
       }
       const p = user(req);
       if (!p) return reply({ error: "Выберите профиль и войдите." }, 401);
+      if (path === "/api/workspace/extension-config" && req.method === "POST") {
+        const input = await body(req);
+        if (input.profileId && input.profileId !== p.id) return reply({error:"Профиль изменился. Откройте кабинет заново."},403);
+        if (!Array.isArray(input.items) || input.items.length < 1 || input.items.length > 20)
+          throw new Error("Нужно от 1 до 20 карточек.");
+        return reply({recipes:input.items.map(extensionRecipe)});
+      }
       if (path === "/api/workspace/ads" && req.method === "GET") {
         const records = db
           .prepare(

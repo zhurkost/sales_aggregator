@@ -7,8 +7,8 @@
   function validate(value) {
     if (!value || typeof value.query !== 'string' || value.query.length < 3 || value.query.length > 120 || /https?:|@|\+375|\b\d{9,}\b|[<>\u0000-\u001f]/i.test(value.query)) throw new Error('Сначала уточните товар и поисковый запрос.');
     if (!Array.isArray(value.terms) || !value.terms.length || value.terms.length > 6 || value.terms.some(t => typeof t !== 'string' || !normalize(t) || t.length > 50)) throw new Error('Не удалось определить признаки товара.');
-    if (!root.AutopostTaxonomy?.[value.taxonomyId]) throw new Error('Подтвердите категорию товара.');
-    return {query:value.query.trim(),terms:value.terms, taxonomyId:value.taxonomyId,kind:value.kind === 'service' ? 'service' : 'product',condition:['Новая','Б/у','На восстановление'].includes(value.condition)?value.condition:''};
+    const recipe = root.AutopostCore.validateRecipe(value.recipe);
+    return {query:value.query.trim(),terms:value.terms, taxonomyId:recipe.taxonomyId,recipe,kind:value.kind === 'service' ? 'service' : 'product',condition:['Новая','Б/у','На восстановление'].includes(value.condition)?value.condition:''};
   }
   function matches(title, criteria) {
     const text = String(title).toLowerCase().replace(/ё/g,'е');
@@ -77,7 +77,7 @@
     return html;
   }
   async function search(input) {
-    const criteria=validate(input), mappings=root.AutopostTaxonomy[criteria.taxonomyId].mappings;
+    const criteria=validate(input), mappings=criteria.recipe.mappings;
     const sources=[];
     if(mappings.kufar){const url=new URL('https://www.kufar.by/l');url.searchParams.set('query',criteria.query);url.searchParams.set('cat',mappings.kufar.id);for(const a of mappings.kufar.attributes||[])if(a.key==='computers_component_type')url.searchParams.set('cct',a.value);sources.push({id:'kufar',name:'Kufar',url:url.href,parse:html=>{const result=parseKufar(html);result.offers=result.offers.filter(o=>o.categoryId===mappings.kufar.id);return result;}});}
     if(mappings.onliner && /^\d+$/.test(mappings.onliner.id)){const url=new URL('https://baraholka.onliner.by/search.php');url.searchParams.set('q',criteria.query);url.searchParams.set('f',mappings.onliner.id);url.searchParams.set('cat',criteria.kind==='service'?'4':'1');url.searchParams.set('topicTitle','1');sources.push({id:'onliner',name:'Onlíner',url:url.href,parse:parseOnliner});}

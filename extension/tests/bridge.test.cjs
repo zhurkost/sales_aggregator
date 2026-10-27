@@ -6,11 +6,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const core = require('../core.js');
-function createBridge({ sendMessage } = {}) {
+function createBridge({ sendMessage, fetchCatalog } = {}) {
   const listeners = {};
   const responses = [];
   const handshakes = [];
   const forwarded = [];
+  const catalogRequests = [];
   let fromExtension;
   const origin = core.APP_ORIGINS[0];
   const window = {
@@ -19,12 +20,13 @@ function createBridge({ sendMessage } = {}) {
   };
   window.top = window;
   const chrome = { runtime: { id: 'test-id', async sendMessage(message) { forwarded.push(message); return sendMessage ? sendMessage(message) : { version: core.VERSION, jobs: [] }; }, onMessage: { addListener(callback) { fromExtension = callback; } } } };
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../bridge.js'), 'utf8'), { AutopostCore: core, window, chrome, location: { origin }, navigator: { userActivation: { isActive: true } }, Date });
+  const fetch = async(url,options)=>{catalogRequests.push({url,options});return fetchCatalog ? fetchCatalog(url,options) : Response.json({recipes:JSON.parse(options.body).items.map(()=>require('./recipe-fixture.cjs')('auto.cars'))});};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../bridge.js'), 'utf8'), { AutopostCore: core, window, chrome, location: { origin }, navigator: { userActivation: { isActive: true } }, Date,fetch,AbortController,setTimeout,clearTimeout });
   async function event(type, data) { for (const listener of listeners[type] || []) await listener(data); }
   async function request(type, requestId = 'req-1', overrides = {}) {
     return event('message', { source: window, origin, data: { source: 'autopost-app', type, requestId, payload: { batchId: requestId, listing: { title: 'Title', description: 'Description', extra: 'do not forward' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }], extra: 'do not forward' } }, ...overrides });
   }
-  return { event, request, responses, handshakes, forwarded, fromExtension, window, origin };
+  return { event, request, responses, handshakes, forwarded, fromExtension, window, origin,catalogRequests };
 }
 
 test('RUN requires a trusted event and allows only one request per gesture', async () => {
@@ -43,6 +45,14 @@ test('RUN requires a trusted event and allows only one request per gesture', asy
   await bridge.request('RUN', 'req-4');
   assert.equal(bridge.forwarded.length, 1);
   assert.equal(bridge.responses.at(-1).message.payload.code, 'USER_GESTURE_REQUIRED');
+  assert.equal(bridge.catalogRequests.length,1);assert.equal(bridge.catalogRequests[0].url,'/api/workspace/extension-config');
+  assert.equal('photos' in JSON.parse(bridge.catalogRequests[0].options.body).items[0],false);
+  assert.ok(bridge.forwarded[0].payload.recipe);
+});
+test('catalog failures prevent launch; no stale dictionary or executable response is used',async()=>{
+  const bridge=createBridge({fetchCatalog:async()=>Response.json({error:'Catalog unavailable'},{status:503})});
+  await bridge.event('click',{isTrusted:true});await bridge.request('RUN');
+  assert.equal(bridge.forwarded.length,0);assert.match(bridge.responses.at(-1).message.payload.error,/Catalog unavailable/);
 });
 
 test('foreign sources and origins do not receive responses', async () => {

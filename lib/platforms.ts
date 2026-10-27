@@ -197,7 +197,16 @@ export type Job = {
   url?: string;
   filledFields?: number;
   photosTransferred?: number;
+  remoteStatus?: {state:string;message:string;checkedAt:string};
 };
+export const remoteStatusLabel:Record<string,string> = {
+  visible:"Открывается на площадке",moderation:"На модерации",rejected:"Отклонено",inactive:"Неактивно",action_required:"Нужно ваше действие",unknown:"Статус не подтверждён",
+};
+export function cleanRemoteStatus(value:unknown):Job['remoteStatus'] {
+  const v = value as Job['remoteStatus'];
+  if (!v || !Object.hasOwn(remoteStatusLabel,v.state) || typeof v.checkedAt !== 'string' || !Number.isFinite(Date.parse(v.checkedAt)) || Date.parse(v.checkedAt)>Date.now()+300000) return undefined;
+  return {state:v.state,checkedAt:new Date(v.checkedAt).toISOString(),message:typeof v.message==='string'?v.message.slice(0,500):''};
+}
 export const statusLabel: Record<string, string> = {
   draft: "Черновик",
   ready: "Подготовлено",
@@ -213,7 +222,7 @@ export const statusLabel: Record<string, string> = {
   cancelled: "Остановлено",
   submitted: "Отправлено, ждём модерацию",
   published: "Опубликовано",
-  link_recorded: "Ссылка сохранена пользователем",
+  link_recorded: "Ссылка сохранена",
   inactive: "Неактивно по отметке пользователя",
   unsupported: "Нужно подключение площадки",
 };

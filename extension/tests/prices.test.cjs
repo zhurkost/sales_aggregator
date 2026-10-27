@@ -1,9 +1,10 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-require('../taxonomy.js');
+require('../core.js');
+const recipe=require('./recipe-fixture.cjs');
 const prices=require('../prices.js');
-const criteria={query:'RX 570',terms:['RX 570'],taxonomyId:'computers.gpu',kind:'product',condition:'Б/у'};
+const criteria={query:'RX 570',terms:['RX 570'],taxonomyId:'computers.gpu',recipe:recipe(),kind:'product',condition:'Б/у'};
 // Minimal observed public-page structure, with synthetic offers and no seller data.
 const kufar=(ads,total='42')=>'<script id="__NEXT_DATA__" type="application/json">'+JSON.stringify({props:{initialState:{listing:{ads,total,error:''},recommendations:{ads:[{subject:'must not appear'}]}}}})+'</script>';
 const offer=(id,subject,price,currency='BYR')=>({ad_id:id,subject,type:'sell',category:'16010',currency,price_byn:String(price),price_usd:String(price),ad_parameters:[{p:'condition',vl:'Б/у'}]});

@@ -53,6 +53,8 @@ import {
   platformValidation,
   safePublicationUrl,
   statusLabel,
+  remoteStatusLabel,
+  cleanRemoteStatus,
   type Job,
 } from "../lib/platforms";
 import {
@@ -325,6 +327,7 @@ export function Workspace({
     [busy, setBusy] = useState(""),
     [checked, setChecked] = useState(false),
     [ext, setExt] = useState(false),
+    [pendingChecks, setPendingChecks] = useState(0),
     [contacts, setContacts] = useState<SellerContacts>({}),
     [extensionChecking, setExtensionChecking] = useState(false),
     [extensionStatus, setExtensionStatus] = useState("Проверяем подключение…"),
@@ -432,11 +435,12 @@ export function Workspace({
     batchId: string;
     recordId: string;
     jobs: Job[];
+    receiptId?: string;
   }) {
     if (batch.profileId && batch.profileId !== profile.id) return;
     if (!batch.recordId || !Array.isArray(batch.jobs)) return;
     const signature = JSON.stringify(batch.jobs);
-    if (seenProgress.current.get(batch.batchId) === signature) return;
+    if (seenProgress.current.get(batch.batchId) === signature) { await acknowledge(batch.receiptId); return; }
     let record =
       current.current.id === batch.recordId
         ? current.current
@@ -445,7 +449,7 @@ export function Workspace({
     record = {
       ...record,
       jobs: record.jobs.map(
-        (job) => batch.jobs.find((j) => j.platformId === job.platformId) || job,
+        (job) => { const next = batch.jobs.find((j) => j.platformId === job.platformId); return next ? {...job,...next,...(next.url && next.url!==job.url?{remoteStatus:undefined}:{})} : job; },
       ),
     };
     if (current.current.id === record.id) {
@@ -454,6 +458,35 @@ export function Workspace({
     }
     await persist(record);
     seenProgress.current.set(batch.batchId, signature);
+    await acknowledge(batch.receiptId);
+  }
+  async function acknowledge(receiptId?:string) {
+    if (receiptId && alive.current) await extension("ACK_RECEIPT",{profileId:profile.id,receiptId});
+  }
+  async function receiveStatus(result:{profileId:string;recordId:string;platformId:string;url:string;remoteStatus:Job['remoteStatus'];receiptId?:string}) {
+    if (!alive.current || result.profileId !== profile.id) return;
+    const status = cleanRemoteStatus(result.remoteStatus);
+    if (!status) return;
+    let record = current.current.id === result.recordId ? current.current
+      : (await api<{ad:AdRecord}>("workspace/ads/"+result.recordId)).ad;
+    const job = record.jobs.find(j=>j.platformId===result.platformId && j.url===result.url);
+    if (!job) { await acknowledge(result.receiptId); return; }
+    if (!job.remoteStatus || Date.parse(job.remoteStatus.checkedAt)<Date.parse(status.checkedAt)) {
+      record = {...record,jobs:record.jobs.map(j=>j===job?{...j,remoteStatus:status}:j)};
+      if (current.current.id === record.id) { current.current=record;setAd(record); }
+      await persist(record);
+    }
+    await acknowledge(result.receiptId);
+  }
+  async function checkStatuses(records:AdSummary[]) {
+    if (!ext) { setShowExtension(true); return; }
+    const items = records.flatMap(record=>record.jobs.filter(j=>j.url && j.status!=="inactive").map(j=>({recordId:record.id,platformId:j.platformId,url:j.url,title:listingTitle(record.listing)})));
+    if (!items.length) { notify("Сначала сохраните ссылку на объявление. После подачи помощник попробует получить её автоматически."); return; }
+    await guarded(async()=>{
+      const result = await extension("CHECK_STATUS",{profileId:profile.id,items},25000);
+      setPendingChecks(Number(result.pendingChecks)||0);
+      notify(`Запущена проверка ${items.length} ссылок. Результаты появятся у площадок в кабинете.`);
+    },"Запускаем проверку");
   }
   useEffect(() => {
     alive.current = true;
@@ -481,9 +514,9 @@ export function Workspace({
       )
         return;
       if (event.data.type === "READY") { void checkExtension(); return; }
-      if (event.data.type !== "PROGRESS") return;
+      if (!["PROGRESS","REMOTE_STATUS"].includes(event.data.type)) return;
       progressQueue.current = progressQueue.current
-        .then(() => receive(event.data.payload))
+        .then(() => event.data.type === "REMOTE_STATUS" ? receiveStatus(event.data.payload) : receive(event.data.payload))
         .catch((e) => notify(errorText(e)));
     };
     window.addEventListener("message", listener);
@@ -493,6 +526,9 @@ export function Workspace({
       () =>
         extensionConnected.current && extension("STATUS", { profileId: profile.id }, 5000)
           .then((r) => {
+            if (alive.current) setPendingChecks(Number(r.pendingChecks)||0);
+            if (Array.isArray(r.receipts)) for (const receipt of r.receipts)
+              progressQueue.current = progressQueue.current.then(()=>receipt.kind==='status'?receiveStatus(receipt):receive(receipt)).catch(()=>undefined);
             if (Array.isArray(r.batches))
               for (const b of r.batches)
                 progressQueue.current = progressQueue.current
@@ -761,17 +797,39 @@ export function Workspace({
       }
     }, "Открываем площадки");
   }
-  async function openJob(job: Job) {
+  async function openJob(job: Job, record: AdSummary | AdRecord = current.current) {
     if (!ext) {
       setShowExtension(true);
       return;
     }
     await guarded(async () => {
-      await extension("OPEN_JOB", {
+      const batchId = record.batchId || crypto.randomUUID();
+      const response = await extension("OPEN_JOB", {
         profileId: profile.id,
-        batchId: ad.batchId,
+        batchId,
+        recordId: record.id,
         platformId: job.platformId,
       });
+      if (typeof response.resumeToken === "string") {
+        // The first request records the user's click before the server/photo read.
+        // Restore only this marketplace, without switching the editor or other jobs.
+        let full = current.current.id === record.id ? current.current
+          : (await api<{ad: AdRecord}>("workspace/ads/" + record.id)).ad;
+        if (!alive.current) return;
+        if (full.batchId !== batchId) {
+          full = {...full,batchId};
+          if (current.current.id === full.id) {current.current=full;setAd(full);}
+          full = await persist(full);
+        }
+        const restored = await extension("RESTORE_JOB", {
+          profileId: profile.id,
+          resumeToken: response.resumeToken,
+          item: {...launchPayload({...full, batchId}), platforms: [{id: job.platformId}]},
+        }, 25000);
+        if (Array.isArray(restored.jobs)) await receive({batchId, recordId: record.id, jobs: restored.jobs as Job[]});
+      } else if (Array.isArray(response.jobs)) {
+        await receive({batchId, recordId: record.id, jobs: response.jobs as Job[]});
+      }
     }, "Открываем");
   }
   const node = categoryById(ad.listing.taxonomyId),
@@ -814,7 +872,7 @@ export function Workspace({
           ))}
         </nav>
         <div className="sidebar-note">
-          <b>Автопост · MVP 0.5</b>
+          <b>Автопост · MVP 0.6</b>
           <p>Карточки и статусы хранятся в вашем профиле на сервере.</p>
         </div>
         <div className="sidebar-bottom">
@@ -1272,7 +1330,7 @@ export function Workspace({
                     <div className="extension-card">
                       <b>
                         {ext
-                          ? "Помощник 0.4 подключён"
+                          ? "Помощник подключён"
                           : "Нужно обновить расширение"}
                       </b>
                       <p>
@@ -1330,6 +1388,9 @@ export function Workspace({
           {view === "cabinet" && (
             <Cabinet
               ads={ads}
+              onOpenJob={(record, job) => void openJob(job, record)}
+              onCheckStatuses={(records) => void checkStatuses(records)}
+              pendingChecks={pendingChecks}
               onOpen={openRecord}
               onNew={fresh}
               onRefresh={refresh}
@@ -1381,7 +1442,7 @@ export function Workspace({
           )}
           <footer>
             <Logo />
-            <span>MVP 0.5 · {taxonomy.version}</span>
+            <span>MVP 0.6 · {taxonomy.version}</span>
             <button onClick={() => setShowExtension(true)}>
               Помощник для браузера
             </button>
@@ -1423,7 +1484,7 @@ export function Workspace({
               </li>
               <li>
                 Войдите при необходимости. Проверьте заполнение, завершите
-                подачу и сохраните ссылку в панели.
+                подачу. Помощник сохранит распознанную ссылку автоматически; запасной способ — кнопка в панели.
               </li>
             </ol>
             <p className="fine-print">
@@ -1510,6 +1571,7 @@ function JobCard({
               onChange({
                 ...job,
                 url: safe,
+                remoteStatus: safe === job.url ? job.remoteStatus : undefined,
                 status: "link_recorded",
                 message:
                   "Ссылка добавлена пользователем. Статус площадки ещё не проверен.",
@@ -1541,6 +1603,9 @@ function JobCard({
 function Cabinet({
   ads,
   onOpen,
+  onOpenJob,
+  onCheckStatuses,
+  pendingChecks,
   onNew,
   onRefresh,
   onLegacy,
@@ -1548,6 +1613,9 @@ function Cabinet({
 }: {
   ads: AdSummary[];
   onOpen: (id: string) => void;
+  onOpenJob: (record: AdSummary, job: Job) => void;
+  onCheckStatuses: (records: AdSummary[]) => void;
+  pendingChecks: number;
   onNew: () => void;
   onRefresh: () => Promise<void>;
   onLegacy: () => Promise<void>;
@@ -1595,6 +1663,9 @@ function Cabinet({
                     "authorization_required",
                     "captcha_required",
                     "review_required",
+                    "manual_required",
+                    "category_required",
+                    "error",
                   ].includes(j.status),
                 ).length
             }
@@ -1616,7 +1687,11 @@ function Cabinet({
           {archived ? "В работе" : "Архив"}
         </button>
         <button className="text-button" onClick={() => void onRefresh()}>
-          Обновить
+          Обновить список
+        </button>
+        <button className="secondary" disabled={pendingChecks>0 || !ads.some(a=>!a.archived && a.jobs.some(j=>j.url && j.status!=="inactive"))}
+          onClick={()=>onCheckStatuses(ads.filter(a=>!a.archived))}>
+          {pendingChecks ? `Проверяем статусы (${pendingChecks})…` : "Обновить статусы всех активных"}
         </button>
         <button className="text-button" onClick={() => void onLegacy()}>
           Перенести старые черновики
@@ -1648,28 +1723,33 @@ function Cabinet({
               </p>
             </div>
             <div className="listing-channel-statuses">
-              {a.jobs.map((j) => (
-                <span key={j.platformId}>
-                  {
-                    getPlatforms(a.listing.category, a.listing.taxonomyId).find(
-                      (p) => p.id === j.platformId,
-                    )?.name
-                  }
-                  :{" "}
-                  {j.url ? (
-                    <a href={j.url} target="_blank" rel="noreferrer">
-                      {statusLabel[j.status]} ↗
-                    </a>
-                  ) : (
-                    statusLabel[j.status]
-                  )}
-                </span>
-              ))}
+              {a.jobs.map((j) => {
+                const name = getPlatforms(a.listing.category, a.listing.taxonomyId)
+                  .find((p) => p.id === j.platformId)?.name || j.platformId;
+                const label = `${name}: ${j.url && j.remoteStatus && j.status!=="inactive" ? remoteStatusLabel[j.remoteStatus.state] : statusLabel[j.status]}`;
+                return j.url ? (
+                  <a key={j.platformId} className="listing-channel-link" href={j.url} target="_blank" rel="noreferrer" title={j.remoteStatus ? `${j.remoteStatus.message} Проверено: ${new Date(j.remoteStatus.checkedAt).toLocaleString('ru-RU')}` : j.message}>
+                    {label} ↗
+                  </a>
+                ) : (
+                  <button key={j.platformId} type="button" className="listing-channel-link" onClick={() => onOpenJob(a, j)}
+                    title={`Открыть задание на ${name}. ${j.message}`} aria-label={`${label}. Открыть задание`}>
+                    {label} ↗
+                  </button>
+                );
+              })}
             </div>
+            {a.jobs.some(j=>j.remoteStatus) && <div className="listing-status-details">{a.jobs.filter(j=>j.remoteStatus).map(j=><p key={j.platformId}>
+              <b>{getPlatforms(a.listing.category,a.listing.taxonomyId).find(p=>p.id===j.platformId)?.name}: </b>
+              {j.remoteStatus!.message} <small>Проверено {new Date(j.remoteStatus!.checkedAt).toLocaleString('ru-RU')}</small>
+            </p>)}</div>}
             <div className="job-actions">
               <button className="primary" onClick={() => onOpen(a.id)}>
                 Открыть карточку
               </button>
+              <button className="secondary" disabled={pendingChecks>0 || !a.jobs.some(j=>j.url && j.status!=="inactive")}
+                title={a.jobs.some(j=>j.url)?"Проверить площадки по сохранённым ссылкам":"Проверка доступна после сохранения ссылки"}
+                onClick={()=>onCheckStatuses([a])}>Обновить статусы</button>
               <button
                 className="text-button"
                 onClick={() => onArchive(a.id, !a.archived)}
@@ -1682,8 +1762,8 @@ function Cabinet({
       </div>
       <p className="fine-print">
         Архивирование и отметки в Автопосте не удаляют объявления на площадках.
-        Автоматическая проверка модерации, поднятие и снятие с продажи пока не
-        подключены.
+        Проверка читает видимый ответ площадки по сохранённой ссылке. «Открывается» не означает подтверждения модерации.
+        Если площадка скрывает причину или требует входа, откройте её по ссылке. Поднятие и снятие с продажи не подключены.
       </p>
     </>
   );

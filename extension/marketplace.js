@@ -1,7 +1,8 @@
 (async function () {
   "use strict";
   const core = globalThis.AutopostCore,
-    dom = globalThis.AutopostDOM;
+    dom = globalThis.AutopostDOM,
+    publication = globalThis.AutopostPublication;
   const platform = core.platformForOrigin(location.origin);
   if (window !== window.top || !platform) return;
   let task;
@@ -14,6 +15,8 @@
   let busy = false,
     stopped = false,
     scheduled = null,
+    arming = false,
+    lastSubmitAt = 0,
     lastReport = "",
     navigationAttempts = 0;
   const filled = new Set(task.filledKeys || []),
@@ -86,7 +89,16 @@
       manual.open = true;
     }
   };
-  retry.onclick = () => void fill(true);
+  retry.onclick = async () => {
+    if (task?.submission) {
+      try {
+        const result = await chrome.runtime.sendMessage({kind:"RESET_SUBMISSION",jobId:task.jobId});
+        if (!result?.ok) { status.textContent = result?.error || "Не удалось возобновить заполнение."; return; }
+        task.submission = null;
+      } catch { status.textContent = "Не удалось связаться с расширением."; return; }
+    }
+    void fill(true);
+  };
   actions.append(retry, copy);
   const urlLabel = node("label", "Ссылка на готовое объявление"),
     urlInput = node("input");
@@ -98,7 +110,15 @@
       "Сохранить ссылку и продолжить очередь",
       "primary",
     ),
+    saveCurrent = node("button", "Сохранить ссылку этой страницы", "primary"),
     skip = node("button", "Пропустить это задание");
+  saveCurrent.hidden = true;
+  saveCurrent.onclick = () => {
+    const url = publication.listingUrl(platform.id,location.href);
+    if (!url) return;
+    urlInput.value = url;
+    void confirm.onclick();
+  };
   confirm.onclick = async () => {
     const url = core.safeLink(platform.id, urlInput.value);
     if (!url) {
@@ -106,22 +126,24 @@
         "Нужна HTTPS-ссылка на объявление именно этой площадки.";
       return;
     }
-    await report(
+    const saved = await report(
       "link_recorded",
       "Ссылка сохранена пользователем. Текущий статус площадки ещё не проверен.",
       [],
       { url, userConfirmed: true },
     );
-    stop(
+    if (saved) stop(
       "Ссылка передана в Автопост. Следующее объявление очереди откроется автоматически.",
     );
   };
   skip.onclick = async () => {
-    await report("cancelled", "Задание пропущено пользователем.");
-    stop(
+    const saved = await report("cancelled", "Задание пропущено пользователем.");
+    if (saved) stop(
       "Задание остановлено. Следующее объявление очереди открывается автоматически.",
     );
   };
+  const manualLink = node("details");
+  manualLink.append(node("summary", "Указать ссылку вручную"),urlLabel,urlInput,confirm);
   body.append(
     title,
     status,
@@ -135,9 +157,9 @@
       "Используется ваша сессия сайта. Проверка и финальная отправка — на площадке. Пароли в Автопост не передаются.",
       "muted",
     ),
-    urlLabel,
-    urlInput,
-    confirm,
+    node("p", "После подачи ссылка сохранится автоматически, если площадка покажет готовое объявление или подтверждение со ссылкой. Если открывается список объявлений, откройте своё в этой же вкладке.", "muted"),
+    saveCurrent,
+    manualLink,
     skip,
   );
   panel.append(top, body);
@@ -158,6 +180,7 @@
     );
   }
   async function report(state, message, skipped = [], extra = {}) {
+    if (!task || stopped) return false;
     status.textContent = message;
     counts.textContent = "Заполнено полей: " + filled.size + ".";
     const signature = JSON.stringify([
@@ -168,7 +191,7 @@
       skipped,
       extra,
     ]);
-    if (signature === lastReport) return;
+    if (signature === lastReport) return false;
     lastReport = signature;
     try {
       const r = await chrome.runtime.sendMessage({
@@ -189,9 +212,50 @@
         status.textContent = r.error;
       } else if (r?.task === null)
         stop("Сеанс завершён. Возобновите задание из личного кабинета.");
+      else if (r?.ok) return true;
     } catch {
+      lastReport = "";
       status.textContent += " Статус не удалось передать: обновите расширение.";
     }
+    return false;
+  }
+  async function armSubmission(event) {
+    if (!task || stopped || task.paused || !publication.isSubmitEvent(event,platform.id,location.href)) return;
+    if (arming || Date.now()-lastSubmitAt < 1500) return; // click and native submit describe the same attempt.
+    lastSubmitAt = Date.now();
+    arming = true;
+    const title = publication.submissionTitle(document,platform.id,task.listing);
+    const existing = publication.existingLinks(document,platform.id,location.href,dom.visible);
+    task.submission = {at:Date.now(),title,existing}; // stop routing immediately, before the worker replies.
+    try {
+      const result = await chrome.runtime.sendMessage({kind:"ARM_SUBMISSION",jobId:task.jobId,userGesture:true,title,existing});
+      if (!task || stopped) return;
+      if (result?.ok) task.submission = result.submission;
+      else { task.submission = null; status.textContent = result?.error || "Не удалось включить сохранение ссылки."; }
+    } catch {
+      if (task) task.submission = null;
+      status.textContent = "Не удалось связаться с расширением. Ссылку можно сохранить кнопкой в панели.";
+    } finally { arming = false; }
+    if (!busy) void fill();
+  }
+  document.addEventListener("click",armSubmission,true);
+  document.addEventListener("submit",armSubmission,true);
+  async function capturePublication() {
+    saveCurrent.hidden = !publication.listingUrl(platform.id,location.href);
+    if (!task.submission) return false;
+    if (arming) return true;
+    const candidate = publication.observe(document,platform.id,location.href,task.submission,dom.visible);
+    if (candidate) {
+      const saved = await report("link_recorded",
+        "Ссылка сохранена автоматически. Статус модерации ещё не проверен.",[],
+        {url:candidate.url,capture:{...candidate,attemptId:task.submission.id}});
+      if (saved) stop("Ссылка сохранена автоматически и появится в кабинете Автопоста. Следующая карточка очереди откроется автоматически.");
+    } else {
+      status.textContent = publication.fresh(task.submission)
+        ? "Ожидаем результат подачи. Если форма показывает ошибку, исправьте её и отправьте ещё раз. Готовое объявление откройте в этой вкладке — ссылка сохранится автоматически."
+        : "Не удалось однозначно распознать результат подачи. Откройте готовое объявление и нажмите «Сохранить ссылку этой страницы».";
+    }
+    return true;
   }
   async function attachPhotos() {
     if (!task.photos.length) {
@@ -326,6 +390,11 @@
     busy = true;
     retry.disabled = true;
     try {
+      if (await capturePublication()) return;
+      if (publication.listingUrl(platform.id,location.href)) {
+        status.textContent = "Открыто готовое объявление. Если оно относится к этой карточке, сохраните ссылку кнопкой ниже.";
+        return; // Never click 'add listing' on a result page.
+      }
       if (platform.manual) {
         await report(
           "manual_required",
@@ -369,7 +438,7 @@
         : !categoryReady
           ? "Подтвердите точную категорию на площадке; заполнение остальных полей продолжается."
           : filled.size
-            ? "Проверьте данные и фотографии. Завершите подачу на сайте, затем сохраните ссылку здесь."
+            ? "Проверьте данные и фотографии. Завершите подачу на сайте — помощник попробует сохранить ссылку автоматически."
             : "Форма не распознана. Откройте подробности ниже; карточка остаётся в Автопосте.";
       await report(state, message, result.skipped);
     } catch (e) {
@@ -395,7 +464,9 @@
     observer.disconnect();
     clearTimeout(scheduled);
     clearInterval(poll);
-    retry.disabled = copy.disabled = confirm.disabled = skip.disabled = true;
+    retry.disabled = copy.disabled = confirm.disabled = skip.disabled = saveCurrent.disabled = true;
+    document.removeEventListener("click",armSubmission,true);
+    document.removeEventListener("submit",armSubmission,true);
     pre.textContent = "";
     status.textContent = message;
     task = null;
@@ -409,6 +480,7 @@
         return;
       }
       task.paused = response.task.paused;
+      if (!arming) task.submission = response.task.submission;
       if (response.task.complete) {
         stop("Задание завершено. Сведения сохранены в личном кабинете.");
         return;

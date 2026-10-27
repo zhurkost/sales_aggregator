@@ -8,7 +8,7 @@ const path = require('node:path');
 const { randomUUID } = require('node:crypto');
 const { IDBFactory } = require('fake-indexeddb');
 const core = require('../core.js');
-require('../taxonomy.js');
+const recipe = require('./recipe-fixture.cjs');
 const APP = core.APP_ORIGINS[0];
 function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(), accessLevel = true, sessionAccessLevel = true } = {}) {
   const created = [];
@@ -29,6 +29,7 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
       async get(id) { if (!tabs.has(id)) throw new Error('No tab'); return tabs.get(id); },
       async update(id,options){if(!tabs.has(id))throw new Error('No tab');Object.assign(tabs.get(id),options);return tabs.get(id);},
       async sendMessage(id, message) { sent.push({ id, message }); },
+      async remove(id) { tabs.delete(id); },
       onRemoved: { addListener() {} },
     },
   };
@@ -49,15 +50,78 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
       if (!listening) resolve(undefined);
     });
   }
-  return { data, localData, indexedDB, created, sent, request, context };
+  return { data, localData, indexedDB, created, sent, request, context, tabs };
 }
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
 
+test('cabinet click activates the right batch and restores an expired job using a single-use click ticket',async()=>{
+  const w=createWorker();await run(w);
+  const second={...payload(),batchId:'second',recordId:'record-two',platforms:[{id:'kufar'}]};
+  await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:second});
+  const opening={kind:'APP_REQUEST',type:'OPEN_JOB',userGesture:true,payload:{batchId:'second',recordId:'record-two',platformId:'kufar'}};
+  await w.request(opening);assert.equal(w.created.length,3);assert.equal(w.tabs.get(12).active,true);
+  w.tabs.get(12).url='https://unrelated.invalid/';await w.request(opening);assert.equal(w.created.length,4,'Never focus an assigned tab which navigated to another site');
+  w.data.autopostSessionV1.batches.find(b=>b.batchId==='second').expiresAt=Date.now()-1;
+  const ticket=await w.request(opening);assert.ok(ticket.resumeToken);assert.equal(w.created.length,4);
+  const restore={kind:'APP_REQUEST',type:'RESTORE_JOB',payload:{resumeToken:ticket.resumeToken,item:second}};
+  assert.ok((await w.request({...restore,payload:{...restore.payload,profileId:'other'}})).error);
+  assert.ok((await w.request({...restore,payload:{...restore.payload,item:{...second,recordId:'wrong'}}})).error);
+  assert.equal((await w.request(restore)).jobs.length,1);assert.equal(w.created.length,5);
+  assert.ok((await w.request(restore)).error,'Ticket is consumed');assert.equal(w.created.length,5);
+});
+test('automatic link capture requires a submit on the assigned tab and matching evidence; durable receipts survive browser restart',async()=>{
+  const w=createWorker();const input={...payload(),profileId:'owner',recordId:'card',listing:{...payload().listing,title:'Видеокарта RX 570'},platforms:[{id:'kufar'}]};
+  await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:input});
+  const form='https://www.kufar.by/ain/create';const url='https://www.kufar.by/item/123456';
+  const {task}=await w.request({kind:'GET_TASK'},form,10);
+  const report={kind:'REPORT_TASK',report:{jobId:task.jobId,status:'link_recorded',url,capture:{mode:'detail',url,title:input.listing.title,attemptId:'absent'}}};
+  assert.ok((await w.request(report,url,10)).error);
+  assert.equal((await w.request({kind:'ARM_SUBMISSION',jobId:task.jobId,userGesture:true,title:input.listing.title},form,99)).task,null);
+  assert.ok((await w.request({kind:'ARM_SUBMISSION',jobId:task.jobId,userGesture:false},form,10)).error);
+  const armed=await w.request({kind:'ARM_SUBMISSION',jobId:task.jobId,userGesture:true,title:input.listing.title},form,10);
+  report.report.capture.attemptId=armed.submission.id;
+  assert.ok((await w.request({...report,report:{...report.report,capture:{...report.report.capture,title:'RX 5700'}}},url,10)).error);
+  assert.ok((await w.request(report,form,10)).error,'Detail evidence must refer to the current page');
+  assert.equal((await w.request(report,url,10)).ok,true);
+  assert.match(w.sent.find(s=>s.message.receiptId)?.message.kind,/APP_PROGRESS/);
+  const restarted=createWorker({indexedDB:w.indexedDB});
+  const status=await restarted.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'owner'}});
+  assert.equal(status.jobs.length,0);assert.equal(status.receipts.length,1);assert.equal(status.receipts[0].jobs[0].url,url);
+  assert.equal((await restarted.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'other'}})).receipts.length,0);
+  const ack={kind:'APP_REQUEST',type:'ACK_RECEIPT',payload:{profileId:'other',receiptId:status.receipts[0].receiptId}};
+  await restarted.request(ack);assert.equal((await restarted.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'owner'}})).receipts.length,1);
+  await restarted.request({...ack,payload:{...ack.payload,profileId:'owner'}});
+  assert.equal((await restarted.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'owner'}})).receipts.length,0);
+});
+test('automatic capture completes one bulk job and advances its marketplace only once',async()=>{
+  const w=createWorker();const input={...payload(),profileId:'owner',recordId:'first',listing:{...payload().listing,title:'Видеокарта RX 570'},platforms:[{id:'kufar'}]};
+  await w.request({kind:'APP_REQUEST',type:'RUN_QUEUE',userGesture:true,payload:{profileId:'owner',items:[input,{...input,batchId:'second',recordId:'second'}]}});
+  const form='https://www.kufar.by/ain/create';const url='https://www.kufar.by/item/123456';const {task}=await w.request({kind:'GET_TASK'},form,10);
+  const armed=await w.request({kind:'ARM_SUBMISSION',jobId:task.jobId,userGesture:true,title:input.listing.title},form,10);
+  const report={kind:'REPORT_TASK',report:{jobId:task.jobId,status:'link_recorded',url,capture:{url,mode:'detail',title:input.listing.title,attemptId:armed.submission.id}}};
+  await w.request(report,url,10);await w.request(report,url,10);assert.equal(w.created.length,2);
+});
+test('status queue opens three inactive tabs, binds reports to exact jobs and stores checked facts separately',async()=>{
+  const w=createWorker();const items=Array.from({length:4},(_,i)=>({recordId:'card-'+i,platformId:'kufar',url:'https://www.kufar.by/item/'+(123450+i),title:'RX 570'}));
+  const msg={kind:'APP_REQUEST',type:'CHECK_STATUS',userGesture:true,payload:{profileId:'owner',items}};
+  assert.ok((await w.request({...msg,userGesture:false})).error);assert.equal(w.created.length,0);
+  assert.equal((await w.request(msg)).pendingChecks,4);assert.equal(w.created.length,3);assert.ok(w.created.every(t=>t.active===false));
+  await w.request(msg);assert.equal(w.created.length,3,'Repeated clicks do not duplicate pending checks');
+  const {task}=await w.request({kind:'GET_STATUS_TASK'},items[0].url,10);assert.ok(task.id);assert.equal(task.listing,undefined);
+  assert.equal((await w.request({kind:'GET_STATUS_TASK'},'https://av.by/',10)).task,null);
+  assert.ok((await w.request({kind:'REPORT_STATUS',checkId:'other',result:{state:'moderation'}},items[0].url,10)).error);
+  assert.equal((await w.request({kind:'REPORT_STATUS',checkId:task.id,result:{state:'moderation',message:'Объявление на модерации'}},items[0].url,10)).ok,true);
+  assert.equal(w.created.length,4);assert.equal(w.tabs.has(10),false);
+  const result=await w.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'owner'}});
+  assert.equal(result.pendingChecks,3);assert.equal(result.receipts[0].remoteStatus.state,'moderation');assert.equal(result.receipts[0].recordId,'card-0');
+  assert.equal((await w.request({kind:'APP_REQUEST',type:'STATUS',payload:{profileId:'other'}})).pendingChecks,0);
+});
+
 test('price requests require app origin and gesture, cache public results, and never create tabs',async()=>{
  const worker=createWorker();let calls=0;
  worker.context.AutopostPrices.search=async()=>{calls++;return {results:[{id:'kufar',status:'ok',groups:[]}],checkedAt:new Date().toISOString()};};
- const message={kind:'APP_REQUEST',type:'PRICE_SEARCH',userGesture:true,payload:{query:'RX 570',terms:['RX 570'],taxonomyId:'computers.gpu'}};
+ const message={kind:'APP_REQUEST',type:'PRICE_SEARCH',userGesture:true,payload:{query:'RX 570',terms:['RX 570'],taxonomyId:'computers.gpu',recipe:recipe()}};
  assert.ok((await worker.request({...message,userGesture:false})).error);
  const denied=await worker.request(message,'https://www.kufar.by/');assert.ok(!denied||denied.error);assert.equal(calls,0);
  assert.equal((await worker.request(message)).results[0].status,'ok');assert.equal((await worker.request(message)).cached,true);assert.equal(calls,1);assert.equal(worker.created.length,0);
@@ -203,7 +267,7 @@ test('bulk queue serializes each marketplace and only advances after completion'
 });
 
 test('default GPU mappings and per-marketplace corrections survive the worker queue',async()=>{
- const w=createWorker();const gpu={...payload(),batchId:'gpu-routing',listing:{...payload().listing,category:'general',taxonomyId:'onliner.286'},platforms:[{id:'kufar-general'},{id:'onliner-general'}],categoryOverrides:{onliner:'17'}};
+ const w=createWorker();const gpu={...payload(),batchId:'gpu-routing',listing:{...payload().listing,category:'general',taxonomyId:'onliner.286'},platforms:[{id:'kufar-general'},{id:'onliner-general'}],categoryOverrides:{onliner:'17'},recipe:recipe('onliner.286',{onliner:'17'})};
  const result=await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:gpu});assert.ok(!result.error,result.error);
  const k=await w.request({kind:'GET_TASK'},'https://www.kufar.by/ain/create',w.created[0].id);
  const o=await w.request({kind:'GET_TASK'},'https://baraholka.onliner.by/fleamarketposting.php',w.created[1].id);

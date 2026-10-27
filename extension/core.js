@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.5.0';
+  const VERSION = '0.6.0';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -103,14 +103,37 @@
     const categoryOverrides = {};
     if(payload.categoryOverrides!==undefined&&!object(payload.categoryOverrides))throw new Error('Некорректные категории площадок.');
     for(const [platform,id] of Object.entries(payload.categoryOverrides||{})) {
-      const options=root.AutopostCategoryOptions;
-      if(!options||!own(options,platform)||typeof id!=='string'||!own(options[platform],id))throw new Error('Категория площадки отсутствует в справочнике. Обновите расширение.');
+      if(!own(PLATFORMS,platform)||typeof id!=='string'||!/^[-a-zA-Z0-9_.:]{1,100}$/.test(id)||(id.includes(':')&&platform!=='kufar'))throw new Error('Категория площадки отсутствует в справочнике.');
       categoryOverrides[platform]=id;
     }
-    if(root.AutopostCategoryAliases&&own(root.AutopostCategoryAliases,listing.taxonomyId))listing.taxonomyId=root.AutopostCategoryAliases[listing.taxonomyId];
-    const mapping=root.AutopostCategoryOptions?.kufar?.[categoryOverrides.kufar]||root.AutopostTaxonomy?.[listing.taxonomyId]?.mappings?.kufar;
-    const attributes=root.AutopostAttributes?root.AutopostAttributes.sanitizeAttributes(root.AutopostFields,mapping,payload.attributes,listing):{};
-    return { batchId, listing, photos, platforms, categoryOverrides, attributes, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
+    const recipe = payload.recipe ? validateRecipe(payload.recipe) : null;
+    if (listing.taxonomyId && !recipe) throw new Error('Не загружены категории с сервера. Обновите страницу Автопоста.');
+    if (recipe) { listing.taxonomyId = recipe.taxonomyId; listing.category = recipe.category; }
+    const attributes = Object.fromEntries((recipe?.entries||[]).map(e=>[e.key,e.value]));
+    return { batchId, listing, photos, platforms, categoryOverrides, attributes, recipe, profileId:text(payload.profileId||'legacy',80,'профиль'), recordId:text(payload.recordId||batchId,80,'карточка') };
+  }
+  function validateRecipe(value) {
+    if (!object(value) || value.protocol !== 1 || !['cars','parts','general'].includes(value.category) ||
+        !/^[a-z0-9_.-]{1,100}$/.test(value.taxonomyId) || !object(value.mappings) || !Array.isArray(value.entries) || value.entries.length > 80)
+      throw new Error('Формат справочника изменился. Обновите расширение.');
+    const parameter = key => typeof key === 'string' && /^[a-z][a-z0-9_]{0,79}$/.test(key) && !['constructor','prototype'].includes(key);
+    const mappings = {};
+    for (const [platform,m] of Object.entries(value.mappings)) {
+      if (!own(PLATFORMS,platform) || !object(m) || typeof m.id !== 'string' || !m.id || m.id.length > 200 || /[\u0000-\u001f]/.test(m.id) ||
+          !Array.isArray(m.path) || m.path.length > 12 || m.path.some(s=>typeof s !== 'string' || s.length > 200) ||
+          (m.attributes && (!Array.isArray(m.attributes) || m.attributes.length > 20))) throw new Error('Некорректное соответствие категории.');
+      const attributes = (m.attributes || []).map(a=>{
+        if (!object(a) || !parameter(a.key)) throw new Error('Некорректный параметр категории.');
+        return {key:a.key,value:text(a.value,100,'значение'),label:text(a.label,200,'название')};
+      });
+      mappings[platform] = {id:m.id,path:[...m.path],attributes};
+    }
+    const entries = value.entries.map(e=>{
+      if (!object(e) || !parameter(e.key) || !own(PLATFORMS,e.platform) || e.formName && !/^[a-zA-Z][a-zA-Z0-9_\[\]]{0,79}$/.test(e.formName))
+        throw new Error('Некорректная характеристика.');
+      return {key:e.key,platform:e.platform,label:text(e.label,200,'название'),value:text(e.value,300,'значение'),text:text(e.text,300,'характеристика'),...(e.formName?{formName:e.formName}:{})};
+    });
+    return {protocol:1,version:text(value.version,100,'версия справочника'),taxonomyId:value.taxonomyId,category:value.category,mappings,entries};
   }
   function publicJob(job) {
     return {
@@ -125,7 +148,7 @@
   }
   function startUrl(id,listing){if(id==='onliner'&&listing.category==='cars')return 'https://ab.onliner.by/';if(id==='abw'&&listing.category==='parts')return 'https://abw.by/carparts';return PLATFORMS[id].url;}
   function safeLink(id,value){try{const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!PLATFORMS[id]?.origins.includes(u.origin)||u.hostname==='profile.onliner.by')return '';u.hash='';return u.href;}catch{return '';}}
-  const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, publicJob, normalize,startUrl,safeLink };
+  const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, validateRecipe, publicJob, normalize,startUrl,safeLink };
   root.AutopostCore = Object.freeze(core);
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
 })(globalThis);
