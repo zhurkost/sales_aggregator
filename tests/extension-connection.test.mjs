@@ -64,6 +64,24 @@ test('version check requires server recipes, link capture and status checks', ()
   assert.equal(extensionVersionOK('0.6.0'),false);
   assert.equal(extensionVersionOK('0.7.0'),false);
   assert.equal(extensionVersionOK('0.8.0'),true);
+  assert.equal(extensionVersionOK('0.8.1'),true);
   assert.equal(extensionVersionOK(undefined),false);
   assert.equal(extensionVersionOK('not-a-version'),false);
 });
+
+test('legacy disconnected bridges show reload instructions without requiring an extension update', () => page(async ({window,reply}) => {
+  for (const error of [
+    "Cannot read properties of undefined (reading 'sendMessage')",
+    "Cannot read properties of null (reading 'sendMessage')",
+    'chrome.runtime.sendMessage is not a function',
+    'chrome is not defined',
+    'Extension context invalidated.',
+  ]) {
+    window.onSend = message => reply(message,'RESPONSE',{error,code:'REQUEST_FAILED'});
+    await assert.rejects(extension('PING'), e => e.code==='EXTENSION_RELOAD_REQUIRED' && /Обновите вкладку/.test(e.message));
+  }
+  window.onSend = message => reply(message,'RESPONSE',{error:'Карточка уже отправлена.',code:'ALREADY_STARTED'});
+  await assert.rejects(extension('RUN'), e => e.code==='ALREADY_STARTED' && e.message==='Карточка уже отправлена.');
+  window.onSend = message => reply(message,'RESPONSE',{version:'0.8.0'});
+  assert.equal((await extension('PING')).version,'0.8.0','Working 0.8.0 remains supported');
+}));

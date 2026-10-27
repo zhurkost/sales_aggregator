@@ -80,7 +80,17 @@ export function newRecord(listing: Listing, text = ""): AdRecord {
     events: [],
   };
 }
-export const EXTENSION_VERSION = "0.8.0";
+export const EXTENSION_VERSION = "0.8.1";
+export function extensionError(detail: unknown, code?: unknown): Error & {code: string} {
+  const message = String(detail || 'Не удалось связаться с расширением.');
+  // Older installed bridges expose a raw TypeError when their extension has
+  // been reloaded. Handle that on the site too, without requiring a reinstall.
+  const reload = code === 'EXTENSION_RELOAD_REQUIRED' ||
+    /context invalidated|receiving end does not exist|could not establish connection|message (port|channel) closed|(?:undefined|null).*sendMessage|sendMessage.*(?:not a function|undefined)|chrome is not defined|(?:chrome\.)?runtime is undefined/i.test(message);
+  return Object.assign(new Error(reload
+    ? 'Обновите вкладку Автопоста: она потеряла связь с расширением. Если это не помогло, включите Автопост в списке расширений этого браузера, разрешите доступ к сайту и снова обновите вкладку.'
+    : message), {code: reload ? 'EXTENSION_RELOAD_REQUIRED' : typeof code === 'string' ? code : 'REQUEST_FAILED'});
+}
 export function extensionVersionOK(version: unknown): boolean {
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
   const [major, minor] = version.split(".").map(Number);
@@ -117,7 +127,7 @@ export function extension(
       cleanup();
       const r = e.data.payload || {};
       if (e.data.error || r.error)
-        reject(new Error(String(e.data.error || r.error)));
+        reject(extensionError(e.data.error || r.error, r.code));
       else resolve(r);
     };
     const timer = setTimeout(() => {
