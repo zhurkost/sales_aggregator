@@ -1,5 +1,11 @@
 # Dependencies
 /node_modules/
+/frontend/node_modules/
+/frontend/.angular/
+/frontend/public/
+/dist-angular/
+/backend/target/
+/backend/work/
 /.pnp
 .pnp.*
 # Keep authored Yarn tooling if the project adopts Yarn.
@@ -43,6 +49,7 @@ yarn-error.log*
 /work/
 
 # OS metadata
+.idea/
 .DS_Store
 *token*
 *secret*

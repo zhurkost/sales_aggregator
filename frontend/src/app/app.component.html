@@ -1,0 +1,1540 @@
+@if (!ready) {
+  <div class="loading-page">
+    <span class="brand">Автопост<span class="brand-period">.</span></span>
+    <p>Открываем личный кабинет…</p>
+  </div>
+} @else if (unavailable) {
+  <div class="loading-page">
+    <h1>Кабинет временно недоступен</h1>
+    <p>Проверьте соединение и повторите попытку.</p>
+    <button class="primary" (click)="session()">Повторить</button>
+  </div>
+} @else if (!profile) {
+  <div class="auth-page">
+    <div class="auth-intro">
+      <span class="brand"
+        ><span class="brand-icon"><app-icon name="layers" /></span>Автопост<span
+          class="brand-period"
+          >.</span
+        ></span
+      ><span class="eyebrow">ВАШ КАБИНЕТ ПРОДАВЦА</span>
+      <h1>Одна карточка.<br />Все размещения рядом.</h1>
+      <p>
+        Подготовьте объявление, выберите площадки и следите за заданиями в своём
+        профиле.
+      </p>
+      <div class="auth-points">
+        <span
+          ><app-icon name="sparkles" />Категория и описание с помощью ИИ</span
+        ><span><app-icon name="globe" />Площадки Беларуси в одном окне</span
+        ><span><app-icon name="file" />Объявления, очередь и ссылки</span>
+      </div>
+    </div>
+    <form class="panel auth-form" (ngSubmit)="authenticate()">
+      <h2>
+        {{ authMode === "register" ? "Создать профиль" : "Выбрать профиль" }}
+      </h2>
+      <p class="section-subtitle">
+        Без почты, телефона и подтверждений. Только логин и пароль.
+      </p>
+      <div class="segmented">
+        <button
+          type="button"
+          [attr.aria-pressed]="authMode === 'login'"
+          (click)="authMode = 'login'"
+        >
+          Войти</button
+        ><button
+          type="button"
+          [attr.aria-pressed]="authMode === 'register'"
+          (click)="authMode = 'register'; login = ''"
+        >
+          Новый профиль
+        </button>
+      </div>
+      @if (authMode === "login" && profiles.length) {
+        <label class="full-label"
+          >Сохранённые профили<select [(ngModel)]="login" name="savedProfile">
+            @for (p of profiles; track p.id) {
+              <option [value]="p.login">{{ p.name }} · {{ p.login }}</option>
+            }
+          </select></label
+        >
+      }
+      <label class="full-label"
+        >Логин<input
+          [(ngModel)]="login"
+          name="login"
+          autocomplete="username"
+          minlength="2"
+          maxlength="40"
+          required
+      /></label>
+      @if (authMode === "register") {
+        <label class="full-label"
+          >Имя профиля<input
+            [(ngModel)]="name"
+            name="name"
+            maxlength="80"
+            placeholder="Например, Илья или Мой магазин"
+        /></label>
+      }
+      <label class="full-label"
+        >Пароль<input
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          [attr.autocomplete]="
+            authMode === 'login' ? 'current-password' : 'new-password'
+          "
+          minlength="6"
+          maxlength="128"
+          required
+      /></label>
+      <button class="primary big" [disabled]="!!busy">
+        <app-icon name="arrow" />{{
+          busy ||
+            (authMode === "register" ? "Создать и войти" : "Войти в кабинет")
+        }}
+      </button>
+      <p class="fine-print">
+        Это профили MVP. Восстановление пароля пока не подключено. Объявления
+        сохраняются на сервере отдельно для каждого профиля.
+      </p>
+    </form>
+  </div>
+} @else {
+  <div class="app-shell workspace-v3">
+    <aside class="sidebar">
+      <span class="brand"
+        ><span class="brand-icon"><app-icon name="layers" /></span>Автопост<span
+          class="brand-period"
+          >.</span
+        ></span
+      >
+      <div class="workspace-label">КАБИНЕТ ПРОДАВЦА</div>
+      <nav>
+        @for (item of nav; track item[0]) {
+          <button
+            class="nav-item"
+            [class.active]="view === item[0]"
+            [disabled]="!!busy"
+            [title]="item[1]"
+            (click)="item[0] === 'editor' ? fresh() : navigate(item[0])"
+          >
+            <app-icon [name]="item[2]" />{{ item[1] }}
+          </button>
+        }
+      </nav>
+      <div class="sidebar-note">
+        <b>Автопост · MVP 0.9</b>
+        <p>Карточки и статусы хранятся в вашем профиле на сервере.</p>
+      </div>
+      <div class="sidebar-bottom">
+        <button class="nav-item" (click)="showExtension = true">
+          <app-icon name="globe" />{{
+            ext ? "Расширение подключено" : "Установить расширение"
+          }}
+        </button>
+        <div class="profile">
+          <span class="avatar"><app-icon name="user" /></span
+          ><span
+            ><b>{{ profile.name }}</b
+            ><small>{{ profile.login }}</small></span
+          ><button title="Сменить профиль" (click)="logout()">
+            <app-icon name="logout" />
+          </button>
+        </div>
+      </div>
+    </aside>
+    <div class="main-shell">
+      <header class="topbar">
+        <div class="breadcrumbs">
+          {{ profile.name }} <span>/</span>
+          @for (item of nav; track item[0]) {
+            @if (item[0] === view) {
+              {{ item[1] }}
+            }
+          }
+        </div>
+        <div class="top-actions">
+          <span class="country">🇧🇾 Беларусь</span
+          ><button class="text-button" (click)="showExtension = true">
+            {{ ext ? "Помощник подключён" : "Расширение " + version }}
+          </button>
+        </div>
+      </header>
+      <div class="mobile-nav">
+        @for (item of nav; track item[0]) {
+          <button
+            [attr.aria-label]="item[1]"
+            [attr.aria-pressed]="view === item[0]"
+            (click)="item[0] === 'editor' ? fresh() : navigate(item[0])"
+          >
+            <app-icon [name]="item[2]" /><span>{{ item[1] }}</span>
+          </button>
+        }
+      </div>
+      <main>
+        @if (view === "editor") {
+          <div class="heading-row">
+            <div>
+              <span class="eyebrow">ОДНО ОБЪЯВЛЕНИЕ — НЕСКОЛЬКО ПЛОЩАДОК</span>
+              <h1>Подготовьте объявление</h1>
+              <p class="subtitle">
+                Опишите товар, проверьте карточку и выберите площадки.
+              </p>
+            </div>
+            <span class="draft-pill" aria-live="polite">{{ saveState }}</span>
+          </div>
+          <div class="steps">
+            <div class="step active"><span>0</span><b>Категория</b></div>
+            <span class="step-line"></span>
+            <div class="step" [class.active]="ad.prepared">
+              <span>1</span><b>Карточка</b>
+            </div>
+            <span class="step-line"></span>
+            <div class="step" [class.active]="ad.photos.length">
+              <span>2</span><b>Фото</b>
+            </div>
+            <span class="step-line"></span>
+            <div class="step" [class.active]="ad.jobs.length">
+              <span>3</span><b>Размещение</b>
+            </div>
+          </div>
+          <div class="content-grid">
+            <div class="editor-column">
+              <section class="panel">
+                <div class="section-title">
+                  <div>
+                    <span class="section-number">0</span>
+                    <h2>Описание и категория</h2>
+                  </div>
+                  <span class="soft-badge">{{
+                    serverAI ? "ИИ подключён" : "Ручное заполнение"
+                  }}</span>
+                </div>
+                <p class="section-subtitle">
+                  Расскажите, что продаёте. Категорию и сведения можно исправить
+                  вручную.
+                </p>
+                <div class="textarea-wrap">
+                  <textarea
+                    aria-label="Исходное описание"
+                    [ngModel]="ad.text"
+                    (ngModelChange)="textChange($event)"
+                    maxlength="8000"
+                    placeholder="Например: продам Volkswagen Passat B8, 2018 год…"
+                  ></textarea>
+                </div>
+                <div class="prepare-row">
+                  <button class="text-button" (click)="textChange(sample)">
+                    Пример автомобиля</button
+                  ><button
+                    class="text-button"
+                    (click)="textChange(partsSample)"
+                  >
+                    Пример запчасти</button
+                  ><button
+                    class="secondary"
+                    [disabled]="!!busy"
+                    (click)="classify()"
+                  >
+                    <app-icon name="sparkles" />Определить категорию
+                  </button>
+                </div>
+                @for (candidate of candidates; track candidate.id) {
+                  <p class="callout">
+                    {{ categoryById(candidate.id)?.name }} —
+                    {{ candidate.reason }}
+                  </p>
+                }
+                <label class="full-label"
+                  >Поиск категории<input
+                    [(ngModel)]="categoryQuery"
+                    placeholder="Название товара или раздела" /></label
+                ><label class="full-label"
+                  >Категория Автопоста<select
+                    [ngModel]="categoryId"
+                    (ngModelChange)="selectCategory($event)"
+                  >
+                    <option value="">Выберите категорию</option>
+                    @for (category of categoryOptions; track category.id) {
+                      <option [value]="category.id">
+                        {{ category.parent }} / {{ category.name }}
+                      </option>
+                    }
+                  </select></label
+                >
+                @if (categoryId) {
+                  <details>
+                    <summary>Категории на площадках</summary>
+                    @for (
+                      platform of getPlatforms(
+                        categoryById(categoryId)?.group || "general",
+                        categoryId
+                      );
+                      track platform.id
+                    ) {
+                      <label class="full-label"
+                        >{{ platform.name
+                        }}<select
+                          [(ngModel)]="pendingOverrides[platform.canonicalId]"
+                        >
+                          <option [ngValue]="undefined">
+                            Автоматически:
+                            {{
+                              mapping(
+                                categoryId,
+                                platform.canonicalId
+                              )?.path?.join(" → ") || "не сопоставлено"
+                            }}
+                          </option>
+                          @for (
+                            option of mappings(platform.canonicalId);
+                            track option.optionId
+                          ) {
+                            <option [value]="option.optionId">
+                              {{ mappingLabel(option) }}
+                            </option>
+                          }
+                        </select></label
+                      >
+                    }
+                  </details>
+                }
+                <div class="prepare-row">
+                  <button
+                    class="secondary"
+                    [disabled]="!!busy"
+                    (click)="manualCategory()"
+                  >
+                    Заполнить вручную</button
+                  ><button
+                    class="primary"
+                    [disabled]="!!busy || !categoryId"
+                    (click)="prepare()"
+                  >
+                    <app-icon name="sparkles" />Подготовить карточку
+                  </button>
+                </div>
+              </section>
+              <section class="panel">
+                <div class="section-title">
+                  <div>
+                    <span class="section-number">1</span>
+                    <h2>Карточка объявления</h2>
+                  </div>
+                  <button
+                    class="text-button"
+                    (click)="history()"
+                    [disabled]="!ad.revision"
+                  >
+                    История
+                  </button>
+                </div>
+                <label class="full-label"
+                  >Заголовок<input
+                    [ngModel]="ad.listing.title"
+                    (ngModelChange)="field('title', $event)"
+                    maxlength="120"
+                /></label>
+                <div class="fields-grid">
+                  @for (definition of definitions; track definition.key) {
+                    <label
+                      >{{ definition.label }}
+                      @if (definition.options) {
+                        <select
+                          [ngModel]="ad.listing[definition.key]"
+                          (ngModelChange)="field(definition.key, $event)"
+                        >
+                          <option value="">Не указано</option>
+                          @for (option of definition.options; track option) {
+                            <option [value]="option">{{ option }}</option>
+                          }
+                        </select>
+                      } @else {
+                        <input
+                          [ngModel]="ad.listing[definition.key]"
+                          (ngModelChange)="field(definition.key, $event)"
+                          [placeholder]="definition.placeholder || ''"
+                        />
+                      }
+                    </label>
+                  }
+                </div>
+                <label class="full-label"
+                  >Описание<textarea
+                    [ngModel]="ad.listing.description"
+                    (ngModelChange)="field('description', $event)"
+                    rows="7"
+                    maxlength="8000"
+                  ></textarea>
+                </label>
+                @if (attributes.length) {
+                  <details open>
+                    <summary>Дополнительные характеристики</summary>
+                    <p class="fine-print">
+                      Неизвестные значения можно оставить пустыми. Площадка
+                      может запросить их при подаче.
+                    </p>
+                    <div class="fields-grid">
+                      @for (attr of attributes; track attr.key) {
+                        <label
+                          >{{ attr.label
+                          }}{{ attr.required ? " · требуется площадкой" : "" }}
+                          @if (attr.options.length) {
+                            <select
+                              [ngModel]="ad.attributes?.[attr.key] || ''"
+                              (ngModelChange)="attribute(attr.key, $event)"
+                            >
+                              <option value="">Не указано</option>
+                              @for (option of attr.options; track option[0]) {
+                                <option [value]="option[0]">
+                                  {{ option[1] }}
+                                </option>
+                              }
+                            </select>
+                          } @else {
+                            <input
+                              [ngModel]="ad.attributes?.[attr.key] || ''"
+                              (ngModelChange)="attribute(attr.key, $event)"
+                              maxlength="300"
+                            />
+                          }
+                        </label>
+                      }
+                    </div>
+                  </details>
+                }
+                @if (settings.templates?.length) {
+                  <div class="prepare-row">
+                    <select
+                      aria-label="Шаблон продавца"
+                      [(ngModel)]="templateId"
+                    >
+                      <option value="">Выберите шаблон</option>
+                      @for (t of settings.templates; track t.id) {
+                        <option [value]="t.id">{{ t.name }}</option>
+                      }</select
+                    ><button class="secondary" (click)="applyTemplate()">
+                      Применить шаблон
+                    </button>
+                  </div>
+                }
+                <details>
+                  <summary>Дополнительный текст для площадок</summary>
+                  @for (platform of platforms; track platform.id) {
+                    <label class="full-label"
+                      >{{ platform.name
+                      }}<textarea
+                        [ngModel]="
+                          ad.platformText?.[platform.canonicalId] || ''
+                        "
+                        (ngModelChange)="
+                          platformTextChange(platform.canonicalId, $event)
+                        "
+                        maxlength="1000"
+                        rows="2"
+                      ></textarea>
+                    </label>
+                  }
+                </details>
+                <label class="full-label"
+                  >Ответственный<select
+                    [ngModel]="ad.assigneeId || ''"
+                    (ngModelChange)="assignee($event)"
+                  >
+                    <option value="">Не назначен</option>
+                    @for (member of team.members; track member.id) {
+                      <option [value]="member.id">{{ member.name }}</option>
+                    }
+                  </select></label
+                >
+                <div class="prepare-row">
+                  <button
+                    class="secondary"
+                    [disabled]="!!busy"
+                    (click)="saveCurrent()"
+                  >
+                    Сохранить</button
+                  ><button class="text-button" (click)="copyText()">
+                    Скопировать текст
+                  </button>
+                </div>
+              </section>
+              <section class="panel">
+                <div class="section-title">
+                  <div>
+                    <span class="section-number">2</span>
+                    <h2>Фотографии</h2>
+                  </div>
+                  <span>{{ ad.photos.length }} / 12</span>
+                </div>
+                <label class="photo-zone" tabindex="0"
+                  ><app-icon name="photo" [size]="30" /><span
+                    >Добавьте JPG, PNG или WebP до 20 МБ</span
+                  ><input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    (change)="upload(fileList($event))"
+                /></label>
+                <p class="photo-paste-hint">
+                  Можно вставить фотографии из буфера обмена.
+                </p>
+                <div class="angular-photos">
+                  @for (photo of ad.photos; track photo.id; let i = $index) {
+                    <figure>
+                      <img [src]="photo.dataUrl" [alt]="photo.name" />
+                      <figcaption>
+                        <button
+                          [disabled]="i === 0"
+                          (click)="movePhoto(i, -1)"
+                          aria-label="Переместить фото влево"
+                        >
+                          ←</button
+                        ><button
+                          (click)="removePhoto(photo.id)"
+                          aria-label="Удалить фото"
+                        >
+                          Удалить</button
+                        ><button
+                          [disabled]="i === ad.photos.length - 1"
+                          (click)="movePhoto(i, 1)"
+                          aria-label="Переместить фото вправо"
+                        >
+                          →
+                        </button>
+                      </figcaption>
+                    </figure>
+                  }
+                </div>
+                <button
+                  class="secondary"
+                  [disabled]="!!busy || !ad.photos.length"
+                  (click)="analyzePhotos()"
+                >
+                  Предложить описание по фото
+                </button>
+                @if (photoSuggestion) {
+                  <div class="callout">
+                    <div>
+                      <b>Проверьте предложение ИИ</b
+                      ><textarea
+                        [(ngModel)]="photoSuggestion.description"
+                        rows="5"
+                        aria-label="Описание по фото"
+                      ></textarea>
+                      @for (q of photoSuggestion.questions; track q) {
+                        <p>{{ q }}</p>
+                      }
+                      <button class="primary" (click)="applyPhotoSuggestion()">
+                        Добавить в исходное описание</button
+                      ><button
+                        class="text-button"
+                        (click)="photoSuggestion = null"
+                      >
+                        Отменить
+                      </button>
+                    </div>
+                  </div>
+                }
+              </section>
+              <section class="panel">
+                <div class="section-title">
+                  <div>
+                    <span class="section-number">3</span>
+                    <h2>Площадки для размещения</h2>
+                  </div>
+                </div>
+                @for (platform of platforms; track platform.id) {
+                  <label class="platform"
+                    ><input
+                      type="checkbox"
+                      [checked]="ad.selected.includes(platform.id)"
+                      (change)="togglePlatform(platform.id)"
+                    /><span
+                      class="platform-icon"
+                      [style.color]="platform.color"
+                      >{{ platform.short }}</span
+                    ><span class="platform-info"
+                      ><b>{{ platform.name }}</b
+                      ><small>{{ platform.note }}</small></span
+                    ><span class="platform-domain">{{
+                      platform.domain
+                    }}</span></label
+                  >
+                }
+              </section>
+              <section class="panel price-comparison">
+                <h2>Сравнить цены</h2>
+                <p>
+                  Сначала определим товар. Затем помощник найдёт похожие
+                  предложения Kufar и Барахолки Onlíner.
+                </p>
+                <button
+                  class="secondary"
+                  [disabled]="!!busy"
+                  (click)="identify()"
+                >
+                  Определить товар для поиска
+                </button>
+                @if (identity) {
+                  <div class="price-identity">
+                    <b>{{ identity.name }}</b>
+                    <p>
+                      {{
+                        identity.status === "identified"
+                          ? identity.query
+                          : identity.question
+                      }}
+                    </p>
+                    @if (identity.status === "identified") {
+                      <button
+                        class="primary"
+                        (click)="searchPrices()"
+                        [disabled]="!!busy"
+                      >
+                        Найти цены на площадках
+                      </button>
+                    }
+                  </div>
+                }
+                @if (priceResults.length) {
+                  <p class="fine-print">
+                    Проверено {{ priceCheckedAt | date: "medium" }}
+                  </p>
+                  @for (result of priceResults; track result.id) {
+                    <article class="price-source">
+                      <h3>
+                        {{ result.name }}
+                        <a
+                          [href]="safeSearchLink(result.url)"
+                          target="_blank"
+                          rel="noreferrer"
+                          >Открыть поиск ↗</a
+                        >
+                      </h3>
+                      <p>
+                        {{
+                          result.error ||
+                            "Просмотрено: " +
+                              result.scanned +
+                              "; совпадений: " +
+                              result.matched
+                        }}
+                      </p>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Валюта</th>
+                            <th>Количество</th>
+                            <th>От — до</th>
+                            <th>Медиана</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (
+                            group of result.groups || [];
+                            track group.currency
+                          ) {
+                            <tr>
+                              <td>{{ group.currency }}</td>
+                              <td>{{ group.count }}</td>
+                              <td>{{ group.min }} — {{ group.max }}</td>
+                              <td>{{ group.median }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                      <details>
+                        <summary>Предложения</summary>
+                        @for (offer of result.offers || []; track offer.url) {
+                          <p>
+                            <a
+                              [href]="safeSearchLink(offer.url)"
+                              target="_blank"
+                              rel="noreferrer"
+                              >{{ offer.title }}</a
+                            >
+                            — {{ offer.price }} {{ offer.currency }}
+                          </p>
+                        }
+                      </details>
+                    </article>
+                  }
+                  <p class="fine-print">
+                    Это цены предложений, а не завершённых сделок. Выборка
+                    ограничена одной страницей; валюты не пересчитываются.
+                  </p>
+                }
+              </section>
+            </div>
+            <aside class="preview-column">
+              <div class="preview-sticky">
+                <div class="preview-label">ПРЕДПРОСМОТР КАРТОЧКИ</div>
+                <article class="preview-card">
+                  <div class="cover">
+                    @if (ad.photos[0]) {
+                      <img
+                        [src]="ad.photos[0].dataUrl"
+                        alt="Главное фото объявления"
+                      />
+                    } @else {
+                      <app-icon name="photo" [size]="70" />
+                    }
+                    <span class="cover-badge">{{
+                      categoryById(ad.listing.taxonomyId)?.name ||
+                        "Выберите категорию"
+                    }}</span>
+                  </div>
+                  <div class="preview-body">
+                    <h2>
+                      {{ listingTitle(ad.listing) || "Название вашего товара" }}
+                    </h2>
+                    <div class="preview-price">
+                      {{ ad.listing.price || "—" }}
+                      <span>{{ ad.listing.currency }}</span>
+                    </div>
+                    <p class="preview-description">
+                      {{
+                        ad.listing.description ||
+                          "Здесь появится описание объявления."
+                      }}
+                    </p>
+                    <div class="preview-city">
+                      {{ ad.listing.city }} · {{ ad.listing.phone }}
+                    </div>
+                  </div>
+                  <div class="preview-bottom">
+                    Вид объявления зависит от площадки
+                  </div>
+                </article>
+                <section class="extension-card">
+                  <b>{{
+                    ext ? "Помощник подключён" : "Помощник для браузера"
+                  }}</b>
+                  <p>{{ extensionStatus }}</p>
+                  <button class="text-button" (click)="showExtension = true">
+                    Установка и подключение
+                  </button>
+                </section>
+              </div>
+            </aside>
+          </div>
+          <section class="panel readiness-panel">
+            <h2>Готовность к размещению</h2>
+            @for (item of readiness; track item.platform.id) {
+              <article class="job">
+                <h3>{{ item.platform.name }}</h3>
+                @if (item.existing) {
+                  <p>
+                    Задание уже существует. Продолжите его, чтобы не создавать
+                    дубль.
+                  </p>
+                }
+                @for (blocker of item.blockers; track blocker) {
+                  <p class="validation">{{ blocker }}</p>
+                }
+                <details>
+                  <summary>Требования и проверка</summary>
+                  @for (note of item.notes; track note) {
+                    <p>{{ note }}</p>
+                  }
+                </details>
+              </article>
+            }
+          </section>
+          <div class="submit-panel">
+            <div class="submit-info">
+              <label class="confirm"
+                ><input type="checkbox" [(ngModel)]="checked" />Я проверил
+                данные, фото и выбранные площадки</label
+              ><span class="save-hint">{{ saveState }}</span>
+              <div class="mode-options">
+                <label
+                  ><input
+                    type="radio"
+                    name="publishMode"
+                    value="manual"
+                    [(ngModel)]="publishMode"
+                  />С подтверждением на площадке</label
+                ><label
+                  ><input
+                    type="radio"
+                    name="publishMode"
+                    value="automatic"
+                    [(ngModel)]="publishMode"
+                  />Автоматически в фоне · beta</label
+                >
+              </div>
+              <p class="fine-print">
+                Автоматическая отправка доступна для проверенных форм Kufar и
+                Барахолки Onlíner. Оставьте вкладку Автопоста открытой.
+              </p>
+            </div>
+            <button class="primary big" [disabled]="!!busy" (click)="start()">
+              Открыть выбранные площадки <app-icon name="arrow" />
+            </button>
+          </div>
+          @if (errors.length) {
+            <div class="validation-errors" role="alert">
+              <b>Проверьте карточку</b>
+              @for (error of errors; track $index) {
+                <p>{{ error }}</p>
+              }
+            </div>
+          }
+          @if (ad.jobs.length) {
+            <section class="panel results">
+              <h2>Задания на площадках</h2>
+              <button class="secondary" (click)="checkStatuses()">
+                Проверить статусы ссылок
+              </button>
+              @for (job of ad.jobs; track job.platformId) {
+                <article class="job">
+                  <div class="job-top">
+                    <b>{{ platformName(job.platformId) }}</b
+                    ><span class="job-status">{{
+                      statusLabel[job.status] || job.status
+                    }}</span>
+                  </div>
+                  <p>{{ job.message }}</p>
+                  @if (job.remoteStatus) {
+                    <p>
+                      {{ remoteStatusLabel[job.remoteStatus.state] }} ·
+                      {{ job.remoteStatus.message }}
+                    </p>
+                  }
+                  <div class="job-actions">
+                    <button class="text-button" (click)="openJob(job)">
+                      Продолжить на площадке ↗
+                    </button>
+                    @if (job.url) {
+                      <a [href]="job.url" target="_blank" rel="noreferrer"
+                        >Открыть объявление ↗</a
+                      >
+                    }
+                  </div>
+                  <label class="full-label"
+                    >Ссылка на объявление<input
+                      [ngModel]="job.url || ''"
+                      (ngModelChange)="setJobLink(job, $event)"
+                      placeholder="https://…" /></label
+                  ><select
+                    aria-label="Отметить статус"
+                    [ngModel]="job.status"
+                    (ngModelChange)="setJobStatus(job, $event)"
+                  >
+                    @for (status of statusLabel | keyvalue; track status.key) {
+                      <option [value]="status.key">{{ status.value }}</option>
+                    }
+                  </select>
+                </article>
+              }
+            </section>
+          }
+        }
+        @if (view === "cabinet" || view === "edit-many") {
+          <div class="heading-row">
+            <div>
+              <span class="eyebrow">ВАШ АССОРТИМЕНТ</span>
+              <h1>
+                {{
+                  view === "edit-many" ? "Массовые изменения" : "Мои объявления"
+                }}
+              </h1>
+            </div>
+            <button class="primary" (click)="fresh()">
+              <app-icon name="plus" />Новое объявление
+            </button>
+          </div>
+          <div class="toolbar">
+            <input
+              aria-label="Поиск объявлений"
+              [(ngModel)]="search"
+              placeholder="Поиск по названию, описанию или ID"
+            /><select aria-label="Архив" [(ngModel)]="archiveFilter">
+              <option value="active">Активные</option>
+              <option value="archived">Архив</option>
+              <option value="all">Все</option></select
+            ><button class="secondary" (click)="refresh()">Обновить</button
+            ><button class="text-button" (click)="exportRecords('csv')">
+              CSV</button
+            ><button class="text-button" (click)="exportRecords('xlsx')">
+              Flagma XLSX</button
+            ><button class="text-button" (click)="exportRecords('json')">
+              JSON
+            </button>
+          </div>
+          @if (view === "edit-many") {
+            <section class="panel">
+              <h2>Изменить выбранные карточки</h2>
+              <div class="fields-grid">
+                <label
+                  >Город<input
+                    [(ngModel)]="batchEdit.city"
+                    (ngModelChange)="batchPreview = []" /></label
+                ><label
+                  >Телефон<input
+                    [(ngModel)]="batchEdit.phone"
+                    (ngModelChange)="batchPreview = []" /></label
+                ><label
+                  >Наличие<select
+                    [(ngModel)]="batchEdit.availability"
+                    (ngModelChange)="batchPreview = []"
+                  >
+                    <option value="">Не менять</option>
+                    <option>В наличии</option>
+                    <option>Под заказ</option>
+                  </select></label
+                ><label
+                  >Цена<select
+                    [(ngModel)]="batchEdit.priceMode"
+                    (ngModelChange)="batchPreview = []"
+                  >
+                    <option value="keep">Не менять</option>
+                    <option value="percent">Изменить на %</option>
+                    <option value="fixed">Установить цену</option>
+                  </select></label
+                ><label
+                  >Значение<input
+                    [(ngModel)]="batchEdit.priceValue"
+                    (ngModelChange)="batchPreview = []"
+                /></label>
+              </div>
+              <button class="secondary" (click)="previewBatch()">
+                Предпросмотр
+              </button>
+              @if (batchPreview.length) {
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Карточка</th>
+                      <th>Цена до</th>
+                      <th>Цена после</th>
+                      <th>Город</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of batchPreview; track item.record.id) {
+                      <tr>
+                        <td>{{ listingTitle(item.record.listing) }}</td>
+                        <td>{{ item.record.listing.price }}</td>
+                        <td>{{ item.listing.price }}</td>
+                        <td>{{ item.listing.city }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+                <button
+                  class="primary"
+                  (click)="applyBatch()"
+                  [disabled]="!!busy"
+                >
+                  Применить к {{ batchPreview.length }} карточкам
+                </button>
+              }
+              <p class="fine-print">
+                Изменения сохраняются в кабинете. На площадках автоматически не
+                применяются.
+              </p>
+            </section>
+          }
+          <section class="panel">
+            @if (!filteredAds.length) {
+              <div class="empty-state">
+                <h3>Пока нет объявлений</h3>
+                <p>Создайте карточку или загрузите каталог.</p>
+              </div>
+            }
+            @for (record of filteredAds; track record.id) {
+              <article class="angular-ad-row">
+                <input
+                  type="checkbox"
+                  [attr.aria-label]="'Выбрать ' + listingTitle(record.listing)"
+                  [checked]="selectedIds.has(record.id)"
+                  (change)="toggleRecord(record.id)"
+                />
+                <div>
+                  <button class="text-button" (click)="openRecord(record.id)">
+                    <b>{{ listingTitle(record.listing) || "Без названия" }}</b>
+                  </button>
+                  <p>
+                    {{ record.listing.price }} {{ record.listing.currency }} ·
+                    {{ record.listing.city }} · Фото: {{ record.photoCount }}
+                    @if (record.sold) {
+                      · Продано
+                    }
+                  </p>
+                  <small
+                    >{{ record.updatedAt | date: "medium" }} ·
+                    {{ record.jobs.length }} заданий</small
+                  >
+                </div>
+                <div class="job-actions">
+                  <button (click)="archive(record)">
+                    {{ record.archived ? "Восстановить" : "В архив" }}</button
+                  ><button (click)="archive(record, true)">
+                    {{ record.sold ? "Вернуть в продажу" : "Продано" }}
+                  </button>
+                </div>
+              </article>
+            }
+          </section>
+          <button class="text-button" (click)="legacy()">
+            Перенести старые локальные черновики
+          </button>
+        }
+        @if (view === "queue") {
+          <h1>Очередь и уведомления</h1>
+          <div class="toolbar">
+            <button
+              class="secondary"
+              [disabled]="!ext || !!busy"
+              (click)="queueAction('PAUSE')"
+            >
+              Пауза</button
+            ><button
+              class="primary"
+              [disabled]="!ext || !!busy"
+              (click)="queueAction('RESUME')"
+            >
+              Продолжить</button
+            ><select aria-label="Режим очереди" [(ngModel)]="publishMode">
+              <option value="manual">С подтверждением</option>
+              <option value="automatic">Автоматически · beta</option></select
+            ><button class="secondary" (click)="queueAction('SET_MODE')">
+              Применить режим</button
+            ><button class="text-button" (click)="checkStatuses(ads)">
+              Проверить ссылки</button
+            ><span
+              >{{ queuePaused ? "Очередь на паузе" : "" }}
+              {{ pendingChecks ? "Проверок: " + pendingChecks : "" }}</span
+            >
+          </div>
+          <section class="panel">
+            <div class="section-title">
+              <h2>Уведомления</h2>
+              <button class="text-button" (click)="markSeen()">
+                Прочитать все
+              </button>
+            </div>
+            @for (n of notifications; track n.id) {
+              <article class="history-item" [class.unread]="!n.seen">
+                <div>
+                  <button class="text-button" (click)="openRecord(n.recordId)">
+                    {{ n.message }}</button
+                  ><small>{{ n.created | date: "medium" }}</small>
+                </div>
+              </article>
+            } @empty {
+              <p>Новых уведомлений нет.</p>
+            }
+          </section>
+          <section class="panel">
+            <select aria-label="Фильтр очереди" [(ngModel)]="queueFilter">
+              <option value="all">Все задания</option>
+              <option value="attention">Требуют внимания</option>
+              <option value="running">Выполняются</option>
+              <option value="waiting">Ожидают</option>
+              <option value="done">Завершены</option>
+            </select>
+            @for (item of queue; track item.record.id + item.job.platformId) {
+              <article class="job">
+                <b
+                  >{{ listingTitle(item.record.listing) }} ·
+                  {{ platformName(item.job.platformId) }}</b
+                >
+                <p>
+                  {{ statusLabel[item.job.status] }} — {{ item.job.message }}
+                </p>
+                <div class="job-actions">
+                  <button (click)="openRecord(item.record.id)">
+                    Открыть карточку</button
+                  ><button (click)="openJob(item.job, item.record)">
+                    Продолжить задание ↗
+                  </button>
+                </div>
+              </article>
+            } @empty {
+              <p>Заданий в этой группе нет.</p>
+            }
+          </section>
+        }
+        @if (view === "profile" || view === "integrations") {
+          <h1>{{ view === "profile" ? "Мой профиль" : "Интеграции" }}</h1>
+          <section class="panel">
+            @if (view === "profile") {
+              <div class="fields-grid">
+                <label
+                  >Компания<input
+                    [(ngModel)]="settings.company"
+                    maxlength="150" /></label
+                ><label
+                  >Контактное лицо<input
+                    [(ngModel)]="settings.contactPerson"
+                    maxlength="100" /></label
+                ><label
+                  >Телефон<input
+                    [(ngModel)]="settings.phone"
+                    placeholder="+375XXXXXXXXX"
+                    maxlength="40" /></label
+                ><label
+                  >Город<input [(ngModel)]="settings.city" maxlength="100"
+                /></label>
+              </div>
+              <p class="fine-print">
+                Контакты используются как значения по умолчанию в новых
+                карточках.
+              </p>
+            } @else {
+              @for (id of ["kufar", "bamper", "flagma"]; track id) {
+                <article class="research-item">
+                  <h3>{{ id }}</h3>
+                  <label
+                    ><input
+                      type="checkbox"
+                      [(ngModel)]="integration(id).enabled"
+                    />Импорт согласован с площадкой</label
+                  ><label class="full-label"
+                    >Примечания<textarea
+                      [(ngModel)]="integration(id).notes"
+                      maxlength="400"
+                      rows="3"
+                    ></textarea>
+                  </label>
+                </article>
+              }
+              <p class="fine-print">
+                Отметка учитывает вашу договорённость с площадкой. Подключение
+                фида и загрузка выполняются в аккаунте продавца.
+              </p>
+            }
+            <button
+              class="primary"
+              (click)="saveSettings()"
+              [disabled]="!!busy"
+            >
+              Сохранить настройки
+            </button>
+          </section>
+          @if (view === "profile") {
+            <section class="panel">
+              <h2>Шаблоны продавца</h2>
+              @for (t of settings.templates || []; track t.id) {
+                <article class="history-item">
+                  <b>{{ t.name }}</b
+                  ><button class="text-button" (click)="editTemplate(t)">
+                    Изменить</button
+                  ><button class="text-button" (click)="removeTemplate(t.id)">
+                    Удалить
+                  </button>
+                </article>
+              }
+              <label class="full-label"
+                >Название<input [(ngModel)]="template.name" maxlength="80"
+              /></label>
+              <div class="fields-grid">
+                <label
+                  >Доставка<textarea
+                    [(ngModel)]="template.delivery"
+                    maxlength="500"
+                  ></textarea></label
+                ><label
+                  >Гарантия<textarea
+                    [(ngModel)]="template.warranty"
+                    maxlength="500"
+                  ></textarea></label
+                ><label
+                  >Склад / получение<textarea
+                    [(ngModel)]="template.warehouse"
+                    maxlength="500"
+                  ></textarea>
+                </label>
+              </div>
+              <details>
+                <summary>Текст для площадок</summary>
+                @for (id of platformNames; track id) {
+                  <label class="full-label"
+                    >{{ id
+                    }}<textarea
+                      [(ngModel)]="template.platformText[id]"
+                      maxlength="1000"
+                    ></textarea>
+                  </label>
+                }
+              </details>
+              <button
+                class="primary"
+                (click)="saveTemplate()"
+                [disabled]="!!busy"
+              >
+                Сохранить шаблон
+              </button>
+            </section>
+          }
+        }
+        @if (view === "team") {
+          <h1>Команда</h1>
+          <section class="panel">
+            <label class="full-label"
+              >Текущий кабинет<select
+                [ngModel]="team.workspaceId"
+                (ngModelChange)="switchWorkspace($event)"
+              >
+                @for (workspace of team.workspaces; track workspace.id) {
+                  <option [value]="workspace.id">{{ workspace.name }}</option>
+                }
+              </select></label
+            >
+            <p>
+              Ваша роль: {{ team.role === "owner" ? "владелец" : "менеджер" }}
+            </p>
+            @for (member of team.members; track member.id) {
+              <article class="history-item">
+                <div>
+                  <b>{{ member.name }}</b
+                  ><small
+                    >{{ member.login }} ·
+                    {{
+                      member.role === "owner" ? "владелец" : "менеджер"
+                    }}</small
+                  >
+                </div>
+                @if (team.role === "owner" && member.role !== "owner") {
+                  <button
+                    class="text-button"
+                    (click)="teamAction('remove', member.id)"
+                  >
+                    Убрать из команды
+                  </button>
+                }
+              </article>
+            }
+            @if (team.role === "owner") {
+              <label class="full-label"
+                >Логин участника<input
+                  [(ngModel)]="memberLogin"
+                  placeholder="Пользователь должен сначала создать профиль" /></label
+              ><button
+                class="primary"
+                (click)="teamAction('add')"
+                [disabled]="!!busy"
+              >
+                Добавить участника
+              </button>
+            }
+          </section>
+        }
+        @if (view === "bulk") {
+          <h1>Массовая загрузка</h1>
+          <p class="subtitle">
+            До 500 товаров и 5 МБ. Импорт не запускает публикацию.
+          </p>
+          <section class="panel">
+            <label class="full-label"
+              >Сохранённый источник<select
+                [ngModel]="importSource"
+                (ngModelChange)="loadPreset($event)"
+              >
+                <option value="">Новый источник</option>
+                @for (p of settings.importPresets || []; track p.id) {
+                  <option [value]="p.id">{{ p.name }}</option>
+                }
+              </select></label
+            ><label class="full-label"
+              >Название источника<input
+                [(ngModel)]="importName"
+                maxlength="80" /></label
+            ><label class="full-label"
+              >Файл XLSX, CSV, TSV, JSON или YML<input
+                type="file"
+                accept=".xlsx,.csv,.tsv,.json,.xml,.yml"
+                (change)="readFile($event)" /></label
+            ><label class="full-label"
+              >HTTPS-ссылка на YML<input
+                [(ngModel)]="feedUrl"
+                placeholder="https://…" /></label
+            ><button class="secondary" (click)="loadFeed()" [disabled]="!!busy">
+              Загрузить по ссылке
+            </button>
+            @if (table) {
+              <h2>Сопоставление колонок</h2>
+              <div class="fields-grid">
+                @for (header of table.headers; track header) {
+                  <label
+                    >{{ header
+                    }}<select
+                      [(ngModel)]="columns[header]"
+                      (ngModelChange)="importPreview = []"
+                    >
+                      <option value="">Не импортировать</option>
+                      @for (field of importFields; track field) {
+                        <option [value]="field">{{ field }}</option>
+                      }
+                    </select></label
+                  >
+                }
+              </div>
+              <label class="full-label"
+                >Общая категория<select
+                  [(ngModel)]="importCategory"
+                  (ngModelChange)="importPreview = []"
+                >
+                  <option value="">Из файла / определить по тексту</option>
+                  @for (category of categories; track category.id) {
+                    <option [value]="category.id">
+                      {{ category.parent }} / {{ category.name }}
+                    </option>
+                  }
+                </select></label
+              >
+              <div class="toolbar">
+                <button class="secondary" (click)="savePreset()">
+                  Сохранить сопоставление</button
+                ><button class="primary" (click)="previewImport()">
+                  Предпросмотр {{ table.rows.length }} строк
+                </button>
+              </div>
+            }
+            @if (importPreview.length) {
+              <label class="full-label"
+                >Фото из папки (сопоставление по именам)<input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  (change)="attachImportPhotos($event)"
+              /></label>
+              <div class="angular-table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Строка</th>
+                      <th>Название</th>
+                      <th>Цена</th>
+                      <th>Проверка</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of importPreview; track item.sourceRow) {
+                      <tr>
+                        <td>{{ item.sourceRow }}</td>
+                        <td>{{ listingTitle(item.record.listing) }}</td>
+                        <td>
+                          {{ item.record.listing.price }}
+                          {{ item.record.listing.currency }}
+                        </td>
+                        <td>{{ item.errors.join("; ") || "Готово" }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <p class="fine-print">
+                Повтор внешнего ID обновит карточку того же источника. Проданные
+                и архивные карточки нужно восстановить явно. Строки с
+                недостающими данными сохраняются для ручной проверки; дубли
+                строк пропускаются.
+              </p>
+              <button
+                class="primary"
+                (click)="importRecords()"
+                [disabled]="!!busy"
+              >
+                Сохранить в кабинет
+              </button>
+              <p aria-live="polite">{{ importProgress }}</p>
+            }
+          </section>
+        }
+        @if (view === "taxonomy") {
+          <h1>Справочник площадок</h1>
+          <section class="panel">
+            <label class="full-label"
+              >Поиск категории<input
+                [(ngModel)]="taxonomySearch"
+                placeholder="Название товара или раздела"
+            /></label>
+            <p>
+              Категории Автопоста и соответствия площадкам. Неоднозначное
+              соответствие можно исправить в карточке.
+            </p>
+            @for (category of catalogResults; track category.id) {
+              <details class="research-item">
+                <summary>{{ category.parent }} / {{ category.name }}</summary>
+                @for (
+                  platform of getPlatforms(category.group, category.id);
+                  track platform.id
+                ) {
+                  <p>
+                    <b>{{ platform.name }}</b
+                    >:
+                    {{
+                      category.mappings[platform.canonicalId]?.path?.join(
+                        " → "
+                      ) || "Требует выбора на площадке"
+                    }}
+                  </p>
+                }
+              </details>
+            }
+          </section>
+        }
+        @if (view === "cabinet" || view === "bulk") {
+          <section class="panel">
+            <h2>Очередь выбранных карточек</h2>
+            <p>
+              Выберите карточки в разделе «Мои объявления». За один запуск — до
+              20 карточек.
+            </p>
+            <label class="full-label"
+              >Режим подачи<select [(ngModel)]="publishMode">
+                <option value="manual">С подтверждением на площадке</option>
+                <option value="automatic">Автоматически в фоне · beta</option>
+              </select></label
+            >
+            <div class="toolbar">
+              <button
+                class="secondary"
+                [disabled]="!!busy || !selectedIds.size"
+                (click)="prepareQueue()"
+              >
+                Проверить выбранные ({{ selectedIds.size }})
+              </button>
+              @if (preparedQueue.length) {
+                <button
+                  class="primary"
+                  [disabled]="!!busy"
+                  (click)="startQueue()"
+                >
+                  Запустить подготовленную очередь ({{ preparedQueue.length }})
+                </button>
+              }
+            </div>
+            <label class="full-label"
+              >Общий подраздел Flagma для выгрузки (необязательно)<input
+                [(ngModel)]="flagmaCategory"
+                placeholder="По умолчанию — категория каждой карточки" /></label
+            ><button
+              class="secondary"
+              (click)="exportRecords('xlsx')"
+              [disabled]="!!busy || !selectedIds.size"
+            >
+              Скачать XLSX для Flagma
+            </button>
+          </section>
+        }
+        <footer>
+          <span
+            ><span class="brand"
+              >Автопост<span class="brand-period">.</span></span
+            ><span class="footer-caption"
+              >Ваш помощник в размещении объявлений</span
+            ></span
+          ><button (click)="showExtension = true">Помощь с расширением</button>
+        </footer>
+      </main>
+    </div>
+  </div>
+}
+@if (showExtension) {
+  <div class="angular-modal-backdrop" (click)="showExtension = false">
+    <section
+      class="modal angular-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="extension-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="modal-inner">
+        <div class="modal-heading">
+          <h2 id="extension-title">Помощник Автопост {{ version }}</h2>
+          <button aria-label="Закрыть" (click)="showExtension = false">
+            <app-icon name="close" />
+          </button>
+        </div>
+        <p class="modal-lead">{{ extensionStatus }}</p>
+        <ol class="instructions">
+          <li>Скачайте архив расширения и распакуйте его.</li>
+          <li>
+            Откройте управление расширениями браузера и включите режим
+            разработчика.
+          </li>
+          <li>Выберите «Загрузить распакованное» и папку расширения.</li>
+          <li>
+            После установки или обновления перезагрузите вкладку Автопоста и
+            вкладки площадок.
+          </li>
+        </ol>
+        <p class="fine-print">
+          Вход в аккаунты площадок и CAPTCHA выполняются в браузере.
+          Автоматический режим доступен только для поддерживаемых форм.
+        </p>
+        <div class="modal-actions">
+          <a class="primary" href="/autopost-extension.zip" download
+            >Скачать расширение</a
+          ><button class="secondary" (click)="checkExtension()">
+            Проверить подключение
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+}
+@if (showHistory) {
+  <div class="angular-modal-backdrop">
+    <section
+      class="modal angular-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="history-title"
+    >
+      <div class="modal-inner">
+        <div class="modal-heading">
+          <h2 id="history-title">История карточки</h2>
+          <button aria-label="Закрыть историю" (click)="showHistory = false">
+            <app-icon name="close" />
+          </button>
+        </div>
+        <p>
+          Восстановление текста и характеристик сохраняет текущие фотографии и
+          ссылки.
+        </p>
+        @for (v of versions; track v.version) {
+          <article class="history-item">
+            <div>
+              <b>Версия {{ v.version }}</b
+              ><small>{{ v.created | date: "medium" }}</small>
+            </div>
+            <button
+              class="secondary"
+              (click)="restore(v.version)"
+              [disabled]="!!busy"
+            >
+              Восстановить
+            </button>
+          </article>
+        } @empty {
+          <p>Сохранённых предыдущих версий пока нет.</p>
+        }
+        <h3>События</h3>
+        @for (event of ad.events; track $index) {
+          <p>{{ event.at | date: "medium" }} — {{ event.message }}</p>
+        }
+      </div>
+    </section>
+  </div>
+}
+@if (toast) {
+  <div class="toast" role="status">
+    <span>{{ toast }}</span
+    ><button aria-label="Закрыть уведомление" (click)="toast = ''">
+      <app-icon name="close" />
+    </button>
+  </div>
+}
+@if (busy) {
+  <div class="angular-busy" role="status">{{ busy }}</div>
+}

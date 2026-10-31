@@ -1,3 +1,6 @@
 *.sh text eol=lf
 *.service text eol=lf
 *.timer text eol=lf
+backend/mvnw text eol=lf
+backend/src/main/resources/domain.json linguist-generated=true
+backend/src/test/resources/domain-contracts.json linguist-generated=true

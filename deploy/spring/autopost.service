@@ -1,0 +1,36 @@
+[Unit]
+Description=Autopost Spring Boot API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=autopost
+Group=autopost
+WorkingDirectory=/opt/autopost/current
+EnvironmentFile=/etc/autopost/environment
+Environment=DATA_DIR=/var/lib/autopost
+Environment=PORT=3000
+StateDirectory=autopost
+StateDirectoryMode=0700
+ExecStart=/usr/bin/java -Xms64m -Xmx256m -XX:MaxMetaspaceSize=160m -jar backend/target/autopost-api.jar
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+UMask=0077
+MemoryMax=640M
+TasksMax=128
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target

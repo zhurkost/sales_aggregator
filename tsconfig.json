@@ -50,6 +50,9 @@
     ".wrangler",
     ".sites-runtime",
     "outputs",
-    "work"
+    "work",
+    "frontend",
+    "backend",
+    "dist-angular"
   ]
 }
