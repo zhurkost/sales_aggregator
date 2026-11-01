@@ -1,0 +1,90 @@
+export type JsonScalar = string | number | boolean | null;
+export type JsonValue = JsonScalar | JsonScalar[];
+export interface Condition {
+  all?: Condition[];
+  any?: Condition[];
+  not?: Condition;
+  option_id?: string;
+  operator?: string;
+  value?: JsonValue;
+}
+export interface Field {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  options: Field[];
+  fill_rule: Record<string, any>;
+  uiWhen?: Condition;
+}
+export interface Address {
+  provider: string;
+  label: string;
+  countryIso: string;
+  settlement: string;
+  street: string;
+  house: string;
+  block?: string;
+  blockType?: string;
+  region?: string;
+  district?: string;
+  latitude?: string;
+  longitude?: string;
+  precision?: string;
+  confirmed: boolean;
+  level?: string;
+}
+export interface RentalDraft {
+  schemaVersion: string;
+  values: Record<string, JsonValue>;
+  extras: Record<string, Record<string, JsonValue>>;
+  platforms: string[];
+  address: Address | null;
+}
+export interface EditorSchema {
+  category: { options: Field[] };
+  canonicalValues: Record<string, string[]>;
+  platforms: Record<
+    string,
+    {
+      extras: Field[];
+      labels: Record<string, string>;
+      choiceLabels: Record<string, Record<string, string>>;
+      constants: Record<string, JsonValue>;
+      bindings: {
+        source: string;
+        target: string;
+        pairs: { from: JsonValue; to: JsonValue }[];
+      }[];
+    }
+  >;
+  version: string;
+  addressSuggestions: boolean;
+}
+export interface Prepared {
+  platform: string;
+  values: Record<string, JsonValue>;
+  issues: { field: string; code: string; message: string }[];
+  dataReady: boolean;
+  publicationReady: boolean;
+}
+
+export async function rentalApi<T>(
+  workspace: string,
+  path: string,
+  data?: unknown,
+): Promise<T> {
+  const response = await fetch("/api/workspace/rental/" + path, {
+    method: data === undefined ? "GET" : "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Autopost-Workspace": workspace,
+    },
+    ...(data === undefined ? {} : { body: JSON.stringify(data) }),
+  });
+  const body = await response.json();
+  if (!response.ok)
+    throw new Error(body.error || "Не удалось выполнить запрос.");
+  return body as T;
+}

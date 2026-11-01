@@ -19,6 +19,27 @@ import org.springframework.test.web.servlet.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 class WorkspaceIntegrationTest {
+  @Test void rentalDraftsArePrivateAndUseOptimisticRevision() throws Exception {
+    var owner=register();var other=register();String id=UUID.randomUUID().toString();
+    var draft=object("schemaVersion","example","values",object("listing.title","My apartment"),"platforms",List.of("kufar"),"extras",object());
+    postJson("rental/drafts/"+id,owner.cookie(),object("revision",0,"draft",draft),200);
+    assertEquals(1,getJson("rental/drafts",owner.cookie(),200).path("drafts").size());
+    assertTrue(getJson("rental/drafts",other.cookie(),200).path("drafts").isEmpty());
+    getJson("rental/drafts/"+id,other.cookie(),404);
+    postJson("rental/drafts/"+id,owner.cookie(),object("revision",0,"draft",draft),409);
+    assertEquals("My apartment",getJson("rental/drafts/"+id,owner.cookie(),200).path("draft").path("values").path("listing.title").asText());
+    postJson("rental/drafts/"+id,owner.cookie(),object("revision",1,"draft",draft),200);
+    assertEquals(2,getJson("rental/drafts/"+id,owner.cookie(),200).path("revision").asInt());
+  }
+
+  @Test void rentalEndpointsRequireAuthenticationAndNeverExposeProviderKey() throws Exception {
+    getJson("rental/editor","",401);getJson("rental/drafts","",401);
+    postJson("rental/address/suggest","",object("query","Минск"),401);
+    postJson("rental/prepare","",object(),401);
+    var account=register();
+    assertFalse(getJson("rental/editor",account.cookie(),503).toString().contains("DADATA_API_KEY"));
+    postJson("rental/address/suggest",account.cookie(),object("query","М"),400);
+  }
   static final Path DATA;
 
   static {

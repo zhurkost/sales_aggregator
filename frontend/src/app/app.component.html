@@ -176,6 +176,9 @@
         }
       </div>
       <main>
+        @if (view === "rental") {
+          <app-rental-editor [workspaceId]="profile.id" />
+        }
         @if (view === "editor") {
           <div class="heading-row">
             <div>

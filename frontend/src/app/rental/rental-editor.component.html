@@ -1,0 +1,243 @@
+<header class="rental-heading">
+  <div>
+    <h1>Долгосрочная аренда квартир</h1>
+    <p>Одна карточка для Kufar, Onliner, Realt и Domovita.</p>
+  </div>
+  <button type="button" class="secondary" (click)="fresh()" [disabled]="busy">
+    Новая карточка
+  </button>
+</header>
+@if (error) {
+  <p class="rental-error" role="alert">{{ error }}</p>
+}
+@if (!schema && !error) {
+  <p>Загружаем поля квартиры…</p>
+}
+@if (drafts.length) {
+  <details class="panel rental-saved">
+    <summary>Сохранённые квартиры · {{ drafts.length }}</summary>
+    @for (item of drafts; track item.id) {
+      <button
+        type="button"
+        class="saved-item"
+        (click)="open(item.id)"
+        [disabled]="busy"
+      >
+        {{ item.title || item.address || "Квартира без названия" }}
+      </button>
+    }
+  </details>
+}
+@if (schema) {
+  @if (draft.schemaVersion !== schema.version) {
+    <button type="button" (click)="acceptSchema()">Принять новую схему</button>
+  }
+  <section class="panel rental-section">
+    <h2>Адрес</h2>
+    <app-address-input
+      [workspaceId]="workspaceId"
+      [draftId]="id"
+      [value]="draft.address"
+      (addressChange)="addressChanged($event)"
+    />
+  </section>
+  @for (group of schema.category.options; track group.id) {
+    <details
+      class="panel rental-section"
+      [open]="
+        group.id === 'group.listing' ||
+        group.id === 'group.rental' ||
+        group.id === 'group.location'
+      "
+    >
+      <summary>{{ group.name }}</summary>
+      <div class="rental-fields">
+        @for (field of group.options; track field.id) {
+          <label
+            class="full-label"
+            [class.wide]="
+              field.type === 'files' || field.id === 'listing.description'
+            "
+            >{{ field.name }}
+            @if (choices(field).length) {
+              <select
+                [ngModel]="value(field)"
+                (ngModelChange)="setValue(field, $event)"
+              >
+                <option value="">Не указано</option>
+                @for (choice of choices(field); track choice) {
+                  <option [value]="choice">{{ label(choice) }}</option>
+                }
+              </select>
+            } @else if (
+              field.type === "files" || field.id === "listing.description"
+            ) {
+              <textarea
+                rows="4"
+                [attr.aria-label]="field.name"
+                [ngModel]="value(field)"
+                (ngModelChange)="setValue(field, $event)"
+                [placeholder]="
+                  field.type === 'files'
+                    ? 'Ссылки HTTPS на исходные файлы, каждая с новой строки'
+                    : ''
+                "
+              ></textarea>
+            } @else {
+              <input
+                [attr.aria-label]="field.name"
+                [ngModel]="value(field)"
+                (ngModelChange)="setValue(field, $event)"
+                maxlength="1000"
+              />
+            }
+            @if (field.id.includes("area")) {
+              <span class="fine-print">м², например 45,5</span>
+            }
+            @if (field.id === "rental.monthly_price") {
+              <span class="fine-print"
+                >За один месяц. Валюта выбирается отдельно.</span
+              >
+            }
+          </label>
+        }
+      </div>
+    </details>
+  }
+  <section class="panel rental-section">
+    <h2>Площадки</h2>
+    <div class="rental-platforms">
+      @for (p of platforms; track p) {
+        <label
+          ><input
+            type="checkbox"
+            [checked]="draft.platforms.includes(p)"
+            (change)="togglePlatform(p, $any($event.target).checked)"
+          />
+          {{ names[p] }}</label
+        >
+      }
+    </div>
+    <p class="fine-print">
+      Неизвестные характеристики можно оставить пустыми. Проверка покажет, что
+      потребуется выбранным площадкам.
+    </p>
+  </section>
+  @for (p of draft.platforms; track p) {
+    <details class="panel rental-section">
+      <summary>Уточнения для {{ names[p] }}</summary>
+      <div class="rental-fields">
+        @for (field of availableExtras(p); track field.id) {
+          <label class="full-label"
+            >{{ field.name }}
+            @if (field.type === "enum") {
+              <select
+                [ngModel]="extra(p, field.id)"
+                (ngModelChange)="setExtra(p, field, $event)"
+              >
+                <option [ngValue]="''">Не указано</option>
+                @for (option of nativeChoices(p, field); track option.id) {
+                  <option [ngValue]="option.fill_rule['value']">
+                    {{ option.name }}
+                  </option>
+                }
+              </select>
+            } @else if (field.type === "boolean") {
+              <select
+                [ngModel]="extra(p, field.id)"
+                (ngModelChange)="setExtra(p, field, $event)"
+              >
+                <option [ngValue]="''">Не указано</option>
+                <option [ngValue]="true">Да</option>
+                <option [ngValue]="false">Нет</option>
+              </select>
+            } @else if (field.type === "multi_enum") {
+              <span class="extra-choices">
+                @for (option of nativeChoices(p, field); track option.id) {
+                  <label
+                    ><input
+                      type="checkbox"
+                      [checked]="selected(p, field, option.fill_rule['value'])"
+                      (change)="
+                        toggleExtra(
+                          p,
+                          field,
+                          option.fill_rule['value'],
+                          $any($event.target).checked
+                        )
+                      "
+                    />{{ option.name }}</label
+                  >
+                }
+              </span>
+            } @else if (field.type === "files") {
+              <textarea
+                rows="3"
+                [ngModel]="extraFileText(p, field)"
+                (ngModelChange)="extraFiles(p, field, $event)"
+                placeholder="Ссылки HTTPS на исходные файлы, каждая с новой строки"
+              ></textarea>
+            } @else {
+              <input
+                [ngModel]="extra(p, field.id)"
+                (ngModelChange)="setExtra(p, field, $event)"
+                maxlength="5000"
+              />
+            }
+            @if (field.fill_rule["required"] === true) {
+              <span class="fine-print"
+                >Площадка требует это поле, когда оно применимо.</span
+              >
+            }
+          </label>
+        }
+      </div>
+      @if (waitingExtras(p)) {
+        <p class="fine-print">
+          Дополнительные поля появятся после выбора связанных параметров:
+          например, региона или типа арендодателя.
+        </p>
+      }
+    </details>
+  }
+  <div class="rental-actions">
+    <span role="status">{{ status }}</span
+    ><button
+      type="button"
+      class="primary"
+      (click)="prepare()"
+      [disabled]="busy || !draft.platforms.length"
+    >
+      {{ busy ? "Проверяем…" : "Подготовить для площадок" }}
+    </button>
+  </div>
+  @for (result of results; track result.platform) {
+    <section class="panel rental-section">
+      <h2>{{ names[result.platform] }}</h2>
+      <p>
+        {{
+          result.dataReady
+            ? "Значения подготовлены. Заполнение формы требует проверки на площадке."
+            : "Значения подготовлены частично. Нужно уточнить:"
+        }}
+      </p>
+      <ul>
+        @for (message of issueMessages(result); track message) {
+          <li>{{ message }}</li>
+        }
+      </ul>
+      <details>
+        <summary>Подготовленные значения</summary>
+        <dl>
+          @for (field of preparedValues(result); track field.id) {
+            <dt>{{ field.name }}</dt>
+            <dd>{{ field.value }}</dd>
+          }
+        </dl>
+        <p class="fine-print">
+          Это проверка подготовки. Объявление на площадке ещё не опубликовано.
+        </p>
+      </details>
+    </section>
+  }
+}
