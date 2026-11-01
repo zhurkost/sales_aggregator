@@ -18,8 +18,11 @@ DaData, автоматически сохраняет карточки в про
 Этаж выше этажности и недопустимая точность вызывают уточнение.
 
 Адрес
-Ключ DADATA_API_KEY доступен только Spring. Запросы направляются на фиксированный
-HTTPS endpoint DaData, без redirects и без передачи профиля/контактов. Поиск
+Ключ DADATA_API_KEY доступен только серверной стороне. По умолчанию Spring
+обращается к фиксированному HTTPS endpoint DaData. В режиме Cloudflare relay
+ключ хранится в Worker Secret, а Spring использует DADATA_RELAY_URL и отдельный
+DADATA_RELAY_TOKEN. Worker принимает запросы только с IP VPS и с этим токеном.
+В обоих режимах нет redirects и передачи профиля/контактов. Поиск
 ограничен Беларусью; результат дополнительно фильтруется по country_iso_code=BY.
 Выбор человека обязателен. Уточнение count=1 вызывается для unrestricted_value
 ранее предложенной подсказки; смена ID/страны отклоняется. Подсказки, их ID и
@@ -48,6 +51,11 @@ Runtime возвращает подготовленные части и явны
 Задать переменные окружения Spring (локально — игнорируемый .dev.vars):
   DADATA_API_KEY=<ключ подсказок>
   RENTAL_REFERENCE_DIR=<абсолютный путь к приватному снимку>
+При проблемах прямого доступа VPS к DaData вместо DADATA_API_KEY задать:
+  DADATA_RELAY_URL=https://<worker>.workers.dev/suggest
+  DADATA_RELAY_TOKEN=<случайный серверный токен, минимум 32 символа>
+Инструкция: ops/cloudflare-dadata-relay/README.md. Ключ провайдера в этом режиме
+хранится в Cloudflare; frontend и расширение менять не требуется.
 Снимок содержит integration/*_common.json, integration/integration-audit.json,
 четыре каталога <platform> с исходными схемами и runtime/preparation_<platform>.json.
 На машине исследования это private-data/rental-reference/2026-11-01 рядом с checkout.

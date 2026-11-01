@@ -23,6 +23,7 @@ jobs:
       - run: npm ci
       - run: npm --prefix frontend ci
       - run: npm test
+      - run: node --test ops/cloudflare-dadata-relay/worker.test.mjs
       - run: npm run test:frontend
       - run: chmod +x backend/mvnw
       - run: npm run build
