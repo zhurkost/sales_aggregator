@@ -1,0 +1,473 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Долгосрочная аренда квартир",
+    "description": "Domovita: https://domovita.by/new/add/flats/rent. Наблюдение 2026-11-01, гостевая форма; покрытие partial. Только квартира целиком, сделка rent. Неполные динамические enum и валюта не готовы к исполнению; см. report_apartments_long_term_rent_domovita.txt.",
+    "categories": [],
+    "options": [
+      {
+        "id": "domovita.action",
+        "name": "Тип сделки",
+        "description": "Вход /new/add → Сдаче длительно; input[name=action][value=rent] выбран. Схема ограничена этой сделкой; sale/daily вне категории.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true
+        },
+        "options": [
+          {
+            "id": "domovita.action.rent",
+            "name": "Сдаче длительно",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "rent"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.property_type",
+        "name": "Тип недвижимости",
+        "description": "После rent выбран flats. Комнаты, дома, гаражи, коммерческая недвижимость вне категории; отдельной студии в исследованной форме нет.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "depends_on": [
+            "domovita.action"
+          ]
+        },
+        "options": [
+          {
+            "id": "domovita.property_type.flats",
+            "name": "Квартиры",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "flats"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.town",
+        "name": "Населённый пункт",
+        "description": "Динамический combobox с выбором типа, области и района населённого пункта. Это не свободный текст; полный каталог и нативные коды не собраны.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.street",
+        "name": "Улица",
+        "description": "Динамический combobox; заблокирован до выбора населённого пункта, сбрасывается при его смене. Название скрытого поля не доказывает отсутствие внутреннего street_id.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "domovita.town"
+          ]
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.house_number",
+        "name": "Номер дома",
+        "description": "Динамический combobox; активируется после выбора улицы. Подсказки допускают буквенные и дробные номера. Отдельные поля корпуса и квартиры не обнаружены в доступном шаге.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "domovita.town",
+            "domovita.street"
+          ]
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.position_x",
+        "name": "Техническая координата position_x",
+        "description": "Скрытое поле карты обнаружено в DOM с первого состояния формы. Ось, единица, формат и изменение значения после выбора адреса не установлены; ручное заполнение не подтверждено.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.position_y",
+        "name": "Техническая координата position_y",
+        "description": "Скрытое поле карты обнаружено в DOM с первого состояния формы. Ось, единица, формат и изменение значения после выбора адреса не установлены; ручное заполнение не подтверждено.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.contact_name",
+        "name": "Как обращаться",
+        "description": "Подпись явно отмечает необязательность. Placeholder: Ваше имя или имя контактного лица. Длины и прочие ограничения не установлены.",
+        "type": "text",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.contact_phone",
+        "name": "Телефон для связи",
+        "description": "Маска +375 (__) ___-__-__, inputmode=numeric. Форма сообщает о коде подтверждения; SMS не отправлялось. Требование подтверждённого телефона для фото установлено, самостоятельная required-проверка телефона не выполнена.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.additional_phone_1",
+        "name": "Дополнительный телефон 1",
+        "description": "Появился после одного клика «Добавить другой номер»; явно необязательный, та же маска, есть удаление и сообщение о подтверждении. Это конкретный наблюдённый слот, не доказательство предельного числа.",
+        "type": "text",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.additional_phone_2",
+        "name": "Дополнительный телефон 2",
+        "description": "Появился после второго клика «Добавить другой номер»; явно необязательный, та же маска. Кнопка добавления осталась. Бесконечное повторение текущим контрактом не выражено.",
+        "type": "text",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.email",
+        "name": "Электронная почта",
+        "description": "Явно необязательно; placeholder: Введите вашу электронную почту. HTML email-type, pattern и длины не заданы; серверная валидация не проверена.",
+        "type": "text",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.rooms",
+        "name": "Количество комнат",
+        "description": "Все семь radio выбраны последовательно, checked проверен; коды DOM являются строками. Состав полей и секций во всех семи состояниях совпал. Исходное состояние без выбора; default не задан.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "domovita.rooms.1",
+            "name": "1",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "1"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.2",
+            "name": "2",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "2"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.3",
+            "name": "3",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.4",
+            "name": "4",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.5",
+            "name": "5",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "5"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.6",
+            "name": "6",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "6"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.7",
+            "name": "7",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "7"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.area_total",
+        "name": "Общая площадь",
+        "description": "Единица м² по заголовку Площадь, м2; placeholder Общая. Исходный контрол текстовый с цифровой клавиатурой; поддержка дробей, числовой формат, диапазон и обязательность не установлены.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.area_kitchen",
+        "name": "Площадь кухни",
+        "description": "Единица м²; placeholder Кухня. Исходный контрол текстовый; поддержка дробей, числовой формат, диапазон и обязательность не установлены.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.area_living",
+        "name": "Жилая площадь",
+        "description": "Единица м²; placeholder Жилая. Исходный контрол текстовый; поддержка дробей, числовой формат, диапазон и обязательность не установлены.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.storey",
+        "name": "Этаж",
+        "description": "Контрол перед «из». Семантически номер этажа; нативный контрол текстовый. Целочисленность, отрицательные/нулевой этажи, диапазон и required не подтверждены.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.storeys",
+        "name": "Этажность",
+        "description": "Контрол после «из». Семантически число этажей здания; исходный тип text. Диапазон и связь storey <= storeys не подтверждены.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.amenities",
+        "name": "Дополнительные опции",
+        "description": "Каждый checkbox включён и выключен. При пустом наборе после взаимодействия появляется локальная ошибка «Обязательное поле», выбор мебели убирает её, повторное снятие возвращает. Это проверка клиента без отправки, сервер не проверен. Опечатка inrernet сохранена как нативный код.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min_items": 1
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.amenities.washing_machine",
+            "name": "Стиральная машина",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "stiralnay_mashina"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.furniture",
+            "name": "Мебель",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "mebel"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.internet",
+            "name": "Интернет",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "inrernet"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.lift",
+            "name": "Лифт",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "lift"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.refrigerator",
+            "name": "Холодильник",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "holodilnik"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.images",
+        "name": "Фотографии квартиры",
+        "description": "Файловый input multiple; chooser accept=image/*,.jpg,.jpeg,.png. Загрузка перекрыта требованием заполнить контакты и подтвердить телефон. В интерфейсе предусмотрена сортировка перетаскиванием. Требование наличия фото подтверждено /rules §1.3. Приём файлов, обложка и реальные лимиты не проверены.",
+        "type": "files",
+        "fill_rule": {
+          "required": true,
+          "depends_on": [
+            "domovita.contact_phone"
+          ],
+          "file_role": "product_image"
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.description",
+        "name": "Описание",
+        "description": "Редактор Tiptap с кнопками форматирования и placeholder описания. Рядом есть скрытый безымянный input для редактора, отдельным заголовком объявления он не является. Наличие описания требуется /rules §1.1; предел длины и формат сохранения HTML/plain text неизвестны.",
+        "type": "text",
+        "fill_rule": {
+          "required": true
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.video",
+        "name": "Видео YouTube",
+        "description": "Один видимый текстовый ввод ссылки YouTube с явной пометкой необязательности. В модели представлен files как коллекция исходных ссылок на видео, а не строка. Адаптация коллекции к скалярному полю требует реализации; видеофайлы не загружались.",
+        "type": "files",
+        "fill_rule": {
+          "required": false,
+          "file_role": "product_video"
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.monthly_price",
+        "name": "Стоимость аренды в месяц",
+        "description": "Период прямо указан подписью: месяц. Требование стоимости аренды подтверждено /rules §1.2. Нативный ввод text; десятичный разделитель, допустимый ноль, диапазон и числовая сериализация неизвестны.",
+        "type": "text",
+        "fill_rule": {
+          "required": true
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.currency",
+        "name": "Валюта месячной платы",
+        "description": "Все четыре видимых значения USD/EUR/BYN/RUB выбраны; новых полей не появилось. Начальное отображение USD. У hidden input отсутствует HTML value-атрибут; сырой внутренний код надёжно не прочитан. Подписи не подставлены вместо неизвестных кодов: options намеренно пуст. Это незавершённый enum.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.has_commission",
+        "name": "Есть комиссия",
+        "description": "В секции Условия сделки (необязательно) варианты Есть комиссия / Нет комиссии. Проверены да, нет, снятие выбора и взаимное исключение. Boolean описывает смысл двух явных ответов, а не нативную серверную сериализацию. Пустой выбор не равен false. Сумма и процент комиссии в этой ветви не появились.",
+        "type": "boolean",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.sale_planned",
+        "name": "Планируется продажа квартиры",
+        "description": "Явно необязательно. Да и Нет взаимно исключаются; повторный клик снимает ответ. Boolean описывает смысл, код API неизвестен. Отсутствующий ответ не равен Нет; новых полей не возникло.",
+        "type": "boolean",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.tenant_conditions",
+        "name": "Кому сдаётся",
+        "description": "Явно необязательно; каждый checkbox проверен во включённом и выключенном состоянии. Это положительные отметки допустимых жильцов, не отдельные трёхзначные запреты. Пустой набор не доказывает запрет для всех групп.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false
+        },
+        "options": [
+          {
+            "id": "domovita.tenant_conditions.students",
+            "name": "Студентам",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "student"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.tenant_conditions.animals",
+            "name": "С животными",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "animals"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.tenant_conditions.children",
+            "name": "С детьми",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "children"
+            },
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]
