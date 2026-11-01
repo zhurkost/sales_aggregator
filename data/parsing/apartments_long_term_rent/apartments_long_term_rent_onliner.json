@@ -1,0 +1,937 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Долгосрочная аренда квартир",
+    "description": "Onliner: частичная исходная схема формы https://r.onliner.by/ak/apartments/create, наблюдение 2026-11-01. Проверен активный шаг фотографий и доставленная DOM-разметка четырёх неактивных шагов. Интерактивная проверка поздних ветвей не выполнена; привязки не подтверждены. Категория задания — квартира целиком; отдельный признак долгосрочности не подтверждён.",
+    "categories": [],
+    "options": [
+      {
+        "id": "onliner.images",
+        "name": "Фотографии квартиры",
+        "description": "Активный первый шаг. Приём локальных файлов выбором или перетаскиванием. Первая фотография рекомендована как лучшая; сортируемая коллекция присутствует в DOM. Файлы не загружались, принятие не проверено.",
+        "type": "files",
+        "fill_rule": {
+          "required": true,
+          "file_role": "product_image",
+          "validation": {
+            "min_items": 1,
+            "mime_types": [
+              "image/gif",
+              "image/jpeg",
+              "image/png"
+            ]
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.rent_type",
+        "name": "Что сдаете в аренду?",
+        "description": "Разметка неактивного шага «Комнаты и адрес». Для данной категории допустима только квартира целиком (flat); room указан для точного описания нативного переключателя и исключён из объёма задания.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.rent_type.flat",
+            "name": "Квартиру",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "flat"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.rent_type.room",
+            "name": "Комнату (вне объёма категории)",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "room"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.room_count",
+        "name": "Количество комнат",
+        "description": "Нативные коды — строки, не числа. В разметке шесть вариантов; студия отдельно не обнаружена. Все варианты доступны лишь как DOM, переход на шаг закрыт фотографиями.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "onliner.rent_type"
+          ],
+          "when": {
+            "option_id": "onliner.rent_type",
+            "operator": "equals",
+            "value": "flat"
+          }
+        },
+        "options": [
+          {
+            "id": "onliner.room_count.1_rooms",
+            "name": "1",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "1_room"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.room_count.2_rooms",
+            "name": "2",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "2_rooms"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.room_count.3_rooms",
+            "name": "3",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3_rooms"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.room_count.4_rooms",
+            "name": "4",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4_rooms"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.room_count.5_rooms",
+            "name": "5",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "5_rooms"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.room_count.6_rooms",
+            "name": "6",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "6_rooms"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.address_query",
+        "name": "Город, улица, номер дома: поисковый ввод",
+        "description": "Только строка запроса user_address в DOM, не готовый адрес объявления. Разметка указывает keyup/blur и noResults; геокодирование, принятие результата, ID и координаты не исследованы. Заполнение этого поля не означает выбор адреса.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.facilities",
+        "name": "Какие удобства есть в квартире?",
+        "description": "Нативная коллекция facilities: девять checkbox. Снятый флажок не доказывает отсутствие удобства. Переключение не проверено.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.facilities.furniture",
+            "name": "Мебель",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "furniture"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.kitchen_furniture",
+            "name": "Кухонная мебель",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "kitchen_furniture"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.stove",
+            "name": "Плита",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "stove"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.refrigerator",
+            "name": "Холодильник",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "refrigerator"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.washing_machine",
+            "name": "Стиральная машина",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "washing_machine"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.tv",
+            "name": "Телевизор",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "tv"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.internet",
+            "name": "Интернет",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "internet"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.balcony",
+            "name": "Лоджия или балкон",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "balcony"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.facilities.conditioner",
+            "name": "Кондиционер",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "conditioner"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.description",
+        "name": "Подробное описание",
+        "description": "Textarea в разметке шага «Описание удобств», data-bind data.description. Техническая обязательность и длина неизвестны; содержательные требования правил приведены в отчёте.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.rent_rules",
+        "name": "Условия аренды",
+        "description": "Коллекция rentRules из трёх checkbox с отрицательными условиями. Отсутствие выбранного кода не преобразовывать в явное разрешение детей, животных или студентов.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.rent_rules.not_student",
+            "name": "Не студентам",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "not_student"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.rent_rules.without_children",
+            "name": "Без детей",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "without_children"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.rent_rules.without_animals",
+            "name": "Без животных",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "without_animals"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.price_amount",
+        "name": "Стоимость аренды в месяц",
+        "description": "Числовой смысл стоимости подтверждён секцией формы и валютой. DOM-контрол — input[type=text] #price-input с maxlength=11; формат, числовые границы и округление не проверены. Это вводимая сумма, не экранный эквивалент.",
+        "type": "number",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "onliner.price_currency"
+          ]
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.price_currency",
+        "name": "Валюта ввода стоимости",
+        "description": "Нативный select data.price.currency. В DOM: USD и BYN; выбор не выполнен. Период задан текстом «в месяц», отдельного переключателя периода в доставленной разметке нет.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.price_currency.USD",
+            "name": "Доллары США",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "USD"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.price_currency.BYN",
+            "name": "Белорусские рубли",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "BYN"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.contact_owner",
+        "name": "Собственник / Агентство",
+        "description": "Нативное поле contact.owner в объявлении. checkedValue:true/false в DOM задаёт логические коды; это не строковые значения HTML value. Роль профиля не исследовалась.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.contact_owner.owner",
+            "name": "Собственник",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": true
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.contact_owner.agency",
+            "name": "Агентство",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": false
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.agency_name",
+        "name": "Юридическое наименование",
+        "description": "Поле agencyInfo.name; контейнер visible: !data.contact.owner(). Условие подтверждено разметкой, появление при переключении не проверено.",
+        "type": "text",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "onliner.contact_owner"
+          ],
+          "when": {
+            "option_id": "onliner.contact_owner",
+            "operator": "equals",
+            "value": false
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.agency_unp",
+        "name": "УНП",
+        "description": "Строковый input agencyInfo.unp; ведущие нули должны сохраняться. Видимость задана !data.contact.owner(); формат и длина неизвестны.",
+        "type": "text",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "onliner.contact_owner"
+          ],
+          "when": {
+            "option_id": "onliner.contact_owner",
+            "operator": "equals",
+            "value": false
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.contact_name",
+        "name": "Ваше имя",
+        "description": "Поле contact.name из разметки шага «Контактная информация». Значения аккаунта не сохранялись; обязательность и длина неизвестны.",
+        "type": "text",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.contact_phone",
+        "name": "Номер телефона в международном формате",
+        "description": "Шаблон одного повторяемого phone.number в contact.phones. Кнопка «Еще один номер» вызывает addPhone; количество и порядок дополнительных элементов не проверены. Схема описывает один элемент, не всю коллекцию; нужен обработчик повторяемых полей.",
+        "type": "text",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "format": "phone"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "onliner.call_time_from",
+        "name": "Звонить с",
+        "description": "Нативный select contact.callTime[0]. Полный DOM-список часов 0:00–23:00; choice.value хранит точное строковое HTML option.value. Тип значения модели Knockout и результат «В любое время» не проверены.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.call_time_from.hour_0",
+            "name": "0:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "0"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_1",
+            "name": "1:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "1"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_2",
+            "name": "2:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "2"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_3",
+            "name": "3:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_4",
+            "name": "4:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_5",
+            "name": "5:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "5"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_6",
+            "name": "6:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "6"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_7",
+            "name": "7:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "7"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_8",
+            "name": "8:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "8"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_9",
+            "name": "9:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "9"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_10",
+            "name": "10:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "10"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_11",
+            "name": "11:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "11"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_12",
+            "name": "12:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "12"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_13",
+            "name": "13:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "13"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_14",
+            "name": "14:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "14"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_15",
+            "name": "15:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "15"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_16",
+            "name": "16:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "16"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_17",
+            "name": "17:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "17"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_18",
+            "name": "18:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "18"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_19",
+            "name": "19:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "19"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_20",
+            "name": "20:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "20"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_21",
+            "name": "21:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "21"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_22",
+            "name": "22:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "22"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_from.hour_23",
+            "name": "23:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "23"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "onliner.call_time_to",
+        "name": "Звонить до",
+        "description": "Нативный select contact.callTime[1]. Полный DOM-список часов 0:00–23:00; choice.value хранит точное строковое HTML option.value. Тип значения модели Knockout и результат «В любое время» не проверены.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": [
+          {
+            "id": "onliner.call_time_to.hour_0",
+            "name": "0:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "0"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_1",
+            "name": "1:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "1"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_2",
+            "name": "2:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "2"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_3",
+            "name": "3:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_4",
+            "name": "4:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_5",
+            "name": "5:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "5"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_6",
+            "name": "6:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "6"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_7",
+            "name": "7:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "7"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_8",
+            "name": "8:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "8"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_9",
+            "name": "9:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "9"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_10",
+            "name": "10:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "10"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_11",
+            "name": "11:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "11"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_12",
+            "name": "12:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "12"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_13",
+            "name": "13:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "13"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_14",
+            "name": "14:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "14"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_15",
+            "name": "15:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "15"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_16",
+            "name": "16:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "16"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_17",
+            "name": "17:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "17"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_18",
+            "name": "18:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "18"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_19",
+            "name": "19:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "19"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_20",
+            "name": "20:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "20"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_21",
+            "name": "21:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "21"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_22",
+            "name": "22:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "22"
+            },
+            "options": []
+          },
+          {
+            "id": "onliner.call_time_to.hour_23",
+            "name": "23:00",
+            "description": "Код из разметки формы; переключение на активном шаге не проверено.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "23"
+            },
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]
