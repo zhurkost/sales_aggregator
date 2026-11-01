@@ -1,0 +1,300 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Долгосрочная аренда квартир",
+    "description": "Частичный каталог наблюдённых контролов Kufar. Контекст подтверждён выбором «Недвижимость → Квартиры → Долгосрочная аренда». Не готов для заполнения: коды справочников неизвестны; контролы с неподтверждённой кратностью сохранены кандидатами в отчёте. Полное покрытие не заявляется.",
+    "categories": [],
+    "options": [
+      {
+        "id": "kufar.title",
+        "name": "Название объявления",
+        "description": "Заголовок новой формы после выбора «Квартиры».",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "max_length": 100
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.category",
+        "name": "Категория",
+        "description": "Наблюдён путь «Недвижимость → Квартиры». Точный код категории не установлен; options пуст, заполнение по нему не реализовано.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.address",
+        "name": "Адрес",
+        "description": "Динамический выбор адресной подсказки с картой. Это не свободный текст. Коды, структура выбранного объекта и координаты не установлены; options пуст. Составной объект адреса текущим Option не представлен полностью.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.walk_through_room",
+        "name": "Есть проходная комната",
+        "description": "Флажок в параметрах долгосрочной аренды; wire-код и обработка невыбранного состояния не установлены.",
+        "type": "boolean",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.sleeping_places",
+        "name": "Количество спальных мест",
+        "description": "Одиночный выпадающий список. Подписи прочитаны из его DOM; точные коды неизвестны, options пуст.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.total_area",
+        "name": "Общая площадь, м²",
+        "description": "Числовой input type=number, единицы м². Верхний предел не установлен.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0,
+            "multiple_of": 0.1
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.living_area",
+        "name": "Жилая площадь, м²",
+        "description": "Числовой input type=number, единицы м². Верхний предел не установлен.",
+        "type": "number",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "min": 0,
+            "multiple_of": 0.1
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.kitchen_area",
+        "name": "Площадь кухни, м²",
+        "description": "Числовой input type=number, единицы м². Поле оставалось в DOM после выбора студии; обязательность и специальные правила студии не установлены.",
+        "type": "number",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "min": 0,
+            "multiple_of": 0.1
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.unfurnished",
+        "name": "Без мебели",
+        "description": "Положительное значение этого внутреннего поля означает включённый флажок «Без мебели». Оно не тождественно нативному wire-значению flat_furnished, которое неизвестно.",
+        "type": "boolean",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.floor",
+        "name": "Этаж",
+        "description": "Закрытый выпадающий список, не свободное целое число. Справочник и коды не прочитаны, options пуст.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.total_floors",
+        "name": "Количество этажей",
+        "description": "Закрытый выпадающий список. Справочник и коды не прочитаны, options пуст.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.year_built",
+        "name": "Год постройки",
+        "description": "Выбор из закрытого списка, а не свободное числовое поле. Диапазон и коды не установлены, options пуст.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.window_orientation",
+        "name": "Окна выходят",
+        "description": "Выпадающий контрол содержит checkbox; множественный выбор по DOM. Список не раскрыт и режим выбора не испытан; options пуст, состав и коды неизвестны.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.building_amenities",
+        "name": "Обустройство дома",
+        "description": "Выпадающий контрол содержит checkbox; множественный выбор по DOM. Список не раскрыт и режим выбора не испытан; options пуст, состав и коды неизвестны.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.new_building",
+        "name": "В новостройке",
+        "description": "Флажок видим в первоначальном состоянии параметров. Зависимость жилого комплекса от него не проверена.",
+        "type": "boolean",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.residential_complex",
+        "name": "Жилой комплекс",
+        "description": "Контрол выбора с подписью «Любое». Это не подтверждённый код/default_value. Возможный поиск и зависимость от адреса не изучены; options пуст.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.photos",
+        "name": "Фотографии",
+        "description": "Файловая загрузка/перетаскивание. В форме долгосрочной аренды показано 0 из 50 и до 10 МБ каждый. Точная граница в байтах неизвестна. Официальное требование реального фото содержит исключение для новостроек; связь исключения с флажком «В новостройке» не проверена, поэтому required=null. Принятие файлов, порядок и обложка не испытаны.",
+        "type": "files",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "max_items": 50,
+            "extensions": [
+              ".jpeg",
+              ".jpg",
+              ".png"
+            ],
+            "max_file_size_bytes": null
+          },
+          "file_role": "product_image"
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.description",
+        "name": "Описание",
+        "description": "Текстовая область, maxlength=5000 и счётчик 0/5000 после завершения загрузки параметров квартиры.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "max_length": 5000
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.price_mode",
+        "name": "Режим цены",
+        "description": "Одиночная radio-группа; подписи «Цена» и «Договорная цена». В DOM у radio есть id common/contact, но не подтверждено, что они являются кодами данных. options пуст.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.price",
+        "name": "Цена",
+        "description": "Числовая цена по min/max/step; HTML input без type=number. Валюта задаётся отдельно. Период платежа и применимость при договорной цене не установлены.",
+        "type": "number",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "min": 0,
+            "max": 99000000,
+            "multiple_of": 0.01
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.currency",
+        "name": "Валюта цены",
+        "description": "В DOM валютного списка прочитаны «руб.», «$», «€». Wire-коды не установлены, options пуст. Отображённый $ не объявляется универсальным значением по умолчанию.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.contact_name",
+        "name": "Имя",
+        "description": "Поле в секции «О продавце», disabled в доступной сессии и связано с профилем. Значение не сохраняется. Доступность редактирования для иных профилей неизвестна.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "max_length": 100
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.contact_phone",
+        "name": "Телефон",
+        "description": "Контактное поле с маской белорусского номера, disabled в доступной сессии. Значения не сохраняются. Есть кнопка добавления телефона; её ветвь не исследована.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "format": "phone"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.contact_method",
+        "name": "Способ связи",
+        "description": "Одиночная radio-группа. Значения radio не прочитаны; options пуст. Это способ связи, не тип арендодателя.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true
+        },
+        "options": []
+      },
+      {
+        "id": "kufar.video",
+        "name": "Видео на YouTube",
+        "description": "Вложение задаётся ссылкой в текстовом поле YouTube, а не загрузкой видеофайла. Нативный maxlength строки=4000 не является files-ограничением и описан только в отчёте. Область доступности и принятие ссылки требуют проверки.",
+        "type": "files",
+        "fill_rule": {
+          "required": null,
+          "file_role": "product_video"
+        },
+        "options": []
+      }
+    ]
+  }
+]
