@@ -10,7 +10,7 @@ install -d -m 755 "$release"
 tar -xzf "$archive" --no-same-owner -C "$release"
 test -f "$release/backend/target/autopost-api.jar"
 test -f "$release/dist-angular/browser/index.html"
-python3 "$release/vps/backup-workspace.py"
+python3 "$release/deploy/spring/backup-workspace.py"
 chmod -R u=rwX,go=rX "$release"
 previous=$(readlink -f /opt/autopost/current || true)
 backup=$(mktemp -d /root/autopost-config-backup.XXXXXX)

@@ -6,85 +6,27 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "install:ci": "node scripts/install-ci.mjs",
+    "install:ci": "npm ci && npm --prefix frontend ci",
     "dev": "node scripts/dev-angular-spring.mjs",
     "dev:vps": "node scripts/dev-angular-spring.mjs",
-    "dev:sites": "node scripts/run-framework.mjs dev",
     "build": "npm run build:frontend && npm run build:backend",
     "build:vps": "npm run build:frontend && npm run build:backend",
     "start:vps": "java -jar backend/target/autopost-api.jar",
     "package:vps": "npm run build && node scripts/package-angular-spring.mjs",
     "start": "java -jar backend/target/autopost-api.jar",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate",
     "typecheck": "npm --prefix frontend run build",
     "test": "node --experimental-strip-types --test tests/*.test.mjs extension/tests/*.test.cjs",
-    "dev:legacy": "node --experimental-strip-types scripts/dev-vps.mjs",
-    "build:legacy": "node scripts/package-extension.mjs && node scripts/run-framework.mjs build",
-    "build:vps:legacy": "node scripts/package-extension.mjs && vite build --config vite.vps.config.ts",
-    "package:vps:legacy": "npm run build:vps:legacy && node scripts/package-vps.mjs",
     "build:frontend": "node scripts/prepare-angular.mjs && npm --prefix frontend run build",
     "build:backend": "node scripts/export-java-domain.mjs && node scripts/maven.mjs -B package",
     "test:frontend": "npm --prefix frontend test",
-    "test:backend": "node scripts/maven.mjs -B test",
-    "typecheck:legacy": "tsc --noEmit",
-    "start:legacy": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0"
+    "test:backend": "node scripts/maven.mjs -B test"
   },
   "dependencies": {
-    "@base-ui/react": "^1.7.0",
-    "@hookform/resolvers": "^5.7.1",
-    "@shadcn/react": "^0.3.0",
-    "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
-    "cmdk": "^1.1.1",
-    "date-fns": "^4.4.0",
-    "drizzle-orm": "0.45.2",
-    "embla-carousel-react": "^8.6.0",
-    "exceljs": "^4.4.0",
-    "input-otp": "^1.4.2",
-    "lucide-react": "^1.31.0",
-    "next": "16.3.4",
-    "next-themes": "^0.4.6",
-    "radix-ui": "^1.6.7",
-    "react": "19.2.6",
-    "react-day-picker": "^10.0.1",
-    "react-dom": "19.2.6",
-    "react-hook-form": "^7.85.0",
-    "react-resizable-panels": "^4.12.2",
-    "recharts": "^3.8.0",
-    "sonner": "^2.0.8",
-    "tailwind-merge": "3.6.0",
-    "vaul": "^1.1.2",
-    "zod": "^3.25.76"
+    "exceljs": "^4.4.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.37.1",
-    "@cloudflare/workers-types": "4.20260515.1",
-    "@tailwindcss/postcss": "4.2.1",
-    "@types/node": "22.19.19",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3",
-    "@vitejs/plugin-react": "6.0.2",
-    "@vitejs/plugin-rsc": "0.5.26",
-    "drizzle-kit": "0.31.10",
-    "eslint": "9.39.4",
-    "eslint-config-next": "16.3.4",
     "fake-indexeddb": "^6.2.6",
-    "happy-dom": "^21.0.4",
-    "json-rpc-2.0": "1.7.1",
-    "raw-body": "3.0.2",
-    "react-server-dom-webpack": "19.2.6",
-    "tailwindcss": "4.2.1",
-    "tw-animate-css": "^1.4.0",
-    "typescript": "5.9.3",
-    "vinext": "1.0.0-beta.5",
-    "vite": "8.0.13",
-    "wrangler": "4.92.0"
+    "happy-dom": "^21.0.4"
   },
-  "type": "module",
-  "overrides": {
-    "miniflare": {
-      "sharp": "0.35.4"
-    }
-  }
+  "type": "module"
 }

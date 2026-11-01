@@ -16,7 +16,6 @@ execFileSync(
     "dist-angular/browser",
     "dist-angular/3rdpartylicenses.txt",
     "deploy/spring",
-    "vps/backup-workspace.py",
   ],
   { stdio: "inherit", windowsHide: true },
 );

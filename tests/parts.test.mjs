@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import {parseLocally,partsSample,sanitizeListing,validateListing,listingText} from '../lib/listing.ts';
 import {getPlatforms,platformValidation} from '../lib/platforms.ts';
 import {systemPrompt} from '../lib/ai-prompt.ts';
-import {POST} from '../app/api/analyze/route.ts';
 
 test('parts parsing preserves OEM, explicit fitment, defects and per-item price',()=>{
   const d=parseLocally(partsSample,'parts');
@@ -33,36 +32,9 @@ test('parts sanitization, text export and channel selection remain separate from
   assert.equal(platformValidation({...d,year:''},['bamper']).length,1);
   assert.deepEqual(platformValidation({...d,year:''},['kufar-parts']),[]);
 });
-test('AI receives part schema and cannot change selected product group',async()=>{
-  const real=globalThis.fetch;let prompt;
-  globalThis.fetch=async(_url,init)=>{prompt=JSON.parse(init.body).messages[0].content;return Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({category:'cars',partName:'Фара',partNumber:'000123-AB',description:'Царапина на стекле.',condition:'Б/у',priceUnit:'За штуку'})}}]});};
-  try{
-    const r=await POST(new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({category:'parts',text:'Продам фару. Артикул 000123-AB. Царапина на стекле.',provider:'openrouter',key:'test-api-key-not-real'})}));
-    assert.equal(r.status,200);const data=await r.json();assert.equal(data.listing.category,'parts');assert.equal(data.listing.partNumber,'000123-AB');
-    assert.match(prompt,/не расширяй список/);assert.match(prompt,/не выбирай год из диапазона/);
-    assert.notEqual(systemPrompt('cars'),systemPrompt('parts'));
-  }finally{globalThis.fetch=real;}
-});
-test('unknown product categories and null JSON are rejected before calling AI',async()=>{
-  for(const body of [null,[],{category:'unsafe-other',text:'Продам деталь для автомобиля'}]){
-    const r=await POST(new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}));
-    assert.equal(r.status,400);
-  }
-});
-test('a part number invented by the model is not accepted as a structured OEM',async()=>{
-  const real=globalThis.fetch;
-  globalThis.fetch=async()=>Response.json({choices:[{finish_reason:'stop',message:{content:'{"partName":"Фара","partNumber":"INVENTED-123"}'}}]});
-  try{
-    const r=await POST(new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({category:'parts',text:'Продам фару, артикул неизвестен.',provider:'openrouter',key:'test-api-key-not-real'})}));
-    assert.equal((await r.json()).listing.partNumber,'');
-  }finally{globalThis.fetch=real;}
-});
-test('AI cannot invent contact or stock and an explicit single price wins over model output',async()=>{
- const real=globalThis.fetch;
- globalThis.fetch=async()=>Response.json({choices:[{finish_reason:'stop',message:{content:JSON.stringify({partName:'Фара',price:'999',currency:'USD',phone:'+375291234567',quantity:'1',availability:'В наличии',priceUnit:'За штуку',manufacturer:'Invented Brand'})}}]});
- try{
-  const r=await POST(new Request('http://localhost:5173/api/analyze',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({category:'parts',text:'Продам фару. Цена 450 BYN. Производитель и количество неизвестны.',provider:'openrouter',key:'test-api-key-not-real'})}));
-  const {listing}=await r.json();assert.equal(listing.price,'450');assert.equal(listing.currency,'BYN');
-  for(const key of ['phone','quantity','availability','priceUnit','manufacturer'])assert.equal(listing[key],'',key);
- }finally{globalThis.fetch=real;}
+
+test('parts prompt keeps explicit fitment and differs from the car schema',()=>{
+ assert.match(systemPrompt('parts'),/не расширяй список/);
+ assert.match(systemPrompt('parts'),/не выбирай год из диапазона/);
+ assert.notEqual(systemPrompt('cars'),systemPrompt('parts'));
 });
