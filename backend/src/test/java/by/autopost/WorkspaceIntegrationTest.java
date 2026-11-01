@@ -40,6 +40,37 @@ class WorkspaceIntegrationTest {
     assertFalse(getJson("rental/editor",account.cookie(),503).toString().contains("DADATA_API_KEY"));
     postJson("rental/address/suggest",account.cookie(),object("query","М"),400);
   }
+
+  @Test
+  void deletesOnlyTheConfirmedRentalRevisionInTheCurrentWorkspace() throws Exception {
+    var owner = register();
+    var other = register();
+    String id = UUID.randomUUID().toString(), keep = UUID.randomUUID().toString();
+    var draft = object("values", object("listing.title", "Delete test"));
+    String path = "rental/drafts/" + id;
+    postJson(path, owner.cookie(), object("revision", 0, "draft", draft), 200);
+    postJson("rental/drafts/" + keep, owner.cookie(), object("revision", 0, "draft", draft), 200);
+    postJson(path + "/delete", "", object("revision", 1), 401);
+    postJson(path + "/delete", other.cookie(), object("revision", 1), 404);
+    postJson(path + "/delete", owner.cookie(), object(), 400);
+    var cross = mvc.perform(post("/api/workspace/" + path + "/delete")
+        .header("Origin", "https://evil.example").header("Cookie", owner.cookie())
+        .contentType("application/json").content("{\"revision\":1}")).andReturn();
+    assertEquals(403, cross.getResponse().getStatus());
+    postJson(path, owner.cookie(), object("revision", 1, "draft", draft), 200);
+    postJson(path + "/delete", owner.cookie(), object("revision", 1), 409);
+    assertEquals(2, getJson(path, owner.cookie(), 200).path("revision").asInt());
+    // An identical ID in another cabinet must remain untouched.
+    postJson(path, other.cookie(), object("revision", 0, "draft", draft), 200);
+    postJson(path + "/delete", owner.cookie(), object("revision", 2), 200);
+    getJson(path, owner.cookie(), 404);
+    getJson(path, other.cookie(), 200);
+    getJson("rental/drafts/" + keep, owner.cookie(), 200);
+    assertEquals(1, getJson("rental/drafts", owner.cookie(), 200).path("drafts").size());
+    // A late autosave from a previously opened card cannot bring it back.
+    postJson(path, owner.cookie(), object("revision", 2, "draft", draft), 409);
+    getJson(path, owner.cookie(), 404);
+  }
   static final Path DATA;
 
   static {

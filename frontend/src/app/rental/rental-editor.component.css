@@ -92,10 +92,48 @@
 }
 .saved-item {
   display: block;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   text-align: left;
-  margin-top: 10px;
+  overflow-wrap: anywhere;
   padding: 12px;
+}
+.saved-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.delete-item {
+  flex-shrink: 0;
+  color: #a33127;
+  background: #fff;
+  border: 1px solid #efc7c2;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.delete-item:hover:not(:disabled) {
+  background: #fff2ef;
+}
+.delete-confirmation {
+  padding: 14px;
+  margin: 0 0 12px;
+  border-radius: 10px;
+  background: #fff2ef;
+}
+.delete-confirmation p {
+  margin: 0 0 12px;
+}
+.delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.rental-editor-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
 }
 .rental-section li {
   margin: 10px 0;

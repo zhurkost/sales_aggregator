@@ -41,6 +41,8 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   status = "";
   error = "";
   busy = false;
+  pendingDelete: string | null = null;
+  deletingId: string | null = null;
   drafts: { id: string; title: string; address: string; revision: number }[] =
     [];
   results: Prepared[] = [];
@@ -281,7 +283,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     const save = this.queue
       .catch(() => {})
       .then(async () => {
-        if (!this.dirty) return;
+        if (!this.dirty || this.deletingId === this.id) return;
         const version = this.editVersion,
           id = this.id,
           snapshot = structuredClone(this.draft);
@@ -313,6 +315,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     if (this.busy) return;
     this.busy = true;
     this.error = "";
+    this.pendingDelete = null;
     try {
       await this.flush();
       const result = await rentalApi<{
@@ -335,23 +338,61 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     }
   }
   async fresh() {
+    if (this.busy) return;
+    this.busy = true;
     try {
       await this.flush();
-      this.id = crypto.randomUUID();
-      this.revision = 0;
-      this.results = [];
-      this.draft = {
-        schemaVersion: this.schema?.version || "",
-        values: {},
-        extras: {},
-        platforms: this.platforms,
-        address: null,
-      };
-      this.dirty = false;
+      this.resetDraft();
       this.status = "Новая карточка";
       this.error = "";
     } catch (e) {
       this.error = (e as Error).message;
+    } finally {
+      this.busy = false;
+    }
+  }
+  private resetDraft() {
+    clearTimeout(this.timer);
+    this.editVersion++;
+    this.id = crypto.randomUUID();
+    this.revision = 0;
+    this.results = [];
+    this.draft = {
+      schemaVersion: this.schema?.version || "",
+      values: {},
+      extras: {},
+      platforms: this.platforms,
+      address: null,
+    };
+    this.dirty = false;
+    this.pendingDelete = null;
+  }
+  async remove(id: string) {
+    if (this.busy || this.pendingDelete !== id) return;
+    this.busy = true;
+    this.deletingId = id;
+    this.error = "";
+    if (this.id === id) clearTimeout(this.timer);
+    // Finish an already-running save first; queued saves of this card are skipped.
+    // Later saves stay behind deletion and cannot recreate the removed card.
+    const removal = this.queue.catch(() => {}).then(async () => {
+      const item = this.drafts.find((draft) => draft.id === id);
+      if (!item) throw new Error("Квартира не найдена. Обновите список.");
+      const revision = this.id === id ? this.revision : item.revision;
+      await rentalApi(this.workspaceId, "drafts/" + id + "/delete", { revision });
+      this.drafts = this.drafts.filter((draft) => draft.id !== id);
+      if (this.id === id) this.resetDraft();
+      this.pendingDelete = null;
+      this.status = "Квартира удалена";
+    });
+    this.queue = removal;
+    try {
+      await removal;
+    } catch (e) {
+      this.error = (e as Error).message;
+    } finally {
+      this.deletingId = null;
+      this.busy = false;
     }
   }
   acceptSchema() {

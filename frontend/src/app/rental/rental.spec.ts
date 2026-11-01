@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { applicable } from "./conditions";
+import { TestBed } from "@angular/core/testing";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -11,6 +12,126 @@ const response = (body: unknown) =>
   new Response(JSON.stringify(body), { status: 200 });
 
 describe("rental preparation editor", () => {
+  it("renders delete confirmation, supports cancellation and updates the saved list", async () => {
+    const fetch = vi.fn(async (url: string) => {
+      if (url.endsWith("/editor")) return response({
+        version: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
+        platforms: Object.fromEntries(["kufar", "onliner", "realt", "domovita"].map((name) => [name, {
+          extras: [], labels: {}, choiceLabels: {}, constants: {}, bindings: [],
+        }])),
+      });
+      if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1 }] });
+      return response({ deleted: true });
+    });
+    vi.stubGlobal("fetch", fetch);
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    const element = fixture.nativeElement as HTMLElement;
+    try {
+      fixture.detectChanges();
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(element.querySelector(".saved-row .delete-item")).not.toBeNull();
+      });
+      const remove = element.querySelector<HTMLButtonElement>(".saved-row .delete-item")!;
+      expect(remove.getAttribute("aria-label")).toContain("Тестовая квартира");
+      remove.click();
+      fixture.detectChanges();
+      expect(element.querySelector(".delete-confirmation")?.textContent).toContain("Восстановить её не получится");
+      element.querySelector<HTMLButtonElement>(".delete-actions .secondary")!.click();
+      fixture.detectChanges();
+      expect(element.querySelector(".delete-confirmation")).toBeNull();
+      expect(fetch.mock.calls.some(([url]) => url.endsWith("/delete"))).toBe(false);
+      remove.click();
+      fixture.detectChanges();
+      element.querySelector<HTMLButtonElement>(".delete-actions .delete-item")!.click();
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(element.querySelector(".rental-saved")).toBeNull();
+      });
+      expect(element.querySelector("[role=status]")?.textContent).toBe("Квартира удалена");
+    } finally { fixture.destroy(); }
+  });
+  it("requires confirmation before removing a saved apartment", async () => {
+    const c = new RentalEditorComponent();
+    const fetch = vi.fn();
+    vi.stubGlobal("fetch", fetch);
+    await c.remove(c.id);
+    expect(fetch).not.toHaveBeenCalled();
+    expect(c.busy).toBe(false);
+    c.ngOnDestroy();
+  });
+  it("waits for an in-flight save and never recreates the deleted active card", async () => {
+    vi.useFakeTimers();
+    const c = new RentalEditorComponent();
+    c.workspaceId = "owner";
+    const id = c.id;
+    c.revision = 1;
+    c.drafts = [{ id, title: "Apartment", address: "", revision: 1 }];
+    let finish!: (response: Response) => void;
+    const calls: { url: string; body: any }[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      calls.push({ url, body: init?.body ? JSON.parse(String(init.body)) : null });
+      if (url.endsWith("/delete")) return response({ deleted: true });
+      if (url.endsWith("/drafts")) return response({ drafts: [{ id, title: "Apartment", address: "", revision: 2 }] });
+      return new Promise<Response>((resolve) => { finish = resolve; });
+    }));
+    c.changed();
+    const saving = c.save();
+    await Promise.resolve();
+    await Promise.resolve();
+    c.changed();
+    const queuedSave = c.save();
+    c.pendingDelete = id;
+    const deleting = c.remove(id);
+    expect(calls.some((call) => call.url.endsWith("/delete"))).toBe(false);
+    finish(response({ revision: 2 }));
+    await Promise.all([saving, queuedSave, deleting]);
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(calls.filter((call) => call.body?.draft)).toHaveLength(1);
+    expect(calls.find((call) => call.url.endsWith("/delete"))?.body).toEqual({ revision: 2 });
+    expect(c.drafts).toEqual([]);
+    expect(c.id).not.toBe(id);
+    expect(c.revision).toBe(0);
+    expect(c.draft.values).toEqual({});
+    expect(c.dirty).toBe(false);
+    expect(c.status).toBe("Квартира удалена");
+    c.ngOnDestroy();
+  });
+  it("keeps another open apartment intact when removing an item from the list", async () => {
+    const c = new RentalEditorComponent();
+    const current = c.id;
+    c.draft.values["listing.title"] = "Keep edits";
+    c.dirty = true;
+    c.drafts = [{ id: "other", title: "Other", address: "", revision: 4 }];
+    c.pendingDelete = "other";
+    vi.stubGlobal("fetch", vi.fn(async () => response({ deleted: true })));
+    await c.remove("other");
+    expect(c.drafts).toEqual([]);
+    expect(c.id).toBe(current);
+    expect(c.draft.values["listing.title"]).toBe("Keep edits");
+    expect(c.dirty).toBe(true);
+    c.ngOnDestroy();
+  });
+  it("preserves the card and unsaved edits if deletion fails or conflicts", async () => {
+    const c = new RentalEditorComponent();
+    const id = c.id;
+    c.revision = 3;
+    c.draft.values["listing.title"] = "Keep";
+    c.dirty = true;
+    c.drafts = [{ id, title: "Keep", address: "", revision: 3 }];
+    c.pendingDelete = id;
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: "Карточка изменена" }), { status: 409 })));
+    await c.remove(id);
+    expect(c.error).toBe("Карточка изменена");
+    expect(c.id).toBe(id);
+    expect(c.drafts).toHaveLength(1);
+    expect(c.draft.values["listing.title"]).toBe("Keep");
+    expect(c.dirty).toBe(true);
+    expect(c.busy).toBe(false);
+    expect(c.deletingId).toBeNull();
+    c.ngOnDestroy();
+  });
   it("flushes edits made during an in-flight save before leaving", async () => {
     const c = new RentalEditorComponent();
     c.workspaceId = "a";

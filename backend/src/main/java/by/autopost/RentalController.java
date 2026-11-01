@@ -124,4 +124,23 @@ class RentalController {
         Instant.now().toString());
     return object("id", id, "revision", revision + 1);
   }
+
+  @PostMapping("/drafts/{id}/delete")
+  @Transactional
+  ObjectNode delete(HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
+    String workspace = access.require(req).workspace();
+    JsonNode revision = input.path("revision");
+    if (!Json.id(id) || !revision.isIntegralNumber() || !revision.canConvertToInt()
+        || revision.asInt() < 1)
+      throw new ApiException(400, "Некорректная версия карточки.");
+    var row = db.one(
+        "SELECT revision FROM rental_drafts WHERE workspace_id=? AND id=?", workspace, id);
+    if (row == null) throw new ApiException(404, "Карточка аренды не найдена.");
+    if (((Number) row.get("revision")).intValue() != revision.asInt())
+      throw new ApiException(409,
+          "Квартира изменена в другой вкладке. Откройте её заново и проверьте перед удалением.");
+    db.run("DELETE FROM rental_drafts WHERE workspace_id=? AND id=? AND revision=?",
+        workspace, id, revision.asInt());
+    return object("deleted", true, "id", id);
+  }
 }
