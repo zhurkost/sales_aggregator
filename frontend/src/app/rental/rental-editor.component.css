@@ -169,7 +169,8 @@ h2 {
 .section-heading h2 { margin:0; font-size:19px; }
 .step-number { background:#e9efff; border-radius:50%; color:#345bc1; width:28px; height:28px; display:grid; place-items:center; font-size:14px; }
 .group-count { float:right; font-size:12px; font-weight:400; color:#68778c; }
-.rental-fields .full-label { display:flex; flex-direction:column; gap:8px; }
+.rental-fields .full-label { display:flex; flex-direction:column; gap:8px; margin:0; }
+.rental-fields .full-label > .fine-print { margin:0; }
 .rental-fields .full-label > label { font-size:14px; font-weight:550; }
 .rental-fields input,.rental-fields select,.rental-fields textarea { box-sizing:border-box; min-width:0; }
 .rental-fields .extra-choices { display:flex; flex-wrap:wrap; flex-direction:row; gap:12px; }
