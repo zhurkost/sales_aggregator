@@ -41,6 +41,20 @@ public final class ReferenceValidator {
     check(common.isArray() && common.size() == 1, "common должен содержать одну категорию");
     var canonical = fields(common);
     check(!canonical.isEmpty(), "нет полей общей карточки");
+    if (card.has("profileDefaults")) {
+      check(card.path("profileDefaults").isArray(), "profileDefaults должен быть массивом");
+      Set<String> defaults = new HashSet<>();
+      for (var rule : card.path("profileDefaults")) {
+        String field = text(rule, "field");
+        check(
+            Set.of("phone", "contactPerson", "company").contains(text(rule, "setting")),
+            "неизвестное поле профиля");
+        check(
+            canonical.containsKey(field) && text(canonical.get(field), "type").equals("text"),
+            "неизвестное текстовое поле профиля " + field);
+        check(defaults.add(field), "несколько значений профиля для " + field);
+      }
+    }
     check(card.path("platforms").isObject(), "нет названий площадок");
     Set<String> registered = new HashSet<>();
     card.path("platforms").fieldNames().forEachRemaining(registered::add);

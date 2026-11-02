@@ -1,0 +1,152 @@
+{
+  "startUrl": "https://domovita.by/new/add",
+  "setup": [
+    {
+      "action": "click",
+      "selector": "label",
+      "text": "Сдаче длительно"
+    },
+    {
+      "action": "click",
+      "selector": "label",
+      "text": "Квартиры"
+    }
+  ],
+  "controls": [
+    {
+      "field": "domovita.contact_name",
+      "action": "text",
+      "selector": "input[name=\"contact_name\"]"
+    },
+    {
+      "field": "domovita.contact_phone",
+      "action": "text",
+      "selector": "input[name=\"phones.0.contact_phone\"]"
+    },
+    {
+      "field": "domovita.additional_phone_1",
+      "action": "text",
+      "selector": "input[name=\"phones.1.contact_phone\"]"
+    },
+    {
+      "field": "domovita.additional_phone_2",
+      "action": "text",
+      "selector": "input[name=\"phones.2.contact_phone\"]"
+    },
+    {
+      "field": "domovita.email",
+      "action": "text",
+      "selector": "input[name=\"email\"]"
+    },
+    {
+      "field": "domovita.area_total",
+      "action": "text",
+      "selector": "input[name=\"area_total\"]"
+    },
+    {
+      "field": "domovita.area_kitchen",
+      "action": "text",
+      "selector": "input[name=\"area_kitchen\"]"
+    },
+    {
+      "field": "domovita.area_living",
+      "action": "text",
+      "selector": "input[name=\"area_living\"]"
+    },
+    {
+      "field": "domovita.storey",
+      "action": "text",
+      "selector": "input[name=\"storey\"]"
+    },
+    {
+      "field": "domovita.storeys",
+      "action": "text",
+      "selector": "input[name=\"storeys\"]"
+    },
+    {
+      "field": "domovita.monthly_price",
+      "action": "text",
+      "selector": "input[name=\"price\"]"
+    },
+    {
+      "field": "domovita.rooms",
+      "action": "choices",
+      "selector": "input[name=\"rooms\"]"
+    },
+    {
+      "field": "domovita.account_type",
+      "action": "choices",
+      "selector": "input[name=\"account_type\"]"
+    },
+    {
+      "field": "domovita.amenities",
+      "action": "choices",
+      "selector": "input[type=\"checkbox\"]"
+    },
+    {
+      "field": "domovita.tenant_conditions",
+      "action": "choices",
+      "selector": "input[type=\"checkbox\"]"
+    },
+    {
+      "field": "domovita.description",
+      "action": "richtext",
+      "selector": ".tiptap[contenteditable=\"true\"]",
+      "index": 0
+    },
+    {
+      "field": "domovita.images",
+      "action": "files",
+      "selector": "input[type=\"file\"]"
+    },
+    {
+      "field": "domovita.currency",
+      "action": "dropdown",
+      "selector": "input[role=\"combobox\"]",
+      "index": 3
+    },
+    {
+      "field": "domovita.town",
+      "action": "autocomplete",
+      "selector": "input[role=\"combobox\"]",
+      "index": 0,
+      "addressPart": "settlement"
+    },
+    {
+      "field": "domovita.street",
+      "action": "autocomplete",
+      "selector": "input[role=\"combobox\"]",
+      "index": 1,
+      "addressPart": "street",
+      "after": "domovita.town"
+    },
+    {
+      "field": "domovita.house_number",
+      "action": "autocomplete",
+      "selector": "input[role=\"combobox\"]",
+      "index": 2,
+      "addressPart": "house",
+      "after": "domovita.street"
+    }
+  ],
+  "next": [
+    {
+      "action": "click",
+      "selector": "button",
+      "text": "Далее"
+    }
+  ],
+  "submit": [],
+  "format": 1,
+  "platform": "domovita",
+  "observedAt": "2026-11-02",
+  "note": "Проверены элементы формы. Переходы после сохранения и окончательная публикация требуют проверки на реальном объявлении; без подтверждения успешной подачи статус published не выставляется.",
+  "ready": [
+    {
+      "selector": "input[name=\"action\"][value=\"rent\"]:checked"
+    },
+    {
+      "selector": "input[name=\"type\"][value=\"flats\"]:checked"
+    }
+  ]
+}

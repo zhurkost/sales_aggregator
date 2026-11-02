@@ -1,8 +1,18 @@
 import type { EditorSchema, Prepared, RentalDraft } from "./rental-models";
 import { rentalApi } from "./rental-api";
+import { RentalCardCheck } from "./rental-card-check";
+import {
+  applyProfileDefaults,
+  type RentalProfile,
+} from "./rental-profile-defaults";
+import { rentalPhotos } from "./rental-photos";
 /** Per-editor session: persistence, revision checks and serialized writes. No DOM. */
 export class RentalDraftStore {
-  constructor(private workspaceId: () => string, private onTransition: () => void) {}
+  constructor(
+    private workspaceId: () => string,
+    private onTransition: () => void,
+    private profile: () => RentalProfile = () => ({}),
+  ) {}
   schema: EditorSchema | null = null;
   draft: RentalDraft = {
     schemaVersion: "",
@@ -21,7 +31,19 @@ export class RentalDraftStore {
   deletingId: string | null = null;
   drafts: { id: string; title: string; address: string; revision: number }[] =
     [];
-  results: Prepared[] = [];
+  readonly check = new RentalCardCheck(() => ({
+    workspace: this.workspaceId(),
+    id: this.id,
+    version: this.editVersion,
+    draft: this.draft,
+    destroyed: this.destroyed,
+  }));
+  get results() {
+    return this.check.results;
+  }
+  set results(value: Prepared[]) {
+    this.check.results = value;
+  }
   private timer?: ReturnType<typeof setTimeout>;
   private queue: Promise<void> = Promise.resolve();
   editVersion = 0;
@@ -32,6 +54,7 @@ export class RentalDraftStore {
       this.draft.schemaVersion = this.schema.version;
       this.draft.modelVersion = this.schema.card?.version;
       this.draft.platforms = this.platforms;
+      applyProfileDefaults(this.draft, this.schema, this.profile());
       await this.refresh();
     } catch (e) {
       this.error = (e as Error).message;
@@ -51,29 +74,68 @@ export class RentalDraftStore {
   changed() {
     this.editVersion++;
     this.dirty = true;
-    this.results = [];
+    this.check.invalidate();
     this.status = "Есть изменения";
     clearTimeout(this.timer);
-    this.timer = setTimeout(() => {
-      void this.save().catch((e) => (this.error = e.message));
-    }, 900);
+    this.timer = setTimeout(async () => {
+      try {
+        await this.save();
+        if (
+          !this.destroyed &&
+          !this.dirty &&
+          !this.busy &&
+          this.check.checked &&
+          this.check.stale
+        )
+          await this.check.refresh();
+      } catch (e) {
+        this.error = (e as Error).message;
+      }
+    }, 1200);
   }
   async updateFields() {
     if (this.busy) return;
     this.busy = true;
     try {
       await this.flush();
-      const schema = await rentalApi<EditorSchema>(this.workspaceId(), "editor");
-      const migrated = await rentalApi<RentalDraft>(this.workspaceId(), "normalize", this.draft);
-      this.schema = schema; this.draft = migrated; this.onTransition(); this.changed(); this.error = ""; await this.save();
+      const schema = await rentalApi<EditorSchema>(
+        this.workspaceId(),
+        "editor",
+      );
+      const migrated = await rentalApi<RentalDraft>(
+        this.workspaceId(),
+        "normalize",
+        this.draft,
+      );
+      this.schema = schema;
+      this.draft = migrated;
+      this.check.clear();
+      this.onTransition();
+      this.changed();
+      this.error = "";
+      await this.save();
       this.status = "Поля обновлены. Сведения сохранены";
-    } catch (e) { this.error = (e as Error).message; } finally { this.busy = false; }
+    } catch (e) {
+      this.error = (e as Error).message;
+    } finally {
+      this.busy = false;
+    }
   }
   async saveCopy() {
     if (this.busy) return;
     this.busy = true;
-    try { await this.queue.catch(() => {}); this.id = crypto.randomUUID(); this.revision = 0; this.dirty = true; await this.save(); this.error = ""; }
-    catch (e) { this.error = (e as Error).message; } finally { this.busy = false; }
+    try {
+      await this.queue.catch(() => {});
+      this.id = crypto.randomUUID();
+      this.revision = 0;
+      this.dirty = true;
+      await this.save();
+      this.error = "";
+    } catch (e) {
+      this.error = (e as Error).message;
+    } finally {
+      this.busy = false;
+    }
   }
   save(): Promise<void> {
     clearTimeout(this.timer);
@@ -93,9 +155,7 @@ export class RentalDraftStore {
         if (this.id === id) {
           this.revision = result.revision;
           this.dirty = this.editVersion !== version;
-          this.status = this.dirty
-            ? "Есть новые изменения"
-            : "Сохранено в кабинете";
+          this.status = this.dirty ? "Есть новые изменения" : "Сохранено";
         }
         if (!this.destroyed) await this.refresh();
       });
@@ -121,14 +181,19 @@ export class RentalDraftStore {
         revision: number;
         draft: RentalDraft;
       }>(this.workspaceId(), "drafts/" + id);
-      if (beforeLoad !== this.editVersion) throw new Error("Текущая карточка изменилась. Сначала сохраните её, затем откройте другую.");
+      if (beforeLoad !== this.editVersion)
+        throw new Error(
+          "Текущая карточка изменилась. Сначала сохраните её, затем откройте другую.",
+        );
       this.id = result.id;
       this.revision = result.revision;
       this.draft = result.draft;
       this.onTransition();
-      this.results = [];
+      this.check.clear();
       this.dirty = false;
       this.status = "Карточка открыта";
+      if (applyProfileDefaults(this.draft, this.schema, this.profile()))
+        this.changed();
       if (this.schema && this.draft.schemaVersion !== this.schema.version)
         this.error =
           "Правила обновились. Нажмите «Обновить поля карточки» — введённые сведения сохранятся.";
@@ -158,7 +223,7 @@ export class RentalDraftStore {
     this.editVersion++;
     this.id = crypto.randomUUID();
     this.revision = 0;
-    this.results = [];
+    this.check.clear();
     this.draft = {
       modelVersion: this.schema?.card?.version,
       schemaVersion: this.schema?.version || "",
@@ -167,6 +232,7 @@ export class RentalDraftStore {
       platforms: this.platforms,
       address: null,
     };
+    applyProfileDefaults(this.draft, this.schema, this.profile());
     this.dirty = false;
     this.pendingDelete = null;
   }
@@ -178,16 +244,21 @@ export class RentalDraftStore {
     if (this.id === id) clearTimeout(this.timer);
     // Finish an already-running save first; queued saves of this card are skipped.
     // Later saves stay behind deletion and cannot recreate the removed card.
-    const removal = this.queue.catch(() => {}).then(async () => {
-      const item = this.drafts.find((draft) => draft.id === id);
-      if (!item) throw new Error("Квартира не найдена. Обновите список.");
-      const revision = this.id === id ? this.revision : item.revision;
-      await rentalApi(this.workspaceId(), "drafts/" + id + "/delete", { revision });
-      this.drafts = this.drafts.filter((draft) => draft.id !== id);
-      if (this.id === id) this.resetDraft();
-      this.pendingDelete = null;
-      this.status = "Квартира удалена";
-    });
+    const removal = this.queue
+      .catch(() => {})
+      .then(async () => {
+        const item = this.drafts.find((draft) => draft.id === id);
+        if (!item) throw new Error("Квартира не найдена. Обновите список.");
+        const revision = this.id === id ? this.revision : item.revision;
+        await rentalApi(this.workspaceId(), "drafts/" + id + "/delete", {
+          revision,
+        });
+        await rentalPhotos(this.workspaceId(), id, []).catch(() => {});
+        this.drafts = this.drafts.filter((draft) => draft.id !== id);
+        if (this.id === id) this.resetDraft();
+        this.pendingDelete = null;
+        this.status = "Квартира удалена";
+      });
     this.queue = removal;
     try {
       await removal;
@@ -206,23 +277,18 @@ export class RentalDraftStore {
     }
   }
   async prepare() {
-    if (this.busy) return;
-    this.busy = true;
+    if (this.busy || this.check.checking) return;
     this.error = "";
-    const version = this.editVersion;
-    try {
-      await this.flush();
-      const result = await rentalApi<{ platforms: Prepared[] }>(
-        this.workspaceId(),
-        "prepare",
-        structuredClone(this.draft),
-      );
-      if (version === this.editVersion) this.results = result.platforms;
-    } catch (e) {
-      this.error = (e as Error).message;
-    } finally {
-      this.busy = false;
-    }
+    await Promise.all([
+      this.save().catch((e) => {
+        this.error = e.message;
+      }),
+      this.check.refresh(),
+    ]);
   }
-  destroy() { this.destroyed = true; clearTimeout(this.timer); }
+  destroy() {
+    this.destroyed = true;
+    clearTimeout(this.timer);
+    this.check.clear();
+  }
 }

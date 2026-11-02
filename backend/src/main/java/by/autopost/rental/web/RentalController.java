@@ -18,13 +18,19 @@ class RentalController {
   private final RentalCatalog catalog;
   private final AddressService addresses;
   private final RentalDraftService drafts;
+  private final RentalPublicationService publication;
 
   RentalController(
-      Access access, RentalCatalog catalog, AddressService addresses, RentalDraftService drafts) {
+      Access access,
+      RentalCatalog catalog,
+      AddressService addresses,
+      RentalDraftService drafts,
+      RentalPublicationService publication) {
     this.access = access;
     this.catalog = catalog;
     this.addresses = addresses;
     this.drafts = drafts;
+    this.publication = publication;
   }
 
   @GetMapping("/editor")
@@ -64,6 +70,11 @@ class RentalController {
   @GetMapping("/drafts")
   ObjectNode drafts(HttpServletRequest req) {
     return drafts.list(access.require(req).workspace());
+  }
+
+  @PostMapping("/extension-config")
+  ObjectNode extensionConfig(HttpServletRequest req, @RequestBody JsonNode input) {
+    return publication.configuration(access.require(req).workspace(), input);
   }
 
   @GetMapping("/drafts/{id}")

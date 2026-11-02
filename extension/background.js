@@ -1,5 +1,5 @@
 "use strict";
-importScripts("core.js", "navigation.js", "photo-store.js", "prices.js", "publication.js", "status.js");
+importScripts("core.js", "navigation.js", "photo-store.js", "prices.js", "publication.js", "status.js", "rental-core.js", "rental-background.js");
 const core = globalThis.AutopostCore;
 const publication = globalThis.AutopostPublication;
 const photoStore = globalThis.AutopostPhotos;
@@ -202,6 +202,7 @@ async function appRequest(message, sender) {
     return {
       version: core.VERSION,
       capabilities: [
+        "rental-publishing",
         "all-platforms",
         "category-routing",
         "queue",
@@ -629,11 +630,13 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
     sender.frameId !== 0 ||
     !Number.isInteger(sender.tab?.id) ||
     !core.object(message) ||
-    !["APP_REQUEST", "GET_TASK", "REPORT_TASK", "ARM_SUBMISSION", "RESET_SUBMISSION", "AUTO_BEGIN", "CLAIM_NAVIGATION", "GET_STATUS_TASK", "REPORT_STATUS"].includes(message.kind)
+    !["RENTAL_REQUEST", "RENTAL_PAGE", "APP_REQUEST", "GET_TASK", "REPORT_TASK", "ARM_SUBMISSION", "RESET_SUBMISSION", "AUTO_BEGIN", "CLAIM_NAVIGATION", "GET_STATUS_TASK", "REPORT_STATUS"].includes(message.kind)
   )
     return false;
   const work = () =>
-    message.kind === "APP_REQUEST"
+    ["RENTAL_REQUEST", "RENTAL_PAGE"].includes(message.kind)
+      ? globalThis.AutopostRentalBackground.handle(message, sender)
+      : message.kind === "APP_REQUEST"
       ? appRequest(message, sender)
       : marketplaceRequest(message, sender);
   // A health check must not wait behind photo writes or queue cleanup.
@@ -676,9 +679,9 @@ chrome.tabs.onRemoved.addListener((id) => {
 // Session metadata disappears when the browser closes; orphaned photos are removed on restart.
 async function cleanPhotos() {
   const state = await load();
-  const live = new Set(state.batches.map((b) => b.photoKey));
+  const live = new Set([...state.batches.map((b) => b.photoKey), ...await globalThis.AutopostRentalBackground.photoKeys()]);
   const keys = await photoStore.keys();
-  await photoStore.remove(keys.filter((key) => key.startsWith(PHOTO_PREFIX) && !live.has(key)));
+  await photoStore.remove(keys.filter((key) => (key.startsWith(PHOTO_PREFIX) || key.startsWith('rental:')) && !live.has(key)));
   await receipts(null,null); // Expire unacknowledged results after seven days, independently of photo/session TTL.
   // Updating/reloading clears storage.session. Retire only our old photo keys;
   // new photos never enter storage.local, even without setAccessLevel support.

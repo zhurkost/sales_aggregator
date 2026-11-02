@@ -1,0 +1,176 @@
+{
+  "startUrl": "https://realt.by/podat-obyavlenie/",
+  "setup": [
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Сдать длительно"
+    },
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Жилая"
+    },
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Квартира"
+    }
+  ],
+  "controls": [
+    {
+      "field": "realt.house_number",
+      "action": "text",
+      "selector": "[id=\"location.houseNumber\"]",
+      "addressPart": "house"
+    },
+    {
+      "field": "realt.building_number",
+      "action": "text",
+      "selector": "[id=\"location.buildingNumber\"]"
+    },
+    {
+      "field": "realt.floor",
+      "action": "text",
+      "selector": "[id=\"apartment.storey\"]"
+    },
+    {
+      "field": "realt.total_area",
+      "action": "text",
+      "selector": "[id=\"area.total\"]"
+    },
+    {
+      "field": "realt.living_area",
+      "action": "text",
+      "selector": "[id=\"area.living\"]"
+    },
+    {
+      "field": "realt.building_floors",
+      "action": "text",
+      "selector": "[id=\"house.storeys\"]"
+    },
+    {
+      "field": "realt.building_year",
+      "action": "text",
+      "selector": "[id=\"house.buildingYear\"]"
+    },
+    {
+      "field": "realt.monthly_rent",
+      "action": "text",
+      "selector": "[id=\"termsOfDeal.price\"]"
+    },
+    {
+      "field": "realt.short_description",
+      "action": "text",
+      "selector": "[id=\"description.shortDescription\"]"
+    },
+    {
+      "field": "realt.contact_phone_1",
+      "action": "text",
+      "selector": "[id=\"contacts.phones[0].value\"]"
+    },
+    {
+      "field": "realt.contact_name",
+      "action": "text",
+      "selector": "[id=\"contacts.name\"]"
+    },
+    {
+      "field": "realt.contact_email",
+      "action": "text",
+      "selector": "[id=\"contacts.email\"]"
+    },
+    {
+      "field": "realt.settlement",
+      "action": "autocomplete",
+      "selector": "[id=\"location.settlement\"]",
+      "addressPart": "settlement"
+    },
+    {
+      "field": "realt.street",
+      "action": "autocomplete",
+      "selector": "[id=\"location.street\"]",
+      "addressPart": "street",
+      "after": "realt.settlement"
+    },
+    {
+      "field": "realt.bargain",
+      "action": "check",
+      "selector": "[id=\"termsOfDeal.bargain\"]"
+    },
+    {
+      "field": "realt.rooms",
+      "action": "choices",
+      "selector": "[id=\"apartment\"]",
+      "label": "Комнат"
+    },
+    {
+      "field": "realt.repair",
+      "action": "choices",
+      "selector": "[id=\"apartment\"]",
+      "label": "Ремонт"
+    },
+    {
+      "field": "realt.balcony",
+      "action": "choices",
+      "selector": "[id=\"apartment\"]",
+      "label": "Балконов / лоджий"
+    },
+    {
+      "field": "realt.currency",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Цена"
+    },
+    {
+      "field": "realt.utilities",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Коммунальные платежи"
+    },
+    {
+      "field": "realt.rental_term",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Срок сдачи"
+    },
+    {
+      "field": "realt.prepayment",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Предоплата"
+    },
+    {
+      "field": "realt.tenant_condition",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Условия сдачи"
+    },
+    {
+      "field": "realt.photos",
+      "action": "files",
+      "selector": "input[type=\"file\"]",
+      "index": 0
+    }
+  ],
+  "next": [
+    {
+      "action": "click",
+      "selector": "button",
+      "text": "Сохранить и продолжить"
+    }
+  ],
+  "submit": [],
+  "format": 1,
+  "platform": "realt",
+  "observedAt": "2026-11-02",
+  "note": "Проверены элементы формы. Переходы после сохранения и окончательная публикация требуют проверки на реальном объявлении; без подтверждения успешной подачи статус published не выставляется.",
+  "ready": [
+    {
+      "selector": "#apartment"
+    },
+    {
+      "selector": "p",
+      "text": "Аренда квартиры"
+    }
+  ]
+}

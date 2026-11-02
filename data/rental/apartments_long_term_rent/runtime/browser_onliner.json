@@ -1,0 +1,126 @@
+{
+  "startUrl": "https://r.onliner.by/ak/apartments/create",
+  "setup": [],
+  "controls": [
+    {
+      "field": "onliner.images",
+      "action": "files",
+      "selector": "input.new-photos__input-file[name=\"file\"]"
+    },
+    {
+      "field": "onliner.rent_type",
+      "action": "choices",
+      "selector": "input[name=\"rent_type\"]"
+    },
+    {
+      "field": "onliner.room_count",
+      "action": "choices",
+      "selector": "input[name=\"roomCount\"]"
+    },
+    {
+      "field": "onliner.facilities",
+      "action": "choices",
+      "selector": "input[data-bind=\"checked: $root.data.facilities\"]"
+    },
+    {
+      "field": "onliner.rent_rules",
+      "action": "choices",
+      "selector": "input[data-bind=\"checked: $root.data.rentRules\"]"
+    },
+    {
+      "field": "onliner.contact_owner",
+      "action": "choices",
+      "selector": "input[name=\"contact.owner\"]"
+    },
+    {
+      "field": "onliner.address_query",
+      "action": "autocomplete",
+      "selector": "input[data-bind*=\"value: $root.data.location.user_address\"]",
+      "addressPart": "label"
+    },
+    {
+      "field": "onliner.description",
+      "action": "text",
+      "selector": "textarea[placeholder=\"Подробное описание\"]"
+    },
+    {
+      "field": "onliner.price_amount",
+      "action": "text",
+      "selector": "#price-input"
+    },
+    {
+      "field": "onliner.price_currency",
+      "action": "select",
+      "selector": "select[data-bind=\"value: $root.data.price.currency\"]"
+    },
+    {
+      "field": "onliner.contact_name",
+      "action": "text",
+      "selector": "input[placeholder=\"Ваше имя\"]"
+    },
+    {
+      "field": "onliner.contact_phone",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер телефона в международном формате\"]",
+      "index": 0
+    },
+    {
+      "field": "onliner.call_time_from",
+      "action": "select",
+      "selector": "select[data-bind*=\"value: $root.data.contact.callTime[0]\"]"
+    },
+    {
+      "field": "onliner.call_time_to",
+      "action": "select",
+      "selector": "select[data-bind*=\"value: $root.data.contact.callTime[1]\"]"
+    },
+    {
+      "field": "onliner.agency_name",
+      "action": "text",
+      "selector": "input[placeholder=\"Юридическое наименование\"]"
+    },
+    {
+      "field": "onliner.agency_unp",
+      "action": "text",
+      "selector": "input[placeholder=\"УНП\"]"
+    },
+    {
+      "field": "onliner.agency_contract_number",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер договора\"]"
+    },
+    {
+      "field": "onliner.agency_contract_date",
+      "action": "text",
+      "selector": "input[placeholder=\"Дата заключения договора\"]"
+    },
+    {
+      "field": "onliner.agency_licence_number",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер лицензии\"]"
+    },
+    {
+      "field": "onliner.agency_licence_date",
+      "action": "text",
+      "selector": "input[placeholder=\"Дата выдачи лицензии\"]"
+    }
+  ],
+  "next": [
+    {
+      "action": "click",
+      "selector": "a[href=\"#progress\"]",
+      "text": "Продолжить",
+      "stepSelector": ".new-progress__item_active"
+    }
+  ],
+  "submit": [],
+  "format": 1,
+  "platform": "onliner",
+  "observedAt": "2026-11-02",
+  "note": "Проверены элементы формы. Переходы после сохранения и окончательная публикация требуют проверки на реальном объявлении; без подтверждения успешной подачи статус published не выставляется.",
+  "ready": [
+    {
+      "selector": ".new-progress"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+<section class="publication" aria-label="Публикация квартиры">
+  <div
+    class="photos"
+    tabindex="0"
+    (paste)="paste($event)"
+    aria-label="Фотографии: можно вставить из буфера"
+  >
+    <label class="upload"
+      >＋ Фото
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        [disabled]="photosBusy"
+        (change)="files($event)"
+    /></label>
+    <span>{{
+      photosBusy
+        ? "Обрабатываем…"
+        : photos.length
+          ? photos.length + " фото · в этом браузере"
+          : "Или вставьте из буфера"
+    }}</span>
+    @for (photo of photos; track photo.id) {
+      <div class="photo">
+        <img [src]="photo.dataUrl" [alt]="photo.name" /><button
+          type="button"
+          [disabled]="photosBusy"
+          [attr.aria-label]="'Удалить фото ' + photo.name"
+          (click)="remove(photo)"
+        >
+          ×
+        </button>
+      </div>
+    }
+  </div>
+  <div class="launch">
+    <label
+      ><input
+        type="checkbox"
+        [ngModel]="mode === 'automatic'"
+        (ngModelChange)="mode = $event ? 'automatic' : 'assist'"
+      />Автоматически пройти шаги формы</label
+    ><button
+      type="button"
+      class="publish"
+      [disabled]="
+        busy || photosBusy || store.busy || !store.draft.platforms.length
+      "
+      (click)="publish()"
+    >
+      {{ busy ? "Передаём…" : "Опубликовать" }}
+    </button>
+  </div>
+  <p class="hint">
+    Уточнения в проверке необязательны. Площадки могут запросить свои
+    обязательные поля и подтверждения.
+  </p>
+  @if (!ready) {
+    <p>
+      <a href="/autopost-extension.zip" download>Скачать расширение 0.9.0</a> ·
+      После установки обновите страницу.
+    </p>
+  }
+  @if (error) {
+    <p role="alert" class="error">{{ error }}</p>
+  }
+  @if (jobs.length) {
+    <div class="jobs" aria-live="polite">
+      @for (job of jobs; track job.id) {
+        <div class="job">
+          <strong>{{ name(job.platform) }}</strong
+          ><span
+            >{{ job.message }}
+            @if (job.filled) {
+              · {{ job.filled }} полей
+            }</span
+          ><button type="button" (click)="open(job)">Открыть</button>
+        </div>
+      }
+    </div>
+    <button type="button" class="stop" (click)="stop()">
+      Остановить задания
+    </button>
+  }
+</section>

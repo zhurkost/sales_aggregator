@@ -50,6 +50,18 @@ test('RUN requires a trusted event and allows only one request per gesture', asy
   assert.equal('photos' in JSON.parse(bridge.catalogRequests[0].options.body).items[0],false);
   assert.ok(bridge.forwarded[0].payload.recipe);
 });
+
+test('rental launch obtains a server recipe after a trusted click and never sends photos to the server',async()=>{
+ const recipe={format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]};
+ const bridge=createBridge({fetchCatalog:async()=>Response.json(recipe)});
+ const input={profileId:'owner',id:'rental',draft:{values:{description:'Apartment'}},photos:[{id:'image'}],mode:'assist',jobs:[{startUrl:'https://evil.invalid'}]};
+ const overrides={data:{source:'autopost-app',type:'RENTAL_RUN',requestId:'rental-1',payload:input}};
+ await bridge.request('RENTAL_RUN','rental-1',overrides);assert.equal(bridge.catalogRequests.length,0);
+ await bridge.event('click',{isTrusted:true});overrides.data.requestId='rental-2';await bridge.request('RENTAL_RUN','rental-2',overrides);
+ assert.equal(bridge.catalogRequests[0].url,'/api/workspace/rental/extension-config');
+ const request=bridge.catalogRequests[0].options;assert.equal(request.headers['X-Autopost-Workspace'],'owner');assert.equal('photos' in JSON.parse(request.body),false);
+ assert.equal(bridge.forwarded[0].kind,'RENTAL_REQUEST');assert.deepEqual(bridge.forwarded[0].payload.jobs,recipe.jobs);assert.equal(bridge.forwarded[0].payload.mode,'assist');
+});
 test('catalog failures prevent launch; no stale dictionary or executable response is used',async()=>{
   const bridge=createBridge({fetchCatalog:async()=>Response.json({error:'Catalog unavailable'},{status:503})});
   await bridge.event('click',{isTrusted:true});await bridge.request('RUN');

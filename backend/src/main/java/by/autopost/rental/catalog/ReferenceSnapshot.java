@@ -15,6 +15,11 @@ public final class ReferenceSnapshot {
   private final String categoryId, version;
   private final JsonNode common, card, audit;
   private final Map<String, JsonNode> schemas, plans, bindings;
+  private final Map<String, JsonNode> browsers;
+
+  public JsonNode browser(String platform) {
+    return get(browsers, platform);
+  }
 
   public ReferenceSnapshot(
       String categoryId,
@@ -25,6 +30,20 @@ public final class ReferenceSnapshot {
       Map<String, JsonNode> plans,
       Map<String, JsonNode> bindings,
       String version) {
+    this(categoryId, common, card, audit, schemas, plans, bindings, Map.of(), version);
+  }
+
+  public ReferenceSnapshot(
+      String categoryId,
+      JsonNode common,
+      JsonNode card,
+      JsonNode audit,
+      Map<String, JsonNode> schemas,
+      Map<String, JsonNode> plans,
+      Map<String, JsonNode> bindings,
+      Map<String, JsonNode> browsers,
+      String version) {
+    this.browsers = copy(browsers);
     this.categoryId = categoryId;
     this.common = common.deepCopy();
     this.card = card.deepCopy();

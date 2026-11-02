@@ -22,6 +22,21 @@ class ReferenceBundleTest {
     var snapshot = repository.snapshot();
     assertEquals(Set.of("kufar", "onliner", "realt", "domovita"), snapshot.platforms());
     assertFalse(new RentalCatalog(repository).editor().path("category").path("options").isEmpty());
+    assertEquals(
+        3, new RentalCatalog(repository).editor().path("card").path("profileDefaults").size());
+  }
+
+  @Test
+  void profileDefaultsRejectUnknownSourcesAndFields() throws Exception {
+    var repo = fixture();
+    var card = (ObjectNode) read("card.json");
+    card.set("profileDefaults", array().add(object("setting", "phone", "field", "missing")));
+    write("card.json", card);
+    assertThrows(ApiException.class, repo::snapshot);
+    card.set(
+        "profileDefaults", array().add(object("setting", "password", "field", "rental.currency")));
+    write("card.json", card);
+    assertThrows(ApiException.class, repo::snapshot);
   }
 
   @Test

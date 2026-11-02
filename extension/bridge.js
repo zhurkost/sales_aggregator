@@ -56,7 +56,7 @@
   window.addEventListener('message', async (event) => {
     if (event.source !== window || event.origin !== origin || !core.object(event.data) || event.data.source !== 'autopost-app') return;
     const { type, requestId } = event.data;
-    if (!['PING', 'PRICE_SEARCH', 'RUN', 'RUN_QUEUE','OPEN_JOB','RESTORE_JOB','CHECK_STATUS','ACK_RECEIPT','PAUSE','RESUME','SET_MODE','CANCEL_RECORD','STATUS', 'CLEAR'].includes(type) || typeof requestId !== 'string' || !/^[a-zA-Z0-9_.:-]{1,120}$/u.test(requestId)) return;
+    if (!['RENTAL_RUN','RENTAL_STATUS','RENTAL_OPEN','RENTAL_STOP','PING', 'PRICE_SEARCH', 'RUN', 'RUN_QUEUE','OPEN_JOB','RESTORE_JOB','CHECK_STATUS','ACK_RECEIPT','PAUSE','RESUME','SET_MODE','CANCEL_RECORD','STATUS', 'CLEAR'].includes(type) || typeof requestId !== 'string' || !/^[a-zA-Z0-9_.:-]{1,120}$/u.test(requestId)) return;
     recentRequests = new Map([...recentRequests].filter(([, time]) => Date.now() - time < 60000));
     if (recentRequests.has(requestId) || recentRequests.size > 80) return;
     recentRequests.set(requestId, Date.now());
@@ -64,7 +64,7 @@
     // the site distinguish a missing content script from a worker startup error.
     window.postMessage({ source: 'autopost-extension', type: 'ACK', requestId, payload: { version: core.VERSION } }, origin);
     const userGesture = gestureId > consumedGestureId && Boolean(navigator.userActivation?.isActive || Date.now() - lastGesture < 2000);
-    const mutation=['RUN','RUN_QUEUE','OPEN_JOB','CHECK_STATUS','PAUSE','RESUME','SET_MODE','PRICE_SEARCH','CANCEL_RECORD'].includes(type);
+    const mutation=['RENTAL_RUN','RENTAL_OPEN','RENTAL_STOP','RUN','RUN_QUEUE','OPEN_JOB','CHECK_STATUS','PAUSE','RESUME','SET_MODE','PRICE_SEARCH','CANCEL_RECORD'].includes(type);
     if (mutation && (!userGesture || running)) {
       respond(requestId, { error: running ? 'Предыдущий запуск ещё выполняется.' : 'Запустите передачу кнопкой на странице.', code: 'USER_GESTURE_REQUIRED' });
       return;
@@ -74,6 +74,15 @@
       // never consume the one-shot launch reservation or transfer card data.
       requireRuntime();
       let payload=event.data.payload;
+      if (type.startsWith('RENTAL_')) {
+        if (mutation) { consumedGestureId=gestureId; running=true; }
+        if (type==='RENTAL_RUN') {
+          const config=await rentalConfig(payload,true);
+          payload={...config,profileId:payload.profileId,draft:payload.draft,mode:payload.mode,photos:payload.photos||[]};
+        }
+        const result=await requireRuntime().sendMessage({kind:'RENTAL_REQUEST',type,payload,userGesture});
+        respond(requestId,result||{error:'Расширение не ответило.'});return;
+      }
       if (['SET_MODE','CANCEL_RECORD'].includes(type)) consumedGestureId=gestureId;
       if (['OPEN_JOB','CHECK_STATUS'].includes(type)) consumedGestureId = gestureId;
       if (type === 'PRICE_SEARCH') { consumedGestureId = gestureId; }
@@ -114,12 +123,31 @@
           : detail || 'Не удалось связаться с расширением.',
         code: connectionError ? 'EXTENSION_RELOAD_REQUIRED' : 'REQUEST_FAILED',
       });
-    } finally { if (type === 'RUN'||type==='RUN_QUEUE') running = false; }
+    } finally { if (type === 'RUN'||type==='RUN_QUEUE'||type.startsWith('RENTAL_')) running = false; }
   });
+  async function rentalConfig(payload, wait=false) {
+    const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),16000);
+    try {
+      for(let attempt=0;attempt<30;attempt++) {
+        const response=await fetch('/api/workspace/rental/extension-config',{
+          method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
+          headers:{'Content-Type':'application/json','X-Autopost-Workspace':payload.profileId},
+          body:JSON.stringify({id:payload.id,draft:payload.draft}),
+        });
+        const data=await response.json();
+        if(response.ok)return data;
+        if(wait&&[404,409].includes(response.status)&&attempt<29){await new Promise(resolve=>setTimeout(resolve,300));continue;}
+        throw new Error(data.error||'Не удалось получить правила аренды.');
+      }
+    } finally {clearTimeout(timer);}
+  }
   function fromExtension(message, sender, reply) {
     const api = runtime();
     if (!api || sender.id !== api.id) return;
-    if(message?.kind==='VERIFY_SNAPSHOT' && message.origin===origin) {
+    if(message?.kind==='RENTAL_VERIFY' && message.origin===origin) {
+      rentalConfig(message).then(data=>reply(data.revision===message.revision?{ok:true}:{error:'Карточка изменена. Остановите старый запуск и передайте новую версию.'}),e=>reply({error:e.message}));return true;
+    }
+    if(message?.kind==='VERIFY_SNAPSHOT'  && message.origin===origin) {
       recipes([message.item],message.profileId,false,true).then(()=>reply({ok:true}),e=>reply({error:e.message||'Не удалось сверить карточку с кабинетом.'}));
       return true;
     }

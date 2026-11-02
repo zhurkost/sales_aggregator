@@ -48,7 +48,8 @@ public class FileReferenceRepository implements ReferenceRepository {
     if (!card.has("canonicalValues")) audit = read("integration/integration-audit.json", paths);
     Map<String, JsonNode> schemas = new TreeMap<>(),
         plans = new TreeMap<>(),
-        bindings = new TreeMap<>();
+        bindings = new TreeMap<>(),
+        browsers = new TreeMap<>();
     var ids = new TreeSet<String>();
     registry.fieldNames().forEachRemaining(ids::add);
     for (String id : ids) {
@@ -63,6 +64,11 @@ public class FileReferenceRepository implements ReferenceRepository {
         throw new ApiException(409, "Обновите схему и маппинг площадки единым комплектом.");
       schemas.put(id, SchemaCompatibility.normalize(schema, format));
       plans.put(id, plan);
+      if (entry.has("browser")) {
+        var browser = read(entry.path("browser").asText(), paths);
+        new BrowserRecipeValidator().validate(id, schemas.get(id), browser);
+        browsers.put(id, browser);
+      }
       if (entry.has("binding")) bindings.put(id, read(entry.path("binding").asText(), paths));
       if (format.equals("2.1") && !entry.has("binding"))
         throw new ApiException(409, "Для схемы 2.1 нужен отдельный binding-файл.");
@@ -71,9 +77,12 @@ public class FileReferenceRepository implements ReferenceRepository {
     if (paths.entrySet().stream().anyMatch(e -> !e.getValue().equals(files.stamp(e.getKey()))))
       throw new ApiException(409, "Справочники изменились при чтении. Повторите запрос.");
     String version = ReferenceSnapshot.fingerprint(common, card, plans);
-    if (modern) version = Hashing.sha256(version + manifest + object("bindings", bindings));
+    if (modern)
+      version =
+          Hashing.sha256(version + manifest + object("bindings", bindings, "browsers", browsers));
     ReferenceSnapshot next =
-        new ReferenceSnapshot(category, common, card, audit, schemas, plans, bindings, version);
+        new ReferenceSnapshot(
+            category, common, card, audit, schemas, plans, bindings, browsers, version);
     cached = next;
     stamps = Map.copyOf(paths);
     return next;

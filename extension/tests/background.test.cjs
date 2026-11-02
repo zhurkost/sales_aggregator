@@ -40,7 +40,7 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
     ...(accessLevel ? { async setAccessLevel() {} } : {}),
   };
   if (!sessionAccessLevel) delete chrome.storage.session.setAccessLevel;
-  const context = vm.createContext({ chrome, indexedDB, crypto: { randomUUID }, URL, Date, console, atob,setTimeout,clearTimeout });
+  const context = vm.createContext({ chrome, indexedDB, crypto: { randomUUID }, URL, Date, console, atob,setTimeout,clearTimeout,structuredClone });
   // Execute the actual imports: stubbing importScripts hid worker registration failures.
   context.importScripts = (...files) => files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file }));
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), context, { filename: 'background.js' });
@@ -353,4 +353,15 @@ test('default GPU mappings and per-marketplace corrections survive the worker qu
  assert.equal(k.task.listing.taxonomyId,'computers.gpu');assert.equal(k.task.mapping.attributes[0].value,'11');assert.equal(o.task.mapping.id,'17');
  assert.equal(w.data.autopostSessionV1.batches[0].categoryOverrides.onliner,'17');
  const bad=await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true,payload:{...gpu,batchId:'bad-routing',categoryOverrides:{onliner:'javascript:attack'}}});assert.match(bad.error,/справочнике/);assert.equal(w.created.length,2);
+});
+
+
+test('real worker registration routes rental jobs to all four sites without legacy listing validation',async()=>{
+ const w=createWorker();
+ const input={id:'rental',profileId:'owner',revision:1,mode:'assist',draft:{values:{}},photos:[],jobs:['kufar','onliner','realt','domovita'].map(p=>({...JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/apartments_long_term_rent/runtime/browser_'+p+'.json'),'utf8')),controls:[]}))};
+ const result=await w.request({kind:'RENTAL_REQUEST',type:'RENTAL_RUN',payload:input,userGesture:true});
+ assert.equal(result.jobs.length,4);assert.equal(w.created.length,4);
+ const ping=await w.request({kind:'APP_REQUEST',type:'PING'});assert.ok(ping.capabilities.includes('rental-publishing'));
+ const task=await w.request({kind:'RENTAL_PAGE',type:'GET'},input.jobs[2].startUrl,12);assert.equal(task.task.recipe.platform,'realt');
+ const frame=await w.request({kind:'RENTAL_PAGE',type:'GET'},input.jobs[2].startUrl,12,1);assert.equal(frame,undefined);
 });

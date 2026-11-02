@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "profileDefaults": [
+    { "setting": "phone", "field": "contact.phone" },
+    { "setting": "contactPerson", "field": "contact.name" },
+    { "setting": "company", "field": "contact.organization_name" }
+  ],
   "valueLabels": {
     "studio": "Студия",
     "allowed": "Разрешено",

@@ -51,6 +51,15 @@ public class RentalCatalog {
 
   public ObjectNode prepare(JsonNode input) {
     ReferenceSnapshot snapshot = references.snapshot();
+    return prepare(snapshot, input);
+  }
+
+  public ObjectNode browser(JsonNode input) {
+    ReferenceSnapshot snapshot = references.snapshot();
+    return new RentalBrowserPreparation().compile(snapshot, prepare(snapshot, input), input);
+  }
+
+  private ObjectNode prepare(ReferenceSnapshot snapshot, JsonNode input) {
     if (!text(input, "schemaVersion").equals(snapshot.version()))
       throw new ApiException(409, "Правила обновились. Обновите поля карточки.");
     input = normalize(snapshot, input);

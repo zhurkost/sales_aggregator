@@ -15,6 +15,8 @@ import { RentalDraftStore } from "./rental-draft.store";
 import { RentalAiAssistant } from "./rental-ai.assistant";
 import { RentalViewModel } from "./rental-view.model";
 import { hasValue } from "./rental-values";
+import type { RentalProfile } from "./rental-profile-defaults";
+import { RentalPublicationComponent } from "./rental-publication.component";
 import {
   Address,
   EditorSchema,
@@ -28,13 +30,14 @@ import {
 @Component({
   selector: "app-rental-editor",
   standalone: true,
-  imports: [RentalSavedListComponent, RentalAiReviewComponent, FormsModule, CommonModule, AddressInputComponent, RentalFieldsComponent],
+  imports: [RentalPublicationComponent, RentalSavedListComponent, RentalAiReviewComponent, FormsModule, CommonModule, AddressInputComponent, RentalFieldsComponent],
   templateUrl: "./rental-editor.component.html",
   styleUrl: "./rental-editor.component.css",
 })
 export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
-  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); });
+  @Input() profileDefaults: RentalProfile = {};
+  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); }, () => this.profileDefaults);
   readonly ai = new RentalAiAssistant(this.store, () => this.workspaceId, address => this.replaceAddress(address), address => this.addressChanged(address));
   readonly view = new RentalViewModel(this.store);
   panel: "parameters" | "saved" | "result" | null = null;
