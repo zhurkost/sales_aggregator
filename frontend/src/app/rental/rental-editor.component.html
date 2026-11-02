@@ -1,7 +1,8 @@
 <header class="rental-heading">
   <div>
-    <h1>Долгосрочная аренда квартир</h1>
-    <p>Одна карточка для Kufar, Onliner, Realt и Domovita.</p>
+    <span class="rental-eyebrow">ДОЛГОСРОЧНАЯ АРЕНДА</span>
+    <h1>Одна квартира. Одна карточка.</h1>
+    <p>Все сведения — в одном месте. Для каждой выбранной площадки.</p>
   </div>
   <button type="button" class="secondary" (click)="fresh()" [disabled]="busy">
     Новая карточка
@@ -9,6 +10,7 @@
 </header>
 @if (error) {
   <p class="rental-error" role="alert">{{ error }}</p>
+  @if (dirty) { <button type="button" class="secondary" [disabled]="busy" (click)="saveCopy()">Сохранить мои правки отдельной карточкой</button> }
 }
 @if (!schema && !error) {
   <p>Загружаем поля квартиры…</p>
@@ -49,217 +51,106 @@
   </details>
 }
 @if (schema) {
-  <fieldset class="rental-editor-fields" [disabled]="!!deletingId">
-  @if (draft.schemaVersion !== schema.version) {
-    <button type="button" (click)="acceptSchema()">Принять новую схему</button>
+  @if (draft.schemaVersion !== schema.version || error.includes("Правила обновились")) {
+    <button type="button" class="secondary" [disabled]="busy" (click)="updateFields()">Обновить поля карточки</button>
   }
-  <section class="panel rental-section">
-    <h2>Адрес</h2>
-    <app-address-input
-      [workspaceId]="workspaceId"
-      [draftId]="id"
-      [value]="draft.address"
-      (addressChange)="addressChanged($event)"
-    />
-  </section>
-  @for (group of schema.category.options; track group.id) {
-    <details
-      class="panel rental-section"
-      [open]="
-        group.id === 'group.listing' ||
-        group.id === 'group.rental' ||
-        group.id === 'group.location'
-      "
-    >
-      <summary>{{ group.name }}</summary>
-      <div class="rental-fields">
-        @for (field of group.options; track field.id) {
-          <label
-            class="full-label"
-            [class.wide]="
-              field.type === 'files' || field.id === 'listing.description'
-            "
-            >{{ field.name }}
-            @if (choices(field).length) {
-              <select
-                [ngModel]="value(field)"
-                (ngModelChange)="setValue(field, $event)"
-              >
-                <option value="">Не указано</option>
-                @for (choice of choices(field); track choice) {
-                  <option [value]="choice">{{ label(choice) }}</option>
-                }
-              </select>
-            } @else if (
-              field.type === "files" || field.id === "listing.description"
-            ) {
-              <textarea
-                rows="4"
-                [attr.aria-label]="field.name"
-                [ngModel]="value(field)"
-                (ngModelChange)="setValue(field, $event)"
-                [placeholder]="
-                  field.type === 'files'
-                    ? 'Ссылки HTTPS на исходные файлы, каждая с новой строки'
-                    : ''
-                "
-              ></textarea>
-            } @else {
-              <input
-                [attr.aria-label]="field.name"
-                [ngModel]="value(field)"
-                (ngModelChange)="setValue(field, $event)"
-                maxlength="1000"
-              />
-            }
-            @if (field.id.includes("area")) {
-              <span class="fine-print">м², например 45,5</span>
-            }
-            @if (field.id === "rental.monthly_price") {
-              <span class="fine-print"
-                >За один месяц. Валюта выбирается отдельно.</span
-              >
-            }
+  <fieldset class="rental-editor-fields" [disabled]="busy">
+    <section class="panel rental-section platform-section">
+      <div><h2>Где подготовить объявление</h2><p class="fine-print">Заполните сведения один раз. Мы сопоставим их с требованиями выбранных площадок.</p></div>
+      <div class="rental-platforms">
+        @for (p of platforms; track p) {
+          <label [class.platform-selected]="draft.platforms.includes(p)">
+            <input type="checkbox" [checked]="draft.platforms.includes(p)" (change)="togglePlatform(p, $any($event.target).checked)" /> {{ platformName(p) }}
           </label>
         }
       </div>
-    </details>
-  }
-  <section class="panel rental-section">
-    <h2>Площадки</h2>
-    <div class="rental-platforms">
-      @for (p of platforms; track p) {
-        <label
-          ><input
-            type="checkbox"
-            [checked]="draft.platforms.includes(p)"
-            (change)="togglePlatform(p, $any($event.target).checked)"
-          />
-          {{ names[p] }}</label
-        >
-      }
-    </div>
-    <p class="fine-print">
-      Неизвестные характеристики можно оставить пустыми. Проверка покажет, что
-      потребуется выбранным площадкам.
-    </p>
-  </section>
-  @for (p of draft.platforms; track p) {
-    <details class="panel rental-section">
-      <summary>Уточнения для {{ names[p] }}</summary>
-      <div class="rental-fields">
-        @for (field of availableExtras(p); track field.id) {
-          <label class="full-label"
-            >{{ field.name }}
-            @if (field.type === "enum") {
-              <select
-                [ngModel]="extra(p, field.id)"
-                (ngModelChange)="setExtra(p, field, $event)"
-              >
-                <option [ngValue]="''">Не указано</option>
-                @for (option of nativeChoices(p, field); track option.id) {
-                  <option [ngValue]="option.fill_rule['value']">
-                    {{ option.name }}
-                  </option>
-                }
-              </select>
-            } @else if (field.type === "boolean") {
-              <select
-                [ngModel]="extra(p, field.id)"
-                (ngModelChange)="setExtra(p, field, $event)"
-              >
-                <option [ngValue]="''">Не указано</option>
-                <option [ngValue]="true">Да</option>
-                <option [ngValue]="false">Нет</option>
-              </select>
-            } @else if (field.type === "multi_enum") {
-              <span class="extra-choices">
-                @for (option of nativeChoices(p, field); track option.id) {
-                  <label
-                    ><input
-                      type="checkbox"
-                      [checked]="selected(p, field, option.fill_rule['value'])"
-                      (change)="
-                        toggleExtra(
-                          p,
-                          field,
-                          option.fill_rule['value'],
-                          $any($event.target).checked
-                        )
-                      "
-                    />{{ option.name }}</label
-                  >
-                }
-              </span>
-            } @else if (field.type === "files") {
-              <textarea
-                rows="3"
-                [ngModel]="extraFileText(p, field)"
-                (ngModelChange)="extraFiles(p, field, $event)"
-                placeholder="Ссылки HTTPS на исходные файлы, каждая с новой строки"
-              ></textarea>
-            } @else {
-              <input
-                [ngModel]="extra(p, field.id)"
-                (ngModelChange)="setExtra(p, field, $event)"
-                maxlength="5000"
-              />
-            }
-            @if (field.fill_rule["required"] === true) {
-              <span class="fine-print"
-                >Площадка требует это поле, когда оно применимо.</span
-              >
-            }
-          </label>
+    </section>
+    @if (draft.legacy?.length) {
+      <section class="panel rental-section legacy-section" id="rental-legacy" tabindex="-1">
+        <h2>Сверьте прежние сведения · {{ draft.legacy?.length }}</h2>
+        <p>Карточка перенесена в единую форму. Совпадающие значения объединены; различия сохранены здесь.</p>
+        @for (item of draft.legacy; track $index) {
+          <div class="legacy-item">
+            <strong>{{ legacyLabel(item) }} @if (item.platform) { · {{ platformName(item.platform) }} }</strong>
+            <p>{{ display(item.value) }}</p><p class="fine-print">{{ item.message }}</p>
+            <div class="delete-actions">
+              @if (item.source && item.candidate !== null && item.candidate !== undefined) {
+                <button type="button" class="secondary" (click)="resolveLegacy($index, true)">Использовать это значение</button>
+              }
+              <button type="button" class="secondary" (click)="resolveLegacy($index, false)">{{ item.candidate != null ? 'Оставить значение карточки' : 'Проверено, оставить в истории' }}</button>
+            </div>
+          </div>
         }
-      </div>
-      @if (waitingExtras(p)) {
-        <p class="fine-print">
-          Дополнительные поля появятся после выбора связанных параметров:
-          например, региона или типа арендодателя.
-        </p>
-      }
-    </details>
-  }
-  <div class="rental-actions">
-    <span role="status">{{ status }}</span
-    ><button
-      type="button"
-      class="primary"
-      (click)="prepare()"
-      [disabled]="busy || !draft.platforms.length"
-    >
-      {{ deletingId ? "Удаляем…" : busy ? "Подождите…" : "Подготовить для площадок" }}
-    </button>
-  </div>
-  @for (result of results; track result.platform) {
+      </section>
+    }
     <section class="panel rental-section">
-      <h2>{{ names[result.platform] }}</h2>
-      <p>
-        {{
-          result.dataReady
-            ? "Значения подготовлены. Заполнение формы требует проверки на площадке."
-            : "Значения подготовлены частично. Нужно уточнить:"
-        }}
-      </p>
-      <ul>
-        @for (message of issueMessages(result); track message) {
-          <li>{{ message }}</li>
-        }
-      </ul>
-      <details>
-        <summary>Подготовленные значения</summary>
-        <dl>
-          @for (field of preparedValues(result); track field.id) {
-            <dt>{{ field.name }}</dt>
-            <dd>{{ field.value }}</dd>
+      <div class="section-heading"><span class="step-number">1</span><h2>Адрес квартиры</h2></div>
+      <app-address-input [workspaceId]="workspaceId" [draftId]="id" [value]="draft.address" [disabled]="busy" (addressChange)="addressChanged($event)" />
+    </section>
+    @for (group of schema.category.options; track group.id) {
+      @if (groupFields(group).length) {
+        <details class="panel rental-section" [id]="'rental-' + group.id" tabindex="-1" [open]="schema.card?.expandedGroups?.includes(group.id) ?? group.id === 'group.main'">
+          <summary>{{ group.name }} <span class="group-count">{{ filled(group) }} / {{ groupFields(group).length }}</span></summary>
+          <div class="rental-fields">
+            @for (field of groupFields(group); track field.id) {
+              <div class="full-label" [class.wide]="field.type === 'files' || field.id === 'listing.description' || field.type === 'multi_enum'">
+                <label [attr.for]="'rental-' + field.id">{{ field.name }}</label>
+                @if (field.type === 'boolean') {
+                  <select [id]="'rental-' + field.id" [ngModel]="draft.values[field.id] ?? ''" (ngModelChange)="setTyped(field, $event)">
+                    <option [ngValue]="''">Не указано</option><option [ngValue]="true">Да</option><option [ngValue]="false">Нет</option>
+                  </select>
+                } @else if (field.type === 'multi_enum') {
+                  <div class="extra-choices" [id]="'rental-' + field.id" tabindex="-1" role="group" [attr.aria-label]="field.name">
+                    @for (choice of choices(field); track choice) {
+                      <label><input type="checkbox" [checked]="hasChoice(field, choice)" (change)="toggleChoice(field, choice, $any($event.target).checked)" />{{ label(choice) }}</label>
+                    }
+                  </div>
+                } @else if (choices(field).length) {
+                  <select [id]="'rental-' + field.id" [ngModel]="value(field)" (ngModelChange)="setValue(field, $event)">
+                    <option value="">Не указано</option>
+                    @for (choice of choices(field); track choice) { <option [value]="choice">{{ label(choice) }}</option> }
+                  </select>
+                } @else if (field.type === 'files' || field.id === 'listing.description') {
+                  <textarea [id]="'rental-' + field.id" rows="4" [ngModel]="value(field)" (ngModelChange)="setValue(field, $event)" [placeholder]="field.type === 'files' ? 'Ссылки HTTPS на файлы, каждая с новой строки' : 'Расскажите о квартире и условиях аренды'"></textarea>
+                } @else {
+                  <input [id]="'rental-' + field.id" [type]="field.type === 'date' ? 'date' : 'text'" [attr.inputmode]="field.type === 'number' || field.type === 'integer' ? 'decimal' : null" [ngModel]="value(field)" (ngModelChange)="setValue(field, $event)" maxlength="5000" />
+                }
+                @if (field.id.includes('area')) { <span class="fine-print">м², например 45,5</span> }
+                @if (field.id === 'rental.monthly_price') { <span class="fine-print">За месяц, в выбранной валюте</span> }
+                @if (usedBy(field).length > 0 && usedBy(field).length < draft.platforms.length) {
+                  <span class="field-platforms">Для @for (p of usedBy(field); track p; let last = $last) { {{ platformName(p) }}{{ last ? '' : ', ' }} }</span>
+                }
+              </div>
+            }
+          </div>
+        </details>
+      }
+    }
+    <div class="rental-actions">
+      <span role="status">{{ status || 'Неизвестные сведения можно заполнить позже' }}</span>
+      <button type="button" class="primary" (click)="prepare()" [disabled]="busy || !draft.platforms.length">{{ busy ? 'Подождите…' : 'Проверить и подготовить' }}</button>
+    </div>
+  </fieldset>
+  @if (results.length) {
+    <section class="panel rental-section result-section">
+      <h2>Подготовка объявления</h2>
+      <p>Данные сохранены. Объявление ещё не опубликовано.</p>
+      @if (groupedIssues.length) {
+        <h3>Что осталось уточнить</h3>
+        <ul class="issue-list">
+          @for (issue of groupedIssues; track $index) {
+            <li><p>{{ issue.message }}</p><span class="field-platforms">@for (p of issue.platforms; track p; let last = $last) { {{ platformName(p) }}{{ last ? '' : ', ' }} }</span>
+              @if (canFocus(issue.source)) { <button type="button" class="text-link" (click)="focusField(issue.source)">Перейти к полю</button> }
+            </li>
           }
-        </dl>
-        <p class="fine-print">
-          Это проверка подготовки. Объявление на площадке ещё не опубликовано.
-        </p>
-      </details>
+        </ul>
+      }
+      @for (result of results; track result.platform) {
+        <details class="prepared-platform">
+          <summary>{{ platformName(result.platform) }} · {{ result.dataReady ? 'Значения подготовлены' : 'Нужна проверка' }}</summary>
+          <dl>@for (field of preparedValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl>
+        </details>
+      }
     </section>
   }
-  </fieldset>
 }

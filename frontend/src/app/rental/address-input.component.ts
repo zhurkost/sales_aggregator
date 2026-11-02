@@ -13,54 +13,50 @@ import { Address, rentalApi } from "./rental-api";
   standalone: true,
   imports: [FormsModule],
   template: `
-    <label class="full-label"
-      >Адрес квартиры
-      <input
-        aria-label="Поиск адреса квартиры"
-        [ngModel]="query"
-        (ngModelChange)="search($event)"
-        autocomplete="off"
-        maxlength="300"
-        placeholder="Населённый пункт, улица, дом"
-      />
-    </label>
-    @if (busy) {
-      <p role="status">Ищем адрес…</p>
-    }
-    @if (error) {
-      <p role="status">{{ error }}</p>
-    }
-    @if (suggestions.length) {
-      <ul class="address-options" aria-label="Варианты адреса">
-        @for (item of suggestions; track item.id) {
-          <li>
-            <button
-              type="button"
-              (click)="choose(item.id)"
-              [disabled]="choosing"
-            >
-              {{ item.label }}
-            </button>
-          </li>
-        }
-      </ul>
-    }
-    @if (selected) {
-      <p class="address-confirmation">
-        Выбран: <strong>{{ selected.label }}</strong>
-      </p>
-      @if (selected.level !== "house") {
-        <p>Дом пока не найден. Уточните номер дома в полях ниже.</p>
+    <div class="address-mode">
+      <button type="button" [disabled]="disabled" (click)="manual = false" [attr.aria-pressed]="!manual">Найти адрес</button>
+      <button type="button" [disabled]="disabled" (click)="manual = true" [attr.aria-pressed]="manual">Ввести вручную</button>
+    </div>
+    @if (!manual) {
+      <label class="full-label">Адрес квартиры
+        <input id="rental-address" aria-label="Поиск адреса квартиры" [disabled]="disabled" [ngModel]="query"
+          (ngModelChange)="search($event)" autocomplete="off" maxlength="300" placeholder="Город, улица, дом" />
+      </label>
+      @if (busy) { <p role="status">Ищем адрес…</p> }
+      @if (error) { <p role="status">{{ error }}</p> }
+      @if (suggestions.length) {
+        <ul class="address-options" aria-label="Варианты адреса">
+          @for (item of suggestions; track item.id) {
+            <li><button type="button" (click)="choose(item.id)" [disabled]="choosing || disabled">{{ item.label }}</button></li>
+          }
+        </ul>
       }
+      @if (selected?.confirmed) {
+        <p class="address-confirmation">Выбран: <strong>{{ selected?.label }}</strong></p>
+      } @else if (query) {
+        <p class="fine-print">Текст сохранён. Выберите подсказку или уточните части адреса вручную.</p>
+      }
+    } @else {
+      <div class="manual-grid" id="rental-address" tabindex="-1">
+        @for (part of parts; track part.key) {
+          <label class="full-label">{{ part.label }}
+            <input [attr.aria-label]="part.label" [disabled]="disabled" [ngModel]="partValue(part.key)" (ngModelChange)="setPart(part.key, $event)" maxlength="200" />
+          </label>
+        }
+      </div>
+      @if (selected?.label) { <p class="fine-print">{{ selected?.label }}</p> }
     }
-    <p class="fine-print">
-      Подсказки DaData · данные OpenStreetMap. Выберите подходящий адрес. Если
-      его нет, заполните адресные поля ниже вручную. Площадки сверят адрес со
-      своими справочниками.
-    </p>
+    <p class="fine-print">Один адрес для всех площадок. Поиск: DaData · OpenStreetMap. Если дома нет в подсказках, используйте ручной ввод.</p>
   `,
   styles: [
     `
+      .address-mode { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+      .address-mode button { background:#f2f5fa; border:1px solid #d9dfeb; padding:8px 12px; border-radius:8px; color:#304a6c; }
+      .address-mode button[aria-pressed=true] { background:#e8efff; border-color:#8da6ee; }
+      input { width:100%; border:1px solid #d9dfeb; border-radius:8px; padding:12px; box-sizing:border-box; }
+      .manual-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+      .manual-grid label { display:flex; flex-direction:column; gap:7px; }
+      @media(max-width:600px) { .manual-grid { grid-template-columns:1fr; } }
       .address-options {
         list-style: none;
         padding: 0;
@@ -103,6 +99,23 @@ export class AddressInputComponent implements OnDestroy {
     this.selected = value;
     this.query = value?.label || "";
   }
+  @Input() set disabled(value: boolean) { this.locked = value; if (value) this.resetPending(); }
+  get disabled() { return this.locked; }
+  private locked = false;
+  manual = false;
+  readonly parts = [
+    {key:"settlement",label:"Населённый пункт"}, {key:"street",label:"Улица"},
+    {key:"house",label:"Дом, включая букву"}, {key:"block",label:"Корпус"},
+    {key:"region",label:"Область"}, {key:"district",label:"Район"},
+  ];
+  partValue(key: string) { return String((this.selected as unknown as Record<string, unknown>)?.[key] || ""); }
+  setPart(key: string, value: string) {
+    if (this.disabled) return;
+    this.resetPending();
+    const a = {provider:"manual", countryIso:"BY", settlement:"", street:"", house:"", ...this.selected, [key]:value, confirmed:false, latitude:"", longitude:""} as Address;
+    a.label = [a.region, a.district, a.settlement, a.street, a.house, a.block].filter(Boolean).join(", ");
+    this.selected = a; this.query = a.label; this.addressChange.emit(a);
+  }
   @Output() addressChange = new EventEmitter<Address | null>();
   query = "";
   selected: Address | null = null;
@@ -122,12 +135,15 @@ export class AddressInputComponent implements OnDestroy {
     this.choosing = false;
   }
   search(value: string) {
+    if (this.disabled) return;
     this.query = value;
     this.selected = null;
     this.suggestions = [];
     this.error = "";
     this.choosing = false;
-    this.addressChange.emit(null);
+    const address: Address = {provider:"manual", label:value, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false};
+    this.selected = address;
+    this.addressChange.emit(address);
     clearTimeout(this.timer);
     const generation = ++this.generation;
     this.busy = false;
@@ -152,6 +168,7 @@ export class AddressInputComponent implements OnDestroy {
     }
   }
   async choose(id: string) {
+    if (this.disabled) return;
     const generation = ++this.generation;
     clearTimeout(this.timer);
     this.choosing = true;

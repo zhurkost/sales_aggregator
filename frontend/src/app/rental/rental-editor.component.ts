@@ -5,6 +5,7 @@ import {
   OnDestroy,
   HostListener,
 } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AddressInputComponent } from "./address-input.component";
 import { applicable } from "./conditions";
@@ -21,7 +22,7 @@ import {
 @Component({
   selector: "app-rental-editor",
   standalone: true,
-  imports: [FormsModule, AddressInputComponent],
+  imports: [FormsModule, CommonModule, AddressInputComponent],
   templateUrl: "./rental-editor.component.html",
   styleUrl: "./rental-editor.component.css",
 })
@@ -32,7 +33,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     schemaVersion: "",
     values: {},
     extras: {},
-    platforms: ["kufar", "onliner", "realt", "domovita"],
+    platforms: [],
     address: null,
   };
   id: string = crypto.randomUUID();
@@ -46,12 +47,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   drafts: { id: string; title: string; address: string; revision: number }[] =
     [];
   results: Prepared[] = [];
-  readonly names: Record<string, string> = {
-    kufar: "Kufar",
-    onliner: "Onliner",
-    realt: "Realt",
-    domovita: "Domovita",
-  };
   private timer?: ReturnType<typeof setTimeout>;
   private queue: Promise<void> = Promise.resolve();
   private editVersion = 0;
@@ -60,6 +55,8 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     try {
       this.schema = await rentalApi<EditorSchema>(this.workspaceId, "editor");
       this.draft.schemaVersion = this.schema.version;
+      this.draft.modelVersion = this.schema.card?.version;
+      this.draft.platforms = this.platforms;
       await this.refresh();
     } catch (e) {
       this.error = (e as Error).message;
@@ -87,6 +84,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     }, 900);
   }
   setValue(field: Field, value: string) {
+    if (this.busy) return;
     this.draft.values[field.id] =
       field.type === "files"
         ? value
@@ -94,9 +92,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
             .map((s) => s.trim())
             .filter(Boolean)
         : value;
-    // A manually edited address is no longer the same confirmed provider selection.
-    if (field.id.startsWith("location.") && this.draft.address)
-      this.draft.address = null;
     this.changed();
   }
   value(field: Field) {
@@ -106,98 +101,112 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   choices(field: Field) {
     return this.schema?.canonicalValues[field.id] || [];
   }
-  label(value: string) {
-    const labels: Record<string, string> = {
-      studio: "Студия",
-      allowed: "Разрешено",
-      forbidden: "Запрещено",
-      yes: "Есть",
-      no: "Нет",
-      present: "Есть",
-      absent: "Нет",
-      partial: "Частично",
-      owner: "Собственник",
-      agency: "Агентство",
-      gas: "Газовая",
-      electric: "Электрическая",
-      none: "Нет",
-      separate: "Раздельный",
-      combined: "Совмещённый",
-      two: "Два",
-      three: "Три",
-      two_plus: "Два и более",
-      present_unspecified: "Есть, тип не уточнён",
-      balcony: "Балкон",
-      loggia: "Лоджия",
-      balcony_and_loggia: "Балкон и лоджия",
-      terrace: "Терраса",
-      panel: "Панельный",
-      monolithic: "Монолитный",
-      brick: "Кирпичный",
-      block: "Блочный",
-      frame: "Каркасный",
-      frame_block: "Каркасно-блочный",
-      block_rooms: "Блок-комнаты",
-      silicate_blocks: "Силикатные блоки",
-      logs: "Бревенчатый",
-      cosmetic: "Косметический",
-      euro: "Евроремонт",
-      designer: "Дизайнерский",
-      construction_finish: "Строительная отделка",
-      unfinished: "Без отделки",
-      needs_repair: "Требуется ремонт",
-      unsafe_condition: "Аварийное состояние",
-      good: "Хороший",
-      normal: "Нормальный",
-      poor: "Плохое состояние",
-      months_1: "Один месяц",
-      months_2: "Два месяца",
-      months_3: "Три месяца",
-      months_3_plus: "Три и более месяца",
-      months_6: "Полгода",
-      deposit_unspecified: "Залог, сумма не уточнена",
-      calls_and_messages: "Звонки и сообщения",
-      calls_only: "Только звонки",
-      messages_only: "Только сообщения",
-    };
-    return labels[value] || value;
-  }
+  label(value: string) { return this.schema?.card?.valueLabels?.[value] || value; }
   addressChanged(address: Address | null) {
-    const hadAddress = !!this.draft.address;
+    if (this.busy) return;
     this.draft.address = address;
-    const parts: Record<string, string> = address
-      ? {
-          "location.settlement": [
-            ...new Set(
-              [address.region, address.district, address.settlement].filter(
-                Boolean,
-              ),
-            ),
-          ].join(", "),
-          "location.street": address.street,
-          "location.house_number":
-            address.house +
-            (address.block
-              ? ` ${address.blockType || "корп."} ${address.block}`
-              : ""),
-          "location.latitude":
-            address.precision === "0" ? address.latitude || "" : "",
-          "location.longitude":
-            address.precision === "0" ? address.longitude || "" : "",
-        }
-      : {};
-    if (hadAddress || address)
-      for (const key of [
-        "location.settlement",
-        "location.street",
-        "location.house_number",
-        "location.latitude",
-        "location.longitude",
-      ])
-        this.draft.values[key] = parts[key] || "";
+    for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
+      delete this.draft.values[key];
+    for (const key of this.schema?.card?.addressDependentFacts || []) delete this.draft.values[key];
+    for (const p of this.platforms)
+      for (const key of this.schema?.platforms[p].addressBoundFields || []) delete this.draft.extras[p]?.[key];
     this.changed();
   }
+  platformName(p: string) { return this.schema?.platforms[p]?.name || p; }
+  groupFields(group: Field) {
+    return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.draft.platforms.includes(u.platform) && applicable(u.when, this.context(u.platform)) !== false));
+  }
+  usedBy(field: Field) {
+    return [...new Set(field.uses?.map(u => u.platform).filter(p => this.draft.platforms.includes(p)) || [])];
+  }
+  setTyped(field: Field, value: JsonValue) {
+    if (this.busy) return;
+    this.draft.values[field.id] = value;
+    this.changed();
+  }
+  toggleChoice(field: Field, choice: string, selected: boolean) {
+    const old = this.draft.values[field.id];
+    const values = Array.isArray(old) ? old : [];
+    this.setTyped(field, (selected ? [...new Set([...values, choice])] : values.filter(x => x !== choice)) as string[]);
+  }
+  hasChoice(field: Field, choice: string) {
+    const value = this.draft.values[field.id];
+    return Array.isArray(value) && value.includes(choice);
+  }
+  filled(group: Field) {
+    return this.groupFields(group).filter(f => {
+      const value = this.draft.values[f.id];
+      return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
+    }).length;
+  }
+  get groupedIssues() {
+    const groups = new Map<string, {source: string; message: string; platforms: string[]}>();
+    const fields = this.schema?.category.options.flatMap(g => g.options) || [];
+    for (const result of this.results) for (const issue of result.issues) {
+      const source = issue.source || "";
+      const name = fields.find(f => f.id === source)?.name;
+      const shared = ["required", "condition", "legacy"].includes(issue.code);
+      const key = source === "address" ? "address" : (source || issue.field) + ":" + issue.code + (shared ? "" : ":" + issue.message);
+      let message = issue.message;
+      if (issue.code === "required" && name) message = `Заполните «${name}».`;
+      if (issue.code === "condition" && name) message = `«${name}»: сначала уточните связанные параметры.`;
+      const entry = groups.get(key) || {source, message, platforms: []};
+      if (!entry.platforms.includes(result.platform)) entry.platforms.push(result.platform);
+      groups.set(key, entry);
+    }
+    return [...groups.values()];
+  }
+  canFocus(source: string) {
+    return source === "legacy" || source === "address" && !this.draft.address?.label ||
+      !!this.schema?.category.options.some(g => g.id === source || g.options.some(f => f.id === source));
+  }
+  async updateFields() {
+    if (this.busy) return;
+    this.busy = true;
+    try {
+      await this.flush();
+      const schema = await rentalApi<EditorSchema>(this.workspaceId, "editor");
+      const migrated = await rentalApi<RentalDraft>(this.workspaceId, "normalize", this.draft);
+      this.schema = schema; this.draft = migrated; this.changed(); this.error = ""; await this.save();
+      this.status = "Поля обновлены. Сведения сохранены";
+    } catch (e) { this.error = (e as Error).message; } finally { this.busy = false; }
+  }
+  focusField(id: string) {
+    const el = document.getElementById("rental-" + id);
+    if (!el) return;
+    if (el instanceof HTMLDetailsElement) el.open = true;
+    let parent = el.parentElement;
+    while (parent) { if (parent instanceof HTMLDetailsElement) parent.open = true; parent = parent.parentElement; }
+    el.scrollIntoView({behavior: "smooth", block: "center"}); el.focus();
+  }
+  legacyLabel(item: NonNullable<RentalDraft["legacy"]>[number]) {
+    return this.schema?.category.options.flatMap(g => g.options).find(f => f.id === item.source)?.name ||
+      this.schema?.platforms[item.platform]?.labels[item.field] || "Сохранённое значение";
+  }
+  resolveLegacy(index: number, useOld: boolean) {
+    if (this.busy) return;
+    const item = this.draft.legacy?.[index];
+    if (!item) return;
+    if (useOld && item.source && item.candidate !== undefined && item.candidate !== null) {
+      if (item.source.startsWith("address.")) {
+        const part = item.source.slice(8);
+        const address = {...this.draft.address, [part]: item.candidate, confirmed: false, provider: "manual", latitude: "", longitude: ""} as Address;
+        address.label = [address.region, address.district, address.settlement, address.street, address.house, address.block].filter(Boolean).join(", ");
+        this.addressChanged(address);
+      } else this.draft.values[item.source] = item.candidate;
+    }
+    (this.draft.resolvedLegacy ||= []).push(item);
+    this.draft.legacy!.splice(index, 1);
+    this.changed();
+  }
+  async saveCopy() {
+    if (this.busy) return;
+    this.busy = true;
+    try { await this.queue.catch(() => {}); this.id = crypto.randomUUID(); this.revision = 0; this.dirty = true; await this.save(); this.error = ""; }
+    catch (e) { this.error = (e as Error).message; } finally { this.busy = false; }
+  }
   togglePlatform(p: string, checked: boolean) {
+    if (this.busy) return;
     this.draft.platforms = checked
       ? [...new Set([...this.draft.platforms, p])]
       : this.draft.platforms.filter((x) => x !== p);
@@ -227,6 +236,13 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
         values[binding.target] = pair.to;
       else if (pair && values[binding.target] === "")
         values[binding.target] = pair.to;
+    }
+    for (const row of schema?.rules || []) {
+      const input = this.draft.values[row.common_option_id];
+      if (input === undefined || input === null || input === "") continue;
+      const cv = row.conversion;
+      if (cv.kind === "identity") values[row.platform_option_id] = input;
+      if (cv.kind === "decimal" && typeof input === "string" && /^-?\d+([,.]\d+)?$/.test(input)) values[row.platform_option_id] = Number(input.replace(",", "."));
     }
     return values;
   }
@@ -318,19 +334,22 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.pendingDelete = null;
     try {
       await this.flush();
+      const beforeLoad = this.editVersion;
       const result = await rentalApi<{
         id: string;
         revision: number;
         draft: RentalDraft;
       }>(this.workspaceId, "drafts/" + id);
+      if (beforeLoad !== this.editVersion) throw new Error("Текущая карточка изменилась. Сначала сохраните её, затем откройте другую.");
       this.id = result.id;
       this.revision = result.revision;
       this.draft = result.draft;
       this.results = [];
       this.dirty = false;
+      this.status = "Карточка открыта";
       if (this.schema && this.draft.schemaVersion !== this.schema.version)
         this.error =
-          "Правила обновились. Проверьте поля и нажмите «Принять новую схему».";
+          "Правила обновились. Нажмите «Обновить поля карточки» — введённые сведения сохранятся.";
     } catch (e) {
       this.error = (e as Error).message;
     } finally {
@@ -358,6 +377,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.revision = 0;
     this.results = [];
     this.draft = {
+      modelVersion: this.schema?.card?.version,
       schemaVersion: this.schema?.version || "",
       values: {},
       extras: {},
@@ -454,5 +474,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroyed = true;
     clearTimeout(this.timer);
+
   }
 }

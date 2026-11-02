@@ -16,6 +16,7 @@ export interface Field {
   options: Field[];
   fill_rule: Record<string, any>;
   uiWhen?: Condition;
+  uses?: { platform: string; target: string; when?: Condition }[];
 }
 export interface Address {
   provider: string;
@@ -35,6 +36,9 @@ export interface Address {
   level?: string;
 }
 export interface RentalDraft {
+  modelVersion?: number;
+  legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];
+  resolvedLegacy?: RentalDraft["legacy"];
   schemaVersion: string;
   values: Record<string, JsonValue>;
   extras: Record<string, Record<string, JsonValue>>;
@@ -42,11 +46,16 @@ export interface RentalDraft {
   address: Address | null;
 }
 export interface EditorSchema {
+  card?: {valueLabels?: Record<string, string>; version: number; expandedGroups: string[]; addressDependentFacts: string[]};
   category: { options: Field[] };
   canonicalValues: Record<string, string[]>;
   platforms: Record<
     string,
     {
+      name?: string;
+      rules?: any[];
+      addressBoundFields?: string[];
+      deferred?: Record<string, string>;
       extras: Field[];
       labels: Record<string, string>;
       choiceLabels: Record<string, Record<string, string>>;
@@ -64,7 +73,7 @@ export interface EditorSchema {
 export interface Prepared {
   platform: string;
   values: Record<string, JsonValue>;
-  issues: { field: string; code: string; message: string }[];
+  issues: { field: string; source?: string; code: string; message: string }[];
   dataReady: boolean;
   publicationReady: boolean;
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 class RentalCatalog {
   static final String CATEGORY = "apartments_long_term_rent";
-  static final Set<String> PLATFORMS = Set.of("kufar", "onliner", "realt", "domovita");
+  static final Set<String> LEGACY_PLATFORMS = Set.of("kufar", "onliner", "realt", "domovita");
   final Path root;
 
   RentalCatalog(@Value("${autopost.rental-reference-dir:}") String directory) {
@@ -53,13 +53,25 @@ class RentalCatalog {
     return plan;
   }
 
-  static void platform(String p) {
-    if (!PLATFORMS.contains(p)) throw new ApiException(400, "Неизвестная площадка.");
+  JsonNode card() {
+    if (root == null || !Files.exists(root.resolve("runtime/card.json"))) return object();
+    return load("runtime/card.json");
+  }
+
+  Set<String> platforms() {
+    if (!card().has("platforms")) return LEGACY_PLATFORMS;
+    Set<String> ids = new TreeSet<>();
+    card().path("platforms").fieldNames().forEachRemaining(ids::add);
+    return ids;
+  }
+
+  void platform(String p) {
+    if (!platforms().contains(p)) throw new ApiException(400, "Неизвестная площадка.");
   }
 
   String version() {
-    ObjectNode snapshot = object("common", common());
-    for (String p : new TreeSet<>(PLATFORMS)) snapshot.set(p, plan(p));
+    ObjectNode snapshot = object("common", common(), "card", card());
+    for (String p : new TreeSet<>(platforms())) snapshot.set(p, plan(p));
     return Access.hash(snapshot.toString());
   }
 
@@ -69,8 +81,9 @@ class RentalCatalog {
     for (var e : audit.path("field_evidence"))
       if (e.has("canonical_values"))
         canonical.set(text(e, "common_option_id"), e.get("canonical_values"));
+    if (card().has("canonicalValues")) canonical = (ObjectNode) card().get("canonicalValues").deepCopy();
     ObjectNode platforms = object();
-    for (String p : new TreeSet<>(PLATFORMS)) {
+    for (String p : new TreeSet<>(platforms())) {
       var schema = schema(p);
       var plan = plan(p);
       Set<String> mapped = new HashSet<>();
@@ -91,6 +104,8 @@ class RentalCatalog {
             choices.put(choice.path("fill_rule").path("value").toString(), text(choice, "name"));
         if (!choices.isEmpty()) choiceLabels.set(id, choices);
       }
+      ObjectNode conditions = object();
+      for (var f : editorFields(schema).values()) if (f.has("uiWhen")) conditions.set(text(f, "id"), f.get("uiWhen"));
       ArrayNode bindings = array();
       for (var row : plan.path("fields"))
         if (text(row.path("conversion"), "kind").equals("lookup"))
@@ -105,8 +120,12 @@ class RentalCatalog {
       platforms.set(
           p,
           object(
-              "extras",
-              extra,
+              "name", card().path("platforms").path(p).path("name").asText(p),
+              "rules", plan.path("fields"),
+              "conditions", conditions,
+              "addressBoundFields", plan.path("address_bound_fields"),
+              "deferred", plan.path("deferred_fields"),
+              "extras", extra,
               "labels",
               labels,
               "choiceLabels",
@@ -118,7 +137,7 @@ class RentalCatalog {
               "coverage",
               "partial"));
     }
-    return object(
+    ObjectNode result = object(
         "category",
         common.get(0),
         "canonicalValues",
@@ -129,6 +148,13 @@ class RentalCatalog {
         version(),
         "runtimeVersion",
         PreparationEngine.VERSION);
+    if (card().path("version").asInt() >= 2) RentalCard.decorate(result, card());
+    return result;
+  }
+
+  ObjectNode normalize(JsonNode draft) {
+    if (card().path("version").asInt() < 2) return draft.deepCopy();
+    return new RentalCard(this).normalize(draft);
   }
 
   // Preserve inherited group conditions in the editor without changing the source contract.
@@ -154,17 +180,21 @@ class RentalCatalog {
   }
 
   ObjectNode prepare(JsonNode input) {
+    if (!text(input, "schemaVersion").equals(version()))
+      throw new ApiException(409, "Правила обновились. Откройте карточку заново; ваши сохранённые сведения будут перенесены.");
+    input = normalize(input);
     ObjectNode common = object(), extras = object();
     if (input.path("values").isObject()) common = (ObjectNode) input.get("values").deepCopy();
     if (input.path("extras").isObject()) extras = (ObjectNode) input.get("extras").deepCopy();
     if (!text(input, "schemaVersion").equals(version()))
       throw new ApiException(
           409, "Схема обновилась. Обновите форму и проверьте сохранённые данные.");
+    RentalCard.projectAddress(common, input.path("address"), card());
     ArrayNode output = array();
     PreparationEngine engine = new PreparationEngine();
     var selected = list(input.path("platforms"));
-    if (selected.isEmpty() || selected.size() > 4)
-      throw new ApiException(400, "Выберите от одной до четырёх площадок.");
+    if (selected.isEmpty() || selected.size() > platforms().size())
+      throw new ApiException(400, "Выберите доступные площадки.");
     Set<String> seen = new HashSet<>();
     for (var id : selected) {
       String p = id.asText();
@@ -173,13 +203,14 @@ class RentalCatalog {
       JsonNode specific = extras.path(p);
       if (!specific.isObject() && !specific.isMissingNode())
         throw new ApiException(400, "Уточнения площадки должны быть объектом.");
-      output.add(
-          engine.prepare(
+      ObjectNode prepared = engine.prepare(
               schema(p),
               plan(p),
               common,
               specific.isObject() ? (ObjectNode) specific : object(),
-              input.path("address")));
+              input.path("address"));
+      RentalCard.annotate(prepared, plan(p), input);
+      output.add(prepared);
     }
     return object("platforms", output, "schemaVersion", text(input, "schemaVersion"));
   }

@@ -49,6 +49,14 @@ class RentalController {
     return addresses.select(access.require(req).workspace(), clean(input, "id", 80));
   }
 
+  @PostMapping("/normalize")
+  ObjectNode normalize(HttpServletRequest req, @RequestBody JsonNode input) {
+    access.require(req);
+    if (!input.isObject() || input.toString().length() > 250000)
+      throw new ApiException(400, "Некорректная карточка.");
+    return catalog.normalize(input);
+  }
+
   @PostMapping("/prepare")
   ObjectNode prepare(HttpServletRequest req, @RequestBody JsonNode input) {
     access.require(req);
@@ -90,7 +98,7 @@ class RentalController {
             id);
     if (row == null) throw new ApiException(404, "Карточка аренды не найдена.");
     return object(
-        "id", id, "revision", row.get("revision"), "draft", parse(row.get("data").toString()));
+        "id", id, "revision", row.get("revision"), "draft", catalog.normalize(parse(row.get("data").toString())));
   }
 
   @PostMapping("/drafts/{id}")

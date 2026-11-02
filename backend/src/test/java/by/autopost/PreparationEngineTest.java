@@ -10,6 +10,27 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 
 class PreparationEngineTest {
+  @Test void suppliedButUnmappableRequiredValueDoesNotAskForTheSameFactAgain() {
+    var schema = schema(option("currency", "enum", object("required", true), choice("USD")));
+    var result = run(schema, plan(row("rental.currency", "currency", object("kind", "lookup", "values", List.of(object("from", "USD", "to", "USD"))))), object("rental.currency", "BYN"), object());
+    assertEquals(1, result.path("issues").size());
+    assertEquals("conversion", result.path("issues").get(0).path("code").asText());
+  }
+  @Test void invalidNumberInInactiveBranchDoesNotBlockPreparation() {
+    var schema = schema(option("rooms", "integer", object()), option("separate", "integer", object("when", object("option_id", "rooms", "operator", "gt", "value", 1))));
+    var result = run(schema, plan(), object(), object("rooms", 1, "separate", "1.5"));
+    assertTrue(result.path("issues").isEmpty());
+    assertFalse(result.path("values").has("separate"));
+  }
+  @Test void explicitNoInCheckboxMappingMeansOmitTheCodeAndNeverNull() {
+    var schema = schema(option("items", "multi_enum", object(), choice("a")));
+    var plan = plan(row("", "items", object("kind", "multi_lookup", "members", List.of(object("common_option_id", "amenity.test", "values", List.of(object("from", true, "to", "a"), object("from", false, "to", null)))))));
+    var result = run(schema, plan, object("amenity.test", false), object());
+    assertTrue(result.path("values").path("items").isArray());
+    assertTrue(result.path("values").path("items").isEmpty());
+    assertTrue(result.path("issues").isEmpty());
+  }
+
   @Test
   void changingANativePlanInvalidatesPreviouslyPreparedDrafts() {
     ObjectNode nativePlan = object("schema_hash", "original", "fields", List.of());

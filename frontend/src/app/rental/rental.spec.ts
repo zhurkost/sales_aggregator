@@ -12,6 +12,103 @@ const response = (body: unknown) =>
   new Response(JSON.stringify(body), { status: 200 });
 
 describe("rental preparation editor", () => {
+  it("locks input during opening and rejects an unexpected late edit without losing it", async () => {
+    const c = new RentalEditorComponent();
+    let resolve!: (r: Response) => void;
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
+    const opening = c.open("another");
+    await vi.waitFor(() => expect(resolve).toBeDefined());
+    const field = {id:"listing.title", type:"text", name:"Title", description:"", options:[], fill_rule:{}};
+    c.setValue(field, "Must not accept locked input");
+    expect(c.draft.values[field.id]).toBeUndefined();
+    c.draft.values[field.id] = "Unexpected asynchronous edit";
+    c.changed();
+    resolve(response({id:"another", revision:1, draft:{schemaVersion:"1",values:{},extras:{},platforms:[],address:null}}));
+    await opening;
+    expect(c.id).not.toBe("another");
+    expect(c.draft.values[field.id]).toBe("Unexpected asynchronous edit");
+    expect(c.dirty).toBe(true);
+    c.ngOnDestroy();
+  });
+  it("editing nearby landmarks never clears the apartment address", () => {
+    const c = new RentalEditorComponent();
+    c.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
+    for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
+      c.setValue({id, name:id, type:"text", options:[], fill_rule:{}, description:""}, "Example");
+    expect(c.draft.address.settlement).toBe("Минск");
+    c.ngOnDestroy();
+  });
+  it("clearing a manual address updates the visible input too", () => {
+    const c = new AddressInputComponent();
+    c.search("Manual query"); c.value = null;
+    expect(c.query).toBe(""); expect(c.selected).toBeNull(); c.ngOnDestroy();
+  });
+  it("persists an unselected address query and rejects a late selection while navigating", async () => {
+    const c = new AddressInputComponent();
+    const emit = vi.spyOn(c.addressChange, "emit");
+    c.search("Тестовый город, дом 7А");
+    expect(emit).toHaveBeenLastCalledWith(expect.objectContaining({label:"Тестовый город, дом 7А", confirmed:false}));
+    let resolve!: (r: Response) => void;
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
+    const selecting = c.choose("test");
+    c.disabled = true;
+    resolve(response({address:{label:"Stale",confirmed:true}}));
+    await selecting;
+    expect(c.query).toBe("Тестовый город, дом 7А");
+    c.ngOnDestroy();
+  });
+  it("invalidates native coordinates and local address dependencies as one operation", () => {
+    const c = new RentalEditorComponent();
+    c.schema = {card:{version:2,expandedGroups:[],addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
+      platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress","coordinates"]}}};
+    c.draft.values["location.metro"] = "Old metro";
+    c.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
+    c.addressChanged({provider:"manual",label:"New",countryIso:"BY",settlement:"New",street:"",house:"",confirmed:false});
+    expect(c.draft.extras.example).toEqual({other:"Keep"});
+    expect(c.draft.values["location.metro"]).toBeUndefined();
+    c.ngOnDestroy();
+  });
+  it("recovers revision conflicts by saving a separate card without overwriting the original", async () => {
+    const c = new RentalEditorComponent();
+    const original = c.id; c.revision = 7; c.dirty = true;
+    c.draft.values["listing.title"] = "Keep my edits";
+    const calls: {url:string, body:any}[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      calls.push({url,body:init?.body ? JSON.parse(String(init.body)) : null});
+      return response(url.endsWith("/drafts") ? {drafts:[]} : {revision:1});
+    }));
+    await c.saveCopy();
+    expect(c.id).not.toBe(original);
+    expect(calls[0].body.revision).toBe(0);
+    expect(calls[0].body.draft.values["listing.title"]).toBe("Keep my edits");
+    expect(calls.some(call => call.url.endsWith(original))).toBe(false);
+    c.ngOnDestroy();
+  });
+
+  it("renders a fifth marketplace with the same one-field form and preserves data when toggled", async () => {
+    const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area"}]};
+    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,extras:[],labels:{},choiceLabels:{},constants:{},bindings:[]}]));
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
+      version:"2",card:{version:2,expandedGroups:["group.main"],addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
+    } : {drafts:[]})));
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
+    await vi.waitFor(() => {fixture.detectChanges(); expect(fixture.nativeElement.textContent).toContain("Пятая площадка");});
+    const c = fixture.componentInstance;
+    expect(c.draft.platforms).toHaveLength(5);
+    c.setValue(field,"42,5"); c.togglePlatform("fifth",false); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[id="rental-rental.test"]')).toBeNull();
+    c.togglePlatform("fifth",true); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]')).toHaveLength(1);
+    expect(c.draft.values[field.id]).toBe("42,5"); fixture.destroy();
+  });
+  it("groups different native required labels into one canonical correction", () => {
+    const c = new RentalEditorComponent();
+    c.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
+    c.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
+    expect(c.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
+    c.ngOnDestroy();
+  });
   it("renders delete confirmation, supports cancellation and updates the saved list", async () => {
     const fetch = vi.fn(async (url: string) => {
       if (url.endsWith("/editor")) return response({
@@ -167,7 +264,7 @@ describe("rental preparation editor", () => {
       confirmed: true,
     };
     c.search("New");
-    c.value = null;
+    c.value = c.selected;
     expect(c.query).toBe("New");
     c.draftId = "two";
     expect(c.query).toBe("");
@@ -278,7 +375,7 @@ describe("rental preparation editor", () => {
     };
     c.draft.values["location.latitude"] = "53.9";
     c.addressChanged(null);
-    expect(c.draft.values["location.latitude"]).toBe("");
+    expect(c.draft.values["location.latitude"]).toBeUndefined();
     expect(c.draft.address).toBeNull();
     c.ngOnDestroy();
   });

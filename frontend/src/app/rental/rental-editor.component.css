@@ -158,3 +158,29 @@ h2 {
     padding: 16px;
   }
 }
+.rental-eyebrow { font-size:11px; letter-spacing:.12em; color:#526f9c; font-weight:700; }
+.rental-heading h1 { font-size:clamp(26px,3vw,34px); margin:8px 0 10px; letter-spacing:-.03em; }
+.platform-section { background:linear-gradient(120deg,#fff,#f1f5ff); }
+.platform-section h2 { font-size:18px; margin-bottom:8px; }
+.rental-platforms { gap:10px; margin-top:18px; }
+.rental-platforms label { display:flex; align-items:center; gap:8px; border:1px solid #dce2eb; border-radius:9px; padding:10px 16px; background:#fff; cursor:pointer; }
+.rental-platforms .platform-selected { border-color:#99abea; background:#edf2ff; }
+.section-heading { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.section-heading h2 { margin:0; font-size:19px; }
+.step-number { background:#e9efff; border-radius:50%; color:#345bc1; width:28px; height:28px; display:grid; place-items:center; font-size:14px; }
+.group-count { float:right; font-size:12px; font-weight:400; color:#68778c; }
+.rental-fields .full-label { display:flex; flex-direction:column; gap:8px; }
+.rental-fields .full-label > label { font-size:14px; font-weight:550; }
+.rental-fields input,.rental-fields select,.rental-fields textarea { box-sizing:border-box; min-width:0; }
+.rental-fields .extra-choices { display:flex; flex-wrap:wrap; flex-direction:row; gap:12px; }
+.field-platforms { font-size:12px; color:#68778c; }
+.legacy-section { border-color:#e7ce9f; background:#fffaf1; }
+.legacy-item { padding:16px 0; border-top:1px solid #ecdfc9; overflow-wrap:anywhere; }
+.issue-list { list-style:none; padding:0; }
+.issue-list li { padding:12px 0; border-bottom:1px solid #e5eaf2; }
+.issue-list p { margin:0 0 6px; }
+.text-link { margin-left:14px; border:0; background:transparent; color:#3156bc; text-decoration:underline; cursor:pointer; }
+.result-section { margin-top:24px; }
+.prepared-platform { padding:16px 0; border-top:1px solid #e5eaf2; }
+:host button:focus-visible,:host input:focus-visible,:host select:focus-visible,:host summary:focus-visible,:host textarea:focus-visible { outline:3px solid #8caaff; outline-offset:2px; }
+@media(max-width:680px) { .rental-actions { flex-direction:column; align-items:stretch; } .delete-actions { flex-wrap:wrap; } .saved-row { gap:5px; } }

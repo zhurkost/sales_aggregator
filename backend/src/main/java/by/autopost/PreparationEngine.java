@@ -334,7 +334,7 @@ class PreparationEngine {
           supplied = true;
           try {
             JsonNode code = lookup(member.path("values"), v);
-            if (list(merged).stream().noneMatch(x -> equal(x, code))) merged.add(code);
+            if (!code.isNull() && list(merged).stream().noneMatch(x -> equal(x, code))) merged.add(code);
           } catch (IllegalArgumentException e) {
             issue(issues, target, "list_value", e.getMessage());
           }
@@ -347,6 +347,12 @@ class PreparationEngine {
         JsonNode output;
         switch (kind) {
           case "identity" -> output = input.deepCopy();
+          case "list_lookup" -> {
+            if (!input.isArray()) throw new IllegalArgumentException("Выберите варианты из списка.");
+            ArrayNode mapped = array();
+            for (var item : input) mapped.add(lookup(cv.path("values"), item));
+            output = mapped;
+          }
           case "lookup" -> output = lookup(cv.path("values"), input);
           case "decimal" -> {
             BigDecimal n = decimal(input, text(cv, "target").equals("integer"));
@@ -426,6 +432,8 @@ class PreparationEngine {
         continue;
       }
       if (active == Truth.NO) {
+        for (int i = issues.size() - 1; i >= 0; i--)
+          if (text(issues.get(i), "field").equals(id)) issues.remove(i);
         values.remove(id);
         continue;
       }
@@ -437,7 +445,7 @@ class PreparationEngine {
         continue;
       }
       if (missing(v)) {
-        if (rule.path("required").asBoolean(false))
+        if (rule.path("required").asBoolean(false) && list(issues).stream().noneMatch(i -> text(i, "field").equals(id)))
           issue(issues, id, "required", "Заполните: " + text(field, "name"));
         continue;
       }
