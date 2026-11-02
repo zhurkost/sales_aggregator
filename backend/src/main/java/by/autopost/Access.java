@@ -1,7 +1,8 @@
 package by.autopost;
 
-import static by.autopost.Json.*;
+import static by.autopost.shared.Json.*;
 
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.*;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
-class Access extends OncePerRequestFilter {
+public class Access extends OncePerRequestFilter {
   final Database db;
   final String origin, proxySecret;
   private final SecureRandom random = new SecureRandom();
@@ -114,7 +115,7 @@ class Access extends OncePerRequestFilter {
     return m.find() ? m.group(1) : "";
   }
 
-  record Actor(String id, String workspace, String name, String login) {
+  public record Actor(String id, String workspace, String name, String login) {
     ObjectNode profile() {
       return object("id", workspace, "accountId", id, "name", name, "login", login);
     }
@@ -139,7 +140,7 @@ class Access extends OncePerRequestFilter {
     return new Actor(id, workspace, owner.get("name").toString(), p.get("login").toString());
   }
 
-  Actor require(HttpServletRequest req) {
+  public Actor require(HttpServletRequest req) {
     Actor actor = user(req);
     if (actor == null) throw new ApiException(401, "Выберите профиль и войдите.");
     String workspace = req.getHeader("X-Autopost-Workspace");

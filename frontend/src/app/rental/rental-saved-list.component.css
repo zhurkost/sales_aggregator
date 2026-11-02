@@ -1,0 +1,12 @@
+:host { display: block; }
+h2 { margin:0; font-size:16px; }
+.text-button { background:none; border:0; padding:5px 0; color:#3658ba; font-size:13px; cursor:pointer; }
+.icon-button { border:0; background:transparent; font-size:25px; padding:4px 9px; line-height:1; color:#52627d; cursor:pointer; }
+button:disabled { opacity:.55; cursor:default; }
+.saved-row { display:flex; gap:12px; align-items:center; border-bottom:1px solid #e5eaf2; padding:15px 0; }
+.saved-item { flex:1; min-width:0; overflow-wrap:anywhere; text-align:left; border:0; background:transparent; color:#2b4f8c; padding:6px 0; }
+.delete-item { border:0; background:#fff3f0; color:#aa4231; border-radius:7px; padding:8px 10px; font-size:12px; }
+.delete-confirmation { padding:14px; background:#fff3f0; border-radius:8px; font-size:14px; }
+.delete-actions { display:flex; gap:10px; justify-content:flex-end; }
+.empty-state { text-align:center; padding:40px 0; color:#748198; }
+button:focus-visible,input:focus-visible,textarea:focus-visible { outline:3px solid #9ab4ff; outline-offset:2px; }

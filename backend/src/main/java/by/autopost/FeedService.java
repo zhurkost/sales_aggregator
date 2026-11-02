@@ -1,5 +1,6 @@
 package by.autopost;
 
+import by.autopost.shared.ApiException;
 import java.net.*;
 import java.nio.charset.*;
 import java.util.*;

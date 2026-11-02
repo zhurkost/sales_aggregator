@@ -1,7 +1,8 @@
 package by.autopost;
 
-import static by.autopost.Json.*;
+import static by.autopost.shared.Json.*;
 
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import jakarta.servlet.http.*;

@@ -1,0 +1,12 @@
+:host { display: block; }
+h2 { margin:0; font-size:16px; }
+.text-button { background:none; border:0; padding:5px 0; color:#3658ba; font-size:13px; cursor:pointer; }
+.icon-button { border:0; background:transparent; font-size:25px; padding:4px 9px; line-height:1; color:#52627d; cursor:pointer; }
+button:disabled { opacity:.55; cursor:default; }
+.ai-conflicts { background:#f5f3ff; padding:14px; margin-top:14px; border-radius:9px; }
+.conflict { display:flex; align-items:center; gap:10px; font-size:13px; padding-top:10px; }
+.conflict>span { flex:1; min-width:0; overflow-wrap:anywhere; }
+.conflict s { color:#7b8091; }
+.ai-questions { margin:14px 0 0; padding-left:18px; color:#665da2; font-size:13px; }
+button:focus-visible,input:focus-visible,textarea:focus-visible { outline:3px solid #9ab4ff; outline-offset:2px; }
+@media(max-width:600px) { .conflict { flex-wrap:wrap; } }

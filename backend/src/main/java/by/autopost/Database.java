@@ -39,8 +39,7 @@ class Database {
             "CREATE TABLE IF NOT EXISTS notifications(id INTEGER PRIMARY KEY"
                 + " AUTOINCREMENT,profile_id TEXT NOT NULL,record_id TEXT NOT NULL,platform_id TEXT"
                 + " NOT NULL,message TEXT NOT NULL,created TEXT NOT NULL,seen INTEGER NOT NULL"
-                + " DEFAULT 0)"))
-      jdbc.execute(sql);
+                + " DEFAULT 0)")) jdbc.execute(sql);
     if (rows("PRAGMA table_info(sessions)").stream()
         .noneMatch(r -> "workspace_id".equals(r.get("name"))))
       jdbc.execute("ALTER TABLE sessions ADD COLUMN workspace_id TEXT NOT NULL DEFAULT ''");

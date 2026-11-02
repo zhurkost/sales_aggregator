@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "platforms": {
+    "example": {
+      "name": "Example"
+    }
+  },
+  "canonicalValues": {
+    "rental.currency": [
+      "BYN",
+      "USD"
+    ]
+  },
+  "expandedGroups": [
+    "group.main"
+  ],
+  "addressDependentFacts": []
+}

@@ -1,14 +1,21 @@
 ФОРМАТ РЕЗУЛЬТАТОВ ПАРСИНГА
 Документ: parsing_format_rule.txt
-Версия: 1.2 | Дата: 2026-11-01
+Версия: 2.1 | Дата: 2026-11-02
 
-Этот файл определяет структуру данных. Порядок работы — в parsing_rule.txt,
-особенности конкретного задания — в parsing_input.txt. Это спецификация,
-а не утверждение о наличии реализованного парсера или загрузчика.
+Здесь определена структура данных; порядок работы — в parsing_rule.txt.
+parsing_input.txt заполняет и изменяет только человек, выдающий задание.
+Для ИИ это вход только для чтения. Спецификация не означает, что исполнитель
+всех описанных действий уже реализован в расширении.
+
+Два отдельных задания: A создаёт исходные Category[] и binding площадки;
+B сравнивает готовые Category[] и создаёт common/mapping без изменения входов.
+В B сопоставляются name полей и name дочерних choice внутри enum/multi_enum;
+mapping связывает выбранный общий текст с точным исходным choice.value.
+Появление новых схем само по себе не запускает B. Границы этапов — в parsing_rule.txt.
 
 1. CATEGORY И OPTION
 
-Корень файла категории — массив Category[]. Все указанные свойства обязательны:
+Корень файла категории — Category[]. Обязательные свойства:
 
 interface Category {
   id: string;
@@ -23,195 +30,226 @@ interface Option {
   name: string;
   description: string;
   type: OptionType;
-  fill_rule: FillRule;
   options: Option[];
 }
 
-id — стабильный машинный идентификатор; name — название для человека.
-description может быть пустой строкой; categories/options всегда массивы.
-Категории размещаются только в categories. У Category нет type и fill_rule.
-Автоматическое наследование полей родительской категории не подразумевается.
-Category.id уникален в каталоге; Option.id — во всём дереве одной категории.
-Ссылки на поля разрешаются по id в пределах категории, включая группы.
+id стабилен; name/description предназначены человеку. Массивы всегда присутствуют.
+Category.id уникален в каталоге, Option.id — в дереве одной категории.
+Подкатегории находятся в categories; поля — в options. Автоматического
+наследования полей нет. Свойство fill_rule удалено и больше не создаётся.
 
-Типы исходных полей площадки:
-  group      — группа полей; options содержит поля или другие группы;
-  text       — текст, включая телефон, VIN и артикул с ведущими нулями;
-  integer    — целое число;
-  number     — дробное или целое число;
-  boolean    — true/false;
-  date       — дата YYYY-MM-DD;
-  datetime   — дата/время ISO 8601 с часовым поясом;
-  enum       — один вариант из options;
-  multi_enum — несколько вариантов из options;
-  choice     — вариант перечисления; его код хранится в fill_rule.value;
-  files      — коллекция ссылок на фотографии, видео или документы.
+Допустимые дополнительные свойства Option — факты о поле, а не команды браузера:
+  value            — обязательно для choice: точный код площадки; null, если неизвестен;
+  required         — true/false; null при неизвестной обязательности;
+  validation       — ограничения из раздела 3;
+  when             — условие применимости из раздела 3;
+  file_role        — для files: product_image/product_video/product_document
+                     либо иная явно описанная роль;
+  options_complete — обязательно для enum/multi_enum: подтверждена ли полнота списка.
 
-У enum/multi_enum дочерние элементы — choice. У остальных конечных полей
-options = []. Реальные значения объявления не записываются в схему.
-В общем файле обычные конечные поля имеют type = "text", вложения — "files",
-группы — "group". Варианты площадки переносятся в маппинг, а не теряются.
+Исходные типы: group, text, integer, number, boolean, date, datetime,
+enum, multi_enum, choice, files. group.options содержит поля/группы.
+text включает телефоны, VIN и артикулы: ведущие нули не теряются.
+date — YYYY-MM-DD, datetime — ISO 8601 с часовым поясом.
+files — коллекция ссылок на фотографии, видео или документы.
+У конечных полей, кроме перечислений, options = []; у choice — также [].
+Общий файл сохраняет group/files, остальные конечные поля имеют тип text.
+Значения конкретного объявления и способы установки полей в схему не записываются.
 
-2. FILL_RULE
+2. ENUM И ВАРИАНТЫ ВЫПАДАЮЩЕГО СПИСКА
 
-Свойства необязательны, кроме value у choice. Использовать только применимые:
-  value_from    — путь к данным: listing.price, attributes.memory, attachments.images;
-  value         — постоянный код choice или иное явно заданное скалярное значение;
-  required      — true/false; null, если обязательность пока не установлена;
-  default_value — только явно установленное значение при отсутствии данных;
-  transform     — упорядоченный список преобразований;
-  depends_on    — массив id полей, которые должны быть обработаны раньше;
-  when          — условие применимости;
-  overwrite     — if_empty (по умолчанию), always или never;
-  validation    — ограничения по разделу 4;
-  file_role     — только files: product_image, product_video, product_document
-                  либо другая явно описанная роль;
-  file_policy   — только files: keep_original: true, ordering: "preserve_source",
-                  primary: "explicit" (если нужна обложка),
-                  on_incompatible: "needs_review". Свойство необязательно.
+Option типа enum ОБЯЗАТЕЛЬНО содержит options: Option[] со всеми наблюдаемыми
+вариантами выпадающего списка. Для multi_enum действует то же правило.
+Каждый вариант — отдельный Option типа choice: id, name, description, type,
+value и options: []. name — видимая подпись, value — нативный код, не порядковый
+номер и не придуманный перевод. Тип кода сохраняется: строка "01" не равна числу 1.
+Служебный placeholder вроде «Выберите» не считается значением, если он недоступен
+для выбора. Disabled/недоступные в текущей ветви варианты отмечаются в отчёте.
 
-value_from — путь через точки, без выражений, индексов и буквальных точек
-в ключах. Задавать его только при известном соответствии данным объявления.
-value и value_from взаимоисключающие. Для files запрещены value/default_value.
-Значения 0 и false не равны отсутствию. null — неизвестность/отсутствие,
-а не команда очистить поле. Неизвестную обязательность не заменять false.
-Для required: true пустая строка/коллекция не удовлетворяет требованию;
-для boolean допустимо как true, так и false.
+Если подпись видна, но код неизвестен, сохранить choice с value: null;
+не прятать известные варианты только в description и не оставлять options пустым.
+options_complete: true допустимо лишь после проверки всего доступного списка
+для указанного состояния, включая пагинацию. При неполноте — false и отчёт
+о границе покрытия. [] допустим только если варианты вообще не удалось наблюдать.
+Полнота списка и известность кодов — разные факты: неизвестные коды не выдумываются.
 
-Разрешённые transform: trim, decimal_dot, to_number, to_integer, uppercase,
-lowercase. Ошибка преобразования не заменяется приближением или округлением.
-В общем text-поле результат остаётся строкой; преобразование в тип площадки
-задаётся маппингом. Для files эти transform не применяются.
+У зависимого списка сохранить связь с родителем через when варианта;
+наблюдаемые варианты разных ветвей не выдавать за безусловно доступные.
+Динамические подсказки не выдавать за полный справочник. Непроверенные варианты
+не заполняются автоматически. При неизвестном коде выбор по подписи допустим
+только через подтверждённый однозначный binding с match: "text".
 
-3. УСЛОВИЯ WHEN
+3. WHEN, VALIDATION И FILES
 
-Узел условия — одна из форм:
-  {"all": [условия]} | {"any": [условия]} | {"not": условие}
-  {"option_id": "id поля", "operator": "операция", "value": значение}
-
+when: {"all": [условия]} | {"any": [условия]} | {"not": условие}
+либо {"option_id": "id", "operator": "операция", "value": значение}.
 Операции: equals, not_equals, in, not_in, exists, gt, gte, lt, lte.
-Для in/not_in value — массив скалярных значений; для exists value не нужно.
-Сравниваются нормализованные значения, для enum — коды choice.value.
-Числовые сравнения требуют числа, а не строки с цифрами. При переносе условия
-в общую модель нужно сопоставить id и значения; нельзя копировать коды сайта
-в условие текстового поля без преобразования.
+Для in/not_in value — массив, для exists не нужно; ссылки — на поля этой категории.
+Сравниваются коды/типизированные значения; неизвестность не превращается в истину
+через отрицание. Для files exists проверяет непустую коллекцию, не факт загрузки.
+При переносе условия в common нужно сопоставить id и универсальные значения.
 
-Неизвестность не становится истиной через not/not_equals. Поле применимо
-только при истинном условии. exists при отсутствии значения возвращает false;
-для files проверяет непустую коллекцию, но не успешность загрузки.
-Неактивное поле не проверяется на обязательность. depends_on не должен иметь
-циклов и ссылок на отсутствующие поля; порядок элементов не заменяет зависимостей.
-
-4. VALIDATION
-
-  text:       min_length, max_length, pattern, format (email/uri/phone);
-  числа:      min, max, exclusive_min, exclusive_max, multiple_of;
-  enum:       allow_custom_value;
+validation:
+  text: min_length, max_length, pattern, format (email/uri/phone);
+  числа: min, max, exclusive_min, exclusive_max, multiple_of;
+  enum: allow_custom_value;
   multi_enum: allow_custom_value, min_items, max_items, unique_items;
-  date/time:  min_date, max_date в формате соответствующего типа;
-  files:      min_items, max_items, mime_types, extensions,
-              max_file_size_bytes, max_total_size_bytes,
-              min_width_px, max_width_px, min_height_px, max_height_px,
-              min_duration_seconds, max_duration_seconds,
-              min_pages, max_pages, unique_items.
+  date/time: min_date, max_date;
+  files: min_items, max_items, mime_types, extensions, max_file_size_bytes,
+         max_total_size_bytes, min_width_px, max_width_px, min_height_px,
+         max_height_px, min_duration_seconds, max_duration_seconds,
+         min_pages, max_pages, unique_items.
 
-Указывать только подтверждённые и применимые ограничения. Неизвестное значение
-можно обозначить null и пояснить в отчёте; это не отсутствие лимита.
-Противоречивые границы и неподдерживаемые свойства требуют уточнения.
-Ограничения площадки сохраняются в её Option, а не автоматически становятся общими.
+Указывать только применимые подтверждённые требования; null — неизвестность,
+а не отсутствие лимита. 0 и false — значения, не отсутствие. required: true
+не допускает пустую строку/коллекцию, но допускает boolean false.
+Лимиты и обязательность площадки не становятся автоматически общими.
 
-5. ОСОБЕННОСТИ FILES
+Files участвует в тех же категориях и маппингах. Значение — массив ссылок
+на исходные вложения, не строка и не дочерние Option. Роль различает фото товара
+и сканы документов. Подготовка файлов относится к mapping, загрузка — к binding.
+Оригиналы, порядок и явно выбранная обложка сохраняются; молчаливое обрезание,
+отбрасывание части коллекции и бинарные данные в спецификации не допускаются.
 
-Files — обычный Option в тех же Category[] и маппингах. Его значение — массив
-ссылок на исходные вложения (даже для одного файла), не строка и не дочерние Option.
-value_from указывает на коллекцию данных объявления, например attachments.images.
-Ссылки могут указывать на хранилище или внешний URL, если площадка его принимает.
-Бинарные данные, реальные файлы и upload-токены в результаты парсинга не включать.
+4. MAPPING — ПРЕОБРАЗОВАНИЕ ДАННЫХ
 
-Роль определяет смысл: фото товара и скан документа — разные поля.
-Ограничения файлов описываются через validation; подготовка под сайт — в маппинге.
-Оригиналы сохраняются. Порядок и главное изображение должны быть определены явно;
-обрезка, потеря файлов и выбор первых N вместо превышения лимита не подразумеваются.
-Загрузка/ввод URL и проверка принятия — задача привязки страницы, не парсинга.
+Файл mapping_%category%_%platform%.json:
+  {category_id, platform, fields: [{common_option_id, platform_option_id, conversion}]}.
+Для нескольких входов вместо common_option_id — common_option_ids: [id, ...]
+с явным назначением входов. Ссылки разрешаются в common и исходной схеме площадки.
 
-6. ФОРМАТ МАППИНГА
+Создаётся только на этапе B по отдельному заданию. Для enum значения from —
+канонический текст по результату сравнения choice.name, to — исходный choice.value.
+Переименование подписи не меняет нативный код. Несопоставленные значения остаются
+кандидатами/needs_review; исходные options и binding на этапе B не переписываются.
 
-Корень: {category_id, platform, fields: []}.
-Запись fields: {common_option_id, platform_option_id, conversion}.
-Если преобразование требует нескольких входов, вместо common_option_id
-использовать common_option_ids: [id, ...] и явно описать их назначение.
-Все ссылки должны разрешаться в соответствующих файлах категорий.
+conversion.kind:
+  identity — перенос без преобразования;
+  lookup   — values: [{from, to}, ...], on_unmapped: "needs_review";
+  files    — preparation: {operations: [...]}, on_incompatible: "needs_review".
+Для enum результат lookup соответствует choice.value. Неизвестный код нельзя
+подменять null как готовым результатом; сопоставление остаётся кандидатом.
 
-conversion описывает направление из общей модели в формат площадки:
-  kind = "identity" — перенос без преобразования;
-  kind = "lookup"   — values: [{from, to}, ...], точные коды площадки;
-  kind = "files"    — preparation: {operations: [...]}, подготовка коллекции.
+Операции файлов задаются явно: resize_image (размеры, keep_aspect_ratio),
+compress_image (пределы качества), convert_image (mime_type), normalize_orientation.
+Пустой operations разрешает только перенос уже совместимых файлов без изменения.
+Для преобразований чисел/дат/единиц/списков задавать точные форматы и параметры;
+если обработчик не определён заданием, описать кандидат в отчёте, не изобретать
+исполняемый код. Маппинг не считается обратимым автоматически.
 
-Для lookup без соответствия: on_unmapped = "needs_review".
-Для files без допустимой подготовки: on_incompatible = "needs_review";
-operations: [] означает перенос без изменения, если требования уже выполнены.
-Разрешённые операции файлов задаются явно с kind и параметрами: resize_image
-(max_width_px, max_height_px, keep_aspect_ratio), compress_image (пределы качества),
-convert_image (mime_type), normalize_orientation. Неизвестные операции не исполняются.
+5. BINDING — ПРАВИЛА ЗАПОЛНЕНИЯ СТРАНИЦЫ РАСШИРЕНИЕМ
 
-Преобразования чисел, дат, единиц, списков и составных значений должны иметь
-явные параметры: исходный/целевой формат, единицы, разделители или используемые
-поля. Если конкретный обработчик/формат параметров не определён заданием,
-описать необходимое преобразование в отчёте как кандидат, не выдумывать рабочий
-код или исполняемую команду. Маппинг не считается автоматически обратимым.
+Файл binding_%category%_%platform%.json (binding в единственном числе):
+  {category_id, platform, fields: [Binding, ...]}.
+Он создаётся при каждом парсинге площадки, в том числе до появления common.
 
-7. ПРИВЯЗКИ К СТРАНИЦЕ
+Для каждого конечного поля исходной схемы, включая files, создаётся одна запись:
+  option_id  — id поля площадки, не common и не дочернего choice;
+  status     — ready / needs_review / unsupported;
+  reason     — обязательно для неготовой записи; что не проверено или не поддерживается.
+Для group и choice отдельная запись не требуется. Условные варианты исполнения
+одного поля описываются через steps/условия, а не неоднозначные дубли option_id.
 
-CSS-селекторы и действия браузера не входят в универсальный fill_rule.
-Если задание требует привязки, описывать её отдельно:
-  category_id, option_id, platform;
-  target: {selectors: [...]};
-  action: set_value/select_option/set_checked/choose/click/autocomplete/
-          upload_files/sequence;
-  events: [input, change, blur] — по необходимости;
-  wait_for: [visible, enabled], timeout_ms;
-  verify: {kind: value_equals/selected_text_equals/checked_equals/files_accepted}.
+У ready обязательны target, action, verify; по необходимости добавляются:
+  target: {selectors: [CSS, ...]} — приоритетные наблюдаемые селекторы;
+  action: set_value / select_option / set_checked / choose / click /
+          autocomplete / upload_files / sequence;
+  match: "value" / "text" — способ точного сопоставления enum;
+  events: ["input", "change", "blur"];
+  depends_on: [option_id, ...] — порядок после успешного заполнения родителей;
+  overwrite: "if_empty" (по умолчанию) / "always" / "never";
+  wait_for: ["visible", "enabled"], timeout_ms;
+  verify: {kind: value_equals / selected_text_equals / checked_equals / files_accepted}.
 
-Селекторы и проверки должны подтверждаться страницей. Несколько совпадений —
-неоднозначность, а не выбор первого. Для files одного input/change или preview
-недостаточно: нужно подтверждение принятия площадкой. Парсинг не публикует объявление.
+Расширение получает подготовленные значения по точному ключу option_id:
+результат mapping или отдельный ввод уникального поля. option_id с точкой —
+один ключ, не путь к объекту. Binding не хранит личные данные, value_from,
+default_value и бизнес-преобразования: подготовка значения относится к mapping.
+Применимость/ограничения читаются из Option.when/validation, без дублирования.
+Для неготовой записи исполняемые свойства можно опустить; она не выполняется.
 
-8. ПРИМЕРЫ
+Нативный select: target на select, action = select_option, match = value;
+варианты и их коды берутся из Option.options, а не дублируются в binding.
+Нестандартный список: target на открывающий элемент, action = choose или
+autocomplete; suggestions: {selector: CSS, match: "exact_text"} описывает
+область вариантов. Выбирается точное уникальное совпадение с choice.name.
+Для радио/чипов допустим choices: [{choice_id, target, action, verify}],
+ссылки ведут на дочерние choice; action = set_checked/click, не слепое переключение.
+Если этого недостаточно, описать непроверенный сценарий в reason, не объявлять ready.
 
-Сокращённая общая категория; ограничения отдельных сайтов здесь не подразумеваются:
+sequence содержит steps: [{target, action, ...}], каждый шаг — подтверждённое
+действие. У шага допускается when по правилам раздела 3. Итоговое verify поля
+обязательно; произвольные скрипты и финальная публикация в steps не допускаются.
+
+Селекторы перебираются по порядку: нет совпадений — следующий; несколько —
+неоднозначность, не первый элемент. Зависимости без циклов и отсутствующих id.
+После выбора родителя элементы ищутся заново. Files использует upload_files
+или ввод поддерживаемой ссылки; verify = files_accepted требует подтверждения
+площадкой, а не одного change/preview. Нельзя утверждать поддержку расширением
+непроверенного обработчика только по наличию корректного JSON.
+
+6. ПРИМЕРЫ (УСЛОВНАЯ ПЛОЩАДКА)
+
+Исходная категория. Подписи, коды и селектор ниже иллюстративные:
 
 [
   {
     "id": "cars",
     "name": "Легковые автомобили",
-    "description": "Общие поля категории",
+    "description": "Пример исходной схемы площадки",
     "categories": [],
     "options": [
       {
-        "id": "car.condition",
+        "id": "vehicle_condition",
         "name": "Состояние",
-        "description": "Состояние автомобиля",
-        "type": "text",
-        "fill_rule": {"value_from": "listing.condition"},
-        "options": []
+        "description": "Варианты выпадающего списка",
+        "type": "enum",
+        "options_complete": true,
+        "options": [
+          {"id": "condition.new", "name": "Новый", "description": "", "type": "choice", "value": "new", "options": []},
+          {"id": "condition.used", "name": "С пробегом", "description": "", "type": "choice", "value": "used", "options": []}
+        ]
       },
       {
-        "id": "product.images",
-        "name": "Фотографии товара",
+        "id": "vehicle_images",
+        "name": "Фото товара",
         "description": "Фотографии в выбранном порядке",
         "type": "files",
-        "fill_rule": {
-          "value_from": "attachments.images",
-          "file_role": "product_image"
-        },
+        "file_role": "product_image",
         "options": []
       }
     ]
   }
 ]
 
-Иллюстративный маппинг. example, vehicle_condition, vehicle_images и коды 1/2
-условные; при реальном парсинге они должны существовать в источнике площадки:
+Binding для обоих полей; непроверенная загрузка явно отмечена:
+
+{
+  "category_id": "cars",
+  "platform": "example",
+  "fields": [
+    {
+      "option_id": "vehicle_condition",
+      "status": "ready",
+      "target": {"selectors": ["select[name='condition']"]},
+      "action": "select_option",
+      "match": "value",
+      "events": ["input", "change"],
+      "overwrite": "if_empty",
+      "wait_for": ["visible", "enabled"],
+      "timeout_ms": 5000,
+      "verify": {"kind": "value_equals"}
+    },
+    {
+      "option_id": "vehicle_images",
+      "status": "needs_review",
+      "reason": "Не проверены загрузчик и подтверждение принятия файлов"
+    }
+  ]
+}
+
+Пример mapping: car.condition и product.images должны существовать в common
+с типами text и files соответственно. В отличие от binding, он описывает значения:
 
 {
   "category_id": "cars",
@@ -222,18 +260,19 @@ CSS-селекторы и действия браузера не входят в
       "platform_option_id": "vehicle_condition",
       "conversion": {
         "kind": "lookup",
-        "values": [{"from": "Новый", "to": 1}, {"from": "С пробегом", "to": 2}],
+        "values": [{"from": "Новый", "to": "new"}, {"from": "С пробегом", "to": "used"}],
         "on_unmapped": "needs_review"
       }
     },
     {
       "common_option_id": "product.images",
       "platform_option_id": "vehicle_images",
-      "conversion": {
-        "kind": "files",
-        "preparation": {"operations": []},
-        "on_incompatible": "needs_review"
-      }
+      "conversion": {"kind": "files", "preparation": {"operations": []}, "on_incompatible": "needs_review"}
     }
   ]
 }
+
+Версия 2.0 меняет контракт. Старые схемы с fill_rule и массивы bindings_* не
+считаются автоматически совместимыми: при обновлении сохранять id/доказательства,
+переносить факты в Option, коды в choice.value, действия в новый binding-файл.
+Не превращать старый неполный результат в ready без проверки.

@@ -1,0 +1,16 @@
+{
+  "category_id": "apartments_long_term_rent",
+  "platform": "example",
+  "fields": [
+    {
+      "option_id": "rent",
+      "status": "needs_review",
+      "reason": "Synthetic fixture: no browser adapter asserted"
+    },
+    {
+      "option_id": "currency",
+      "status": "needs_review",
+      "reason": "Synthetic fixture: no browser adapter asserted"
+    }
+  ]
+}

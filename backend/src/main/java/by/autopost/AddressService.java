@@ -1,7 +1,8 @@
 package by.autopost;
 
-import static by.autopost.Json.*;
+import static by.autopost.shared.Json.*;
 
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import java.io.*;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 /** Suggestions require an explicit choice; an OSM identifier is never a marketplace identifier. */
 @Service
-class AddressService {
+public class AddressService {
   private final URI endpoint;
   private final String authorization;
   private final boolean relay;
@@ -43,9 +44,11 @@ class AddressService {
           || endpoint.getUserInfo() != null
           || endpoint.getQuery() != null
           || endpoint.getFragment() != null)
-        throw new IllegalArgumentException("DADATA_RELAY_URL must be an HTTPS endpoint without credentials, query or fragment");
+        throw new IllegalArgumentException(
+            "DADATA_RELAY_URL must be an HTTPS endpoint without credentials, query or fragment");
       if (relayToken.strip().length() < 32)
-        throw new IllegalArgumentException("DADATA_RELAY_TOKEN must contain at least 32 characters");
+        throw new IllegalArgumentException(
+            "DADATA_RELAY_TOKEN must contain at least 32 characters");
       authorization = "Bearer " + relayToken.strip();
     } else {
       endpoint = URI.create("https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address");
@@ -53,7 +56,7 @@ class AddressService {
     }
   }
 
-  boolean configured() {
+  public boolean configured() {
     return !authorization.isEmpty();
   }
 
@@ -142,12 +145,12 @@ class AddressService {
         .build();
   }
 
-  synchronized ObjectNode suggest(String workspace, String query) {
+  public synchronized ObjectNode suggest(String workspace, String query) {
     query = query.strip();
     if (query.length() < 3 || query.length() > 300)
       throw new ApiException(400, "Введите от 3 до 300 символов адреса.");
     prune();
-    String queryKey = "q:" + workspace + ":" + PreparationEngine.normalized(query);
+    String queryKey = "q:" + workspace + ":" + by.autopost.shared.Text.normalized(query);
     Entry hit = cache.get(queryKey);
     if (hit != null) return (ObjectNode) hit.suggestion.deepCopy();
     budget(workspace);
@@ -164,7 +167,7 @@ class AddressService {
     return result;
   }
 
-  synchronized ObjectNode select(String workspace, String id) {
+  public synchronized ObjectNode select(String workspace, String id) {
     prune();
     Entry selected = cache.get(id);
     if (selected == null || !selected.workspace.equals(workspace) || id.startsWith("q:"))
@@ -186,8 +189,8 @@ class AddressService {
     for (String part : List.of("city", "settlement", "street", "house", "block")) {
       String previous = text(old.path("data"), part);
       if (!previous.isEmpty()
-          && !PreparationEngine.normalized(previous)
-              .equals(PreparationEngine.normalized(text(next.path("data"), part))))
+          && !by.autopost.shared.Text.normalized(previous)
+              .equals(by.autopost.shared.Text.normalized(text(next.path("data"), part))))
         throw new ApiException(409, "Сервис уточнил адрес иначе. Найдите нужный дом ещё раз.");
     }
     ObjectNode address = normalize(next);

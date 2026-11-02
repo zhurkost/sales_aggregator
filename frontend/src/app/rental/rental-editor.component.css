@@ -26,11 +26,6 @@ button:disabled { opacity:.55; cursor:default; }
 .rental-actions { position:sticky; bottom:0; display:flex; align-items:center; justify-content:space-between; gap:12px; background:#f6f8fcef; backdrop-filter:blur(12px); padding:14px 0; margin-top:10px; }
 .rental-actions>span,.drawer-footer>span { font-size:12px; color:#64748b; }
 .error-banner { color:#a33e29; background:#fff1eb; padding:14px; border-radius:10px; margin-bottom:14px; }
-.ai-conflicts { background:#f5f3ff; padding:14px; margin-top:14px; border-radius:9px; }
-.conflict { display:flex; align-items:center; gap:10px; font-size:13px; padding-top:10px; }
-.conflict>span { flex:1; min-width:0; overflow-wrap:anywhere; }
-.conflict s { color:#7b8091; }
-.ai-questions { margin:14px 0 0; padding-left:18px; color:#665da2; font-size:13px; }
 .legacy-section,.results { margin-top:20px; border:1px solid #e0e6ef; padding:20px; border-radius:12px; background:white; }
 .legacy-item { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:15px 0; border-bottom:1px solid #edf0f5; }
 .legacy-item>div { flex:1; }
@@ -52,11 +47,6 @@ button:disabled { opacity:.55; cursor:default; }
 .parameter-group { padding:22px 0; border-bottom:1px solid #e5eaf2; }
 .parameter-group h3,.prepared-platform h3 { margin:0 0 16px; font-size:15px; }
 .drawer-footer { padding:15px 26px; border-top:1px solid #e5eaf2; background:#f9fafc; }
-.saved-row { display:flex; gap:12px; align-items:center; border-bottom:1px solid #e5eaf2; padding:15px 0; }
-.saved-item { flex:1; min-width:0; overflow-wrap:anywhere; text-align:left; border:0; background:transparent; color:#2b4f8c; padding:6px 0; }
-.delete-item { border:0; background:#fff3f0; color:#aa4231; border-radius:7px; padding:8px 10px; font-size:12px; }
-.delete-confirmation { padding:14px; background:#fff3f0; border-radius:8px; font-size:14px; }
-.delete-actions { display:flex; gap:10px; justify-content:flex-end; }
 .prepared-platform { padding-top:24px; }
 .prepared-platform dl { display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; font-size:13px; }
 .prepared-platform dd { margin:0; overflow-wrap:anywhere; white-space:pre-wrap; }

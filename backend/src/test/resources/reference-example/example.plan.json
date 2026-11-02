@@ -1,0 +1,34 @@
+{
+  "category_id": "apartments_long_term_rent",
+  "runtime_version": "1.0",
+  "platform": "example",
+  "common_hash": "6462e96ae227701c5f265526284fa3adc294c82e169bf503524d374b673de00a",
+  "schema_hash": "2ef16d84fa57609cc2cba7a5a59178a1563a7b48048bdbcd980b97d348a19bfe",
+  "fields": [
+    {
+      "common_option_id": "rental.price",
+      "platform_option_id": "rent",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "to": "01",
+            "from": "BYN"
+          },
+          {
+            "to": 2,
+            "from": "USD"
+          }
+        ]
+      }
+    }
+  ]
+}

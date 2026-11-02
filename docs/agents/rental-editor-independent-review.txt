@@ -103,9 +103,10 @@ Domovita и позволяет подключать следующие площ�
   docs/rental-preparation.txt;
   frontend/src/app/rental/rental-editor.component.{ts,html,css};
   frontend/src/app/rental/address-input.component.ts и rental-api.ts;
-  backend/src/main/java/by/autopost/RentalCatalog.java;
-  backend/src/main/java/by/autopost/PreparationEngine.java;
-  backend/src/main/java/by/autopost/AddressService.java и RentalController.java;
+  backend/src/main/java/by/autopost/rental/application/RentalCatalog.java;
+  backend/src/main/java/by/autopost/rental/preparation/PreparationEngine.java;
+  backend/src/main/java/by/autopost/AddressService.java и rental/web/RentalController.java;
+  docs/rental-architecture.md — границы модулей и контрактов;
   приватные common, схемы площадок, mapping, integration-audit и runtime-планы.
 Проверь также тесты, а не только наличие файлов с названиями «mapping».
 

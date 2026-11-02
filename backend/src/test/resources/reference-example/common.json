@@ -1,0 +1,32 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Example rental",
+    "description": "Synthetic",
+    "categories": [],
+    "options": [
+      {
+        "id": "group.main",
+        "name": "group.main",
+        "description": "Synthetic example, not marketplace data",
+        "type": "group",
+        "options": [
+          {
+            "id": "rental.price",
+            "name": "rental.price",
+            "description": "Synthetic example, not marketplace data",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "rental.currency",
+            "name": "rental.currency",
+            "description": "Synthetic example, not marketplace data",
+            "type": "text",
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]

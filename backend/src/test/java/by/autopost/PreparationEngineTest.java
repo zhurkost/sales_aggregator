@@ -1,8 +1,14 @@
 package by.autopost;
 
-import static by.autopost.Json.*;
+import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import by.autopost.rental.application.RentalCatalog;
+import by.autopost.rental.card.*;
+import by.autopost.rental.catalog.*;
+import by.autopost.rental.model.*;
+import by.autopost.rental.preparation.*;
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import java.math.BigDecimal;
@@ -10,21 +16,58 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 
 class PreparationEngineTest {
-  @Test void suppliedButUnmappableRequiredValueDoesNotAskForTheSameFactAgain() {
+  @Test
+  void suppliedButUnmappableRequiredValueDoesNotAskForTheSameFactAgain() {
     var schema = schema(option("currency", "enum", object("required", true), choice("USD")));
-    var result = run(schema, plan(row("rental.currency", "currency", object("kind", "lookup", "values", List.of(object("from", "USD", "to", "USD"))))), object("rental.currency", "BYN"), object());
+    var result =
+        run(
+            schema,
+            plan(
+                row(
+                    "rental.currency",
+                    "currency",
+                    object(
+                        "kind", "lookup", "values", List.of(object("from", "USD", "to", "USD"))))),
+            object("rental.currency", "BYN"),
+            object());
     assertEquals(1, result.path("issues").size());
     assertEquals("conversion", result.path("issues").get(0).path("code").asText());
   }
-  @Test void invalidNumberInInactiveBranchDoesNotBlockPreparation() {
-    var schema = schema(option("rooms", "integer", object()), option("separate", "integer", object("when", object("option_id", "rooms", "operator", "gt", "value", 1))));
+
+  @Test
+  void invalidNumberInInactiveBranchDoesNotBlockPreparation() {
+    var schema =
+        schema(
+            option("rooms", "integer", object()),
+            option(
+                "separate",
+                "integer",
+                object("when", object("option_id", "rooms", "operator", "gt", "value", 1))));
     var result = run(schema, plan(), object(), object("rooms", 1, "separate", "1.5"));
     assertTrue(result.path("issues").isEmpty());
     assertFalse(result.path("values").has("separate"));
   }
-  @Test void explicitNoInCheckboxMappingMeansOmitTheCodeAndNeverNull() {
+
+  @Test
+  void explicitNoInCheckboxMappingMeansOmitTheCodeAndNeverNull() {
     var schema = schema(option("items", "multi_enum", object(), choice("a")));
-    var plan = plan(row("", "items", object("kind", "multi_lookup", "members", List.of(object("common_option_id", "amenity.test", "values", List.of(object("from", true, "to", "a"), object("from", false, "to", null)))))));
+    var plan =
+        plan(
+            row(
+                "",
+                "items",
+                object(
+                    "kind",
+                    "multi_lookup",
+                    "members",
+                    List.of(
+                        object(
+                            "common_option_id",
+                            "amenity.test",
+                            "values",
+                            List.of(
+                                object("from", true, "to", "a"),
+                                object("from", false, "to", null)))))));
     var result = run(schema, plan, object("amenity.test", false), object());
     assertTrue(result.path("values").path("items").isArray());
     assertTrue(result.path("values").path("items").isEmpty());
@@ -35,17 +78,17 @@ class PreparationEngineTest {
   void changingANativePlanInvalidatesPreviouslyPreparedDrafts() {
     ObjectNode nativePlan = object("schema_hash", "original", "fields", List.of());
     RentalCatalog catalog =
-        new RentalCatalog("") {
-          @Override
-          JsonNode common() {
-            return array();
-          }
-
-          @Override
-          JsonNode plan(String platform) {
-            return nativePlan;
-          }
-        };
+        new RentalCatalog(
+            () ->
+                new ReferenceSnapshot(
+                    "apartments_long_term_rent",
+                    array(),
+                    object(),
+                    object(),
+                    Map.of(),
+                    Map.of("kufar", nativePlan),
+                    Map.of(),
+                    ReferenceSnapshot.fingerprint(array(), object(), Map.of("kufar", nativePlan))));
     String previous = catalog.version();
     nativePlan.put("schema_hash", "changed-codes");
     assertThrows(
@@ -82,30 +125,25 @@ class PreparationEngineTest {
   @Test
   void decimalsAreExactAndNeverRound() {
     assertEquals(
-        new BigDecimal("1234.56"),
-        PreparationEngine.decimal(TextNode.valueOf("1\u00a0234,56"), false));
-    assertEquals(new BigDecimal("0"), PreparationEngine.decimal(TextNode.valueOf("0"), true));
+        new BigDecimal("1234.56"), Values.decimal(TextNode.valueOf("1\u00a0234,56"), false));
+    assertEquals(new BigDecimal("0"), Values.decimal(TextNode.valueOf("0"), true));
     assertThrows(
-        IllegalArgumentException.class,
-        () -> PreparationEngine.decimal(TextNode.valueOf("1234.56"), true));
+        IllegalArgumentException.class, () -> Values.decimal(TextNode.valueOf("1234.56"), true));
     for (String invalid : List.of("1,234.5", "1e3", "45 м²", "5+", "12 34", "NaN"))
       assertThrows(
-          IllegalArgumentException.class,
-          () -> PreparationEngine.decimal(TextNode.valueOf(invalid), false));
+          IllegalArgumentException.class, () -> Values.decimal(TextNode.valueOf(invalid), false));
   }
 
   @Test
   void telephoneIsAStringAndPreservesNationalDigits() {
-    assertEquals(
-        "291234567",
-        PreparationEngine.phone(TextNode.valueOf("+375 (29) 123-45-67"), "BY_NATIONAL"));
-    assertEquals("+375291234567", PreparationEngine.phone(TextNode.valueOf("29 1234567"), "E164"));
+    assertEquals("291234567", Values.phone(TextNode.valueOf("+375 (29) 123-45-67"), "BY_NATIONAL"));
+    assertEquals("+375291234567", Values.phone(TextNode.valueOf("29 1234567"), "E164"));
     assertThrows(
         IllegalArgumentException.class,
-        () -> PreparationEngine.phone(TextNode.valueOf("+48123456789"), "BY_NATIONAL"));
+        () -> Values.phone(TextNode.valueOf("+48123456789"), "BY_NATIONAL"));
     assertThrows(
         IllegalArgumentException.class,
-        () -> PreparationEngine.phone(TextNode.valueOf("+375291234567 доб 01"), "E164"));
+        () -> Values.phone(TextNode.valueOf("+375291234567 доб 01"), "E164"));
   }
 
   @Test
@@ -134,9 +172,8 @@ class PreparationEngineTest {
   void unknownDoesNotTurnTrueThroughNegation() {
     JsonNode condition =
         object("not", object("option_id", "role", "operator", "equals", "value", false));
-    assertEquals(PreparationEngine.Truth.UNKNOWN, PreparationEngine.when(condition, object()));
-    assertEquals(
-        PreparationEngine.Truth.NO, PreparationEngine.when(condition, object("role", false)));
+    assertEquals(Conditions.Truth.UNKNOWN, Conditions.when(condition, object()));
+    assertEquals(Conditions.Truth.NO, Conditions.when(condition, object("role", false)));
   }
 
   @Test
@@ -315,8 +352,8 @@ class PreparationEngineTest {
   @Test
   void readonlyNumericWhenDoesNotCompareTextLexically() {
     assertEquals(
-        PreparationEngine.Truth.UNKNOWN,
-        PreparationEngine.when(
+        Conditions.Truth.UNKNOWN,
+        Conditions.when(
             object("option_id", "floor", "operator", "gt", "value", 3), object("floor", "10")));
   }
 
@@ -328,10 +365,10 @@ class PreparationEngineTest {
             "text",
             object("validation", object("pattern", "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")));
     assertDoesNotThrow(
-        () -> PreparationEngine.validateValue(field, TextNode.valueOf("a.b-c@example.test")));
+        () -> FieldValidation.validateValue(field, TextNode.valueOf("a.b-c@example.test")));
     assertThrows(
         IllegalArgumentException.class,
-        () -> PreparationEngine.validateValue(field, TextNode.valueOf("a@example.invalid")));
+        () -> FieldValidation.validateValue(field, TextNode.valueOf("a@example.invalid")));
   }
 
   @Test
@@ -369,7 +406,7 @@ class PreparationEngineTest {
             "group",
             object("when", object("option_id", "owner", "operator", "equals", "value", false)),
             field);
-    var fields = RentalCatalog.editorFields(schema(group));
+    var fields = EditorSchemaBuilder.editorFields(schema(group));
     assertEquals("owner", fields.get("name").path("uiWhen").path("option_id").asText());
     assertFalse(field.has("uiWhen"));
   }

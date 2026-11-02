@@ -1,9 +1,13 @@
 package by.autopost;
 
-import static by.autopost.Json.*;
+import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+import by.autopost.rental.card.*;
+import by.autopost.rental.catalog.*;
+import by.autopost.rental.model.*;
+import by.autopost.rental.preparation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import java.nio.file.*;
@@ -19,28 +23,49 @@ import org.springframework.test.web.servlet.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 class WorkspaceIntegrationTest {
-  @Test void rentalDraftsArePrivateAndUseOptimisticRevision() throws Exception {
-    var owner=register();var other=register();String id=UUID.randomUUID().toString();
-    var draft=object("schemaVersion","example","values",object("listing.title","My apartment"),"platforms",List.of("kufar"),"extras",object());
-    postJson("rental/drafts/"+id,owner.cookie(),object("revision",0,"draft",draft),200);
-    assertEquals(1,getJson("rental/drafts",owner.cookie(),200).path("drafts").size());
-    assertTrue(getJson("rental/drafts",other.cookie(),200).path("drafts").isEmpty());
-    getJson("rental/drafts/"+id,other.cookie(),404);
-    postJson("rental/drafts/"+id,owner.cookie(),object("revision",0,"draft",draft),409);
-    assertEquals("My apartment",getJson("rental/drafts/"+id,owner.cookie(),200).path("draft").path("values").path("listing.title").asText());
-    postJson("rental/drafts/"+id,owner.cookie(),object("revision",1,"draft",draft),200);
-    assertEquals(2,getJson("rental/drafts/"+id,owner.cookie(),200).path("revision").asInt());
+  @Test
+  void rentalDraftsArePrivateAndUseOptimisticRevision() throws Exception {
+    var owner = register();
+    var other = register();
+    String id = UUID.randomUUID().toString();
+    var draft =
+        object(
+            "schemaVersion",
+            "example",
+            "values",
+            object("listing.title", "My apartment"),
+            "platforms",
+            List.of("kufar"),
+            "extras",
+            object());
+    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 0, "draft", draft), 200);
+    assertEquals(1, getJson("rental/drafts", owner.cookie(), 200).path("drafts").size());
+    assertTrue(getJson("rental/drafts", other.cookie(), 200).path("drafts").isEmpty());
+    getJson("rental/drafts/" + id, other.cookie(), 404);
+    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 0, "draft", draft), 409);
+    assertEquals(
+        "My apartment",
+        getJson("rental/drafts/" + id, owner.cookie(), 200)
+            .path("draft")
+            .path("values")
+            .path("listing.title")
+            .asText());
+    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 1, "draft", draft), 200);
+    assertEquals(2, getJson("rental/drafts/" + id, owner.cookie(), 200).path("revision").asInt());
   }
 
-  @Test void rentalEndpointsRequireAuthenticationAndNeverExposeProviderKey() throws Exception {
-    getJson("rental/editor","",401);getJson("rental/drafts","",401);
-    postJson("rental/address/suggest","",object("query","Минск"),401);
-    postJson("rental/prepare","",object(),401);
-    postJson("rental/analyze","",object("text","Сдам квартиру"),401);
-    var account=register();
-    assertFalse(getJson("rental/editor",account.cookie(),503).toString().contains("DADATA_API_KEY"));
-    postJson("rental/address/suggest",account.cookie(),object("query","М"),400);
-    postJson("rental/analyze",account.cookie(),object("text","М"),400);
+  @Test
+  void rentalEndpointsRequireAuthenticationAndNeverExposeProviderKey() throws Exception {
+    getJson("rental/editor", "", 401);
+    getJson("rental/drafts", "", 401);
+    postJson("rental/address/suggest", "", object("query", "Минск"), 401);
+    postJson("rental/prepare", "", object(), 401);
+    postJson("rental/analyze", "", object("text", "Сдам квартиру"), 401);
+    var account = register();
+    assertFalse(
+        getJson("rental/editor", account.cookie(), 503).toString().contains("DADATA_API_KEY"));
+    postJson("rental/address/suggest", account.cookie(), object("query", "М"), 400);
+    postJson("rental/analyze", account.cookie(), object("text", "М"), 400);
   }
 
   @Test
@@ -55,9 +80,14 @@ class WorkspaceIntegrationTest {
     postJson(path + "/delete", "", object("revision", 1), 401);
     postJson(path + "/delete", other.cookie(), object("revision", 1), 404);
     postJson(path + "/delete", owner.cookie(), object(), 400);
-    var cross = mvc.perform(post("/api/workspace/" + path + "/delete")
-        .header("Origin", "https://evil.example").header("Cookie", owner.cookie())
-        .contentType("application/json").content("{\"revision\":1}")).andReturn();
+    var cross =
+        mvc.perform(
+                post("/api/workspace/" + path + "/delete")
+                    .header("Origin", "https://evil.example")
+                    .header("Cookie", owner.cookie())
+                    .contentType("application/json")
+                    .content("{\"revision\":1}"))
+            .andReturn();
     assertEquals(403, cross.getResponse().getStatus());
     postJson(path, owner.cookie(), object("revision", 1, "draft", draft), 200);
     postJson(path + "/delete", owner.cookie(), object("revision", 1), 409);
@@ -73,6 +103,7 @@ class WorkspaceIntegrationTest {
     postJson(path, owner.cookie(), object("revision", 2, "draft", draft), 409);
     getJson(path, owner.cookie(), 404);
   }
+
   static final Path DATA;
 
   static {

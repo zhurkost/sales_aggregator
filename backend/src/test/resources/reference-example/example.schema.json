@@ -1,0 +1,47 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Example rental",
+    "description": "Synthetic",
+    "categories": [],
+    "options": [
+      {
+        "id": "rent",
+        "name": "rent",
+        "description": "Synthetic example, not marketplace data",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 0
+        }
+      },
+      {
+        "id": "currency",
+        "name": "currency",
+        "description": "Synthetic example, not marketplace data",
+        "type": "enum",
+        "options": [
+          {
+            "id": "currency.byn",
+            "name": "currency.byn",
+            "description": "Synthetic example, not marketplace data",
+            "type": "choice",
+            "options": [],
+            "value": "01"
+          },
+          {
+            "id": "currency.usd",
+            "name": "currency.usd",
+            "description": "Synthetic example, not marketplace data",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      }
+    ]
+  }
+]

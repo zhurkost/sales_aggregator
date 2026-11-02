@@ -1,8 +1,13 @@
 package by.autopost;
 
-import static by.autopost.Json.*;
+import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import by.autopost.rental.card.*;
+import by.autopost.rental.catalog.*;
+import by.autopost.rental.model.*;
+import by.autopost.rental.preparation.*;
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import java.util.*;
@@ -112,14 +117,24 @@ class AddressServiceTest {
     var withKey = new AddressService("provider-secret", "https://relay.example/suggest", token);
     assertFalse(withKey.buildRequest("Минск", 1).headers().toString().contains("provider-secret"));
     var direct = new AddressService("provider-secret", "", "");
-    assertEquals("Token provider-secret", direct.buildRequest("Минск", 1).headers().firstValue("Authorization").orElseThrow());
+    assertEquals(
+        "Token provider-secret",
+        direct.buildRequest("Минск", 1).headers().firstValue("Authorization").orElseThrow());
   }
 
   @Test
   void invalidRelayConfigurationFailsClosed() {
-    for (String url : List.of("http://relay.example/suggest", "https://user:pass@relay.example/suggest", "https://relay.example/suggest?key=value", "https://relay.example/suggest#key"))
-      assertThrows(IllegalArgumentException.class, () -> new AddressService("key", url, "x".repeat(48)));
-    assertThrows(IllegalArgumentException.class, () -> new AddressService("key", "https://relay.example/suggest", "short"));
+    for (String url :
+        List.of(
+            "http://relay.example/suggest",
+            "https://user:pass@relay.example/suggest",
+            "https://relay.example/suggest?key=value",
+            "https://relay.example/suggest#key"))
+      assertThrows(
+          IllegalArgumentException.class, () -> new AddressService("key", url, "x".repeat(48)));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> new AddressService("key", "https://relay.example/suggest", "short"));
     assertFalse(new AddressService("", "", "").configured());
   }
 }
