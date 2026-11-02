@@ -1,0 +1,18 @@
+:host { display:block; }
+.fields-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px 20px; }
+.field { min-width:0; display:flex; flex-direction:column; gap:7px; }
+.field > label { display:block; color:#43536a; font-size:13px; font-weight:550; }
+:host(.main-fields) .fields-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+:host(.main-fields) .price { grid-column:span 2; }
+.wide { grid-column:1/-1; }
+input,select,textarea { width:100%; min-width:0; box-sizing:border-box; border:1px solid #d9e0eb; border-radius:9px; background:white; color:#192c46; padding:10px 12px; font:inherit; font-size:14px; }
+textarea { resize:vertical; }
+.toggle,.choices { display:flex; gap:6px; flex-wrap:wrap; }
+.toggle button { border:1px solid #d9e0eb; border-radius:8px; padding:9px 16px; background:white; }
+.toggle button[aria-pressed=true] { border-color:#7d95dc; background:#edf2ff; color:#2848a7; }
+.choices label { display:flex; flex-direction:row; align-items:center; gap:7px; border:1px solid #d9e0eb; padding:8px 10px; border-radius:8px; font-size:13px; }
+.choices input { width:auto; }
+.ai-mark { color:#6552c5; cursor:help; margin-left:5px; }
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible { outline:3px solid #9ab4ff; outline-offset:2px; }
+@media(max-width:600px) { .fields-grid { grid-template-columns:1fr; gap:16px; } }
+@media(max-width:1100px) { :host(.main-fields) .fields-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }

@@ -8,6 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AddressInputComponent } from "./address-input.component";
+import { RentalFieldsComponent } from "./rental-fields.component";
 import { applicable } from "./conditions";
 import {
   Address,
@@ -16,13 +17,14 @@ import {
   JsonValue,
   Prepared,
   RentalDraft,
+  RentalAiResult,
   rentalApi,
 } from "./rental-api";
 
 @Component({
   selector: "app-rental-editor",
   standalone: true,
-  imports: [FormsModule, CommonModule, AddressInputComponent],
+  imports: [FormsModule, CommonModule, AddressInputComponent, RentalFieldsComponent],
   templateUrl: "./rental-editor.component.html",
   styleUrl: "./rental-editor.component.css",
 })
@@ -47,6 +49,17 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   drafts: { id: string; title: string; address: string; revision: number }[] =
     [];
   results: Prepared[] = [];
+  panel: "parameters" | "saved" | "result" | null = null;
+  parameterSearch = "";
+  filledOnly = false;
+  aiBusy = false;
+  aiMessage = "";
+  aiQuestions: string[] = [];
+  aiConflicts: RentalAiResult["suggestions"] = [];
+  aiAddress: Address | null = null;
+  private aiAddressFacts: RentalAiResult["suggestions"] = [];
+  private panelTrigger: HTMLElement | null = null;
+  private focusTimer?: ReturnType<typeof setTimeout>;
   private timer?: ReturnType<typeof setTimeout>;
   private queue: Promise<void> = Promise.resolve();
   private editVersion = 0;
@@ -85,6 +98,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   }
   setValue(field: Field, value: string) {
     if (this.busy) return;
+    delete this.draft.aiEvidence?.[field.id];
     this.draft.values[field.id] =
       field.type === "files"
         ? value
@@ -104,13 +118,19 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   label(value: string) { return this.schema?.card?.valueLabels?.[value] || value; }
   addressChanged(address: Address | null) {
     if (this.busy) return;
+    this.replaceAddress(address);
+    this.aiAddress = null; this.aiAddressFacts = [];
+    const dependent = this.schema?.card?.addressDependentFacts || [];
+    this.aiConflicts = this.aiConflicts.filter(item => !dependent.includes(item.field));
+    this.changed();
+  }
+  private replaceAddress(address: Address | null) {
     this.draft.address = address;
     for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
       delete this.draft.values[key];
-    for (const key of this.schema?.card?.addressDependentFacts || []) delete this.draft.values[key];
+    for (const key of this.schema?.card?.addressDependentFacts || []) { delete this.draft.values[key]; delete this.draft.aiEvidence?.[key]; }
     for (const p of this.platforms)
       for (const key of this.schema?.platforms[p].addressBoundFields || []) delete this.draft.extras[p]?.[key];
-    this.changed();
   }
   platformName(p: string) { return this.schema?.platforms[p]?.name || p; }
   groupFields(group: Field) {
@@ -121,6 +141,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   }
   setTyped(field: Field, value: JsonValue) {
     if (this.busy) return;
+    delete this.draft.aiEvidence?.[field.id];
     this.draft.values[field.id] = value;
     this.changed();
   }
@@ -167,18 +188,120 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
       await this.flush();
       const schema = await rentalApi<EditorSchema>(this.workspaceId, "editor");
       const migrated = await rentalApi<RentalDraft>(this.workspaceId, "normalize", this.draft);
-      this.schema = schema; this.draft = migrated; this.changed(); this.error = ""; await this.save();
+      this.schema = schema; this.draft = migrated; this.clearAi(); this.changed(); this.error = ""; await this.save();
       this.status = "Поля обновлены. Сведения сохранены";
     } catch (e) { this.error = (e as Error).message; } finally { this.busy = false; }
   }
   focusField(id: string) {
-    const el = document.getElementById("rental-" + id);
-    if (!el) return;
-    if (el instanceof HTMLDetailsElement) el.open = true;
-    let parent = el.parentElement;
-    while (parent) { if (parent instanceof HTMLDetailsElement) parent.open = true; parent = parent.parentElement; }
-    el.scrollIntoView({behavior: "smooth", block: "center"}); el.focus();
+    const basic = id === "address" || id === "legacy" || this.mainFields.some(f => f.id === id) || id === "listing.description";
+    if (!basic) { this.openPanel("parameters"); this.parameterSearch = ""; this.filledOnly = false; }
+    else this.closePanel(false);
+    clearTimeout(this.focusTimer);
+    this.focusTimer = setTimeout(() => {
+      const el = document.getElementById("rental-" + id);
+      el?.scrollIntoView({behavior: "smooth", block: "center"});
+      (el?.querySelector<HTMLElement>("button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled])") || el)?.focus();
+    }, 0);
   }
+  get mainFields() {
+    const main = this.schema?.category.options.find(g => g.id === "group.main");
+    return main ? this.groupFields(main) : [];
+  }
+  get additionalGroups() {
+    const query = this.parameterSearch.trim().toLocaleLowerCase();
+    return (this.schema?.category.options || []).filter(g => g.id !== "group.main").map(g => ({...g, options:this.groupFields(g).filter(f =>
+      f.id !== "listing.description" && (!this.filledOnly || this.hasValue(this.draft.values[f.id])) &&
+      (!query || (g.name + " " + f.name + " " + this.valueLabel(f.id, this.draft.values[f.id])).toLocaleLowerCase().includes(query))
+    )})).filter(g => g.options.length);
+  }
+  get additionalFilled() {
+    return (this.schema?.category.options || []).filter(g => g.id !== "group.main").flatMap(g => this.groupFields(g))
+      .filter(f => f.id !== "listing.description" && this.hasValue(this.draft.values[f.id]));
+  }
+  get description() { return String(this.draft.values["listing.description"] || ""); }
+  setDescription(value: string) {
+    if (this.busy) return;
+    this.draft.values["listing.description"] = value;
+    this.clearAi();
+    this.changed();
+  }
+  hasValue(value: JsonValue | undefined) { return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0); }
+  fieldName(id: string) { return this.schema?.category.options.flatMap(g => g.options).find(f => f.id === id)?.name || id; }
+  valueLabel(id: string, value: JsonValue | undefined) {
+    if (value === true) return "Да"; if (value === false) return "Нет";
+    if (Array.isArray(value)) return value.map(v => this.label(String(v))).join(", ");
+    return this.label(String(value ?? ""));
+  }
+  editField(event: {field: Field; value: JsonValue}) { this.setTyped(event.field, event.value); }
+  openPanel(panel: NonNullable<RentalEditorComponent["panel"]>) {
+    this.panelTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    this.panel = panel;
+    clearTimeout(this.focusTimer);
+    this.focusTimer = setTimeout(() => document.getElementById("rental-panel-title")?.focus(), 0);
+  }
+  closePanel(restoreFocus = true) {
+    this.panel = null; this.pendingDelete = null;
+    clearTimeout(this.focusTimer);
+    const trigger = this.panelTrigger;
+    if (restoreFocus) this.focusTimer = setTimeout(() => trigger?.focus(), 0);
+  }
+  panelKeys(event: KeyboardEvent) {
+    if (event.key === "Escape") { event.preventDefault(); this.closePanel(); }
+    if (event.key !== "Tab") return;
+    const controls = Array.from(document.querySelectorAll<HTMLElement>(".rental-drawer button:not([disabled]),.rental-drawer input:not([disabled]),.rental-drawer select:not([disabled]),.rental-drawer textarea:not([disabled]),.rental-drawer [tabindex='0']"));
+    if (!controls.length) { event.preventDefault(); return; }
+    const first = controls[0], last = controls[controls.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+    const outside = !active || !active.closest(".rental-drawer");
+    if (event.shiftKey && (active === first || outside)) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && (active === last || outside)) { event.preventDefault(); first.focus(); }
+  }
+  async fillFromDescription() {
+    if (this.busy || this.description.trim().length < 10 || !this.schema) return;
+    this.busy = true; this.aiBusy = true; this.error = ""; this.aiMessage = "";
+    this.aiConflicts = []; this.aiAddress = null; this.aiAddressFacts = []; this.aiQuestions = [];
+    const id = this.id, version = this.editVersion, schemaVersion = this.schema.version;
+    try {
+      await this.flush();
+      const result = await rentalApi<RentalAiResult>(this.workspaceId, "analyze", {text:this.description, schemaVersion});
+      if (this.destroyed || this.id !== id || this.editVersion !== version || this.schema.version !== result.schemaVersion) return;
+      let count = 0;
+      if (result.address && !this.draft.address?.label) { this.replaceAddress(result.address); count++; }
+      else if (result.address && result.address.label !== this.draft.address?.label) this.aiAddress = result.address;
+      const fields = this.schema.category.options.flatMap(g => g.options);
+      for (const item of result.suggestions) {
+        if (!fields.some(f => f.id === item.field)) continue;
+        if (this.aiAddress && this.schema.card?.addressDependentFacts.includes(item.field)) { this.aiAddressFacts.push(item); continue; }
+        const existing = this.draft.values[item.field];
+        if (!this.hasValue(existing)) {
+          this.draft.values[item.field] = item.value;
+          (this.draft.aiEvidence ||= {})[item.field] = item.quote; count++;
+        } else if (JSON.stringify(existing) !== JSON.stringify(item.value)) this.aiConflicts.push(item);
+      }
+      this.aiQuestions = result.questions;
+      this.aiMessage = count ? `Заполнено: ${count}. Проверьте карточку.` : this.aiConflicts.length || this.aiAddress ? "Есть отличия от заполненной карточки." : "Новых сведений не найдено.";
+      if (count) { this.changed(); await this.flush(); }
+    } catch (e) { this.error = (e as Error).message; }
+    finally { this.busy = false; this.aiBusy = false; }
+  }
+  acceptAiField(index: number) {
+    if (this.busy) return;
+    const item = this.aiConflicts[index]; if (!item) return;
+    this.draft.values[item.field] = item.value;
+    (this.draft.aiEvidence ||= {})[item.field] = item.quote;
+    this.aiConflicts.splice(index, 1); this.changed();
+  }
+  acceptAiAddress() {
+    if (this.busy || !this.aiAddress) return;
+    const facts = this.aiAddressFacts;
+    this.addressChanged(this.aiAddress);
+    for (const item of facts) {
+      this.draft.values[item.field] = item.value;
+      (this.draft.aiEvidence ||= {})[item.field] = item.quote;
+    }
+    this.changed();
+  }
+  private clearAi() { this.aiConflicts = []; this.aiAddress = null; this.aiAddressFacts = []; this.aiMessage = ""; this.aiQuestions = []; }
   legacyLabel(item: NonNullable<RentalDraft["legacy"]>[number]) {
     return this.schema?.category.options.flatMap(g => g.options).find(f => f.id === item.source)?.name ||
       this.schema?.platforms[item.platform]?.labels[item.field] || "Сохранённое значение";
@@ -344,6 +467,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
       this.id = result.id;
       this.revision = result.revision;
       this.draft = result.draft;
+      this.clearAi(); this.closePanel(false);
       this.results = [];
       this.dirty = false;
       this.status = "Карточка открыта";
@@ -371,6 +495,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     }
   }
   private resetDraft() {
+    this.clearAi(); this.closePanel(false);
     clearTimeout(this.timer);
     this.editVersion++;
     this.id = crypto.randomUUID();
@@ -474,6 +599,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroyed = true;
     clearTimeout(this.timer);
+    clearTimeout(this.focusTimer);
 
   }
 }

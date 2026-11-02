@@ -13,14 +13,18 @@ import { Address, rentalApi } from "./rental-api";
   standalone: true,
   imports: [FormsModule],
   template: `
+    @if (compact) {
+      <div class="compact-heading"><label for="rental-address">Адрес</label><button type="button" [disabled]="disabled" (click)="manual = !manual">{{ manual ? 'Найти адрес' : 'Ввести вручную' }}</button></div>
+    } @else {
     <div class="address-mode">
       <button type="button" [disabled]="disabled" (click)="manual = false" [attr.aria-pressed]="!manual">Найти адрес</button>
       <button type="button" [disabled]="disabled" (click)="manual = true" [attr.aria-pressed]="manual">Ввести вручную</button>
     </div>
+    }
     @if (!manual) {
-      <label class="full-label">Адрес квартиры
+      <label class="full-label" [class.compact-input]="compact">@if (!compact) { Адрес квартиры }
         <input id="rental-address" aria-label="Поиск адреса квартиры" [disabled]="disabled" [ngModel]="query"
-          (ngModelChange)="search($event)" autocomplete="off" maxlength="300" placeholder="Город, улица, дом" />
+          (ngModelChange)="search($event)" (focus)="suggestCurrent()" autocomplete="off" maxlength="300" placeholder="Город, улица, дом" />
       </label>
       @if (busy) { <p role="status">Ищем адрес…</p> }
       @if (error) { <p role="status">{{ error }}</p> }
@@ -31,9 +35,9 @@ import { Address, rentalApi } from "./rental-api";
           }
         </ul>
       }
-      @if (selected?.confirmed) {
+      @if (selected?.confirmed && !compact) {
         <p class="address-confirmation">Выбран: <strong>{{ selected?.label }}</strong></p>
-      } @else if (query) {
+      } @else if (query && !compact) {
         <p class="fine-print">Текст сохранён. Выберите подсказку или уточните части адреса вручную.</p>
       }
     } @else {
@@ -44,13 +48,18 @@ import { Address, rentalApi } from "./rental-api";
           </label>
         }
       </div>
-      @if (selected?.label) { <p class="fine-print">{{ selected?.label }}</p> }
+      @if (selected?.label && !compact) { <p class="fine-print">{{ selected?.label }}</p> }
     }
-    <p class="fine-print">Один адрес для всех площадок. Поиск: DaData · OpenStreetMap. Если дома нет в подсказках, используйте ручной ввод.</p>
+    @if (!compact) { <p class="fine-print">Один адрес для всех площадок. Поиск: DaData · OpenStreetMap. Если дома нет в подсказках, используйте ручной ввод.</p> }
   `,
   styles: [
     `
       .address-mode { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+      .compact-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px; font-size:13px; color:#43536a; }
+      .compact-heading label { font-weight:550; }
+      .compact-heading button { border:0; background:transparent; color:#3658ba; padding:0; font-size:12px; }
+      .compact-input { margin:0; }
+      .manual-grid .full-label { margin:0; font-size:13px; }
       .address-mode button { background:#f2f5fa; border:1px solid #d9dfeb; padding:8px 12px; border-radius:8px; color:#304a6c; }
       .address-mode button[aria-pressed=true] { background:#e8efff; border-color:#8da6ee; }
       input { width:100%; border:1px solid #d9dfeb; border-radius:8px; padding:12px; box-sizing:border-box; }
@@ -85,6 +94,7 @@ import { Address, rentalApi } from "./rental-api";
 })
 export class AddressInputComponent implements OnDestroy {
   @Input({ required: true }) workspaceId = "";
+  @Input() compact = false;
   @Input() set draftId(id: string) {
     if (id === this.currentDraft) return;
     this.currentDraft = id;
@@ -149,6 +159,11 @@ export class AddressInputComponent implements OnDestroy {
     this.busy = false;
     if (value.trim().length < 3) return;
     this.timer = setTimeout(() => void this.load(value, generation), 400);
+  }
+  suggestCurrent() {
+    if (this.disabled || this.selected?.confirmed || this.query.trim().length < 3 || this.suggestions.length || this.busy) return;
+    clearTimeout(this.timer);
+    void this.load(this.query, ++this.generation);
   }
   async load(query: string, generation: number) {
     this.busy = true;

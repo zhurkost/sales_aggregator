@@ -128,6 +128,9 @@ describe("rental preparation editor", () => {
       fixture.detectChanges();
       await vi.waitFor(() => {
         fixture.detectChanges();
+        expect(fixture.componentInstance.schema).not.toBeNull();
+        fixture.componentInstance.openPanel("saved");
+        fixture.detectChanges();
         expect(element.querySelector(".saved-row .delete-item")).not.toBeNull();
       });
       const remove = element.querySelector<HTMLButtonElement>(".saved-row .delete-item")!;
@@ -146,7 +149,7 @@ describe("rental preparation editor", () => {
         fixture.detectChanges();
         expect(element.querySelector(".rental-saved")).toBeNull();
       });
-      expect(element.querySelector("[role=status]")?.textContent).toBe("Квартира удалена");
+      expect(element.textContent).toContain("Квартира удалена");
     } finally { fixture.destroy(); }
   });
   it("requires confirmation before removing a saved apartment", async () => {

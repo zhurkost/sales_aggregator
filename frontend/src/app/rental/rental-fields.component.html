@@ -1,0 +1,31 @@
+<div class="fields-grid">
+  @for (field of fields; track field.id) {
+    <div class="field" [class.wide]="field.type === 'files' || field.type === 'multi_enum'" [class.price]="field.id === 'rental.monthly_price'">
+      <label [attr.for]="'rental-' + field.id">{{ name(field) }}
+        @if (evidence[field.id]) { <span class="ai-mark" [title]="'Из описания: ' + evidence[field.id]" aria-label="Заполнено из описания">✦</span> }
+      </label>
+      @if (field.type === 'boolean') {
+        <div class="toggle" [id]="'rental-' + field.id" tabindex="-1" role="group" [attr.aria-label]="name(field)">
+          <button type="button" [disabled]="disabled" [attr.aria-pressed]="values[field.id] == null || values[field.id] === ''" (click)="set(field, '')" aria-label="Не указано">—</button>
+          <button type="button" [disabled]="disabled" [attr.aria-pressed]="values[field.id] === true" (click)="set(field, true)">Да</button>
+          <button type="button" [disabled]="disabled" [attr.aria-pressed]="values[field.id] === false" (click)="set(field, false)">Нет</button>
+        </div>
+      } @else if (field.type === 'multi_enum') {
+        <div class="choices" [id]="'rental-' + field.id" tabindex="-1" role="group" [attr.aria-label]="name(field)">
+          @for (choice of choices[field.id] || []; track choice) {
+            <label><input type="checkbox" [disabled]="disabled" [checked]="checked(field, choice)" (change)="toggle(field, choice, $any($event.target).checked)" />{{ label(choice) }}</label>
+          }
+        </div>
+      } @else if (choices[field.id]?.length) {
+        <select [id]="'rental-' + field.id" [disabled]="disabled" [ngModel]="value(field)" (ngModelChange)="set(field, $event)">
+          <option value="">Не указано</option>
+          @for (choice of choices[field.id]; track choice) { <option [value]="choice">{{ label(choice) }}</option> }
+        </select>
+      } @else if (field.type === 'files') {
+        <textarea [id]="'rental-' + field.id" [disabled]="disabled" rows="3" placeholder="Ссылки на файлы, каждая с новой строки" [ngModel]="value(field)" (ngModelChange)="set(field, $event)"></textarea>
+      } @else {
+        <input [id]="'rental-' + field.id" [disabled]="disabled" [type]="field.type === 'date' ? 'date' : 'text'" [attr.inputmode]="field.type === 'number' || field.type === 'integer' ? 'decimal' : null" [ngModel]="value(field)" (ngModelChange)="set(field, $event)" maxlength="5000" />
+      }
+    </div>
+  }
+</div>

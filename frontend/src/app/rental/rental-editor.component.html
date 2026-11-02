@@ -1,156 +1,118 @@
-<header class="rental-heading">
-  <div>
-    <span class="rental-eyebrow">ДОЛГОСРОЧНАЯ АРЕНДА</span>
-    <h1>Одна квартира. Одна карточка.</h1>
-    <p>Все сведения — в одном месте. Для каждой выбранной площадки.</p>
-  </div>
-  <button type="button" class="secondary" (click)="fresh()" [disabled]="busy">
-    Новая карточка
-  </button>
-</header>
-@if (error) {
-  <p class="rental-error" role="alert">{{ error }}</p>
-  @if (dirty) { <button type="button" class="secondary" [disabled]="busy" (click)="saveCopy()">Сохранить мои правки отдельной карточкой</button> }
-}
-@if (!schema && !error) {
-  <p>Загружаем поля квартиры…</p>
-}
-@if (drafts.length) {
-  <details class="panel rental-saved">
-    <summary>Сохранённые квартиры · {{ drafts.length }}</summary>
-    @for (item of drafts; track item.id) {
-      <div class="saved-row">
-      <button
-        type="button"
-        class="saved-item"
-        (click)="open(item.id)"
-        [disabled]="busy"
-      >
-        {{ item.title || item.address || "Квартира без названия" }}
-      </button>
-      <button
-        type="button"
-        class="delete-item"
-        [attr.aria-label]="'Удалить квартиру: ' + (item.title || item.address || 'Квартира без названия')"
-        [disabled]="busy"
-        (click)="pendingDelete = item.id"
-      >Удалить</button>
-      </div>
-      @if (pendingDelete === item.id) {
-        <div class="delete-confirmation" role="group" aria-label="Подтверждение удаления квартиры">
-          <p>Удалить эту квартиру из кабинета? Восстановить её не получится.</p>
-          <div class="delete-actions">
-            <button type="button" class="secondary" [disabled]="busy" (click)="pendingDelete = null">Отмена</button>
-            <button type="button" class="delete-item" [disabled]="busy" (click)="remove(item.id)">
-              {{ deletingId === item.id ? "Удаляем…" : "Да, удалить" }}
-            </button>
-          </div>
-        </div>
-      }
-    }
-  </details>
-}
-@if (schema) {
-  @if (draft.schemaVersion !== schema.version || error.includes("Правила обновились")) {
-    <button type="button" class="secondary" [disabled]="busy" (click)="updateFields()">Обновить поля карточки</button>
+<div [attr.inert]="panel ? '' : null">
+  <header class="rental-heading">
+    <h1>Сдать квартиру</h1>
+    <div class="header-actions">
+      <button type="button" class="quiet-button" [disabled]="busy" (click)="openPanel('saved')">Мои квартиры · {{ drafts.length }}</button>
+      <button type="button" class="quiet-button" [disabled]="busy" (click)="fresh()">＋ Новая</button>
+    </div>
+  </header>
+  @if (error) {
+    <div class="error-banner" role="alert">{{ error }}
+      @if (dirty) { <button type="button" class="text-button" [disabled]="busy" (click)="saveCopy()">Сохранить копию</button> }
+    </div>
   }
-  <fieldset class="rental-editor-fields" [disabled]="busy">
-    <section class="panel rental-section platform-section">
-      <div><h2>Где подготовить объявление</h2><p class="fine-print">Заполните сведения один раз. Мы сопоставим их с требованиями выбранных площадок.</p></div>
-      <div class="rental-platforms">
+  @if (!schema && !error) { <p role="status">Загружаем карточку…</p> }
+  @if (schema) {
+    @if (draft.schemaVersion !== schema.version || error.includes('Правила обновились')) {
+      <button type="button" class="quiet-button" [disabled]="busy" (click)="updateFields()">Обновить поля карточки</button>
+    }
+    <fieldset class="card" [disabled]="busy" [attr.aria-busy]="aiBusy">
+      <section class="description-section">
+        <label for="rental-listing.description">Описание квартиры</label>
+        <textarea id="rental-listing.description" class="source-description" rows="4" maxlength="8000" [ngModel]="description" (ngModelChange)="setDescription($event)" placeholder="Например: сдам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9, 1500 BYN в месяц. Есть балкон и стиральная машина, можно с детьми."></textarea>
+        <div class="description-actions">
+          <span class="ai-status" role="status">{{ aiBusy ? 'ИИ заполняет карточку…' : aiMessage }}</span>
+          <button type="button" class="ai-button" [disabled]="busy || description.trim().length < 10" (click)="fillFromDescription()">✦ {{ aiBusy ? 'Заполняем…' : 'Заполнить с ИИ' }}</button>
+        </div>
+        @if (aiQuestions.length) {
+          <ul class="ai-questions">@for (question of aiQuestions; track question) { <li>{{ question }}</li> }</ul>
+        }
+        @if (aiConflicts.length || aiAddress) {
+          <div class="ai-conflicts">
+            <h2>Обновить по описанию?</h2>
+            @if (aiAddress) {
+              <div class="conflict"><span>Адрес: <s>{{ draft.address?.label }}</s> → <strong>{{ aiAddress.label }}</strong></span><button type="button" class="text-button" (click)="acceptAiAddress()">Применить</button><button type="button" class="icon-button" aria-label="Оставить текущий адрес" (click)="aiAddress = null">×</button></div>
+            }
+            @for (item of aiConflicts; track item.field; let index = $index) {
+              <div class="conflict"><span>{{ fieldName(item.field) }}: <s>{{ valueLabel(item.field, draft.values[item.field]) }}</s> → <strong>{{ valueLabel(item.field, item.value) }}</strong></span><button type="button" class="text-button" (click)="acceptAiField(index)">Применить</button><button type="button" class="icon-button" [attr.aria-label]="'Оставить текущее: ' + fieldName(item.field)" (click)="aiConflicts.splice(index, 1)">×</button></div>
+            }
+          </div>
+        }
+      </section>
+      <section class="address-section">
+        <app-address-input [workspaceId]="workspaceId" [draftId]="id" [value]="draft.address" [disabled]="busy" [compact]="true" (addressChange)="addressChanged($event)" />
+      </section>
+      <section class="main-section" aria-label="Основные характеристики">
+        <app-rental-fields class="main-fields" [fields]="mainFields" [values]="draft.values" [choices]="schema.canonicalValues" [labels]="schema.card?.valueLabels || {}" [evidence]="draft.aiEvidence || {}" [disabled]="busy" (edit)="editField($event)" />
+      </section>
+      <section class="extra-section">
+        <div class="extra-heading"><h2>Дополнительно</h2><button type="button" class="text-button" (click)="openPanel('parameters')">Все параметры @if (additionalFilled.length) { · {{ additionalFilled.length }} }</button></div>
+        @if (additionalFilled.length) {
+          <div class="fact-chips">
+            @for (field of additionalFilled.slice(0, 6); track field.id) {
+              <button type="button" class="fact-chip" (click)="focusField(field.id)">{{ field.name }}: {{ valueLabel(field.id, draft.values[field.id]) }}</button>
+            }
+            @if (additionalFilled.length > 6) { <button type="button" class="fact-chip" (click)="openPanel('parameters')">Ещё {{ additionalFilled.length - 6 }}</button> }
+          </div>
+        }
+      </section>
+      <div class="platform-row" role="group" aria-label="Площадки">
         @for (p of platforms; track p) {
-          <label [class.platform-selected]="draft.platforms.includes(p)">
-            <input type="checkbox" [checked]="draft.platforms.includes(p)" (change)="togglePlatform(p, $any($event.target).checked)" /> {{ platformName(p) }}
-          </label>
+          <label [class.selected]="draft.platforms.includes(p)"><input type="checkbox" [checked]="draft.platforms.includes(p)" (change)="togglePlatform(p, $any($event.target).checked)" />{{ platformName(p) }}</label>
         }
       </div>
-    </section>
+    </fieldset>
     @if (draft.legacy?.length) {
-      <section class="panel rental-section legacy-section" id="rental-legacy" tabindex="-1">
+      <section class="legacy-section" id="rental-legacy" tabindex="-1">
         <h2>Сверьте прежние сведения · {{ draft.legacy?.length }}</h2>
-        <p>Карточка перенесена в единую форму. Совпадающие значения объединены; различия сохранены здесь.</p>
         @for (item of draft.legacy; track $index) {
-          <div class="legacy-item">
-            <strong>{{ legacyLabel(item) }} @if (item.platform) { · {{ platformName(item.platform) }} }</strong>
-            <p>{{ display(item.value) }}</p><p class="fine-print">{{ item.message }}</p>
-            <div class="delete-actions">
-              @if (item.source && item.candidate !== null && item.candidate !== undefined) {
-                <button type="button" class="secondary" (click)="resolveLegacy($index, true)">Использовать это значение</button>
-              }
-              <button type="button" class="secondary" (click)="resolveLegacy($index, false)">{{ item.candidate != null ? 'Оставить значение карточки' : 'Проверено, оставить в истории' }}</button>
-            </div>
+          <div class="legacy-item"><div><strong>{{ legacyLabel(item) }}</strong><p>{{ display(item.value) }}</p></div>
+            @if (item.source && item.candidate != null) { <button type="button" class="quiet-button" [disabled]="busy" (click)="resolveLegacy($index, true)">Использовать</button> }
+            <button type="button" class="quiet-button" [disabled]="busy" (click)="resolveLegacy($index, false)">Оставить в истории</button>
           </div>
         }
       </section>
     }
-    <section class="panel rental-section">
-      <div class="section-heading"><span class="step-number">1</span><h2>Адрес квартиры</h2></div>
-      <app-address-input [workspaceId]="workspaceId" [draftId]="id" [value]="draft.address" [disabled]="busy" (addressChange)="addressChanged($event)" />
-    </section>
-    @for (group of schema.category.options; track group.id) {
-      @if (groupFields(group).length) {
-        <details class="panel rental-section" [id]="'rental-' + group.id" tabindex="-1" [open]="schema.card?.expandedGroups?.includes(group.id) ?? group.id === 'group.main'">
-          <summary>{{ group.name }} <span class="group-count">{{ filled(group) }} / {{ groupFields(group).length }}</span></summary>
-          <div class="rental-fields">
-            @for (field of groupFields(group); track field.id) {
-              <div class="full-label" [class.wide]="field.type === 'files' || field.id === 'listing.description' || field.type === 'multi_enum'">
-                <label [attr.for]="'rental-' + field.id">{{ field.name }}</label>
-                @if (field.type === 'boolean') {
-                  <select [id]="'rental-' + field.id" [ngModel]="draft.values[field.id] ?? ''" (ngModelChange)="setTyped(field, $event)">
-                    <option [ngValue]="''">Не указано</option><option [ngValue]="true">Да</option><option [ngValue]="false">Нет</option>
-                  </select>
-                } @else if (field.type === 'multi_enum') {
-                  <div class="extra-choices" [id]="'rental-' + field.id" tabindex="-1" role="group" [attr.aria-label]="field.name">
-                    @for (choice of choices(field); track choice) {
-                      <label><input type="checkbox" [checked]="hasChoice(field, choice)" (change)="toggleChoice(field, choice, $any($event.target).checked)" />{{ label(choice) }}</label>
-                    }
-                  </div>
-                } @else if (choices(field).length) {
-                  <select [id]="'rental-' + field.id" [ngModel]="value(field)" (ngModelChange)="setValue(field, $event)">
-                    <option value="">Не указано</option>
-                    @for (choice of choices(field); track choice) { <option [value]="choice">{{ label(choice) }}</option> }
-                  </select>
-                } @else if (field.type === 'files' || field.id === 'listing.description') {
-                  <textarea [id]="'rental-' + field.id" rows="4" [ngModel]="value(field)" (ngModelChange)="setValue(field, $event)" [placeholder]="field.type === 'files' ? 'Ссылки HTTPS на файлы, каждая с новой строки' : 'Расскажите о квартире и условиях аренды'"></textarea>
-                } @else {
-                  <input [id]="'rental-' + field.id" [type]="field.type === 'date' ? 'date' : 'text'" [attr.inputmode]="field.type === 'number' || field.type === 'integer' ? 'decimal' : null" [ngModel]="value(field)" (ngModelChange)="setValue(field, $event)" maxlength="5000" />
-                }
-                @if (field.id.includes('area')) { <span class="fine-print">м², например 45,5</span> }
-                @if (field.id === 'rental.monthly_price') { <span class="fine-print">За месяц, в выбранной валюте</span> }
-                @if (usedBy(field).length > 0 && usedBy(field).length < draft.platforms.length) {
-                  <span class="field-platforms">Для @for (p of usedBy(field); track p; let last = $last) { {{ platformName(p) }}{{ last ? '' : ', ' }} }</span>
-                }
-              </div>
-            }
-          </div>
-        </details>
-      }
+    @if (results.length) {
+      <section class="results">
+        <div class="extra-heading"><h2>Проверка карточки</h2><span>Ещё не опубликовано</span></div>
+        <div class="result-platforms">@for (result of results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')">{{ platformName(result.platform) }} · {{ result.dataReady ? 'Подготовлено' : 'Нужна проверка' }}</button> }</div>
+        @if (groupedIssues.length) {
+          <ul class="issues">@for (issue of groupedIssues; track $index) {
+            <li><div><span>{{ issue.message }}</span><small>@for (p of issue.platforms; track p; let last = $last) { {{ platformName(p) }}{{ last ? '' : ', ' }} }</small></div>@if (canFocus(issue.source)) { <button type="button" class="text-button" (click)="focusField(issue.source)">Уточнить</button> }</li>
+          }</ul>
+        }
+      </section>
     }
-    <div class="rental-actions">
-      <span role="status">{{ status || 'Неизвестные сведения можно заполнить позже' }}</span>
-      <button type="button" class="primary" (click)="prepare()" [disabled]="busy || !draft.platforms.length">{{ busy ? 'Подождите…' : 'Проверить и подготовить' }}</button>
-    </div>
-  </fieldset>
-  @if (results.length) {
-    <section class="panel rental-section result-section">
-      <h2>Подготовка объявления</h2>
-      <p>Данные сохранены. Объявление ещё не опубликовано.</p>
-      @if (groupedIssues.length) {
-        <h3>Что осталось уточнить</h3>
-        <ul class="issue-list">
-          @for (issue of groupedIssues; track $index) {
-            <li><p>{{ issue.message }}</p><span class="field-platforms">@for (p of issue.platforms; track p; let last = $last) { {{ platformName(p) }}{{ last ? '' : ', ' }} }</span>
-              @if (canFocus(issue.source)) { <button type="button" class="text-link" (click)="focusField(issue.source)">Перейти к полю</button> }
-            </li>
-          }
-        </ul>
-      }
-      @for (result of results; track result.platform) {
-        <details class="prepared-platform">
-          <summary>{{ platformName(result.platform) }} · {{ result.dataReady ? 'Значения подготовлены' : 'Нужна проверка' }}</summary>
-          <dl>@for (field of preparedValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl>
-        </details>
-      }
-    </section>
+    <div class="rental-actions"><span role="status">{{ status }}</span><button type="button" class="primary" [disabled]="busy || !draft.platforms.length" (click)="prepare()">{{ busy && !aiBusy ? 'Проверяем…' : 'Проверить карточку' }}</button></div>
   }
+</div>
+@if (panel && schema) {
+  <div class="drawer-overlay" (click)="closePanel()">
+    <section class="rental-drawer" role="dialog" aria-modal="true" aria-labelledby="rental-panel-title" (click)="$event.stopPropagation()" (keydown)="panelKeys($event)">
+      <header class="drawer-heading"><h2 id="rental-panel-title" tabindex="-1">{{ panel === 'parameters' ? 'Параметры квартиры' : panel === 'saved' ? 'Мои квартиры' : 'Подготовленные данные' }}</h2><button type="button" class="icon-button" aria-label="Закрыть панель" (click)="closePanel()">×</button></header>
+      @if (panel === 'parameters') {
+        <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="parameterSearch" (ngModelChange)="parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="filledOnly" />Заполненные</label></div>
+        <div class="drawer-body">
+          @for (group of additionalGroups; track group.id) {
+            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.options" [values]="draft.values" [choices]="schema.canonicalValues" [labels]="schema.card?.valueLabels || {}" [evidence]="draft.aiEvidence || {}" [disabled]="busy" (edit)="editField($event)" /></section>
+          } @empty { <p class="empty-state">Параметры не найдены</p> }
+        </div>
+      } @else if (panel === 'saved') {
+        <div class="drawer-body">
+          @if (drafts.length) {
+            <div class="rental-saved">
+              @for (item of drafts; track item.id) {
+                <div class="saved-row"><button type="button" class="saved-item" [disabled]="busy" (click)="open(item.id)">{{ item.title || item.address || 'Квартира без названия' }}</button><button type="button" class="delete-item" [disabled]="busy" [attr.aria-label]="'Удалить квартиру: ' + (item.title || item.address || 'Квартира без названия')" (click)="pendingDelete = item.id">Удалить</button></div>
+                @if (pendingDelete === item.id) { <div class="delete-confirmation"><p>Удалить квартиру? Восстановить её не получится.</p><div class="delete-actions"><button type="button" class="secondary" [disabled]="busy" (click)="pendingDelete = null">Отмена</button><button type="button" class="delete-item" [disabled]="busy" (click)="remove(item.id)">Да, удалить</button></div></div> }
+              }
+            </div>
+          } @else { <p class="empty-state">Пока нет сохранённых квартир</p> }
+        </div>
+      } @else {
+        <div class="drawer-body">@for (result of results; track result.platform) { <section class="prepared-platform"><h3>{{ platformName(result.platform) }}</h3><dl>@for (field of preparedValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl></section> }</div>
+      }
+      <footer class="drawer-footer"><span role="status">{{ status }}</span><button type="button" class="primary" (click)="closePanel()">Готово</button></footer>
+    </section>
+  </div>
 }

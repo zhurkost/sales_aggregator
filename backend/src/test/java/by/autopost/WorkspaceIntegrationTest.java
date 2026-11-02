@@ -36,9 +36,11 @@ class WorkspaceIntegrationTest {
     getJson("rental/editor","",401);getJson("rental/drafts","",401);
     postJson("rental/address/suggest","",object("query","Минск"),401);
     postJson("rental/prepare","",object(),401);
+    postJson("rental/analyze","",object("text","Сдам квартиру"),401);
     var account=register();
     assertFalse(getJson("rental/editor",account.cookie(),503).toString().contains("DADATA_API_KEY"));
     postJson("rental/address/suggest",account.cookie(),object("query","М"),400);
+    postJson("rental/analyze",account.cookie(),object("text","М"),400);
   }
 
   @Test

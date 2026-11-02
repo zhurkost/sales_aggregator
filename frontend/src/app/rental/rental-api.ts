@@ -37,6 +37,7 @@ export interface Address {
 }
 export interface RentalDraft {
   modelVersion?: number;
+  aiEvidence?: Record<string, string>;
   legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];
   resolvedLegacy?: RentalDraft["legacy"];
   schemaVersion: string;
@@ -44,6 +45,14 @@ export interface RentalDraft {
   extras: Record<string, Record<string, JsonValue>>;
   platforms: string[];
   address: Address | null;
+}
+export interface RentalAiResult {
+  schemaVersion: string;
+  model: string;
+  suggestions: {field: string; value: JsonValue; quote: string}[];
+  address: Address | null;
+  questions: string[];
+  ignored: number;
 }
 export interface EditorSchema {
   card?: {valueLabels?: Record<string, string>; version: number; expandedGroups: string[]; addressDependentFacts: string[]};
