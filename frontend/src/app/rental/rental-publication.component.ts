@@ -147,7 +147,11 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     try {
       const photos = await this.gateway.add(this.photos, files);
       await this.gateway.photos(workspace, id, photos);
-      if (generation === this.generation) this.photos = photos;
+      if (generation === this.generation) {
+        this.photos = photos;
+        this.store.draft.localPhotoIds = photos.map((photo) => photo.id);
+        this.store.changed();
+      }
     } catch (e) {
       this.error = (e as Error).message;
     } finally {
@@ -169,10 +173,15 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     input.value = "";
   }
   async remove(photo: Photo) {
+    const generation = this.generation;
     const photos = this.photos.filter((p) => p.id !== photo.id);
     try {
       await this.gateway.photos(this.workspaceId, this.draftId, photos);
-      this.photos = photos;
+      if (generation === this.generation) {
+        this.photos = photos;
+        this.store.draft.localPhotoIds = photos.map((photo) => photo.id);
+        this.store.changed();
+      }
     } catch (e) {
       this.error = (e as Error).message;
     }

@@ -66,6 +66,11 @@ test("rental worker opens every selected site once and isolates profile, origin 
         return t;
       },
       async update() {},
+      async get(id) {
+        const tab = created.find((t) => t.id === id);
+        if (!tab) throw new Error("closed");
+        return tab;
+      },
       async sendMessage() {
         return verify;
       },
@@ -173,6 +178,16 @@ test("rental worker opens every selected site once and isolates profile, origin 
   assert.equal(
     (await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender)).task,
     null,
+  );
+  await run();
+  assert.equal(created.length, 4);
+  assert.equal(
+    (await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender)).task.submitted,
+    true,
+  );
+  assert.equal(
+    (await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok,
+    false,
   );
 });
 async function fixture(html, controls, extra = {}) {

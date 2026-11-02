@@ -114,13 +114,14 @@
       this.waiting = null;
     }
     ready() {
-      return (this.recipe.ready || []).every((r) =>
-        query(r.selector).some(
+      return (this.recipe.ready || []).every((r) => {
+        const exists = query(r.selector).some(
           (e) =>
             (visible(e) || visible(label(e))) &&
             (!r.text || norm(e.textContent).includes(norm(r.text))),
-        ),
-      );
+        );
+        return r.absent ? !exists : exists;
+      });
     }
     protect(target) {
       for (const c of this.recipe.controls)
@@ -326,7 +327,7 @@
             : "");
         if (this.stepClicks.has(key)) continue;
         const els = targets(s).filter(
-          (e) => norm(e.textContent) === norm(s.text),
+          (e) => s.matchText === false || norm(e.textContent) === norm(s.text),
         );
         if (
           els.length === 1 &&

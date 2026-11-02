@@ -4,7 +4,8 @@
     {
       "action": "click",
       "selector": "[data-testid=\"ain-show-all-categories\"]",
-      "text": "Изменить категорию"
+      "text": "Изменить категорию",
+      "matchText": false
     },
     {
       "action": "click",
@@ -226,6 +227,10 @@
     {
       "selector": "[data-name=\"type\"] [class*=\"chip__filled-green\"]",
       "text": "Долгосрочная аренда"
+    },
+    {
+      "selector": "[data-testid=\"kufar-chose-category-popup\"]",
+      "absent": true
     }
   ]
 }

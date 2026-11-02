@@ -156,5 +156,21 @@
     if (!paused) void tick();
   };
   interval = setInterval(() => void tick(), 900);
+  chrome.runtime.onMessage.addListener((message, sender, reply) => {
+    if (
+      sender.id !== chrome.runtime.id ||
+      message?.kind !== "RENTAL_WAKE" ||
+      message.jobId !== task.jobId
+    )
+      return;
+    task.mode = message.mode;
+    paused = false;
+    idle = 0;
+    cycles = 0;
+    clearInterval(interval);
+    interval = setInterval(() => void tick(), 900);
+    void tick();
+    reply({ ok: true });
+  });
   void tick();
 })();

@@ -36,6 +36,7 @@ export interface Address {
   level?: string;
 }
 export interface RentalDraft {
+  localPhotoIds?: string[];
   modelVersion?: number;
   aiEvidence?: Record<string, string>;
   legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];

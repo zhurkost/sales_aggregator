@@ -14,6 +14,32 @@ const gateway = {
 };
 afterEach(() => vi.clearAllMocks());
 describe("publication of incomplete rental cards", () => {
+  it("photo changes revise a saved card without altering its attributes", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(
+      () => "owner",
+      () => {},
+    );
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    const photos = [
+      {
+        id: "photo-1",
+        name: "one.jpg",
+        type: "image/jpeg",
+        dataUrl: "data:image/jpeg;base64,AAAA",
+      },
+    ];
+    gateway.add.mockResolvedValueOnce(photos);
+    await c.add([]);
+    expect(c.store.dirty).toBe(true);
+    expect(c.store.draft.localPhotoIds).toEqual(["photo-1"]);
+    expect(c.store.draft.values).toEqual({});
+    await c.remove(photos[0]);
+    expect(c.store.draft.localPhotoIds).toEqual([]);
+    c.ngOnDestroy();
+    c.store.destroy();
+  });
   it("offers publish without checking or resolving any issues, saves and launches the exact filled snapshot", async () => {
     TestBed.configureTestingModule({
       providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
@@ -44,6 +70,7 @@ describe("publication of incomplete rental cards", () => {
     fixture.componentRef.setInput("draftId", store.id);
     fixture.detectChanges();
     await vi.waitFor(() => expect(fixture.componentInstance.ready).toBe(true));
+    expect(store.dirty).toBe(false);
     fixture.detectChanges();
     const button = fixture.nativeElement.querySelector(
       ".publish",

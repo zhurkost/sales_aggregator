@@ -62,7 +62,7 @@
             active: true,
           });
           j.tabId = tab.id;
-          j.status = "running";
+          if (j.status !== "stopped") j.status = "running";
           await save(rows);
         }
         return { ok: true };
@@ -81,7 +81,42 @@
       const data = core.validate(payload);
       const old = own.find((b) => b.revision === data.revision);
       // Retrying a click or a timed-out response must not open/publish duplicates.
-      if (old) return summary(old);
+      if (old) {
+        if (old.jobs.every((j) => j.status === "stopped")) {
+          old.sourceTabId = sender.tab.id;
+          old.mode = data.mode;
+          for (const j of old.jobs) {
+            j.status = "running";
+            j.message = "Возобновляем заполнение";
+          }
+          await save(rows);
+          for (const j of old.jobs) {
+            try {
+              await chrome.tabs.get(j.tabId);
+            } catch {
+              const tab = await chrome.tabs.create({
+                url: j.recipe.startUrl,
+                active: false,
+              });
+              j.tabId = tab.id;
+              await save(rows);
+              continue;
+            }
+            try {
+              await chrome.tabs.sendMessage(j.tabId, {
+                kind: "RENTAL_WAKE",
+                jobId: j.id,
+                mode: old.mode,
+              });
+            } catch {
+              j.status = "needs_action";
+              j.message = "Обновите вкладку площадки для продолжения.";
+            }
+          }
+          await save(rows);
+        }
+        return summary(old);
+      }
       if (own.some((b) => b.jobs.some((j) => j.status !== "stopped")))
         throw new Error(
           "У этой карточки уже есть задания. Остановите предыдущий запуск перед передачей новой версии.",
