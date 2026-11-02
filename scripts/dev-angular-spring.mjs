@@ -13,6 +13,8 @@ const environment = {
   PUBLIC_ORIGIN: "http://127.0.0.1:5173",
   DATA_DIR: fileURLToPath(new URL("../work/local-data", import.meta.url)),
   VPS_PROXY_SECRET: "",
+  RENTAL_REFERENCE_DIR: process.env.RENTAL_REFERENCE_DIR || local.RENTAL_REFERENCE_DIR ||
+    fileURLToPath(new URL("../data/rental/apartments_long_term_rent", import.meta.url)),
 };
 const api = spawn(process.execPath, ["scripts/maven.mjs", "spring-boot:run"], {
   stdio: "inherit",

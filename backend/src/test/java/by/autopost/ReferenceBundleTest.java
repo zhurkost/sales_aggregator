@@ -17,6 +17,14 @@ import org.junit.jupiter.api.io.TempDir;
 
 class ReferenceBundleTest {
   @Test
+  void committedMarketplaceBundleIsCompleteAndMatchesItsRuntimeHashes() {
+    var repository = new FileReferenceRepository("../data/rental/apartments_long_term_rent");
+    var snapshot = repository.snapshot();
+    assertEquals(Set.of("kufar", "onliner", "realt", "domovita"), snapshot.platforms());
+    assertFalse(new RentalCatalog(repository).editor().path("category").path("options").isEmpty());
+  }
+
+  @Test
   void ambiguousLookupIsRejectedButExplicitPartialCoverageCannotInventCodes() throws Exception {
     var repo = fixture();
     var plan = read("example.plan.json");

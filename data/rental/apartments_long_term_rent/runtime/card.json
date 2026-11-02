@@ -1,0 +1,585 @@
+{
+  "version": 2,
+  "valueLabels": {
+    "studio": "Студия",
+    "allowed": "Разрешено",
+    "forbidden": "Запрещено",
+    "yes": "Есть",
+    "no": "Нет",
+    "present": "Есть",
+    "absent": "Нет",
+    "partial": "Частично",
+    "owner": "Собственник",
+    "agency": "Агентство",
+    "gas": "Газовая",
+    "electric": "Электрическая",
+    "none": "Нет",
+    "separate": "Раздельный",
+    "combined": "Совмещённый",
+    "two": "Два",
+    "three": "Три",
+    "two_plus": "Два и более",
+    "present_unspecified": "Есть, тип не уточнён",
+    "balcony": "Балкон",
+    "loggia": "Лоджия",
+    "balcony_and_loggia": "Балкон и лоджия",
+    "terrace": "Терраса",
+    "panel": "Панельный",
+    "monolithic": "Монолитный",
+    "brick": "Кирпичный",
+    "block": "Блочный",
+    "frame": "Каркасный",
+    "frame_block": "Каркасно-блочный",
+    "block_rooms": "Блок-комнаты",
+    "silicate_blocks": "Силикатные блоки",
+    "logs": "Бревенчатый",
+    "cosmetic": "Косметический",
+    "euro": "Евроремонт",
+    "designer": "Дизайнерский",
+    "construction_finish": "Строительная отделка",
+    "unfinished": "Без отделки",
+    "needs_repair": "Требуется ремонт",
+    "unsafe_condition": "Аварийное состояние",
+    "good": "Хороший",
+    "normal": "Нормальный",
+    "poor": "Плохое состояние",
+    "months_1": "Один месяц",
+    "months_2": "Два месяца",
+    "months_3": "Три месяца",
+    "months_3_plus": "Три и более месяца",
+    "months_6": "Полгода",
+    "deposit_unspecified": "Залог, сумма не уточнена",
+    "calls_and_messages": "Звонки и сообщения",
+    "calls_only": "Только звонки",
+    "messages_only": "Только сообщения"
+  },
+  "platforms": {
+    "kufar": {
+      "name": "Kufar"
+    },
+    "onliner": {
+      "name": "Onliner"
+    },
+    "realt": {
+      "name": "Realt"
+    },
+    "domovita": {
+      "name": "Domovita"
+    }
+  },
+  "canonicalValues": {
+    "listing.title": [],
+    "listing.description": [],
+    "location.settlement": [],
+    "location.street": [],
+    "location.house_number": [],
+    "location.residential_complex": [],
+    "location.latitude": [],
+    "location.longitude": [],
+    "rental.room_configuration": [
+      "studio",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "5+"
+    ],
+    "rental.total_area": [],
+    "rental.living_area": [],
+    "rental.kitchen_area": [],
+    "building.wall_material": [
+      "panel",
+      "monolithic",
+      "brick",
+      "block",
+      "frame",
+      "frame_block",
+      "block_rooms",
+      "silicate_blocks",
+      "logs"
+    ],
+    "rental.bathroom": [
+      "separate",
+      "combined",
+      "two",
+      "three",
+      "two_plus"
+    ],
+    "rental.balcony": [
+      "present_unspecified",
+      "none",
+      "loggia",
+      "two",
+      "balcony",
+      "balcony_and_loggia",
+      "terrace"
+    ],
+    "rental.repair": [
+      "cosmetic",
+      "euro",
+      "designer",
+      "construction_finish",
+      "unfinished",
+      "needs_repair",
+      "unsafe_condition",
+      "good",
+      "normal",
+      "poor"
+    ],
+    "rental.monthly_price": [],
+    "rental.currency": [
+      "USD",
+      "EUR",
+      "BYN",
+      "RUB"
+    ],
+    "rental.prepayment": [
+      "none",
+      "months_1",
+      "months_2",
+      "months_3_plus",
+      "months_6",
+      "deposit_unspecified",
+      "months_3"
+    ],
+    "contact.landlord_role": [
+      "owner",
+      "agency"
+    ],
+    "contact.name": [],
+    "contact.phone": [],
+    "contact.additional_phone_1": [],
+    "contact.additional_phone_2": [],
+    "contact.additional_phone_3": [],
+    "contact.email": [],
+    "contact.organization_name": [],
+    "contact.organization_unp": [],
+    "contact.communication_method": [
+      "calls_and_messages",
+      "messages_only",
+      "calls_only"
+    ],
+    "amenity.furniture": [
+      "present",
+      "absent",
+      "partial"
+    ],
+    "amenity.refrigerator": [
+      "yes",
+      "no"
+    ],
+    "amenity.washing_machine": [
+      "yes",
+      "no"
+    ],
+    "amenity.dishwasher": [
+      "yes",
+      "no"
+    ],
+    "amenity.microwave": [
+      "yes",
+      "no"
+    ],
+    "amenity.tv": [
+      "yes",
+      "no"
+    ],
+    "amenity.air_conditioner": [
+      "yes",
+      "no"
+    ],
+    "amenity.internet": [
+      "yes",
+      "no"
+    ],
+    "amenity.shower": [
+      "yes",
+      "no"
+    ],
+    "amenity.jacuzzi": [
+      "yes",
+      "no"
+    ],
+    "amenity.dishes": [
+      "yes",
+      "no"
+    ],
+    "amenity.elevator": [
+      "yes",
+      "no"
+    ],
+    "amenity.stove_type": [
+      "gas",
+      "electric"
+    ],
+    "tenant.students": [
+      "allowed",
+      "forbidden"
+    ],
+    "tenant.pets": [
+      "allowed",
+      "forbidden"
+    ],
+    "tenant.children": [
+      "allowed",
+      "forbidden"
+    ],
+    "media.images": [],
+    "media.youtube_video": [],
+    "rental.sleeping_places": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "более 10"
+    ],
+    "rental.window_orientation": [
+      "Во двор",
+      "На речку",
+      "В парк",
+      "На улицу",
+      "Юг",
+      "Север",
+      "Восток",
+      "Запад"
+    ],
+    "rental.condition": [
+      "Новое",
+      "Вторичное"
+    ],
+    "contact.call_time_from": [
+      "0:00",
+      "1:00",
+      "2:00",
+      "3:00",
+      "4:00",
+      "5:00",
+      "6:00",
+      "7:00",
+      "8:00",
+      "9:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00"
+    ],
+    "contact.call_time_to": [
+      "0:00",
+      "1:00",
+      "2:00",
+      "3:00",
+      "4:00",
+      "5:00",
+      "6:00",
+      "7:00",
+      "8:00",
+      "9:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00"
+    ],
+    "rental.layout": [
+      "чешский проект",
+      "брежневка",
+      "сталинка",
+      "хрущевка",
+      "малосемейка",
+      "пентхаус",
+      "таунхаус",
+      "новостройка",
+      "свободная планировка",
+      "студия"
+    ],
+    "building.infrastructure": [
+      "сигнализация",
+      "парковка"
+    ],
+    "amenity.telephone_lines": [
+      "нет",
+      "есть",
+      "1 телефон",
+      "2 телефона",
+      "спаренный"
+    ],
+    "rental.utilities": [
+      "нет",
+      "50%",
+      "100%"
+    ],
+    "rental.has_commission": [
+      "Есть комиссия",
+      "Нет комиссии"
+    ],
+    "rental.sale_planned": [
+      "Да",
+      "Нет"
+    ],
+    "contact.messengers": [
+      "Viber",
+      "WhatsApp"
+    ],
+    "contact.additional_phone_1_messengers": [
+      "Viber",
+      "WhatsApp"
+    ],
+    "contact.additional_phone_2_messengers": [
+      "Viber",
+      "WhatsApp"
+    ],
+    "contact.additional_phone_3_messengers": [
+      "Viber",
+      "WhatsApp"
+    ],
+    "tenant.preferred": [
+      "Семье",
+      "Под офис",
+      "Студентам",
+      "Не компаниям"
+    ],
+    "location.metro_1_station": [
+      "Институт культуры",
+      "Площадь Ленина",
+      "Октябрьская",
+      "Площадь Победы",
+      "Площадь Якуба Коласа",
+      "Академия наук",
+      "Парк Челюскинцев",
+      "Московская",
+      "Восток",
+      "Борисовский тракт",
+      "Уручье",
+      "Грушевка",
+      "Михалово",
+      "Петровщина",
+      "Малиновка",
+      "Пушкинская",
+      "Молодежная",
+      "Фрунзенская",
+      "Немига",
+      "Купаловская",
+      "Первомайская",
+      "Пролетарская",
+      "Тракторный завод",
+      "Партизанская",
+      "Автозаводская",
+      "Могилевская",
+      "Спортивная",
+      "Кунцевщина",
+      "Каменная горка",
+      "Юбилейная площадь",
+      "Площадь Богушевича",
+      "Вокзальная",
+      "Ковальская Слобода",
+      "Аэродромная (2024)",
+      "Неморшанский сад (2024)",
+      "Слуцкий гостинец (2024)"
+    ],
+    "location.metro_1_mode": [
+      "Пешком",
+      "На транспорте"
+    ],
+    "location.metro_2_station": [
+      "Институт культуры",
+      "Площадь Ленина",
+      "Октябрьская",
+      "Площадь Победы",
+      "Площадь Якуба Коласа",
+      "Академия наук",
+      "Парк Челюскинцев",
+      "Московская",
+      "Восток",
+      "Борисовский тракт",
+      "Уручье",
+      "Грушевка",
+      "Михалово",
+      "Петровщина",
+      "Малиновка",
+      "Пушкинская",
+      "Молодежная",
+      "Фрунзенская",
+      "Немига",
+      "Купаловская",
+      "Первомайская",
+      "Пролетарская",
+      "Тракторный завод",
+      "Партизанская",
+      "Автозаводская",
+      "Могилевская",
+      "Спортивная",
+      "Кунцевщина",
+      "Каменная горка",
+      "Юбилейная площадь",
+      "Площадь Богушевича",
+      "Вокзальная",
+      "Ковальская Слобода",
+      "Аэродромная (2024)",
+      "Неморшанский сад (2024)",
+      "Слуцкий гостинец (2024)"
+    ],
+    "location.metro_2_mode": [
+      "Пешком",
+      "На транспорте"
+    ],
+    "location.metro_3_station": [
+      "Институт культуры",
+      "Площадь Ленина",
+      "Октябрьская",
+      "Площадь Победы",
+      "Площадь Якуба Коласа",
+      "Академия наук",
+      "Парк Челюскинцев",
+      "Московская",
+      "Восток",
+      "Борисовский тракт",
+      "Уручье",
+      "Грушевка",
+      "Михалово",
+      "Петровщина",
+      "Малиновка",
+      "Пушкинская",
+      "Молодежная",
+      "Фрунзенская",
+      "Немига",
+      "Купаловская",
+      "Первомайская",
+      "Пролетарская",
+      "Тракторный завод",
+      "Партизанская",
+      "Автозаводская",
+      "Могилевская",
+      "Спортивная",
+      "Кунцевщина",
+      "Каменная горка",
+      "Юбилейная площадь",
+      "Площадь Богушевича",
+      "Вокзальная",
+      "Ковальская Слобода",
+      "Аэродромная (2024)",
+      "Неморшанский сад (2024)",
+      "Слуцкий гостинец (2024)"
+    ],
+    "location.metro_3_mode": [
+      "Пешком",
+      "На транспорте"
+    ],
+    "location.microdistrict": [
+      "Академия наук",
+      "Ангарская",
+      "Аэродромная",
+      "Боровая",
+      "Боровляны",
+      "Брилевичи",
+      "Верхний город",
+      "Веснянка",
+      "Восток",
+      "Восточный",
+      "Грушевка",
+      "Домбровка",
+      "Дражня",
+      "Запад",
+      "Заславская",
+      "Зацень",
+      "Зеленый луг",
+      "Каменная Горка",
+      "Каменная Горка-1",
+      "Каменная Горка-2",
+      "Каменная Горка-3",
+      "Каменная Горка-4",
+      "Каменная Горка-5",
+      "Каскад",
+      "Комаровка",
+      "Красный Бор",
+      "Кунцевщина",
+      "Курасовщина",
+      "Лебяжий",
+      "Лошица",
+      "Малиновка",
+      "Масюковщина",
+      "Маяк Минска",
+      "Медвежино",
+      "Минск-Мир",
+      "Михалово",
+      "Новая Боровая",
+      "Новинки",
+      "Озерище",
+      "Осмоловка",
+      "поселок Радужный",
+      "Пулихова",
+      "Раковское шоссе",
+      "Ржавец",
+      "Северный берег",
+      "Северный поселок",
+      "Сельхозпоселок",
+      "Семашко",
+      "Серебрянка",
+      "Серова",
+      "Слепянка",
+      "Сокол",
+      "Сосны",
+      "Степянка",
+      "Сторожовка",
+      "Сухарево",
+      "Троицкое предместье",
+      "Уручье",
+      "Харьковская",
+      "Чижовка",
+      "Шабаны",
+      "Юго-Запад"
+    ]
+  },
+  "addressProjection": {
+    "location.settlement": "settlement",
+    "location.street": "street",
+    "location.house_number": "house",
+    "location.latitude": "latitude",
+    "location.longitude": "longitude"
+  },
+  "expandedGroups": [
+    "group.main",
+    "group.listing"
+  ],
+  "addressDependentFacts": [
+    "location.microdistrict",
+    "location.residential_complex",
+    "location.town_distance",
+    "location.metro_1_station",
+    "location.metro_1_mode",
+    "location.metro_1_minutes",
+    "location.metro_2_station",
+    "location.metro_2_mode",
+    "location.metro_2_minutes",
+    "location.metro_3_station",
+    "location.metro_3_mode",
+    "location.metro_3_minutes"
+  ],
+  "modelNote": "Union canonical card v2; source schemas unchanged; semantic mapping reviewed separately."
+}

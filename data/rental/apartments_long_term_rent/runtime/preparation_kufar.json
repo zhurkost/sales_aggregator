@@ -1,0 +1,3079 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "apartments_long_term_rent",
+  "platform": "kufar",
+  "schema_hash": "4be50180a5ceea337cac1dfd5785ab26706db1e5ab54e8f41c2f48d2ee91bbd2",
+  "common_hash": "1cea552d409fe9cb3b653314980c9d37d706e855de32275bcba3c03c7157ae25",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "kufar.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "kufar.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.room_configuration",
+      "platform_option_id": "kufar.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "studio",
+            "to": "6"
+          },
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5+",
+            "to": "5"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.floor",
+      "platform_option_id": "kufar.floor",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10",
+            "to": "10"
+          },
+          {
+            "from": "11",
+            "to": "11"
+          },
+          {
+            "from": "12",
+            "to": "12"
+          },
+          {
+            "from": "13",
+            "to": "13"
+          },
+          {
+            "from": "14",
+            "to": "14"
+          },
+          {
+            "from": "15",
+            "to": "15"
+          },
+          {
+            "from": "16",
+            "to": "16"
+          },
+          {
+            "from": "17",
+            "to": "17"
+          },
+          {
+            "from": "18",
+            "to": "18"
+          },
+          {
+            "from": "19",
+            "to": "19"
+          },
+          {
+            "from": "20",
+            "to": "20"
+          },
+          {
+            "from": "21",
+            "to": "21"
+          },
+          {
+            "from": "22",
+            "to": "22"
+          },
+          {
+            "from": "23",
+            "to": "23"
+          },
+          {
+            "from": "24",
+            "to": "24"
+          },
+          {
+            "from": "25",
+            "to": "25"
+          },
+          {
+            "from": "26",
+            "to": "26"
+          },
+          {
+            "from": "27",
+            "to": "27"
+          },
+          {
+            "from": "28",
+            "to": "28"
+          },
+          {
+            "from": "29",
+            "to": "29"
+          },
+          {
+            "from": ">30",
+            "to": "30"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.total_floors",
+      "platform_option_id": "kufar.total_floors",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10",
+            "to": "10"
+          },
+          {
+            "from": "11",
+            "to": "11"
+          },
+          {
+            "from": "12",
+            "to": "12"
+          },
+          {
+            "from": "13",
+            "to": "13"
+          },
+          {
+            "from": "14",
+            "to": "14"
+          },
+          {
+            "from": "15",
+            "to": "15"
+          },
+          {
+            "from": "16",
+            "to": "16"
+          },
+          {
+            "from": "17",
+            "to": "17"
+          },
+          {
+            "from": "18",
+            "to": "18"
+          },
+          {
+            "from": "19",
+            "to": "19"
+          },
+          {
+            "from": "20",
+            "to": "20"
+          },
+          {
+            "from": "21",
+            "to": "21"
+          },
+          {
+            "from": "22",
+            "to": "22"
+          },
+          {
+            "from": "23",
+            "to": "23"
+          },
+          {
+            "from": "24",
+            "to": "24"
+          },
+          {
+            "from": "25",
+            "to": "25"
+          },
+          {
+            "from": "26",
+            "to": "26"
+          },
+          {
+            "from": "27",
+            "to": "27"
+          },
+          {
+            "from": "28",
+            "to": "28"
+          },
+          {
+            "from": "29",
+            "to": "29"
+          },
+          {
+            "from": ">30",
+            "to": "30"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.year",
+      "platform_option_id": "kufar.year_built",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1951",
+            "to": "1951"
+          },
+          {
+            "from": "1952",
+            "to": "1952"
+          },
+          {
+            "from": "1953",
+            "to": "1953"
+          },
+          {
+            "from": "1954",
+            "to": "1954"
+          },
+          {
+            "from": "1955",
+            "to": "1955"
+          },
+          {
+            "from": "1956",
+            "to": "1956"
+          },
+          {
+            "from": "1957",
+            "to": "1957"
+          },
+          {
+            "from": "1958",
+            "to": "1958"
+          },
+          {
+            "from": "1959",
+            "to": "1959"
+          },
+          {
+            "from": "1960",
+            "to": "1960"
+          },
+          {
+            "from": "1961",
+            "to": "1961"
+          },
+          {
+            "from": "1962",
+            "to": "1962"
+          },
+          {
+            "from": "1963",
+            "to": "1963"
+          },
+          {
+            "from": "1964",
+            "to": "1964"
+          },
+          {
+            "from": "1965",
+            "to": "1965"
+          },
+          {
+            "from": "1966",
+            "to": "1966"
+          },
+          {
+            "from": "1967",
+            "to": "1967"
+          },
+          {
+            "from": "1968",
+            "to": "1968"
+          },
+          {
+            "from": "1969",
+            "to": "1969"
+          },
+          {
+            "from": "1970",
+            "to": "1970"
+          },
+          {
+            "from": "1971",
+            "to": "1971"
+          },
+          {
+            "from": "1972",
+            "to": "1972"
+          },
+          {
+            "from": "1973",
+            "to": "1973"
+          },
+          {
+            "from": "1974",
+            "to": "1974"
+          },
+          {
+            "from": "1975",
+            "to": "1975"
+          },
+          {
+            "from": "1976",
+            "to": "1976"
+          },
+          {
+            "from": "1977",
+            "to": "1977"
+          },
+          {
+            "from": "1978",
+            "to": "1978"
+          },
+          {
+            "from": "1979",
+            "to": "1979"
+          },
+          {
+            "from": "1980",
+            "to": "1980"
+          },
+          {
+            "from": "1981",
+            "to": "1981"
+          },
+          {
+            "from": "1982",
+            "to": "1982"
+          },
+          {
+            "from": "1983",
+            "to": "1983"
+          },
+          {
+            "from": "1984",
+            "to": "1984"
+          },
+          {
+            "from": "1985",
+            "to": "1985"
+          },
+          {
+            "from": "1986",
+            "to": "1986"
+          },
+          {
+            "from": "1987",
+            "to": "1987"
+          },
+          {
+            "from": "1988",
+            "to": "1988"
+          },
+          {
+            "from": "1989",
+            "to": "1989"
+          },
+          {
+            "from": "1990",
+            "to": "1990"
+          },
+          {
+            "from": "1991",
+            "to": "1991"
+          },
+          {
+            "from": "1992",
+            "to": "1992"
+          },
+          {
+            "from": "1993",
+            "to": "1993"
+          },
+          {
+            "from": "1994",
+            "to": "1994"
+          },
+          {
+            "from": "1995",
+            "to": "1995"
+          },
+          {
+            "from": "1996",
+            "to": "1996"
+          },
+          {
+            "from": "1997",
+            "to": "1997"
+          },
+          {
+            "from": "1998",
+            "to": "1998"
+          },
+          {
+            "from": "1999",
+            "to": "1999"
+          },
+          {
+            "from": "2000",
+            "to": "2000"
+          },
+          {
+            "from": "2001",
+            "to": "2001"
+          },
+          {
+            "from": "2002",
+            "to": "2002"
+          },
+          {
+            "from": "2003",
+            "to": "2003"
+          },
+          {
+            "from": "2004",
+            "to": "2004"
+          },
+          {
+            "from": "2005",
+            "to": "2005"
+          },
+          {
+            "from": "2006",
+            "to": "2006"
+          },
+          {
+            "from": "2007",
+            "to": "2007"
+          },
+          {
+            "from": "2008",
+            "to": "2008"
+          },
+          {
+            "from": "2009",
+            "to": "2009"
+          },
+          {
+            "from": "2010",
+            "to": "2010"
+          },
+          {
+            "from": "2011",
+            "to": "2011"
+          },
+          {
+            "from": "2012",
+            "to": "2012"
+          },
+          {
+            "from": "2013",
+            "to": "2013"
+          },
+          {
+            "from": "2014",
+            "to": "2014"
+          },
+          {
+            "from": "2015",
+            "to": "2015"
+          },
+          {
+            "from": "2016",
+            "to": "2016"
+          },
+          {
+            "from": "2017",
+            "to": "2017"
+          },
+          {
+            "from": "2018",
+            "to": "2018"
+          },
+          {
+            "from": "2019",
+            "to": "2019"
+          },
+          {
+            "from": "2020",
+            "to": "2020"
+          },
+          {
+            "from": "2021",
+            "to": "2021"
+          },
+          {
+            "from": "2022",
+            "to": "2022"
+          },
+          {
+            "from": "2023",
+            "to": "2023"
+          },
+          {
+            "from": "2024",
+            "to": "2024"
+          },
+          {
+            "from": "2025",
+            "to": "2025"
+          },
+          {
+            "from": "2026",
+            "to": "2026"
+          },
+          {
+            "from": "2027",
+            "to": "2027"
+          },
+          {
+            "from": "2028",
+            "to": "2028"
+          },
+          {
+            "from": "2029",
+            "to": "2029"
+          },
+          {
+            "from": "<=1950",
+            "to": "1950"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall_material",
+      "platform_option_id": "kufar.wall_material",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "panel",
+            "to": "1"
+          },
+          {
+            "from": "monolithic",
+            "to": "2"
+          },
+          {
+            "from": "brick",
+            "to": "3"
+          },
+          {
+            "from": "block",
+            "to": "4"
+          },
+          {
+            "from": "frame",
+            "to": "5"
+          },
+          {
+            "from": "frame_block",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.bathroom",
+      "platform_option_id": "kufar.bathroom",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "separate",
+            "to": "1"
+          },
+          {
+            "from": "combined",
+            "to": "2"
+          },
+          {
+            "from": "two",
+            "to": "3"
+          },
+          {
+            "from": "three",
+            "to": "4"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.balcony",
+      "platform_option_id": "kufar.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "present_unspecified",
+            "to": "1"
+          },
+          {
+            "from": "none",
+            "to": "2"
+          },
+          {
+            "from": "loggia",
+            "to": "3"
+          },
+          {
+            "from": "two",
+            "to": "4"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.repair",
+      "platform_option_id": "kufar.repair",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "cosmetic",
+            "to": "1"
+          },
+          {
+            "from": "euro",
+            "to": "5"
+          },
+          {
+            "from": "designer",
+            "to": "10"
+          },
+          {
+            "from": "construction_finish",
+            "to": "15"
+          },
+          {
+            "from": "unfinished",
+            "to": "20"
+          },
+          {
+            "from": "needs_repair",
+            "to": "22"
+          },
+          {
+            "from": "unsafe_condition",
+            "to": "25"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "kufar.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.prepayment",
+      "platform_option_id": "kufar.prepayment",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "none",
+            "to": "1"
+          },
+          {
+            "from": "months_1",
+            "to": "5"
+          },
+          {
+            "from": "months_2",
+            "to": "10"
+          },
+          {
+            "from": "months_3_plus",
+            "to": "15"
+          },
+          {
+            "from": "months_6",
+            "to": "20"
+          },
+          {
+            "from": "deposit_unspecified",
+            "to": "25"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.communication_method",
+      "platform_option_id": "kufar.contact_method",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "calls_and_messages",
+            "to": "0"
+          },
+          {
+            "from": "messages_only",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "kufar.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.youtube_video",
+      "platform_option_id": "kufar.video",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.total_area",
+      "platform_option_id": "kufar.total_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.living_area",
+      "platform_option_id": "kufar.living_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.kitchen_area",
+      "platform_option_id": "kufar.kitchen_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.monthly_price",
+      "platform_option_id": "kufar.price",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number",
+        "requires": [
+          "kufar.currency"
+        ],
+        "currency_field": "kufar.currency"
+      }
+    },
+    {
+      "platform_option_id": "kufar.household_amenities",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.furniture",
+            "values": [
+              {
+                "from": "present",
+                "to": "6"
+              },
+              {
+                "from": "absent",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.tv",
+            "values": [
+              {
+                "from": "yes",
+                "to": "2"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.air_conditioner",
+            "values": [
+              {
+                "from": "yes",
+                "to": "4"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.wifi",
+            "values": [
+              {
+                "from": true,
+                "to": "1"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.telephone_network",
+            "values": [
+              {
+                "from": true,
+                "to": "3"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.iron",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.amenities",
+      "editor_group_name": "Мебель и удобства"
+    },
+    {
+      "platform_option_id": "kufar.kitchen_amenities",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.refrigerator",
+            "values": [
+              {
+                "from": "yes",
+                "to": "1"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.dishwasher",
+            "values": [
+              {
+                "from": "yes",
+                "to": "3"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.microwave",
+            "values": [
+              {
+                "from": "yes",
+                "to": "2"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.dishes",
+            "values": [
+              {
+                "from": "yes",
+                "to": "4"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.stove_type",
+            "values": [
+              {
+                "from": "gas",
+                "to": "6"
+              },
+              {
+                "from": "electric",
+                "to": "7"
+              },
+              {
+                "from": "none",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.coffee_maker",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.amenities",
+      "editor_group_name": "Мебель и удобства"
+    },
+    {
+      "platform_option_id": "kufar.bathroom_amenities",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.washing_machine",
+            "values": [
+              {
+                "from": "yes",
+                "to": "3"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.shower",
+            "values": [
+              {
+                "from": "yes",
+                "to": "2"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.jacuzzi",
+            "values": [
+              {
+                "from": "yes",
+                "to": "1"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.bath",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.hairdryer",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.towels",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.amenities",
+      "editor_group_name": "Мебель и удобства"
+    },
+    {
+      "platform_option_id": "kufar.building_amenities",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.elevator",
+            "values": [
+              {
+                "from": "yes",
+                "to": "1"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.ramp",
+            "values": [
+              {
+                "from": true,
+                "to": "2"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.garbage_chute",
+            "values": [
+              {
+                "from": true,
+                "to": "3"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.fenced",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.covered_parking",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.parking_space",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.intercom",
+            "values": [
+              {
+                "from": true,
+                "to": "7"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.cctv",
+            "values": [
+              {
+                "from": true,
+                "to": "8"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.basement",
+            "values": [
+              {
+                "from": true,
+                "to": "9"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.details",
+      "editor_group_name": "Планировка и дом"
+    },
+    {
+      "platform_option_id": "kufar.rental_conditions",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "tenant.students",
+            "values": [
+              {
+                "from": "allowed",
+                "to": "1"
+              },
+              {
+                "from": "forbidden",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "tenant.pets",
+            "values": [
+              {
+                "from": "allowed",
+                "to": "2"
+              },
+              {
+                "from": "forbidden",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "tenant.children",
+            "values": [
+              {
+                "from": "allowed",
+                "to": "3"
+              },
+              {
+                "from": "forbidden",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "tenant.couples",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "tenant.workers",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "tenant.business_travel",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.terms",
+      "editor_group_name": "Условия аренды"
+    },
+    {
+      "common_option_id": "amenity.furniture",
+      "platform_option_id": "kufar.unfurnished",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "absent",
+            "to": true
+          },
+          {
+            "from": "present",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.walk_through_room",
+      "platform_option_id": "kufar.walk_through_room",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.sleeping_places",
+      "platform_option_id": "kufar.sleeping_places",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "более 10",
+            "to": "10"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "rental.window_orientation",
+      "platform_option_id": "kufar.window_orientation",
+      "conversion": {
+        "kind": "list_lookup",
+        "values": [
+          {
+            "from": "Во двор",
+            "to": "1"
+          },
+          {
+            "from": "На речку",
+            "to": "2"
+          },
+          {
+            "from": "В парк",
+            "to": "3"
+          },
+          {
+            "from": "На улицу",
+            "to": "4"
+          },
+          {
+            "from": "Юг",
+            "to": "5"
+          },
+          {
+            "from": "Север",
+            "to": "6"
+          },
+          {
+            "from": "Восток",
+            "to": "7"
+          },
+          {
+            "from": "Запад",
+            "to": "8"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "building.new_building",
+      "platform_option_id": "kufar.new_building",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.condition",
+      "platform_option_id": "kufar.condition",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Новое",
+            "to": "2"
+          },
+          {
+            "from": "Вторичное",
+            "to": "1"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "kufar.contact_name",
+      "conversion": {
+        "kind": "identity",
+        "requires": [
+          "kufar.company_ad"
+        ]
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "kufar.contact_phone",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164",
+        "requires": [
+          "kufar.company_ad"
+        ]
+      }
+    },
+    {
+      "common_option_id": "contact.organization_address",
+      "platform_option_id": "kufar.company_address",
+      "conversion": {
+        "kind": "identity",
+        "requires": [
+          "kufar.company_ad"
+        ]
+      }
+    },
+    {
+      "common_option_id": "contact.organization_unp",
+      "platform_option_id": "kufar.company_vat",
+      "conversion": {
+        "kind": "identity",
+        "requires": [
+          "kufar.company_ad"
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.residential_complex",
+      "platform_option_id": "kufar.residential_complex",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом «Лимасол» в квартале «Средиземноморский» (Minsk World)",
+            "to": "895"
+          },
+          {
+            "from": "Дом «Лиссабон» в квартале «Западная Европа» (Minsk World)",
+            "to": "800"
+          },
+          {
+            "from": "Дом «Лондон» в квартале «Западная Европа» (Minsk World)",
+            "to": "880"
+          },
+          {
+            "from": "Дом «Мадрид» в квартале «Западная Европа» (Minsk World)",
+            "to": "910"
+          },
+          {
+            "from": "Дом «Манчестер» в квартале «Западная Европа» (Minsk World)",
+            "to": "915"
+          },
+          {
+            "from": "Дом «Марсель» в квартале «Западная Европа» (Minsk World)",
+            "to": "820"
+          },
+          {
+            "from": "Дом «Мехико-Сити» в квартале «Южная Америка» (Minsk World)",
+            "to": "805"
+          },
+          {
+            "from": "Дом «Монтевидео» в квартале «Южная Америка» (Minsk World)",
+            "to": "865"
+          },
+          {
+            "from": "Дом «Мюнхен» в квартале «Западная Европа» (Minsk World)",
+            "to": "795"
+          },
+          {
+            "from": "Дом «Париж» в квартале «Западная Европа» (Minsk World)",
+            "to": "825"
+          },
+          {
+            "from": "Дом «Родос» в квартале «Средиземноморский» (Minsk World)",
+            "to": "870"
+          },
+          {
+            "from": "Дом «Румба» в квартале «Мировые танцы» (Minsk World)",
+            "to": "840"
+          },
+          {
+            "from": "Дом «Самба» в квартале «Мировые танцы» (Minsk World)",
+            "to": "925"
+          },
+          {
+            "from": "Дом «Сан-Паулу» в квартале «Южная Америка» (Minsk World)",
+            "to": "905"
+          },
+          {
+            "from": "Дом «Санторини» в квартале «Средиземноморский» (Minsk World)",
+            "to": "810"
+          },
+          {
+            "from": "Дом «Сентрал Парк» в квартале «Happy Planet» (Minsk World)",
+            "to": "790"
+          },
+          {
+            "from": "Дом «Ча-Ча-Ча» в квартале «Мировые танцы» (Minsk World)",
+            "to": "835"
+          },
+          {
+            "from": "Дом на Будённого, 30",
+            "to": "705"
+          },
+          {
+            "from": "Дом на Менделеева, 30",
+            "to": "710"
+          },
+          {
+            "from": "Дом на пр-т Мира 18",
+            "to": "95"
+          },
+          {
+            "from": "Дом по пр-ту Фрунзе 36А",
+            "to": "100"
+          },
+          {
+            "from": "Дом по ул. 3-я Коллективная",
+            "to": "105"
+          },
+          {
+            "from": "Дом по ул. Буденного 28",
+            "to": "110"
+          },
+          {
+            "from": "Дом по ул. Волотовской 11",
+            "to": "115"
+          },
+          {
+            "from": "Дом по ул. Махновича 11",
+            "to": "120"
+          },
+          {
+            "from": "Дом по ул. Пушкина",
+            "to": "125"
+          },
+          {
+            "from": "Дом по ул. Свердлова 12",
+            "to": "130"
+          },
+          {
+            "from": "Дом по ул. Социалистической",
+            "to": "135"
+          },
+          {
+            "from": "Дом по ул. Червякова",
+            "to": "140"
+          },
+          {
+            "from": "Дом Эмиратс Волна",
+            "to": "145"
+          },
+          {
+            "from": "Доступное жильё: Железнодорожная дом №4",
+            "to": "150"
+          },
+          {
+            "from": "Доступное жилье: Железнодорожная дом №6",
+            "to": "155"
+          },
+          {
+            "from": "Доступное жильё: Запад",
+            "to": "160"
+          },
+          {
+            "from": "Доступное жилье: Степянка",
+            "to": "165"
+          },
+          {
+            "from": "ЖД № 67  в мкрн Билево-2",
+            "to": "170"
+          },
+          {
+            "from": "ЖД №1008 по ул. Еронько",
+            "to": "175"
+          },
+          {
+            "from": "ЖД №1054 по ул. Еронько",
+            "to": "180"
+          },
+          {
+            "from": "ЖД №2 по ул. Папанина",
+            "to": "185"
+          },
+          {
+            "from": "ЖД №49 по ул. Алексея Пысина",
+            "to": "190"
+          },
+          {
+            "from": "ЖД Дипломат",
+            "to": "195"
+          },
+          {
+            "from": "ЖД на пер. 1-й Южный 19",
+            "to": "200"
+          },
+          {
+            "from": "ЖД на проспекте Строителей 92",
+            "to": "205"
+          },
+          {
+            "from": "ЖД по ул. Адамковской",
+            "to": "700"
+          },
+          {
+            "from": "ЖД на ул. Гагарина",
+            "to": "210"
+          },
+          {
+            "from": "ЖД на ул. Горького 41",
+            "to": "215"
+          },
+          {
+            "from": "ЖД по ул. Свердлова, 29",
+            "to": "690"
+          },
+          {
+            "from": "ЖД по ул. Чкалова",
+            "to": "220"
+          },
+          {
+            "from": "ЖД по ул. Федько, 3",
+            "to": "685"
+          },
+          {
+            "from": "ЖД Рамонак",
+            "to": "640"
+          },
+          {
+            "from": "ЖД Топаз",
+            "to": "670"
+          },
+          {
+            "from": "ЖД Фаворит",
+            "to": "665"
+          },
+          {
+            "from": "Жилой дом № 2",
+            "to": "225"
+          },
+          {
+            "from": "Жилой дом № 3",
+            "to": "230"
+          },
+          {
+            "from": "Жилой дом № 5 по ул. Суворова",
+            "to": "235"
+          },
+          {
+            "from": "Жилой дом № 8 по ул. Академика Карского",
+            "to": "240"
+          },
+          {
+            "from": "Жилой дом №2",
+            "to": "245"
+          },
+          {
+            "from": "Жилой дом №4",
+            "to": "250"
+          },
+          {
+            "from": "Жилой дом №5 по ул. Судиловского в г. Солигорске",
+            "to": "730"
+          },
+          {
+            "from": "Жилой дом №66Л по ул.Правды",
+            "to": "255"
+          },
+          {
+            "from": "Жилой дом №92",
+            "to": "260"
+          },
+          {
+            "from": "Жилой дом в мкр. Лебяжий",
+            "to": "265"
+          },
+          {
+            "from": "Жилой дом Зодиак",
+            "to": "270"
+          },
+          {
+            "from": "Жилой дом КПД №3 в мкрн Билево-1",
+            "to": "275"
+          },
+          {
+            "from": "Жилой дом по пер. Горный, 8",
+            "to": "755"
+          },
+          {
+            "from": "Жилой дом по ул. Грибоедова",
+            "to": "280"
+          },
+          {
+            "from": "Жилой комплекс Янтарь",
+            "to": "285"
+          },
+          {
+            "from": "Жилой район Новая Боровая",
+            "to": "290"
+          },
+          {
+            "from": "ЖК на ул. Розы Люксембург",
+            "to": "655"
+          },
+          {
+            "from": "ЖК Радужный",
+            "to": "305"
+          },
+          {
+            "from": "ЖК Родны Кут",
+            "to": "660"
+          },
+          {
+            "from": "ЖК D3",
+            "to": "310"
+          },
+          {
+            "from": "ЖК Depo",
+            "to": "930"
+          },
+          {
+            "from": "ЖК Minsk World",
+            "to": "315"
+          },
+          {
+            "from": "ЖК Smart",
+            "to": "320"
+          },
+          {
+            "from": "ЖК Антоновский квартал",
+            "to": "765"
+          },
+          {
+            "from": "ЖК Белый город",
+            "to": "775"
+          },
+          {
+            "from": "ЖК Браславский",
+            "to": "325"
+          },
+          {
+            "from": "ЖК Брестский",
+            "to": "330"
+          },
+          {
+            "from": "ЖК в мкрн Загорский",
+            "to": "335"
+          },
+          {
+            "from": "ЖК в районе ул. Алибегова — Я. Брыля",
+            "to": "340"
+          },
+          {
+            "from": "ЖК Варшавский",
+            "to": "345"
+          },
+          {
+            "from": "ЖК Варшавский дом №37",
+            "to": "350"
+          },
+          {
+            "from": "ЖК Восточный",
+            "to": "355"
+          },
+          {
+            "from": "ЖК Гармония",
+            "to": "750"
+          },
+          {
+            "from": "ЖК Гранд Авеню",
+            "to": "760"
+          },
+          {
+            "from": "ЖК Гранд Хаус",
+            "to": "360"
+          },
+          {
+            "from": "ЖК Грушевский посад",
+            "to": "365"
+          },
+          {
+            "from": "ЖК Дубравинский",
+            "to": "960"
+          },
+          {
+            "from": "ЖК Зеленая гавань",
+            "to": "370"
+          },
+          {
+            "from": "ЖК Изумрудный",
+            "to": "950"
+          },
+          {
+            "from": "ЖК Триумф",
+            "to": "375"
+          },
+          {
+            "from": "ЖК КАСКАД",
+            "to": "380"
+          },
+          {
+            "from": "ЖК Квартал Михалово",
+            "to": "785"
+          },
+          {
+            "from": "ЖК Квартал на Грушевке",
+            "to": "975"
+          },
+          {
+            "from": "ЖК Кипарис",
+            "to": "650"
+          },
+          {
+            "from": "ЖК Колбасино",
+            "to": "385"
+          },
+          {
+            "from": "ЖК Комфорт парк",
+            "to": "745"
+          },
+          {
+            "from": "ЖК Лазурит",
+            "to": "300"
+          },
+          {
+            "from": "ЖК Лайт",
+            "to": "965"
+          },
+          {
+            "from": "ЖК Левада",
+            "to": "390"
+          },
+          {
+            "from": "ЖК Малахит",
+            "to": "395"
+          },
+          {
+            "from": "ЖК Малиновка",
+            "to": "400"
+          },
+          {
+            "from": "ЖК Матвеевский",
+            "to": "405"
+          },
+          {
+            "from": "ЖK Маэстро",
+            "to": "740"
+          },
+          {
+            "from": "ЖК Маяк Минска",
+            "to": "410"
+          },
+          {
+            "from": "ЖК Мегаполис",
+            "to": "415"
+          },
+          {
+            "from": "ЖК Менжинский",
+            "to": "420"
+          },
+          {
+            "from": "ЖК Минский квартал",
+            "to": "425"
+          },
+          {
+            "from": "ЖК Монтерей",
+            "to": "430"
+          },
+          {
+            "from": "ЖК на просп. Ивана Жолтовского",
+            "to": "435"
+          },
+          {
+            "from": "ЖК на Титова, 14",
+            "to": "715"
+          },
+          {
+            "from": "ЖК на ул. Восточной - Олешева",
+            "to": "440"
+          },
+          {
+            "from": "ЖК на ул. Заслонова 47",
+            "to": "445"
+          },
+          {
+            "from": "ЖК на ул. Якубовского 70",
+            "to": "450"
+          },
+          {
+            "from": "ЖК Нарочанский",
+            "to": "455"
+          },
+          {
+            "from": "ЖК Некрасовский",
+            "to": "460"
+          },
+          {
+            "from": "ЖК Новоселье",
+            "to": "465"
+          },
+          {
+            "from": "ЖК Новый Заславль",
+            "to": "295"
+          },
+          {
+            "from": "ЖК Одесский",
+            "to": "470"
+          },
+          {
+            "from": "ЖК Озерцо",
+            "to": "475"
+          },
+          {
+            "from": "ЖК Олимпик Парк",
+            "to": "480"
+          },
+          {
+            "from": "ЖК Парк Челюскинцев",
+            "to": "485"
+          },
+          {
+            "from": "ЖК Парус",
+            "to": "970"
+          },
+          {
+            "from": "ЖК Пирс",
+            "to": "500"
+          },
+          {
+            "from": "ЖК по мкрн 104 ЖД №39",
+            "to": "505"
+          },
+          {
+            "from": "ЖК по мкрн 59 ЖД №33",
+            "to": "510"
+          },
+          {
+            "from": "ЖК по мкрн №15 ЖД №19",
+            "to": "515"
+          },
+          {
+            "from": "ЖК по просп. Речицкий ЖД №142",
+            "to": "520"
+          },
+          {
+            "from": "ЖК по просп. Строителей 92",
+            "to": "525"
+          },
+          {
+            "from": "ЖК по ул. Богдана Хмельницкого",
+            "to": "530"
+          },
+          {
+            "from": "ЖК по ул. Докутович ЖД №3",
+            "to": "535"
+          },
+          {
+            "from": "ЖК по ул. Калинина 3",
+            "to": "540"
+          },
+          {
+            "from": "ЖК по ул. Колесника 1а",
+            "to": "545"
+          },
+          {
+            "from": "ЖК по ул. Полесская 28А",
+            "to": "550"
+          },
+          {
+            "from": "ЖК по ул. Рогачевская ЖД №1",
+            "to": "555"
+          },
+          {
+            "from": "ЖК по ул. Федюнинского ЖД №10",
+            "to": "560"
+          },
+          {
+            "from": "ЖК Прибужский Квартал",
+            "to": "565"
+          },
+          {
+            "from": "ЖК Променад",
+            "to": "570"
+          },
+          {
+            "from": "ЖК Променада (Брест)",
+            "to": "575"
+          },
+          {
+            "from": "ЖК Разинский",
+            "to": "580"
+          },
+          {
+            "from": "ЖК Северный",
+            "to": "585"
+          },
+          {
+            "from": "ЖК Северный Берег",
+            "to": "735"
+          },
+          {
+            "from": "ЖК Скандинавское предместье",
+            "to": "587"
+          },
+          {
+            "from": "ЖК Славянский Квартал",
+            "to": "945"
+          },
+          {
+            "from": "ЖК Старая крепость",
+            "to": "590"
+          },
+          {
+            "from": "ЖК Тришин",
+            "to": "720"
+          },
+          {
+            "from": "ЖК Уручский-2",
+            "to": "595"
+          },
+          {
+            "from": "ЖК Уютный",
+            "to": "780"
+          },
+          {
+            "from": "ЖК Четыре сезона",
+            "to": "600"
+          },
+          {
+            "from": "ЖК эконом-класса по ул. Карвата, 10",
+            "to": "770"
+          },
+          {
+            "from": "ЖК Янтарный",
+            "to": "695"
+          },
+          {
+            "from": "ЖК Ясный бор",
+            "to": "955"
+          },
+          {
+            "from": "Застройка квартала в районе улицы Ленина",
+            "to": "605"
+          },
+          {
+            "from": "Квартал Северное сияние (Новая Боровая)",
+            "to": "675"
+          },
+          {
+            "from": "Квартал Цветной (Новая Боровая)",
+            "to": "680"
+          },
+          {
+            "from": "Клубный дом Вилла Рива",
+            "to": "610"
+          },
+          {
+            "from": "Клубный дом Цитадель",
+            "to": "615"
+          },
+          {
+            "from": "Клубный комплекс Набережный",
+            "to": "725"
+          },
+          {
+            "from": "микрорайон Грандичи",
+            "to": "620"
+          },
+          {
+            "from": "МК Фарфоровый",
+            "to": "625"
+          },
+          {
+            "from": "Многоквартирный жилой дом № 44",
+            "to": "630"
+          },
+          {
+            "from": "Новостройка по адресу пер Горный 8",
+            "to": "635"
+          },
+          {
+            "from": "MOD House",
+            "to": "1"
+          },
+          {
+            "from": "ЖК Гастелло Резиденс",
+            "to": "645"
+          },
+          {
+            "from": "Дом №3 в мкр. Лошица-6",
+            "to": "5"
+          },
+          {
+            "from": "Дом № 3 по ул. Гоголя-Папанина",
+            "to": "10"
+          },
+          {
+            "from": "Дом № 4 по ул. Пролетарской - Щорса",
+            "to": "15"
+          },
+          {
+            "from": "Дом № 603Б в мкр. №6 жилого района Аэропорт",
+            "to": "20"
+          },
+          {
+            "from": "Дом № 615А в мкр. №6 жилого района Аэропорт",
+            "to": "25"
+          },
+          {
+            "from": "Дом №1 по ул. Комсомольская",
+            "to": "30"
+          },
+          {
+            "from": "Дом №1 по ул. Курчатова",
+            "to": "35"
+          },
+          {
+            "from": "Дом №11 по ул.Суворова ЖК Колбасино",
+            "to": "40"
+          },
+          {
+            "from": "Дом №2 по ул. Ленина",
+            "to": "45"
+          },
+          {
+            "from": "Дом №2 по ул. Пролетарской - Щорса",
+            "to": "50"
+          },
+          {
+            "from": "Дом №28 в мкрн. Спутник",
+            "to": "55"
+          },
+          {
+            "from": "Дом №312А по ул.Суворова ЖК Колбасино",
+            "to": "60"
+          },
+          {
+            "from": "Дом №34 в мкрн. Спутник",
+            "to": "65"
+          },
+          {
+            "from": "Дом №35 по ул. Труда",
+            "to": "70"
+          },
+          {
+            "from": "Дом №4 в мкр. Лошица-6",
+            "to": "75"
+          },
+          {
+            "from": "Дом №41 по ул. Огинского",
+            "to": "80"
+          },
+          {
+            "from": "Дом №56",
+            "to": "85"
+          },
+          {
+            "from": "Дом №6 по ул. Пролетарской - Щорса",
+            "to": "90"
+          },
+          {
+            "from": "Дом «Амстердам» в квартале «Западная Европа» (Minsk World)",
+            "to": "830"
+          },
+          {
+            "from": "Дом «Бангкок» в квартале «Азия» (Minsk World)",
+            "to": "900"
+          },
+          {
+            "from": "Дом «Белград» в квартале «Центральная Европа» (Minsk World)",
+            "to": "815"
+          },
+          {
+            "from": "Дом «Берлин» в квартале «Западная Европа» (Minsk World)",
+            "to": "855"
+          },
+          {
+            "from": "Дом «Бразилиа» в квартале «Южная Америка» (Minsk World)",
+            "to": "875"
+          },
+          {
+            "from": "Дом «Бухарест» в квартале «Центральная Европа» (Minsk World)",
+            "to": "885"
+          },
+          {
+            "from": "Дом «Варшава» в квартале «Центральная Европа» (Minsk World)",
+            "to": "860"
+          },
+          {
+            "from": "Дом «Гайд Парк» в квартале «Happy Planet» (Minsk World)",
+            "to": "890"
+          },
+          {
+            "from": "Дом «Голден Гейт Парк» в квартале «Happy Planet» (Minsk World)",
+            "to": "850"
+          },
+          {
+            "from": "Дом «Ёёги Парк» (Minsk World)",
+            "to": "845"
+          },
+          {
+            "from": "Дом «Лима» в квартале «Южная Америка» (Minsk World)",
+            "to": "920"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "",
+      "platform_option_id": "kufar.address_metro",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "location.metro_1_station",
+            "values": [
+              {
+                "from": "Автозаводская",
+                "to": "2"
+              },
+              {
+                "from": "Академия наук",
+                "to": "3"
+              },
+              {
+                "from": "Аэродромная",
+                "to": "36"
+              },
+              {
+                "from": "Борисовский тракт",
+                "to": "4"
+              },
+              {
+                "from": "Восток",
+                "to": "5"
+              },
+              {
+                "from": "Грушевка",
+                "to": "6"
+              },
+              {
+                "from": "Институт культуры",
+                "to": "7"
+              },
+              {
+                "from": "Каменная горка",
+                "to": "8"
+              },
+              {
+                "from": "Ковальская Слобода",
+                "to": "32"
+              },
+              {
+                "from": "Кунцевщина",
+                "to": "9"
+              },
+              {
+                "from": "Малиновка",
+                "to": "10"
+              },
+              {
+                "from": "Михалово",
+                "to": "11"
+              },
+              {
+                "from": "Могилевская",
+                "to": "12"
+              },
+              {
+                "from": "Молодежная",
+                "to": "13"
+              },
+              {
+                "from": "Московская",
+                "to": "14"
+              },
+              {
+                "from": "Немига",
+                "to": "15"
+              },
+              {
+                "from": "Неморшанский сад",
+                "to": "35"
+              },
+              {
+                "from": "Октябрьская (Купаловская)",
+                "to": "16"
+              },
+              {
+                "from": "Парк Челюскинцев",
+                "to": "17"
+              },
+              {
+                "from": "Партизанская",
+                "to": "18"
+              },
+              {
+                "from": "Первомайская",
+                "to": "19"
+              },
+              {
+                "from": "Петровщина",
+                "to": "20"
+              },
+              {
+                "from": "Площадь Ленина (Вокзальная)",
+                "to": "21"
+              },
+              {
+                "from": "Площадь Победы",
+                "to": "22"
+              },
+              {
+                "from": "Площадь Франтишка Богушевича",
+                "to": "33"
+              },
+              {
+                "from": "Площадь Якуба Коласа",
+                "to": "23"
+              },
+              {
+                "from": "Пролетарская",
+                "to": "24"
+              },
+              {
+                "from": "Пушкинская",
+                "to": "25"
+              },
+              {
+                "from": "Спортивная",
+                "to": "26"
+              },
+              {
+                "from": "Слуцкий гостинец",
+                "to": "34"
+              },
+              {
+                "from": "Тракторный завод",
+                "to": "27"
+              },
+              {
+                "from": "Уручье",
+                "to": "28"
+              },
+              {
+                "from": "Фрунзенская (Юбилейная площадь)",
+                "to": "29"
+              }
+            ]
+          },
+          {
+            "common_option_id": "location.metro_2_station",
+            "values": [
+              {
+                "from": "Автозаводская",
+                "to": "2"
+              },
+              {
+                "from": "Академия наук",
+                "to": "3"
+              },
+              {
+                "from": "Аэродромная",
+                "to": "36"
+              },
+              {
+                "from": "Борисовский тракт",
+                "to": "4"
+              },
+              {
+                "from": "Восток",
+                "to": "5"
+              },
+              {
+                "from": "Грушевка",
+                "to": "6"
+              },
+              {
+                "from": "Институт культуры",
+                "to": "7"
+              },
+              {
+                "from": "Каменная горка",
+                "to": "8"
+              },
+              {
+                "from": "Ковальская Слобода",
+                "to": "32"
+              },
+              {
+                "from": "Кунцевщина",
+                "to": "9"
+              },
+              {
+                "from": "Малиновка",
+                "to": "10"
+              },
+              {
+                "from": "Михалово",
+                "to": "11"
+              },
+              {
+                "from": "Могилевская",
+                "to": "12"
+              },
+              {
+                "from": "Молодежная",
+                "to": "13"
+              },
+              {
+                "from": "Московская",
+                "to": "14"
+              },
+              {
+                "from": "Немига",
+                "to": "15"
+              },
+              {
+                "from": "Неморшанский сад",
+                "to": "35"
+              },
+              {
+                "from": "Октябрьская (Купаловская)",
+                "to": "16"
+              },
+              {
+                "from": "Парк Челюскинцев",
+                "to": "17"
+              },
+              {
+                "from": "Партизанская",
+                "to": "18"
+              },
+              {
+                "from": "Первомайская",
+                "to": "19"
+              },
+              {
+                "from": "Петровщина",
+                "to": "20"
+              },
+              {
+                "from": "Площадь Ленина (Вокзальная)",
+                "to": "21"
+              },
+              {
+                "from": "Площадь Победы",
+                "to": "22"
+              },
+              {
+                "from": "Площадь Франтишка Богушевича",
+                "to": "33"
+              },
+              {
+                "from": "Площадь Якуба Коласа",
+                "to": "23"
+              },
+              {
+                "from": "Пролетарская",
+                "to": "24"
+              },
+              {
+                "from": "Пушкинская",
+                "to": "25"
+              },
+              {
+                "from": "Спортивная",
+                "to": "26"
+              },
+              {
+                "from": "Слуцкий гостинец",
+                "to": "34"
+              },
+              {
+                "from": "Тракторный завод",
+                "to": "27"
+              },
+              {
+                "from": "Уручье",
+                "to": "28"
+              },
+              {
+                "from": "Фрунзенская (Юбилейная площадь)",
+                "to": "29"
+              }
+            ]
+          },
+          {
+            "common_option_id": "location.metro_3_station",
+            "values": [
+              {
+                "from": "Автозаводская",
+                "to": "2"
+              },
+              {
+                "from": "Академия наук",
+                "to": "3"
+              },
+              {
+                "from": "Аэродромная",
+                "to": "36"
+              },
+              {
+                "from": "Борисовский тракт",
+                "to": "4"
+              },
+              {
+                "from": "Восток",
+                "to": "5"
+              },
+              {
+                "from": "Грушевка",
+                "to": "6"
+              },
+              {
+                "from": "Институт культуры",
+                "to": "7"
+              },
+              {
+                "from": "Каменная горка",
+                "to": "8"
+              },
+              {
+                "from": "Ковальская Слобода",
+                "to": "32"
+              },
+              {
+                "from": "Кунцевщина",
+                "to": "9"
+              },
+              {
+                "from": "Малиновка",
+                "to": "10"
+              },
+              {
+                "from": "Михалово",
+                "to": "11"
+              },
+              {
+                "from": "Могилевская",
+                "to": "12"
+              },
+              {
+                "from": "Молодежная",
+                "to": "13"
+              },
+              {
+                "from": "Московская",
+                "to": "14"
+              },
+              {
+                "from": "Немига",
+                "to": "15"
+              },
+              {
+                "from": "Неморшанский сад",
+                "to": "35"
+              },
+              {
+                "from": "Октябрьская (Купаловская)",
+                "to": "16"
+              },
+              {
+                "from": "Парк Челюскинцев",
+                "to": "17"
+              },
+              {
+                "from": "Партизанская",
+                "to": "18"
+              },
+              {
+                "from": "Первомайская",
+                "to": "19"
+              },
+              {
+                "from": "Петровщина",
+                "to": "20"
+              },
+              {
+                "from": "Площадь Ленина (Вокзальная)",
+                "to": "21"
+              },
+              {
+                "from": "Площадь Победы",
+                "to": "22"
+              },
+              {
+                "from": "Площадь Франтишка Богушевича",
+                "to": "33"
+              },
+              {
+                "from": "Площадь Якуба Коласа",
+                "to": "23"
+              },
+              {
+                "from": "Пролетарская",
+                "to": "24"
+              },
+              {
+                "from": "Пушкинская",
+                "to": "25"
+              },
+              {
+                "from": "Спортивная",
+                "to": "26"
+              },
+              {
+                "from": "Слуцкий гостинец",
+                "to": "34"
+              },
+              {
+                "from": "Тракторный завод",
+                "to": "27"
+              },
+              {
+                "from": "Уручье",
+                "to": "28"
+              },
+              {
+                "from": "Фрунзенская (Юбилейная площадь)",
+                "to": "29"
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.location",
+      "editor_group_name": "Рядом с домом"
+    },
+    {
+      "common_option_id": "location.microdistrict",
+      "platform_option_id": "kufar.address_microdistrict",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Академия наук",
+            "to": "5"
+          },
+          {
+            "from": "Ангарская",
+            "to": "10"
+          },
+          {
+            "from": "Аэродромная",
+            "to": "15"
+          },
+          {
+            "from": "Боровая",
+            "to": "20"
+          },
+          {
+            "from": "Боровляны",
+            "to": "25"
+          },
+          {
+            "from": "Брилевичи",
+            "to": "30"
+          },
+          {
+            "from": "Верхний город",
+            "to": "35"
+          },
+          {
+            "from": "Веснянка",
+            "to": "40"
+          },
+          {
+            "from": "Восток",
+            "to": "45"
+          },
+          {
+            "from": "Восточный",
+            "to": "50"
+          },
+          {
+            "from": "Грушевка",
+            "to": "55"
+          },
+          {
+            "from": "Домбровка",
+            "to": "65"
+          },
+          {
+            "from": "Дражня",
+            "to": "70"
+          },
+          {
+            "from": "Запад",
+            "to": "80"
+          },
+          {
+            "from": "Заславская",
+            "to": "90"
+          },
+          {
+            "from": "Зацень",
+            "to": "95"
+          },
+          {
+            "from": "Зеленый луг",
+            "to": "100"
+          },
+          {
+            "from": "Каменная Горка",
+            "to": "105"
+          },
+          {
+            "from": "Каменная Горка-1",
+            "to": "335"
+          },
+          {
+            "from": "Каменная Горка-2",
+            "to": "340"
+          },
+          {
+            "from": "Каменная Горка-3",
+            "to": "345"
+          },
+          {
+            "from": "Каменная Горка-4",
+            "to": "350"
+          },
+          {
+            "from": "Каменная Горка-5",
+            "to": "355"
+          },
+          {
+            "from": "Каскад",
+            "to": "110"
+          },
+          {
+            "from": "Комаровка",
+            "to": "120"
+          },
+          {
+            "from": "Красный Бор",
+            "to": "125"
+          },
+          {
+            "from": "Кунцевщина",
+            "to": "130"
+          },
+          {
+            "from": "Курасовщина",
+            "to": "135"
+          },
+          {
+            "from": "Лебяжий",
+            "to": "140"
+          },
+          {
+            "from": "Лошица",
+            "to": "145"
+          },
+          {
+            "from": "Малиновка",
+            "to": "150"
+          },
+          {
+            "from": "Масюковщина",
+            "to": "160"
+          },
+          {
+            "from": "Маяк Минска",
+            "to": "325"
+          },
+          {
+            "from": "Медвежино",
+            "to": "165"
+          },
+          {
+            "from": "Минск-Мир",
+            "to": "170"
+          },
+          {
+            "from": "Михалово",
+            "to": "175"
+          },
+          {
+            "from": "Новая Боровая",
+            "to": "177"
+          },
+          {
+            "from": "Новинки",
+            "to": "180"
+          },
+          {
+            "from": "Озерище",
+            "to": "185"
+          },
+          {
+            "from": "Осмоловка",
+            "to": "187"
+          },
+          {
+            "from": "поселок Радужный",
+            "to": "195"
+          },
+          {
+            "from": "Пулихова",
+            "to": "200"
+          },
+          {
+            "from": "Раковское шоссе",
+            "to": "205"
+          },
+          {
+            "from": "Ржавец",
+            "to": "210"
+          },
+          {
+            "from": "Северный берег",
+            "to": "330"
+          },
+          {
+            "from": "Северный поселок",
+            "to": "215"
+          },
+          {
+            "from": "Сельхозпоселок",
+            "to": "220"
+          },
+          {
+            "from": "Семашко",
+            "to": "225"
+          },
+          {
+            "from": "Серебрянка",
+            "to": "230"
+          },
+          {
+            "from": "Серова",
+            "to": "235"
+          },
+          {
+            "from": "Слепянка",
+            "to": "240"
+          },
+          {
+            "from": "Сокол",
+            "to": "245"
+          },
+          {
+            "from": "Сосны",
+            "to": "250"
+          },
+          {
+            "from": "Степянка",
+            "to": "255"
+          },
+          {
+            "from": "Сторожовка",
+            "to": "260"
+          },
+          {
+            "from": "Сухарево",
+            "to": "265"
+          },
+          {
+            "from": "Троицкое предместье",
+            "to": "275"
+          },
+          {
+            "from": "Уручье",
+            "to": "280"
+          },
+          {
+            "from": "Харьковская",
+            "to": "290"
+          },
+          {
+            "from": "Чижовка",
+            "to": "305"
+          },
+          {
+            "from": "Шабаны",
+            "to": "310"
+          },
+          {
+            "from": "Юго-Запад",
+            "to": "320"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": {
+    "kufar.category": "1010",
+    "kufar.transaction_type": "let",
+    "kufar.price_mode": "common"
+  },
+  "addresses": [
+    {
+      "platform_option_id": "kufar.address_text",
+      "part": "label",
+      "scalar_verified": false
+    }
+  ],
+  "checks": [],
+  "review": [
+    {
+      "field": "",
+      "message": "Имя/телефон берутся из профиля Kufar. Геокодер и приём фотографий требуют подтверждения в форме."
+    }
+  ],
+  "coordinates": [
+    {
+      "platform_option_id": "kufar.coordinates",
+      "axis": "pair"
+    }
+  ],
+  "address_bound_fields": [
+    "kufar.address_area_region_1",
+    "kufar.address_area_region_2",
+    "kufar.address_area_region_3",
+    "kufar.address_area_region_4",
+    "kufar.address_area_region_5",
+    "kufar.address_area_region_6",
+    "kufar.address_area_region_7",
+    "kufar.address_region",
+    "kufar.address_tags_yandex",
+    "kufar.address_text",
+    "kufar.coordinates"
+  ],
+  "deferred_fields": {
+    "kufar.address_text": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_region": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_1": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_2": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_3": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_4": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_5": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_6": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_area_region_7": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.coordinates": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.address_tags_yandex": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "kufar.company_ad": "Зависит от возможностей и настроек аккаунта площадки.",
+    "kufar.ad_video_enabled": "Зависит от возможностей и настроек аккаунта площадки.",
+    "kufar.contact_name": "Контакты и реквизиты Kufar зависят от профиля площадки. Их соответствие единой карточке нужно проверить в аккаунте.",
+    "kufar.contact_phone": "Контакты и реквизиты Kufar зависят от профиля площадки. Их соответствие единой карточке нужно проверить в аккаунте.",
+    "kufar.company_address": "Контакты и реквизиты Kufar зависят от профиля площадки. Их соответствие единой карточке нужно проверить в аккаунте.",
+    "kufar.company_vat": "Контакты и реквизиты Kufar зависят от профиля площадки. Их соответствие единой карточке нужно проверить в аккаунте."
+  }
+}

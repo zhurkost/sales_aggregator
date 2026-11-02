@@ -20,7 +20,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "autopost.rental-reference-dir=")
 @AutoConfigureMockMvc
 class WorkspaceIntegrationTest {
   @Test

@@ -1,0 +1,1344 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Долгосрочная аренда квартир",
+    "description": "Domovita, гостевая и авторизованная форма квартиры целиком в долгосрочную аренду. Дата 2026-11-01. Приватное продолжение baseline; покрытие partial. Конфигурация C1, код J1/J2, UI и серверная проверка черновика; подробности и границы в report_apartments_long_term_rent_domovita.txt. Адресные enum содержат только частичную выборку.",
+    "categories": [],
+    "options": [
+      {
+        "id": "domovita.action",
+        "name": "Тип сделки",
+        "description": "Вход /new/add → Сдаче длительно; input[name=action][value=rent] выбран. Схема ограничена этой сделкой; sale/daily вне категории.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true
+        },
+        "options": [
+          {
+            "id": "domovita.action.rent",
+            "name": "Сдаче длительно",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "rent"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.property_type",
+        "name": "Тип недвижимости",
+        "description": "После rent выбран flats. Комнаты, дома, гаражи, коммерческая недвижимость вне категории; отдельной студии в исследованной форме нет.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "depends_on": [
+            "domovita.action"
+          ]
+        },
+        "options": [
+          {
+            "id": "domovita.property_type.flats",
+            "name": "Квартиры",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "flats"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.town",
+        "name": "Населённый пункт",
+        "description": "Динамический адресный select. J1: выбранный объект {id,type,label,value,lat,lng,...}; в form_params отправляется числовой id. Здесь только 9 результатов трёх поисковых запросов; это не полный каталог Беларуси.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.town.id_15362",
+            "name": "г. Минск МИНСКАЯ ОБЛАСТЬ Минский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=г..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 15362
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_59833",
+            "name": "ст. Минская правда МИНСКАЯ ОБЛАСТЬ Логойский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=ст..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 59833
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_63042",
+            "name": "ст. Минский Водник МИНСКАЯ ОБЛАСТЬ Логойский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=ст..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 63042
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_59657",
+            "name": "ст. Минский фарфоровый завод МИНСКАЯ ОБЛАСТЬ Логойский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=ст..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 59657
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_60173",
+            "name": "ст. Минского маргаринового з-да МИНСКАЯ ОБЛАСТЬ Пуховичский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=ст..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 60173
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_2194",
+            "name": "г. Брест БРЕСТСКАЯ ОБЛАСТЬ Брестский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=г..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2194
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_55762",
+            "name": "д. Брестский БРЕСТСКАЯ ОБЛАСТЬ Брестский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=д..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 55762
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_17990",
+            "name": "д. Копище МИНСКАЯ ОБЛАСТЬ Минский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=д..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 17990
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.town.id_16196",
+            "name": "д. Копище МИНСКАЯ ОБЛАСТЬ Вилейский район",
+            "description": "A1/A2/A3, частичная выборка; объект type=д..",
+            "type": "choice",
+            "fill_rule": {
+              "value": 16196
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.street",
+        "name": "Улица",
+        "description": "J1: обязательна для selected town.type='г.', необязательна для иных типов. Текущий контракт не выражает required по метаданным enum-объекта. API v1/find-street: query,limit:20,town_id; возвращает id,value,label,lat,lng. Сериализация street_name=selected.value; street.id нужен для поиска домов. Здесь один подтверждённый вариант для Минска.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "domovita.town"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.street.id_5792",
+            "name": "пр-т Дзержинского",
+            "description": "A4: native street.id=5792; сериализуемое значение — строка value.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "пр-т Дзержинского",
+              "when": {
+                "option_id": "domovita.town",
+                "operator": "equals",
+                "value": 15362
+              }
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.house_number",
+        "name": "Номер дома",
+        "description": "J1: обязательность для городов, кроме отдельного служебного исключения в коде. В сельской ветви проверено сохранение без улицы/дома. API v1/find-house зависит от town_id и street_id; выбранный объект {value,label,lat,lng}, отдельный ID дома в ответе отсутствует. В form_params отправляется строковый house_number. Частичная выборка одного запроса.",
+        "type": "enum",
+        "fill_rule": {
+          "required": null,
+          "depends_on": [
+            "domovita.town",
+            "domovita.street"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.house_number.n3",
+            "name": "3",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_slash_1",
+            "name": "3/1",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3/1",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_slash_2",
+            "name": "3/2",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3/2",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_slash_3",
+            "name": "3/3",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3/3",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_slash_cyr_be",
+            "name": "3/Б",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3/Б",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n30",
+            "name": "30",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "30",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n32",
+            "name": "32",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "32",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n34",
+            "name": "34",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "34",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n35_cyr_a",
+            "name": "35А",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "35А",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n37",
+            "name": "37",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "37",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n39",
+            "name": "39",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "39",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_cyr_a",
+            "name": "3А",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3А",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_cyr_a_slash_1",
+            "name": "3А/1",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3А/1",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_cyr_be",
+            "name": "3Б",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3Б",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.house_number.n3_cyr_g",
+            "name": "3Г",
+            "description": "A5: все результаты запроса query='3'; не полный каталог домов.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "3Г",
+              "when": {
+                "all": [
+                  {
+                    "option_id": "domovita.town",
+                    "operator": "equals",
+                    "value": 15362
+                  },
+                  {
+                    "option_id": "domovita.street",
+                    "operator": "equals",
+                    "value": "пр-т Дзержинского"
+                  }
+                ]
+              }
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.position_x",
+        "name": "Техническая координата position_x",
+        "description": "J1: position_x=lat (широта), выставляется при выборе town/street/house и клике карты. Клиент проверяет включительный диапазон 51..56.5; это прямоугольная проверка, не точная граница страны. Не заполнять произвольной строкой.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 51,
+            "max": 56.5
+          },
+          "depends_on": [
+            "domovita.town",
+            "domovita.street",
+            "domovita.house_number"
+          ]
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.position_y",
+        "name": "Техническая координата position_y",
+        "description": "J1: position_y=lng (долгота), выставляется службой адреса и картой. Клиент проверяет включительный диапазон 23..33. Администратор имеет исключение; исследован обычный аккаунт.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 23,
+            "max": 33
+          },
+          "depends_on": [
+            "domovita.town",
+            "domovita.street",
+            "domovita.house_number"
+          ]
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.contact_name",
+        "name": "Как обращаться",
+        "description": "Подпись явно отмечает необязательность. Placeholder: Ваше имя или имя контактного лица. Длины и прочие ограничения не установлены.",
+        "type": "text",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.contact_phone",
+        "name": "Телефон для связи",
+        "description": "J1/J3: DOM phones.<slot>.contact_phone; сериализация contact_phone_<slot+1> — 9 цифр без 375. Проверяются коды 25/29/33/44/17; для обычных user/usergrey непустой номер должен быть подтверждён. Текущий профильный номер не сохранялся в доказательства. Основной телефон обязателен; подтверждённый телефон предоставил пользователь штатным входом.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min_length": 9,
+            "max_length": 9,
+            "pattern": "^(25|29|33|44|17)\\d{7}$"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.additional_phone_1",
+        "name": "Дополнительный телефон 1",
+        "description": "J1/J3: DOM phones.<slot>.contact_phone; сериализация contact_phone_<slot+1> — 9 цифр без 375. Проверяются коды 25/29/33/44/17; для обычных user/usergrey непустой номер должен быть подтверждён. Текущий профильный номер не сохранялся в доказательства. Дополнительный слот 1, DOM phones.1.contact_phone; label необязательно.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "min_length": 9,
+            "max_length": 9,
+            "pattern": "^(25|29|33|44|17)\\d{7}$"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.additional_phone_2",
+        "name": "Дополнительный телефон 2",
+        "description": "J1/J3: DOM phones.<slot>.contact_phone; сериализация contact_phone_<slot+1> — 9 цифр без 375. Проверяются коды 25/29/33/44/17; для обычных user/usergrey непустой номер должен быть подтверждён. Текущий профильный номер не сохранялся в доказательства. Дополнительный слот 2, DOM phones.2.contact_phone; label необязательно.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "min_length": 9,
+            "max_length": 9,
+            "pattern": "^(25|29|33|44|17)\\d{7}$"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.email",
+        "name": "Электронная почта",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. input_type=email; J1/J3: клиентский regex с TLD длиной 2–4. Принятие сервером и иных форматов не проверялось.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.rooms",
+        "name": "Количество комнат",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. Нативные коды конфигурации — числа 1–7; DOM radio использует строковые атрибуты. Отдельной студии нет в полученной конфигурации.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.rooms.1",
+            "name": "1",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.2",
+            "name": "2",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.3",
+            "name": "3",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.4",
+            "name": "4",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 4
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.5",
+            "name": "5",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 5
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.6",
+            "name": "6",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 6
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.7",
+            "name": "7",
+            "description": "C1, числовой код input_options.value. В UI все семь вариантов проверены в baseline.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 7
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.area_total",
+        "name": "Общая площадь",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. J1: числовой formatter, максимум 2 десятичных знака, отрицательные не допускаются. Кухня переопределена required:false в компоненте area. Сохранение черновика с дробными общей/жилой площадями и пустой кухней проверено. Точка сохраняет дробь; заполнение целой строкой с запятой удаляет запятую. Межполевая проверка общей площади описана в отчёте.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0,
+            "multiple_of": 0.01
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.area_kitchen",
+        "name": "Площадь кухни",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. J1: числовой formatter, максимум 2 десятичных знака, отрицательные не допускаются. Кухня переопределена required:false в компоненте area. Сохранение черновика с дробными общей/жилой площадями и пустой кухней проверено. Точка сохраняет дробь; заполнение целой строкой с запятой удаляет запятую. Межполевая проверка общей площади описана в отчёте.",
+        "type": "number",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "min": 0,
+            "multiple_of": 0.01
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.area_living",
+        "name": "Жилая площадь",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. J1: числовой formatter, максимум 2 десятичных знака, отрицательные не допускаются. Кухня переопределена required:false в компоненте area. Сохранение черновика с дробными общей/жилой площадями и пустой кухней проверено. Точка сохраняет дробь; заполнение целой строкой с запятой удаляет запятую. Межполевая проверка общей площади описана в отчёте.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0,
+            "multiple_of": 0.01
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.storey",
+        "name": "Этаж",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. J1: для flats decimalScale=0, allowNegative=false, isAllowed Number(value)<99. Этаж должен быть <= этажности; ввод этажа выше текущей этажности автоматически поднимает этажность. Исследован путь flats, не коммерческая ветвь с отрицательными этажами.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0,
+            "max": 98
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.storeys",
+        "name": "Этажность",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. J1: для flats decimalScale=0, allowNegative=false, isAllowed Number(value)<99. Этаж должен быть <= этажности; ввод этажа выше текущей этажности автоматически поднимает этажность. Исследован путь flats, не коммерческая ветвь с отрицательными этажами.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0,
+            "max": 98
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.amenities",
+        "name": "Дополнительные опции",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. key=extra_info_comments. Пять строковых кодов; минимум один выбранный пункт подтверждён UI и source rules.required.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min_items": 1,
+            "max_items": 5,
+            "unique_items": true
+          },
+          "default_value": []
+        },
+        "options": [
+          {
+            "id": "domovita.amenities.washing_machine",
+            "name": "Стиральная машина",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "stiralnay_mashina"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.furniture",
+            "name": "Мебель",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "mebel"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.internet",
+            "name": "Интернет",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "inrernet"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.lift",
+            "name": "Лифт",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "lift"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.amenities.refrigerator",
+            "name": "Холодильник",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "holodilnik"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.images",
+        "name": "Фотографии квартиры",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. 30 фото, JPG/JPEG/PNG/WebP, до 10 MiB. J1 задаёт maxSize=10485760 и асимметричную проверку разрешения (см. отчёт). Первое фото — главное, порядок меняется drag/drop. Один разрешённый JPEG загружен, получена серверная WebP-ссылка, сохранение подтверждено полной перезагрузкой; тест затем удалён из черновика. Полное удаление бинарного объекта не подтверждено: прежний URL после удаления отвечает HEAD 200.",
+        "type": "files",
+        "fill_rule": {
+          "required": true,
+          "depends_on": [
+            "domovita.contact_phone"
+          ],
+          "file_role": "product_image",
+          "validation": {
+            "min_items": 1,
+            "max_items": 30,
+            "max_file_size_bytes": 10485760,
+            "extensions": [
+              ".jpg",
+              ".jpeg",
+              ".png",
+              ".webp"
+            ]
+          },
+          "file_policy": {
+            "keep_original": true,
+            "ordering": "preserve_source",
+            "on_incompatible": "needs_review"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.description",
+        "name": "Описание",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. required:false; J1 text_editor передаёт HTML из editor.getHTML(), пустой редактор — ''. Это техническая обязательность формы; публичные /rules требуют описание по содержанию. Расхождение сохранено в отчёте, baseline required:true уточнён.",
+        "type": "text",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.video",
+        "name": "Видео YouTube",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. input_type=url, native youtube_link; один внешний YouTube URL. J1 проверяет YouTube-подобный regex, приведённый в отчёте. Серверная загрузка видеофайла не предусмотрена в исследованном поле.",
+        "type": "files",
+        "fill_rule": {
+          "required": false,
+          "file_role": "product_video",
+          "validation": {
+            "max_items": 1
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.monthly_price",
+        "name": "Стоимость аренды в месяц",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. input_type=number и UI допускает 2 десятичных знака, но при сохранении тестового черновика сервер отклонил 1234.56: цена должна быть целым числом. Значение 1234 прошло и открыло следующий шаг. Период — месяц; ноль, пределы и серверный размер суммы отдельно не проверялись.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.currency",
+        "name": "Валюта месячной платы",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. Все четыре кода подтверждены input_options.value и сериализатором J1 (selected.value). Первоначальный default {label:USD,value:USD}; это не валютный конвертер.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          },
+          "default_value": "USD"
+        },
+        "options": [
+          {
+            "id": "domovita.currency.usd",
+            "name": "USD",
+            "description": "C1: точный строковый код input_options.value.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "USD"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.currency.eur",
+            "name": "EUR",
+            "description": "C1: точный строковый код input_options.value.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "EUR"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.currency.byn",
+            "name": "BYN",
+            "description": "C1: точный строковый код input_options.value.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "BYN"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.currency.rub",
+            "name": "RUB",
+            "description": "C1: точный строковый код input_options.value.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "RUB"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.has_commission",
+        "name": "Есть комиссия",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. Native key=additional_attributes[commission]. Одно из числовых значений 1/0 либо отсутствие ответа. Baseline boolean уточнён до нативного перечисления, смысл ID сохранён.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.has_commission.yes",
+            "name": "Есть комиссия",
+            "description": "C1: число 1.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.has_commission.no",
+            "name": "Нет комиссии",
+            "description": "C1: число 0; не отсутствие ответа.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.sale_planned",
+        "name": "Планируется продажа квартиры",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. Native key=is_planning_sell. Числовые 1/0; отсутствие ответа отдельно. Baseline boolean уточнён до нативного enum.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.sale_planned.yes",
+            "name": "Да",
+            "description": "C1: число 1.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.sale_planned.no",
+            "name": "Нет",
+            "description": "C1: число 0.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.tenant_conditions",
+        "name": "Кому сдаётся",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. Native key=to_rent; три строковых кода. Пустой массив не является запретом всех групп.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "max_items": 3,
+            "unique_items": true
+          },
+          "default_value": []
+        },
+        "options": [
+          {
+            "id": "domovita.tenant_conditions.students",
+            "name": "Студентам",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "student"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.tenant_conditions.animals",
+            "name": "С животными",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "animals"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.tenant_conditions.children",
+            "name": "С детьми",
+            "description": "Подтверждённый строковый код DOM, 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "children"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.additional_phone_3",
+        "name": "Дополнительный телефон 3",
+        "description": "J1/J3: DOM phones.<slot>.contact_phone; сериализация contact_phone_<slot+1> — 9 цифр без 375. Проверяются коды 25/29/33/44/17; для обычных user/usergrey непустой номер должен быть подтверждён. Текущий профильный номер не сохранялся в доказательства. DOM phones.3.contact_phone. Четвёртый телефон в общем наборе — последний: код добавляет строку только при phones.length<4; UI подтверждает не более 3 дополнительных. Непустой номер в этом слоте не проверялся.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "min_length": 9,
+            "max_length": 9,
+            "pattern": "^(25|29|33|44|17)\\d{7}$"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "domovita.account_type",
+        "name": "Тип аккаунта в форме",
+        "description": "C1: POST https://api.domovita.by/v2/add-object/config {operation:rent,type:flats}, 2026-11-01. J1: поле показывается для profile.roleName=User. UI user и usergrey реально переключены, новых контролов не появилось. Это выбор формы, не доказательство доступа к роли профессионального аккаунта/редактированию его профиля.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "default_value": "user",
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.account_type.owner",
+            "name": "Собственник",
+            "description": "C1 и DOM radio checked.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "user"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.account_type.agency",
+            "name": "Агентство",
+            "description": "C1 и DOM radio checked.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "usergrey"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.contact_messengers",
+        "name": "Мессенджеры телефона 1",
+        "description": "C1/J1: DOM-модель phones.0.contact_phone_messengers; сериализация messengers_phone_1. Отметки Viber/WhatsApp показываются для полного подтверждённого номера (или служебных ролей); UI основного телефона наблюдён. Один и тот же мессенджер нельзя назначить нескольким телефонам: выбор на другом номере отключается. Непустые дополнительные телефоны и межномерный запрет практически не тестировались.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "domovita.contact_phone"
+          ],
+          "validation": {
+            "max_items": 2,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.contact_messengers.viber",
+            "name": "Viber",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "viber"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.contact_messengers.whatsapp",
+            "name": "WhatsApp",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "whatsapp"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.additional_phone_1_messengers",
+        "name": "Мессенджеры телефона 2",
+        "description": "C1/J1: DOM-модель phones.1.contact_phone_messengers; сериализация messengers_phone_2. Отметки Viber/WhatsApp показываются для полного подтверждённого номера (или служебных ролей); UI основного телефона наблюдён. Один и тот же мессенджер нельзя назначить нескольким телефонам: выбор на другом номере отключается. Непустые дополнительные телефоны и межномерный запрет практически не тестировались.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "domovita.additional_phone_1"
+          ],
+          "validation": {
+            "max_items": 2,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.additional_phone_1_messengers.viber",
+            "name": "Viber",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "viber"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.additional_phone_1_messengers.whatsapp",
+            "name": "WhatsApp",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "whatsapp"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.additional_phone_2_messengers",
+        "name": "Мессенджеры телефона 3",
+        "description": "C1/J1: DOM-модель phones.2.contact_phone_messengers; сериализация messengers_phone_3. Отметки Viber/WhatsApp показываются для полного подтверждённого номера (или служебных ролей); UI основного телефона наблюдён. Один и тот же мессенджер нельзя назначить нескольким телефонам: выбор на другом номере отключается. Непустые дополнительные телефоны и межномерный запрет практически не тестировались.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "domovita.additional_phone_2"
+          ],
+          "validation": {
+            "max_items": 2,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.additional_phone_2_messengers.viber",
+            "name": "Viber",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "viber"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.additional_phone_2_messengers.whatsapp",
+            "name": "WhatsApp",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "whatsapp"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.additional_phone_3_messengers",
+        "name": "Мессенджеры телефона 4",
+        "description": "C1/J1: DOM-модель phones.3.contact_phone_messengers; сериализация messengers_phone_4. Отметки Viber/WhatsApp показываются для полного подтверждённого номера (или служебных ролей); UI основного телефона наблюдён. Один и тот же мессенджер нельзя назначить нескольким телефонам: выбор на другом номере отключается. Непустые дополнительные телефоны и межномерный запрет практически не тестировались.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "domovita.additional_phone_3"
+          ],
+          "validation": {
+            "max_items": 2,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "domovita.additional_phone_3_messengers.viber",
+            "name": "Viber",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "viber"
+            },
+            "options": []
+          },
+          {
+            "id": "domovita.additional_phone_3_messengers.whatsapp",
+            "name": "WhatsApp",
+            "description": "C1/J1, строковый код.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "whatsapp"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "domovita.promotion_text",
+        "name": "Рекламный текст",
+        "description": "Авторизованный UI: необязательное поле, счётчик 0/76, отображается в каталоге при покупке тарифа Максимальный. J1 editorKey='ads_text', HTML из getHTML(), CharacterCount limit=76 по видимым символам. Не является заголовком/описанием объекта. Поле не заполнялось, тариф не покупался.",
+        "type": "text",
+        "fill_rule": {
+        "required": false
+        },
+        "options": []
+      }
+    ]
+  }
+]

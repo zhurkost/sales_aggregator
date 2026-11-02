@@ -1,0 +1,98 @@
+[
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "kufar.total_area",
+    "platform": "kufar",
+    "target": {
+      "selectors": [
+        "input[name=\"size\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "kufar.living_area",
+    "platform": "kufar",
+    "target": {
+      "selectors": [
+        "input[name=\"size_living_space\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "kufar.kitchen_area",
+    "platform": "kufar",
+    "target": {
+      "selectors": [
+        "input[name=\"size_kitchen\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "kufar.price",
+    "platform": "kufar",
+    "target": {
+      "selectors": [
+        "input[name=\"price\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  }
+]

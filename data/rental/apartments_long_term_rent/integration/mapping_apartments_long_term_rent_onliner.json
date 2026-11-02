@@ -1,0 +1,115 @@
+{
+  "category_id": "apartments_long_term_rent",
+  "platform": "onliner",
+  "fields": [
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "onliner.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.room_configuration",
+      "platform_option_id": "onliner.room_count",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1_room"
+          },
+          {
+            "from": "2",
+            "to": "2_rooms"
+          },
+          {
+            "from": "3",
+            "to": "3_rooms"
+          },
+          {
+            "from": "4",
+            "to": "4_rooms"
+          },
+          {
+            "from": "5",
+            "to": "5_rooms"
+          },
+          {
+            "from": "6",
+            "to": "6_rooms"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "onliner.price_currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "BYN",
+            "to": "BYN"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.landlord_role",
+      "platform_option_id": "onliner.contact_owner",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "owner",
+            "to": true
+          },
+          {
+            "from": "agency",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "onliner.contact_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.organization_name",
+      "platform_option_id": "onliner.agency_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.organization_unp",
+      "platform_option_id": "onliner.agency_unp",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "onliner.images",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    }
+  ]
+}

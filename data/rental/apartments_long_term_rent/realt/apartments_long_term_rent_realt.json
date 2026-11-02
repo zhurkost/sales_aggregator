@@ -1,0 +1,3002 @@
+[
+  {
+    "id": "apartments_long_term_rent",
+    "name": "Долгосрочная аренда квартир",
+    "description": "Realt, Беларусь: Сдать длительно → Жилая → Квартира (rentForLongLivingApartment, category=2). Приватная ревизия 2026-11-01: форма, штатная авторизация и собственные справочники формы. Покрытие partial: профессиональные роли, полная адресная цепочка, серверное сохранение и отдельные проверки вложений не завершены. Пустые enum и объектные UI-значения требуют адаптера; отчёт содержит границы доказательств.",
+    "categories": [],
+    "options": [
+      {
+        "id": "realt.deal_type",
+        "name": "Тип сделки",
+        "description": "Исследуется только Сдать длительно. Нативная строковая константа rentForLong; полный выбор иных сделок вне объёма. Нативное имя: estateType.dealType. Источник: 6490f7a3738ec014.js: 114025; 6faa6614a92f3d62.js: 114533/951963; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.deal_type.code_rentForLong",
+            "name": "Сдать длительно",
+            "description": "Нативный код из 6490f7a3738ec014.js / 6faa6614a92f3d62.js, только целевая ветвь. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "rentForLong"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.property_family",
+        "name": "Тип недвижимости",
+        "description": "Жилая недвижимость; код Living. Ветка rentForLongLiving. Нативное имя: estateType.realEstateType. Источник: 6490f7a3738ec014.js: 227767; 6faa6614a92f3d62.js: 114533; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.property_family.code_Living",
+            "name": "Жилая",
+            "description": "Нативный код из 6490f7a3738ec014.js / 6faa6614a92f3d62.js, только целевая ветвь. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "Living"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.property_kind",
+        "name": "Вид недвижимости",
+        "description": "Квартира целиком; код Apartment. Итоговый ключ rentForLongLivingApartment, ObjectCategory.ltar=2. Нативное имя: estateType.realEstatePropertyType. Источник: 6490f7a3738ec014.js: 841150; 0d785db8d2770618.js: mapEstateTypesToCategory; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.property_kind.code_Apartment",
+            "name": "Квартира",
+            "description": "Нативный код из 6490f7a3738ec014.js / 6faa6614a92f3d62.js, только целевая ветвь. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "Apartment"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.settlement",
+        "name": "Адрес: населённый пункт",
+        "description": "Автокомплит возвращает объект справочника с UUID, регионом, районом, townCat и координатами. Choice.value хранит UUID; для заполнения нужен полный объект, одного текста недостаточно. Собраны только три исследованных города, не весь справочник. Нативное имя: location.settlement. Источник: 847f32496ade4f1d.js: LocationSectionContainer/155605; settlement-*-response.json; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.settlement.uuid_4cb07174-7b00-11eb-8943-0cc47adabd66",
+            "name": "г. Минск",
+            "description": "Нативный код из offersMultiGeoReferenceAgg, частичная выборка из 3 городов. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.settlement.uuid_4c8f8db2-7b00-11eb-8943-0cc47adabd66",
+            "name": "г. Брест",
+            "description": "Нативный код из offersMultiGeoReferenceAgg, частичная выборка из 3 городов. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.settlement.uuid_4cc5a09a-7b00-11eb-8943-0cc47adabd66",
+            "name": "г. Фаниполь",
+            "description": "Нативный код из offersMultiGeoReferenceAgg, частичная выборка из 3 городов. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "4cc5a09a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.street",
+        "name": "Улица",
+        "description": "Зависит от settlement; запрашивает types:[6], townUuids:[выбранный UUID], pageSize:6 на desktop/20 mobile. hasExtraOption=true допускает собственную улицу; объект extraOption сериализуется через value как streetName без streetUuid. Справочник не выгружен. Нативное имя: location.street. Источник: 847f32496ade4f1d.js: компонент $ в 155605; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": true
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.house_number",
+        "name": "Дом",
+        "description": "Числовая часть дома: NumberField, только целые, min=1 max=999, без отрицательных. Корпус вводится отдельно. Исправление прежнего type=text по прямому доказательству реализации. Нативное имя: location.houseNumber. Источник: 847f32496ade4f1d.js: компонент Q; 73847d00ccbc1d71.js: NumberField; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "min": 1,
+            "max": 999
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.building_number",
+        "name": "Корпус",
+        "description": "Текстовый корпус, max_length=4, активен после settlement. Ввод/очистка подтверждены ранее. Нативное имя: location.buildingNumber. Источник: 847f32496ade4f1d.js: Q; авторизованный UI; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "max_length": 4
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.town_distance",
+        "name": "Расстояние",
+        "description": "Расстояние от МКАД, км; показывается для населённого пункта Минской области (stateRegionUuid=499f06b8-7b00-11eb-8943-0cc47adabd66) вне столицы (townCat!=Capital). Автозаполнение из settlement.townDistance, после него возможно редактирование. max=999.99, дробный ввод до 2 знаков. Не является безусловным default. Нативное имя: location.townDistance. Источник: 847f32496ade4f1d.js: e9; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "number",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "max": 999.99
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.residential_complex",
+        "name": "Жилой комплекс",
+        "description": "Поиск ЖК по title, page=1 pageSize=6 sort title ASC; значение объекта — UUID. Полный справочник не выгружен, данные объектов не собирались. Нативное имя: location.newBuildComplexUuid → newBuildComplexUuid. Источник: 847f32496ade4f1d.js: eR / objectsSearchNewBuildComplexesQuery; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.rooms",
+        "name": "Комнат",
+        "description": "Один числовой код 1/2/3/4/5; подпись 5+ соответствует коду 5. Форма хранит массив одного кода, сериализует map(Number).at(0). Нативное имя: apartment.rooms → objectParams.rooms. Источник: shortcuts-category-2-response.json: room; a3145bd089aa8e9d.js: es/$; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.rooms.code_1",
+            "name": "1",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).room. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rooms.code_2",
+            "name": "2",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).room. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rooms.code_3",
+            "name": "3",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).room. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rooms.code_4",
+            "name": "4",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).room. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 4
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rooms.code_5",
+            "name": "5+",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).room. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 5
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.separate_rooms",
+        "name": "Раздельных комнат",
+        "description": "Появляется для rooms 2/3/4/5, требуется в активной ветви. min=1 max=99; дополнительный валидатор запрещает больше выбранного rooms при коде<6. Таким образом при 5+ (код 5) код проверяет <=5. Не изменять это правило самостоятельно. Нативное имя: apartment.separateRooms → objectParams.separateRooms. Источник: a3145bd089aa8e9d.js: J/es; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "depends_on": [
+            "realt.rooms"
+          ],
+          "validation": {
+            "min": 1,
+            "max": 99
+          },
+          "when": {
+            "option_id": "realt.rooms",
+            "operator": "in",
+            "value": [
+              2,
+              3,
+              4,
+              5
+            ]
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.floor",
+        "name": "Этаж",
+        "description": "Целое число 1..99; ApartmentSection передаёт required=true. Отдельное от этажности. Нативное имя: apartment.storey → objectParams.storey. Источник: a3145bd089aa8e9d.js: StoreyField / ApartmentSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 1,
+            "max": 99
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.repair",
+        "name": "Ремонт",
+        "description": "Один код ремонта, включая 0. Значения не заменяются подписями. Нативное имя: apartment.repair → objectParams.repairState. Источник: shortcuts-category-2-response.json: repairState; a3145bd089aa8e9d.js: RepairField; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.repair.code_0",
+            "name": "евроремонт",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).repairState. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.repair.code_2",
+            "name": "хороший",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).repairState. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.repair.code_3",
+            "name": "нормальный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).repairState. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          },
+          {
+            "id": "realt.repair.code_5",
+            "name": "плохое состояние",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).repairState. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 5
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.balcony",
+        "name": "Балконов / лоджий",
+        "description": "Один код типа балкона/лоджии. RequiredBalcony в RentFlatsOfferForm не передан. Нативное имя: apartment.balcony → objectParams.balcony. Источник: shortcuts-category-2-response.json: balconyType; a3145bd089aa8e9d.js: g; f2bd4135323e18ba.js; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.balcony.code_1",
+            "name": "балкон",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).balconyType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.balcony.code_0",
+            "name": "Нет",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).balconyType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.balcony.code_2",
+            "name": "Лоджия",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).balconyType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.balcony.code_25",
+            "name": "балкон и лоджия",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).balconyType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 25
+            },
+            "options": []
+          },
+          {
+            "id": "realt.balcony.code_19",
+            "name": "терраса",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).balconyType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 19
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.bathroom",
+        "name": "Санузел",
+        "description": "Один код санузла; Раздельный=0. Нативное имя: apartment.toilet → objectParams.lavatory. Источник: shortcuts-category-2-response.json: toilet; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.bathroom.code_0",
+            "name": "Раздельный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).toilet. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.bathroom.code_1",
+            "name": "Совмещенный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).toilet. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.bathroom.code_2",
+            "name": "2 и более",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).toilet. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.layout",
+        "name": "Планировка",
+        "description": "Один числовой код планировки, студия=9, свободная планировка=8. Это не код количества комнат. Нативное имя: apartment.planning → objectParams.layout. Источник: shortcuts-category-2-response.json: layout; a3145bd089aa8e9d.js: j; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.layout.code_3",
+            "name": "чешский проект",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_7",
+            "name": "брежневка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 7
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_5",
+            "name": "сталинка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 5
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_6",
+            "name": "хрущевка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 6
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_4",
+            "name": "малосемейка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 4
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_10",
+            "name": "пентхаус",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 10
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_11",
+            "name": "таунхаус",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 11
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_0",
+            "name": "новостройка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_8",
+            "name": "свободная планировка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 8
+            },
+            "options": []
+          },
+          {
+            "id": "realt.layout.code_9",
+            "name": "студия",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).layout. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 9
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.total_area",
+        "name": "Площадь общая, м²",
+        "description": "Общая площадь м²: обязательна, min=1 max=9999, до 3 дробных знаков. Дополнительная проверка total >= living+kitchen не выразима одним validation; отражена в отчёте. Нативное имя: area.total → objectParams.areaTotal. Источник: f2bd4135323e18ba.js: RentFlatsOfferForm; a3145bd089aa8e9d.js: AreaSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 1,
+            "max": 9999
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.living_area",
+        "name": "Площадь жилая, м²",
+        "description": "Жилая площадь м²: обязательна, min=1 max=9999, до 3 дробных знаков; участвует в проверке total >= living+kitchen. Нативное имя: area.living → objectParams.areaLiving. Источник: f2bd4135323e18ba.js: RentFlatsOfferForm; a3145bd089aa8e9d.js: AreaSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "number",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 1,
+            "max": 9999
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.kitchen_area",
+        "name": "Площадь кухни, м²",
+        "description": "Площадь кухни м², в раскрытых параметрах; min=1 max=9999, до 3 дробных знаков. Участвует в суммарной проверке площади. Нативное имя: area.kitchen → objectParams.areaKitchen. Источник: a3145bd089aa8e9d.js: AreaSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "number",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "min": 1,
+            "max": 9999
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.building_floors",
+        "name": "Этажей в доме",
+        "description": "Этажей в доме: обязательное целое 1..99. Нативное имя: house.storeys → objectParams.storeys. Источник: f2bd4135323e18ba.js: HouseSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 1,
+            "max": 99
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.building_year",
+        "name": "Год постройки",
+        "description": "Целый год 1700..2100. В RentFlatsOfferForm requiredBuildingYear не передан. Код также вычисляет скрытые newBuilding/isNotFinish, но эти поля не предлагаются в данной ветви. Нативное имя: house.buildingYear → objectParams.buildingYear. Источник: f2bd4135323e18ba.js: HouseSection; a3145bd089aa8e9d.js: BuildingYearField; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "min": 1700,
+            "max": 2100
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.major_repair_year",
+        "name": "Год капитального ремонта",
+        "description": "Год капремонта, целое, max=9999. Отрицательный ввод запрещён форматтером; отдельный min не задан. Нативное имя: house.repairYear → objectParams.repairYear. Источник: f2bd4135323e18ba.js: HouseSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "max": 9999
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.building_type",
+        "name": "Тип дома",
+        "description": "Один код типа дома, кирпичный=0. Нативное имя: house.houseType → objectParams.houseType. Источник: shortcuts-category-2-response.json: houseType; f2bd4135323e18ba.js; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.building_type.code_1",
+            "name": "Панельный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.building_type.code_0",
+            "name": "Кирпичный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.building_type.code_2",
+            "name": "Блок-комнаты",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.building_type.code_5",
+            "name": "Силикатные блоки",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 5
+            },
+            "options": []
+          },
+          {
+            "id": "realt.building_type.code_6",
+            "name": "Бревенчатый",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 6
+            },
+            "options": []
+          },
+          {
+            "id": "realt.building_type.code_11",
+            "name": "Каркасно-блочный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 11
+            },
+            "options": []
+          },
+          {
+            "id": "realt.building_type.code_3",
+            "name": "Монолитный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).houseType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.amenities",
+        "name": "Удобства",
+        "description": "Множественный выбор 6 удобств. Форма использует объекты вариантов и сериализует их value как Number. Нативное имя: additional.appliance → objectParams.facilities. Источник: shortcuts-category-2-response.json: facilities; a3145bd089aa8e9d.js: AdditionalSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "realt.amenities.code_606",
+            "name": "телефонная сеть",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).facilities. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 606
+            },
+            "options": []
+          },
+          {
+            "id": "realt.amenities.code_611",
+            "name": "душевая кабина",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).facilities. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 611
+            },
+            "options": []
+          },
+          {
+            "id": "realt.amenities.code_602",
+            "name": "посуда",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).facilities. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 602
+            },
+            "options": []
+          },
+          {
+            "id": "realt.amenities.code_614",
+            "name": "джакузи",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).facilities. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 614
+            },
+            "options": []
+          },
+          {
+            "id": "realt.amenities.code_640",
+            "name": "видеодомофон",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).facilities. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 640
+            },
+            "options": []
+          },
+          {
+            "id": "realt.amenities.code_607",
+            "name": "интернет",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).facilities. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 607
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.infrastructure",
+        "name": "Инфраструктура",
+        "description": "Множественный выбор: сигнализация, парковка; оба одновременно подтверждены UI. Нативное имя: additional.infrastructure → objectParams.infrastructure. Источник: shortcuts-category-2-response.json: infrastructure; 847f32496ade4f1d.js: InfrastructureField; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "realt.infrastructure.code_704",
+            "name": "сигнализация",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).infrastructure. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 704
+            },
+            "options": []
+          },
+          {
+            "id": "realt.infrastructure.code_746",
+            "name": "парковка",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).infrastructure. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 746
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.furniture",
+        "name": "Мебель",
+        "description": "Один числовой код мебельной комплектации. Нативная форма хранит массив одного кода (furnitureRent); сериализация должна следовать apartmentRent, а не скалярной подстановке в состояние UI. Нативное имя: additional.furnitureRent → objectParams.furniture. Источник: shortcuts-category-2-response.json: furniture; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.furniture.code_1",
+            "name": "есть",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).furniture. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.furniture.code_0",
+            "name": "нет",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).furniture. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.furniture.code_402",
+            "name": "частично",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).furniture. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 402
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.telephone_lines",
+        "name": "Количество телефонов",
+        "description": "Телефонная линия квартиры, не контакт подателя. Один код. Нативное имя: additional.phone → objectParams.phone. Источник: shortcuts-category-2-response.json: phone; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.telephone_lines.code_0",
+            "name": "нет",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).phone. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.telephone_lines.code_1",
+            "name": "есть",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).phone. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.telephone_lines.code_2",
+            "name": "1 телефон",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).phone. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.telephone_lines.code_3",
+            "name": "2 телефона",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).phone. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          },
+          {
+            "id": "realt.telephone_lines.code_8",
+            "name": "спаренный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).phone. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 8
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.appliances",
+        "name": "Бытовая техника",
+        "description": "Множественный выбор 9 единиц техники; UI хранит объекты и сериализует Number(value). Нативное имя: additional.applianceRental → objectParams.appliance. Источник: shortcuts-category-2-response.json: appliance; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "multi_enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false,
+            "unique_items": true
+          }
+        },
+        "options": [
+          {
+            "id": "realt.appliances.code_503",
+            "name": "холодильник",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 503
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_505",
+            "name": "посудомоечная машина",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 505
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_504",
+            "name": "СВЧ-печь",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 504
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_507",
+            "name": "телевизор",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 507
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_514",
+            "name": "кондиционер",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 514
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_506",
+            "name": "стиральная машина",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 506
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_511",
+            "name": "домашний кинотеатр",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 511
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_502",
+            "name": "мелкая бытовая техника",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 502
+            },
+            "options": []
+          },
+          {
+            "id": "realt.appliances.code_512",
+            "name": "компьютер",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).appliance. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 512
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.stove",
+        "name": "Плита",
+        "description": "Один код плиты: газ=0, электрическая=1. Нативное имя: additional.stove → objectParams.stove. Источник: shortcuts-category-2-response.json: stove; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.stove.code_0",
+            "name": "газ",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).stove. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.stove.code_1",
+            "name": "плита электрическая",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).stove. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.currency",
+        "name": "Цена: валюта",
+        "description": "UI получает строковые ключи Object.entries(PricesMap): BYN='933', USD='840', EUR='978'; RUB исключён slice(0,-1). Форма хранит массив одного строкового кода; Сериализатор priceCurrency выполняет currency.map(Number).at(0). Явный default BYN задан исходным кодом, не профилем. Нативное имя: termsOfDeal.currency → termsOfLease.priceCurrency. Источник: a502bef3f2b81ed9.js: Prices/PricesMap; 847f32496ade4f1d.js: M; 6490f7a3738ec014.js: D; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "allow_custom_value": false
+          },
+          "default_value": "933"
+        },
+        "options": [
+          {
+            "id": "realt.currency.code_933",
+            "name": "BYN",
+            "description": "Нативный код из PricesMap → Object.entries; 847f32496ade4f1d.js. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "933"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.currency.code_840",
+            "name": "USD",
+            "description": "Нативный код из PricesMap → Object.entries; 847f32496ade4f1d.js. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "840"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.currency.code_978",
+            "name": "EUR",
+            "description": "Нативный код из PricesMap → Object.entries; 847f32496ade4f1d.js. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "978"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.monthly_rent",
+        "name": "За месяц",
+        "description": "Месячная плата. В этой ветви NumberField без allowFloats, поэтому целое число 1..999999999 (9 цифр), не дробное number. Договорный вариант отсутствует. Нативное имя: termsOfDeal.price → termsOfLease.price. Источник: 847f32496ade4f1d.js: M; 73847d00ccbc1d71.js: NumberField; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": true,
+          "depends_on": [
+            "realt.currency"
+          ],
+          "validation": {
+            "min": 1,
+            "max": 999999999
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.bargain",
+        "name": "Возможен торг",
+        "description": "Булев чекбокс торга. Клиентский required не задан; оба состояния проверены ранее. Нативное имя: termsOfDeal.bargain → termsOfLease.priceHaggle. Источник: 847f32496ade4f1d.js: TermsOfDealSection; baseline UI; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "boolean",
+        "fill_rule": {
+          "required": false
+        },
+        "options": []
+      },
+      {
+        "id": "realt.utilities",
+        "name": "Коммунальные платежи",
+        "description": "Один числовой код доли коммунальных платежей (0/50/100). База доли и субъект платежа в подписи не уточнены. Нативное имя: termsOfDeal.housingRent → termsOfLease.housingRent. Источник: shortcuts-category-2-response.json: housingRent; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.utilities.code_0",
+            "name": "нет",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).housingRent. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.utilities.code_50",
+            "name": "50%",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).housingRent. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 50
+            },
+            "options": []
+          },
+          {
+            "id": "realt.utilities.code_100",
+            "name": "100%",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).housingRent. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 100
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.rental_term",
+        "name": "Срок сдачи",
+        "description": "Срок сдачи: коды 30/60/90/180/365/999. 999 означает Длительный, а не буквальные 999 дней. Нативное имя: termsOfDeal.rentPeriod → termsOfLease.rentPeriod. Источник: shortcuts-category-2-response.json: leasePeriod; 847f32496ade4f1d.js: TermsOfDealSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.rental_term.code_30",
+            "name": "Месяц",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).leasePeriod. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 30
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rental_term.code_60",
+            "name": "2 Месяца",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).leasePeriod. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 60
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rental_term.code_90",
+            "name": "3 Месяца",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).leasePeriod. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 90
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rental_term.code_180",
+            "name": "Полгода",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).leasePeriod. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 180
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rental_term.code_365",
+            "name": "Год",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).leasePeriod. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 365
+            },
+            "options": []
+          },
+          {
+            "id": "realt.rental_term.code_999",
+            "name": "Длительный",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).leasePeriod. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 999
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.prepayment",
+        "name": "Предоплата",
+        "description": "Предоплата как один код срока. Без предоплаты=7, не 0; не смешивать с залогом. Нативное имя: termsOfDeal.prepayment → termsOfLease.prepayment. Источник: shortcuts-category-2-response.json: prepayment; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.prepayment.code_7",
+            "name": "Без предоплаты",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).prepayment. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 7
+            },
+            "options": []
+          },
+          {
+            "id": "realt.prepayment.code_1",
+            "name": "Месяц",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).prepayment. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.prepayment.code_2",
+            "name": "2 месяца",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).prepayment. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.prepayment.code_3",
+            "name": "3 месяца",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).prepayment. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          },
+          {
+            "id": "realt.prepayment.code_6",
+            "name": "Полгода",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).prepayment. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 6
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.tenant_condition",
+        "name": "Условия сдачи",
+        "description": "Один код условия сдачи 0..3; не независимые флаги. Нативное имя: termsOfDeal.termsOfLease → termsOfLease.terms. Источник: shortcuts-category-2-response.json: termOfLease; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          }
+        },
+        "options": [
+          {
+            "id": "realt.tenant_condition.code_0",
+            "name": "Семье",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).termOfLease. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 0
+            },
+            "options": []
+          },
+          {
+            "id": "realt.tenant_condition.code_1",
+            "name": "Под офис",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).termOfLease. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.tenant_condition.code_2",
+            "name": "Студентам",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).termOfLease. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.tenant_condition.code_3",
+            "name": "Не компаниям",
+            "description": "Нативный код из offersGetShortcutsByCategory(category:2).termOfLease. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.photos",
+        "name": "Фото",
+        "description": "Загрузчик принял помеченный тестовый JPG, вернул серверный UUID и CDN URL. Client maxSize=20971520, минимум 320x320. UI/публикационные правила 20 фото/50 при Спецпредложении, клиентский maxFiles=50, tooltip содержит ещё 150 — конфликт численных уровней описан в отчёте; единый max_items не выдуман. Required=true по правилу фото каждого помещения, хотя сам клиентский uploader не имеет required. Порядок/главное фото поддержаны исходным кодом. Нативное имя: media.photos → media.images. Источник: 847f32496ade4f1d.js: MediaSection; 44858f2b4a80206d.js: UploadDndFilesField; 1122b65acc326def.js: Dropzone; UI тест 2026-11-01; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "files",
+        "fill_rule": {
+          "required": true,
+          "file_role": "product_image",
+          "validation": {
+            "min_items": 1,
+            "max_items": null,
+            "mime_types": [
+              "image/jpeg",
+              "image/png"
+            ],
+            "extensions": [
+              ".jpg",
+              ".jpeg",
+              ".png"
+            ],
+            "max_file_size_bytes": 20971520,
+            "min_width_px": 320,
+            "min_height_px": 320
+          },
+          "file_policy": {
+            "keep_original": true,
+            "ordering": "preserve_source",
+            "primary": "explicit",
+            "on_incompatible": "needs_review"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.floor_plan",
+        "name": "Фото планировки",
+        "description": "Отдельное фото планировки. Обычная новая форма maxFiles=1, multiple=false; client maxSize=20971520, минимум 320x320. Ветвь copy допускает 2, она вне объёма. Приём планировки не тестировался из-за непроверяемого удаления файла CDN. Нативное имя: media.planning → media.planningPhotos. Источник: 847f32496ade4f1d.js: MediaSection; cc55380793e9628e.js: UploadFilesField; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "files",
+        "fill_rule": {
+          "required": false,
+          "file_role": "floor_plan_image",
+          "validation": {
+            "max_items": 1,
+            "max_file_size_bytes": 20971520,
+            "min_width_px": 320,
+            "min_height_px": 320
+          },
+          "file_policy": {
+            "keep_original": true,
+            "ordering": "preserve_source",
+            "on_incompatible": "needs_review"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.youtube_video",
+        "name": "Ссылка на видео YouTube",
+        "description": "Одна ссылка YouTube (коллекция files в контракте); если заполнена, min_length=5/max_length=255 у исходного URL input. Подсказка: youtube.com/watch?v и youtu.be. Платная функция, фактическое воспроизведение не проверено. Нативное имя: media.youtube → media.videoSource. Источник: 847f32496ade4f1d.js: ex/MediaSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "files",
+        "fill_rule": {
+          "required": false,
+          "file_role": "product_video",
+          "validation": {
+            "max_items": 1
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.tour_3d",
+        "name": "3D тур",
+        "description": "Одна ссылка на 3D тур; исходный input min_length=5/max_length=255, подсказка matterport/3dmap. Files остаётся коллекцией ссылок; платная функция не активирована. Нативное имя: media.tour3d → media.tour3dSource. Источник: 847f32496ade4f1d.js: ex/MediaSection; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "files",
+        "fill_rule": {
+          "required": false,
+          "file_role": "virtual_tour",
+          "validation": {
+            "max_items": 1
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.title",
+        "name": "Заголовок",
+        "description": "Текстовый заголовок; DOM max_length=255, платная функция по подписи. Нативное имя: description.title → textData.title. Источник: 847f32496ade4f1d.js: DescriptionSection/ej; baseline DOM; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "max_length": 255
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.short_description",
+        "name": "Краткое описание",
+        "description": "Краткое описание обязательно, минимум 50 и максимум 500 знаков. Source validateMinLength(50), symbolsLimit=500; подсчёт grapheme у текстового компонента. Ввод и очистка подтверждены. Нативное имя: description.shortDescription → textData.headline. Источник: 847f32496ade4f1d.js: eD; baseline input test; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min_length": 50,
+            "max_length": 500
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.description",
+        "name": "Подробное описание",
+        "description": "Подробное описание до 5000 знаков в rich text редакторе; платная функция. Разметка/серверная нормализация не проверены. Нативное имя: description.description → textData.description. Источник: 847f32496ade4f1d.js: eA; baseline DOM TinyMCE; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "max_length": 5000
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.metro_1_station",
+        "name": "Ближайшее метро: станция 1",
+        "description": "Станция метро: UUID из 36 наблюдавшихся вариантов; форме нужен объект с metroStationUuid, metroLineUuid, metroLineId и label. Повторные станции между строками отфильтровываются. Страница 2 вернула те же 36 станций; независимого доказательства исчерпания справочника нет. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[0].metroStation. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": [
+          {
+            "id": "realt.metro_1_station.uuid_481c9f9e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Институт культуры",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481c9f9e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481ca4ae-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Ленина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca4ae-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481ca613-7b00-11eb-8943-0cc47adabd66",
+            "name": "Октябрьская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca613-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481ca729-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Победы",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca729-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481ca889-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Якуба Коласа",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca889-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481ca9de-7b00-11eb-8943-0cc47adabd66",
+            "name": "Академия наук",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca9de-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481caba5-7b00-11eb-8943-0cc47adabd66",
+            "name": "Парк Челюскинцев",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caba5-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481caca1-7b00-11eb-8943-0cc47adabd66",
+            "name": "Московская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caca1-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cada1-7b00-11eb-8943-0cc47adabd66",
+            "name": "Восток",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cada1-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cae9a-7b00-11eb-8943-0cc47adabd66",
+            "name": "Борисовский тракт",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cae9a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481caf96-7b00-11eb-8943-0cc47adabd66",
+            "name": "Уручье",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caf96-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb081-7b00-11eb-8943-0cc47adabd66",
+            "name": "Грушевка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb081-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb170-7b00-11eb-8943-0cc47adabd66",
+            "name": "Михалово",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb170-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb2fe-7b00-11eb-8943-0cc47adabd66",
+            "name": "Петровщина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb2fe-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb3f0-7b00-11eb-8943-0cc47adabd66",
+            "name": "Малиновка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb3f0-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb4e6-7b00-11eb-8943-0cc47adabd66",
+            "name": "Пушкинская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb4e6-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb5df-7b00-11eb-8943-0cc47adabd66",
+            "name": "Молодежная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb5df-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb72e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Фрунзенская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb72e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb824-7b00-11eb-8943-0cc47adabd66",
+            "name": "Немига",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb824-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cb91d-7b00-11eb-8943-0cc47adabd66",
+            "name": "Купаловская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb91d-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cba0d-7b00-11eb-8943-0cc47adabd66",
+            "name": "Первомайская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cba0d-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cbafb-7b00-11eb-8943-0cc47adabd66",
+            "name": "Пролетарская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbafb-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cbc5a-7b00-11eb-8943-0cc47adabd66",
+            "name": "Тракторный завод",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbc5a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cbd4f-7b00-11eb-8943-0cc47adabd66",
+            "name": "Партизанская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbd4f-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cbe47-7b00-11eb-8943-0cc47adabd66",
+            "name": "Автозаводская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbe47-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cbf4b-7b00-11eb-8943-0cc47adabd66",
+            "name": "Могилевская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbf4b-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc03e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Спортивная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc03e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc130-7b00-11eb-8943-0cc47adabd66",
+            "name": "Кунцевщина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc130-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc223-7b00-11eb-8943-0cc47adabd66",
+            "name": "Каменная горка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc223-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc312-7b00-11eb-8943-0cc47adabd66",
+            "name": "Юбилейная площадь",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc312-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc404-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Богушевича",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc404-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc4f8-7b00-11eb-8943-0cc47adabd66",
+            "name": "Вокзальная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc4f8-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_481cc5e4-7b00-11eb-8943-0cc47adabd66",
+            "name": "Ковальская Слобода",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc5e4-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_51ca0078-a674-11eb-963d-0cc47adabd66",
+            "name": "Аэродромная (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "51ca0078-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_82355720-a674-11eb-963d-0cc47adabd66",
+            "name": "Неморшанский сад (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "82355720-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_station.uuid_c27127ef-a674-11eb-963d-0cc47adabd66",
+            "name": "Слуцкий гостинец (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "c27127ef-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.metro_1_mode",
+        "name": "Пешком / Транспортом: 1",
+        "description": "Способ добраться до метро: Пешком=1, На транспорте=2 (числа). UI хранит объект варианта; сериализатор использует .value. Не задавать default по автоматически подобранной станции. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[0].metroTimeType. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": [
+          {
+            "id": "realt.metro_1_mode.code_1",
+            "name": "Пешком",
+            "description": "Нативный код из 847f32496ade4f1d.js, MetroTimeType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_1_mode.code_2",
+            "name": "На транспорте",
+            "description": "Нативный код из 847f32496ade4f1d.js, MetroTimeType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.metro_1_minutes",
+        "name": "Минут до метро: 1",
+        "description": "Минут до метро, целое NumberField min=1/max=20, maxlength=2. Клиентское поле optional. Максимум три строки, строки добавляются и удаляются. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[0].metroTime. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "min": 1,
+            "max": 20
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.metro_2_station",
+        "name": "Ближайшее метро: станция 2",
+        "description": "Станция метро: UUID из 36 наблюдавшихся вариантов; форме нужен объект с metroStationUuid, metroLineUuid, metroLineId и label. Повторные станции между строками отфильтровываются. Страница 2 вернула те же 36 станций; независимого доказательства исчерпания справочника нет. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[1].metroStation. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": [
+          {
+            "id": "realt.metro_2_station.uuid_481c9f9e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Институт культуры",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481c9f9e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481ca4ae-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Ленина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca4ae-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481ca613-7b00-11eb-8943-0cc47adabd66",
+            "name": "Октябрьская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca613-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481ca729-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Победы",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca729-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481ca889-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Якуба Коласа",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca889-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481ca9de-7b00-11eb-8943-0cc47adabd66",
+            "name": "Академия наук",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca9de-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481caba5-7b00-11eb-8943-0cc47adabd66",
+            "name": "Парк Челюскинцев",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caba5-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481caca1-7b00-11eb-8943-0cc47adabd66",
+            "name": "Московская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caca1-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cada1-7b00-11eb-8943-0cc47adabd66",
+            "name": "Восток",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cada1-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cae9a-7b00-11eb-8943-0cc47adabd66",
+            "name": "Борисовский тракт",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cae9a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481caf96-7b00-11eb-8943-0cc47adabd66",
+            "name": "Уручье",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caf96-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb081-7b00-11eb-8943-0cc47adabd66",
+            "name": "Грушевка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb081-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb170-7b00-11eb-8943-0cc47adabd66",
+            "name": "Михалово",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb170-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb2fe-7b00-11eb-8943-0cc47adabd66",
+            "name": "Петровщина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb2fe-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb3f0-7b00-11eb-8943-0cc47adabd66",
+            "name": "Малиновка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb3f0-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb4e6-7b00-11eb-8943-0cc47adabd66",
+            "name": "Пушкинская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb4e6-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb5df-7b00-11eb-8943-0cc47adabd66",
+            "name": "Молодежная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb5df-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb72e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Фрунзенская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb72e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb824-7b00-11eb-8943-0cc47adabd66",
+            "name": "Немига",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb824-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cb91d-7b00-11eb-8943-0cc47adabd66",
+            "name": "Купаловская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb91d-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cba0d-7b00-11eb-8943-0cc47adabd66",
+            "name": "Первомайская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cba0d-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cbafb-7b00-11eb-8943-0cc47adabd66",
+            "name": "Пролетарская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbafb-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cbc5a-7b00-11eb-8943-0cc47adabd66",
+            "name": "Тракторный завод",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbc5a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cbd4f-7b00-11eb-8943-0cc47adabd66",
+            "name": "Партизанская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbd4f-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cbe47-7b00-11eb-8943-0cc47adabd66",
+            "name": "Автозаводская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbe47-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cbf4b-7b00-11eb-8943-0cc47adabd66",
+            "name": "Могилевская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbf4b-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc03e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Спортивная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc03e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc130-7b00-11eb-8943-0cc47adabd66",
+            "name": "Кунцевщина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc130-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc223-7b00-11eb-8943-0cc47adabd66",
+            "name": "Каменная горка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc223-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc312-7b00-11eb-8943-0cc47adabd66",
+            "name": "Юбилейная площадь",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc312-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc404-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Богушевича",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc404-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc4f8-7b00-11eb-8943-0cc47adabd66",
+            "name": "Вокзальная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc4f8-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_481cc5e4-7b00-11eb-8943-0cc47adabd66",
+            "name": "Ковальская Слобода",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc5e4-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_51ca0078-a674-11eb-963d-0cc47adabd66",
+            "name": "Аэродромная (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "51ca0078-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_82355720-a674-11eb-963d-0cc47adabd66",
+            "name": "Неморшанский сад (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "82355720-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_station.uuid_c27127ef-a674-11eb-963d-0cc47adabd66",
+            "name": "Слуцкий гостинец (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "c27127ef-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.metro_2_mode",
+        "name": "Пешком / Транспортом: 2",
+        "description": "Способ добраться до метро: Пешком=1, На транспорте=2 (числа). UI хранит объект варианта; сериализатор использует .value. Не задавать default по автоматически подобранной станции. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[1].metroTimeType. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": [
+          {
+            "id": "realt.metro_2_mode.code_1",
+            "name": "Пешком",
+            "description": "Нативный код из 847f32496ade4f1d.js, MetroTimeType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_2_mode.code_2",
+            "name": "На транспорте",
+            "description": "Нативный код из 847f32496ade4f1d.js, MetroTimeType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.metro_2_minutes",
+        "name": "Минут до метро: 2",
+        "description": "Минут до метро, целое NumberField min=1/max=20, maxlength=2. Клиентское поле optional. Максимум три строки, строки добавляются и удаляются. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[1].metroTime. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "min": 1,
+            "max": 20
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.metro_3_station",
+        "name": "Ближайшее метро: станция 3",
+        "description": "Станция метро: UUID из 36 наблюдавшихся вариантов; форме нужен объект с metroStationUuid, metroLineUuid, metroLineId и label. Повторные станции между строками отфильтровываются. Страница 2 вернула те же 36 станций; независимого доказательства исчерпания справочника нет. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[2].metroStation. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": [
+          {
+            "id": "realt.metro_3_station.uuid_481c9f9e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Институт культуры",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481c9f9e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481ca4ae-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Ленина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca4ae-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481ca613-7b00-11eb-8943-0cc47adabd66",
+            "name": "Октябрьская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca613-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481ca729-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Победы",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca729-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481ca889-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Якуба Коласа",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca889-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481ca9de-7b00-11eb-8943-0cc47adabd66",
+            "name": "Академия наук",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481ca9de-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481caba5-7b00-11eb-8943-0cc47adabd66",
+            "name": "Парк Челюскинцев",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caba5-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481caca1-7b00-11eb-8943-0cc47adabd66",
+            "name": "Московская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caca1-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cada1-7b00-11eb-8943-0cc47adabd66",
+            "name": "Восток",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cada1-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cae9a-7b00-11eb-8943-0cc47adabd66",
+            "name": "Борисовский тракт",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cae9a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481caf96-7b00-11eb-8943-0cc47adabd66",
+            "name": "Уручье",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481caf96-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb081-7b00-11eb-8943-0cc47adabd66",
+            "name": "Грушевка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb081-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb170-7b00-11eb-8943-0cc47adabd66",
+            "name": "Михалово",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb170-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb2fe-7b00-11eb-8943-0cc47adabd66",
+            "name": "Петровщина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb2fe-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb3f0-7b00-11eb-8943-0cc47adabd66",
+            "name": "Малиновка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb3f0-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb4e6-7b00-11eb-8943-0cc47adabd66",
+            "name": "Пушкинская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb4e6-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb5df-7b00-11eb-8943-0cc47adabd66",
+            "name": "Молодежная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb5df-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb72e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Фрунзенская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb72e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb824-7b00-11eb-8943-0cc47adabd66",
+            "name": "Немига",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb824-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cb91d-7b00-11eb-8943-0cc47adabd66",
+            "name": "Купаловская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cb91d-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cba0d-7b00-11eb-8943-0cc47adabd66",
+            "name": "Первомайская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cba0d-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cbafb-7b00-11eb-8943-0cc47adabd66",
+            "name": "Пролетарская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbafb-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cbc5a-7b00-11eb-8943-0cc47adabd66",
+            "name": "Тракторный завод",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbc5a-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cbd4f-7b00-11eb-8943-0cc47adabd66",
+            "name": "Партизанская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbd4f-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cbe47-7b00-11eb-8943-0cc47adabd66",
+            "name": "Автозаводская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbe47-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cbf4b-7b00-11eb-8943-0cc47adabd66",
+            "name": "Могилевская",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cbf4b-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc03e-7b00-11eb-8943-0cc47adabd66",
+            "name": "Спортивная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc03e-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc130-7b00-11eb-8943-0cc47adabd66",
+            "name": "Кунцевщина",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc130-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc223-7b00-11eb-8943-0cc47adabd66",
+            "name": "Каменная горка",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc223-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc312-7b00-11eb-8943-0cc47adabd66",
+            "name": "Юбилейная площадь",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc312-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc404-7b00-11eb-8943-0cc47adabd66",
+            "name": "Площадь Богушевича",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc404-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc4f8-7b00-11eb-8943-0cc47adabd66",
+            "name": "Вокзальная",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc4f8-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_481cc5e4-7b00-11eb-8943-0cc47adabd66",
+            "name": "Ковальская Слобода",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "481cc5e4-7b00-11eb-8943-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_51ca0078-a674-11eb-963d-0cc47adabd66",
+            "name": "Аэродромная (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "51ca0078-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_82355720-a674-11eb-963d-0cc47adabd66",
+            "name": "Неморшанский сад (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "82355720-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_station.uuid_c27127ef-a674-11eb-963d-0cc47adabd66",
+            "name": "Слуцкий гостинец (2024)",
+            "description": "Нативный код из referenceSearchMetroMobile, 36 наблюдавшихся станций. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": "c27127ef-a674-11eb-963d-0cc47adabd66"
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.metro_3_mode",
+        "name": "Пешком / Транспортом: 3",
+        "description": "Способ добраться до метро: Пешком=1, На транспорте=2 (числа). UI хранит объект варианта; сериализатор использует .value. Не задавать default по автоматически подобранной станции. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[2].metroTimeType. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "allow_custom_value": false
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": [
+          {
+            "id": "realt.metro_3_mode.code_1",
+            "name": "Пешком",
+            "description": "Нативный код из 847f32496ade4f1d.js, MetroTimeType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.metro_3_mode.code_2",
+            "name": "На транспорте",
+            "description": "Нативный код из 847f32496ade4f1d.js, MetroTimeType. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "realt.metro_3_minutes",
+        "name": "Минут до метро: 3",
+        "description": "Минут до метро, целое NumberField min=1/max=20, maxlength=2. Клиентское поле optional. Максимум три строки, строки добавляются и удаляются. Ветка Минска; строка должна существовать. Само when по городу не означает автоматическое создание трёх строк. Нативное имя: location.nearestMetroStations[2].metroTime. Источник: 847f32496ade4f1d.js: e2; metro-page-1/2-response.json; 0d785db8d2770618.js: locationSectionNames; форма https://realt.by/podat-obyavlenie/, 2026-11-01.",
+        "type": "integer",
+        "fill_rule": {
+          "required": false,
+          "depends_on": [
+            "realt.settlement"
+          ],
+          "validation": {
+            "min": 1,
+            "max": 20
+          },
+          "when": {
+            "option_id": "realt.settlement",
+            "operator": "equals",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.contact_phone_1",
+        "name": "Контактный телефон 1",
+        "description": "Первый обязательный телефон. Телефон хранится текстом, не числом; форматирование/подтверждение выполняются штатным компонентом. Максимум 4 строки подтверждён UI и maxNumber=4. Значения профиля не сохранялись, телефоны и SMS-коды не вводились. Нативное имя: contacts.phones[0].value → contactInfo.contactPhones[0]. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "format": "phone"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.contact_phone_2",
+        "name": "Контактный телефон 2",
+        "description": "Дополнительная строка после Добавить телефон; когда строка существует, её телефон обязателен. Условие существования строки не выражено текущим контрактом, поэтому required=null. Телефон хранится текстом, не числом; форматирование/подтверждение выполняются штатным компонентом. Максимум 4 строки подтверждён UI и maxNumber=4. Значения профиля не сохранялись, телефоны и SMS-коды не вводились. Нативное имя: contacts.phones[1].value → contactInfo.contactPhones[1]. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "text",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "format": "phone"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.contact_phone_3",
+        "name": "Контактный телефон 3",
+        "description": "Дополнительная строка после Добавить телефон; когда строка существует, её телефон обязателен. Условие существования строки не выражено текущим контрактом, поэтому required=null. Телефон хранится текстом, не числом; форматирование/подтверждение выполняются штатным компонентом. Максимум 4 строки подтверждён UI и maxNumber=4. Значения профиля не сохранялись, телефоны и SMS-коды не вводились. Нативное имя: contacts.phones[2].value → contactInfo.contactPhones[2]. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "text",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "format": "phone"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.contact_phone_4",
+        "name": "Контактный телефон 4",
+        "description": "Дополнительная строка после Добавить телефон; когда строка существует, её телефон обязателен. Условие существования строки не выражено текущим контрактом, поэтому required=null. Телефон хранится текстом, не числом; форматирование/подтверждение выполняются штатным компонентом. Максимум 4 строки подтверждён UI и maxNumber=4. Значения профиля не сохранялись, телефоны и SMS-коды не вводились. Нативное имя: contacts.phones[3].value → contactInfo.contactPhones[3]. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "text",
+        "fill_rule": {
+          "required": null,
+          "validation": {
+            "format": "phone"
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.contact_name",
+        "name": "Имя (контактное)",
+        "description": "Обязательное контактное имя; DOM maxLength=255. Предзаполненное значение не переносится в схему. Нативное имя: contacts.name → contactInfo.contactName. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "text",
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "max_length": 255
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.contact_email",
+        "name": "Email",
+        "description": "Необязательное поле Email, emailPattern и forbidSpaces в компоненте; DOM maxLength=255. Значение профиля не сохранялось. Нативное имя: contacts.email → contactInfo.email. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "text",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "format": "email",
+            "max_length": 255
+          }
+        },
+        "options": []
+      },
+      {
+        "id": "realt.communication_method",
+        "name": "Способ связи",
+        "description": "Одиночный необязательный выбор. Все 3 значения переключены в авторизованной форме; набор полей не изменился. Default=1 явно задан исходным кодом, не выведен из профиля. Нативное имя: contacts.communicationMethod → contactInfo.communicationMethod. Источник: Авторизованный UI #contacts, 2026-11-01; 847f32496ade4f1d.js: ContactsSection/eH/e_/eL/tw; 0d785db8d2770618.js: contactsSectionNames.",
+        "type": "enum",
+        "fill_rule": {
+          "required": false,
+          "validation": {
+            "allow_custom_value": false
+          },
+          "default_value": 1
+        },
+        "options": [
+          {
+            "id": "realt.communication_method.code_1",
+            "name": "Звонки и сообщения",
+            "description": "Нативный код из 847f32496ade4f1d.js: tw. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 1
+            },
+            "options": []
+          },
+          {
+            "id": "realt.communication_method.code_2",
+            "name": "Звонки",
+            "description": "Нативный код из 847f32496ade4f1d.js: tw. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 2
+            },
+            "options": []
+          },
+          {
+            "id": "realt.communication_method.code_3",
+            "name": "Сообщения",
+            "description": "Нативный код из 847f32496ade4f1d.js: tw. Дата 2026-11-01.",
+            "type": "choice",
+            "fill_rule": {
+              "value": 3
+            },
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]

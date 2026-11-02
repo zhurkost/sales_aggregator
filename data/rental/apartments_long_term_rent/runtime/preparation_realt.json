@@ -1,0 +1,1449 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "apartments_long_term_rent",
+  "platform": "realt",
+  "schema_hash": "6c3ffcd7ffb270eaa7499e77bd73a6a9e4bfc9b1bbfd8c1e65c00e8757f11f2b",
+  "common_hash": "1cea552d409fe9cb3b653314980c9d37d706e855de32275bcba3c03c7157ae25",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "realt.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.room_configuration",
+      "platform_option_id": "realt.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5+",
+            "to": 5
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall_material",
+      "platform_option_id": "realt.building_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "panel",
+            "to": 1
+          },
+          {
+            "from": "brick",
+            "to": 0
+          },
+          {
+            "from": "block_rooms",
+            "to": 2
+          },
+          {
+            "from": "silicate_blocks",
+            "to": 5
+          },
+          {
+            "from": "logs",
+            "to": 6
+          },
+          {
+            "from": "frame_block",
+            "to": 11
+          },
+          {
+            "from": "monolithic",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.bathroom",
+      "platform_option_id": "realt.bathroom",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "separate",
+            "to": 0
+          },
+          {
+            "from": "combined",
+            "to": 1
+          },
+          {
+            "from": "two_plus",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.balcony",
+      "platform_option_id": "realt.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "balcony",
+            "to": 1
+          },
+          {
+            "from": "none",
+            "to": 0
+          },
+          {
+            "from": "loggia",
+            "to": 2
+          },
+          {
+            "from": "balcony_and_loggia",
+            "to": 25
+          },
+          {
+            "from": "terrace",
+            "to": 19
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.repair",
+      "platform_option_id": "realt.repair",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "euro",
+            "to": 0
+          },
+          {
+            "from": "good",
+            "to": 2
+          },
+          {
+            "from": "normal",
+            "to": 3
+          },
+          {
+            "from": "poor",
+            "to": 5
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "realt.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "933"
+          },
+          {
+            "from": "USD",
+            "to": "840"
+          },
+          {
+            "from": "EUR",
+            "to": "978"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.prepayment",
+      "platform_option_id": "realt.prepayment",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "none",
+            "to": 7
+          },
+          {
+            "from": "months_1",
+            "to": 1
+          },
+          {
+            "from": "months_2",
+            "to": 2
+          },
+          {
+            "from": "months_3",
+            "to": 3
+          },
+          {
+            "from": "months_6",
+            "to": 6
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "realt.contact_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.email",
+      "platform_option_id": "realt.contact_email",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.communication_method",
+      "platform_option_id": "realt.communication_method",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "calls_and_messages",
+            "to": 1
+          },
+          {
+            "from": "calls_only",
+            "to": 2
+          },
+          {
+            "from": "messages_only",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "amenity.furniture",
+      "platform_option_id": "realt.furniture",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "present",
+            "to": 1
+          },
+          {
+            "from": "absent",
+            "to": 0
+          },
+          {
+            "from": "partial",
+            "to": 402
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "amenity.stove_type",
+      "platform_option_id": "realt.stove",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "gas",
+            "to": 0
+          },
+          {
+            "from": "electric",
+            "to": 1
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "realt.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.youtube_video",
+      "platform_option_id": "realt.youtube_video",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "realt.description",
+      "conversion": {
+        "kind": "plain_text_html"
+      }
+    },
+    {
+      "common_option_id": "rental.total_area",
+      "platform_option_id": "realt.total_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.living_area",
+      "platform_option_id": "realt.living_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.kitchen_area",
+      "platform_option_id": "realt.kitchen_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.floor",
+      "platform_option_id": "realt.floor",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "building.total_floors",
+      "platform_option_id": "realt.building_floors",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "building.year",
+      "platform_option_id": "realt.building_year",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "rental.monthly_price",
+      "platform_option_id": "realt.monthly_rent",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer",
+        "requires": [
+          "realt.currency"
+        ],
+        "currency_field": "realt.currency"
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "realt.contact_phone_1",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "common_option_id": "contact.additional_phone_1",
+      "platform_option_id": "realt.contact_phone_2",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "common_option_id": "contact.additional_phone_2",
+      "platform_option_id": "realt.contact_phone_3",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "common_option_id": "contact.additional_phone_3",
+      "platform_option_id": "realt.contact_phone_4",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "platform_option_id": "realt.appliances",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.refrigerator",
+            "values": [
+              {
+                "from": "yes",
+                "to": 503
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.washing_machine",
+            "values": [
+              {
+                "from": "yes",
+                "to": 506
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.dishwasher",
+            "values": [
+              {
+                "from": "yes",
+                "to": 505
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.microwave",
+            "values": [
+              {
+                "from": "yes",
+                "to": 504
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.tv",
+            "values": [
+              {
+                "from": "yes",
+                "to": 507
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.air_conditioner",
+            "values": [
+              {
+                "from": "yes",
+                "to": 514
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.home_cinema",
+            "values": [
+              {
+                "from": true,
+                "to": 511
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.small_appliances",
+            "values": [
+              {
+                "from": true,
+                "to": 502
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.computer",
+            "values": [
+              {
+                "from": true,
+                "to": 512
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.amenities",
+      "editor_group_name": "Мебель и удобства"
+    },
+    {
+      "platform_option_id": "realt.amenities",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.internet",
+            "values": [
+              {
+                "from": "yes",
+                "to": 607
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.shower",
+            "values": [
+              {
+                "from": "yes",
+                "to": 611
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.jacuzzi",
+            "values": [
+              {
+                "from": "yes",
+                "to": 614
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.dishes",
+            "values": [
+              {
+                "from": "yes",
+                "to": 602
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.telephone_network",
+            "values": [
+              {
+                "from": true,
+                "to": 606
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "building.video_intercom",
+            "values": [
+              {
+                "from": true,
+                "to": 640
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ]
+      },
+      "editor_group": "group.amenities",
+      "editor_group_name": "Мебель и удобства"
+    },
+    {
+      "common_option_id": "tenant.preferred",
+      "platform_option_id": "realt.tenant_condition",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Семье",
+            "to": 0
+          },
+          {
+            "from": "Под офис",
+            "to": 1
+          },
+          {
+            "from": "Студентам",
+            "to": 2
+          },
+          {
+            "from": "Не компаниям",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "location.town_distance",
+      "platform_option_id": "realt.town_distance",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "rental.separate_rooms",
+      "platform_option_id": "realt.separate_rooms",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "rental.layout",
+      "platform_option_id": "realt.layout",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "чешский проект",
+            "to": 3
+          },
+          {
+            "from": "брежневка",
+            "to": 7
+          },
+          {
+            "from": "сталинка",
+            "to": 5
+          },
+          {
+            "from": "хрущевка",
+            "to": 6
+          },
+          {
+            "from": "малосемейка",
+            "to": 4
+          },
+          {
+            "from": "пентхаус",
+            "to": 10
+          },
+          {
+            "from": "таунхаус",
+            "to": 11
+          },
+          {
+            "from": "новостройка",
+            "to": 0
+          },
+          {
+            "from": "свободная планировка",
+            "to": 8
+          },
+          {
+            "from": "студия",
+            "to": 9
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "building.major_repair_year",
+      "platform_option_id": "realt.major_repair_year",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "building.infrastructure",
+      "platform_option_id": "realt.infrastructure",
+      "conversion": {
+        "kind": "list_lookup",
+        "values": [
+          {
+            "from": "сигнализация",
+            "to": 704
+          },
+          {
+            "from": "парковка",
+            "to": 746
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "amenity.telephone_lines",
+      "platform_option_id": "realt.telephone_lines",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "нет",
+            "to": 0
+          },
+          {
+            "from": "есть",
+            "to": 1
+          },
+          {
+            "from": "1 телефон",
+            "to": 2
+          },
+          {
+            "from": "2 телефона",
+            "to": 3
+          },
+          {
+            "from": "спаренный",
+            "to": 8
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "rental.bargain",
+      "platform_option_id": "realt.bargain",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.utilities",
+      "platform_option_id": "realt.utilities",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "нет",
+            "to": 0
+          },
+          {
+            "from": "50%",
+            "to": 50
+          },
+          {
+            "from": "100%",
+            "to": 100
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "media.floor_plan",
+      "platform_option_id": "realt.floor_plan",
+      "conversion": {
+        "kind": "files"
+      }
+    },
+    {
+      "common_option_id": "media.tour_3d",
+      "platform_option_id": "realt.tour_3d",
+      "conversion": {
+        "kind": "files"
+      }
+    },
+    {
+      "common_option_id": "listing.short_description",
+      "platform_option_id": "realt.short_description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "location.residential_complex",
+      "platform_option_id": "realt.residential_complex",
+      "conversion": {
+        "kind": "lookup",
+        "values": []
+      }
+    },
+    {
+      "common_option_id": "location.metro_1_station",
+      "platform_option_id": "realt.metro_1_station",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Институт культуры",
+            "to": "481c9f9e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Ленина",
+            "to": "481ca4ae-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Октябрьская",
+            "to": "481ca613-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Победы",
+            "to": "481ca729-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Якуба Коласа",
+            "to": "481ca889-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Академия наук",
+            "to": "481ca9de-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Парк Челюскинцев",
+            "to": "481caba5-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Московская",
+            "to": "481caca1-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Восток",
+            "to": "481cada1-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Борисовский тракт",
+            "to": "481cae9a-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Уручье",
+            "to": "481caf96-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Грушевка",
+            "to": "481cb081-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Михалово",
+            "to": "481cb170-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Петровщина",
+            "to": "481cb2fe-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Малиновка",
+            "to": "481cb3f0-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Пушкинская",
+            "to": "481cb4e6-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Молодежная",
+            "to": "481cb5df-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Фрунзенская",
+            "to": "481cb72e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Немига",
+            "to": "481cb824-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Купаловская",
+            "to": "481cb91d-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Первомайская",
+            "to": "481cba0d-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Пролетарская",
+            "to": "481cbafb-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Тракторный завод",
+            "to": "481cbc5a-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Партизанская",
+            "to": "481cbd4f-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Автозаводская",
+            "to": "481cbe47-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Могилевская",
+            "to": "481cbf4b-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Спортивная",
+            "to": "481cc03e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Кунцевщина",
+            "to": "481cc130-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Каменная горка",
+            "to": "481cc223-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Юбилейная площадь",
+            "to": "481cc312-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Богушевича",
+            "to": "481cc404-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Вокзальная",
+            "to": "481cc4f8-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Ковальская Слобода",
+            "to": "481cc5e4-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Аэродромная (2024)",
+            "to": "51ca0078-a674-11eb-963d-0cc47adabd66"
+          },
+          {
+            "from": "Неморшанский сад (2024)",
+            "to": "82355720-a674-11eb-963d-0cc47adabd66"
+          },
+          {
+            "from": "Слуцкий гостинец (2024)",
+            "to": "c27127ef-a674-11eb-963d-0cc47adabd66"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.metro_1_mode",
+      "platform_option_id": "realt.metro_1_mode",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Пешком",
+            "to": 1
+          },
+          {
+            "from": "На транспорте",
+            "to": 2
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.metro_1_minutes",
+      "platform_option_id": "realt.metro_1_minutes",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "location.metro_2_station",
+      "platform_option_id": "realt.metro_2_station",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Институт культуры",
+            "to": "481c9f9e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Ленина",
+            "to": "481ca4ae-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Октябрьская",
+            "to": "481ca613-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Победы",
+            "to": "481ca729-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Якуба Коласа",
+            "to": "481ca889-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Академия наук",
+            "to": "481ca9de-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Парк Челюскинцев",
+            "to": "481caba5-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Московская",
+            "to": "481caca1-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Восток",
+            "to": "481cada1-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Борисовский тракт",
+            "to": "481cae9a-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Уручье",
+            "to": "481caf96-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Грушевка",
+            "to": "481cb081-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Михалово",
+            "to": "481cb170-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Петровщина",
+            "to": "481cb2fe-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Малиновка",
+            "to": "481cb3f0-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Пушкинская",
+            "to": "481cb4e6-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Молодежная",
+            "to": "481cb5df-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Фрунзенская",
+            "to": "481cb72e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Немига",
+            "to": "481cb824-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Купаловская",
+            "to": "481cb91d-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Первомайская",
+            "to": "481cba0d-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Пролетарская",
+            "to": "481cbafb-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Тракторный завод",
+            "to": "481cbc5a-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Партизанская",
+            "to": "481cbd4f-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Автозаводская",
+            "to": "481cbe47-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Могилевская",
+            "to": "481cbf4b-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Спортивная",
+            "to": "481cc03e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Кунцевщина",
+            "to": "481cc130-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Каменная горка",
+            "to": "481cc223-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Юбилейная площадь",
+            "to": "481cc312-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Богушевича",
+            "to": "481cc404-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Вокзальная",
+            "to": "481cc4f8-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Ковальская Слобода",
+            "to": "481cc5e4-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Аэродромная (2024)",
+            "to": "51ca0078-a674-11eb-963d-0cc47adabd66"
+          },
+          {
+            "from": "Неморшанский сад (2024)",
+            "to": "82355720-a674-11eb-963d-0cc47adabd66"
+          },
+          {
+            "from": "Слуцкий гостинец (2024)",
+            "to": "c27127ef-a674-11eb-963d-0cc47adabd66"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.metro_2_mode",
+      "platform_option_id": "realt.metro_2_mode",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Пешком",
+            "to": 1
+          },
+          {
+            "from": "На транспорте",
+            "to": 2
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.metro_2_minutes",
+      "platform_option_id": "realt.metro_2_minutes",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "location.metro_3_station",
+      "platform_option_id": "realt.metro_3_station",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Институт культуры",
+            "to": "481c9f9e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Ленина",
+            "to": "481ca4ae-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Октябрьская",
+            "to": "481ca613-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Победы",
+            "to": "481ca729-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Якуба Коласа",
+            "to": "481ca889-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Академия наук",
+            "to": "481ca9de-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Парк Челюскинцев",
+            "to": "481caba5-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Московская",
+            "to": "481caca1-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Восток",
+            "to": "481cada1-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Борисовский тракт",
+            "to": "481cae9a-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Уручье",
+            "to": "481caf96-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Грушевка",
+            "to": "481cb081-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Михалово",
+            "to": "481cb170-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Петровщина",
+            "to": "481cb2fe-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Малиновка",
+            "to": "481cb3f0-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Пушкинская",
+            "to": "481cb4e6-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Молодежная",
+            "to": "481cb5df-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Фрунзенская",
+            "to": "481cb72e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Немига",
+            "to": "481cb824-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Купаловская",
+            "to": "481cb91d-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Первомайская",
+            "to": "481cba0d-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Пролетарская",
+            "to": "481cbafb-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Тракторный завод",
+            "to": "481cbc5a-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Партизанская",
+            "to": "481cbd4f-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Автозаводская",
+            "to": "481cbe47-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Могилевская",
+            "to": "481cbf4b-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Спортивная",
+            "to": "481cc03e-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Кунцевщина",
+            "to": "481cc130-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Каменная горка",
+            "to": "481cc223-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Юбилейная площадь",
+            "to": "481cc312-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Площадь Богушевича",
+            "to": "481cc404-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Вокзальная",
+            "to": "481cc4f8-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Ковальская Слобода",
+            "to": "481cc5e4-7b00-11eb-8943-0cc47adabd66"
+          },
+          {
+            "from": "Аэродромная (2024)",
+            "to": "51ca0078-a674-11eb-963d-0cc47adabd66"
+          },
+          {
+            "from": "Неморшанский сад (2024)",
+            "to": "82355720-a674-11eb-963d-0cc47adabd66"
+          },
+          {
+            "from": "Слуцкий гостинец (2024)",
+            "to": "c27127ef-a674-11eb-963d-0cc47adabd66"
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.metro_3_mode",
+      "platform_option_id": "realt.metro_3_mode",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Пешком",
+            "to": 1
+          },
+          {
+            "from": "На транспорте",
+            "to": 2
+          }
+        ]
+      }
+    },
+    {
+      "common_option_id": "location.metro_3_minutes",
+      "platform_option_id": "realt.metro_3_minutes",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    }
+  ],
+  "constants": {
+    "realt.deal_type": "rentForLong",
+    "realt.property_family": "Living",
+    "realt.property_kind": "Apartment",
+    "realt.rental_term": 999
+  },
+  "addresses": [
+    {
+      "platform_option_id": "realt.settlement",
+      "part": "settlement",
+      "scalar_verified": false
+    },
+    {
+      "platform_option_id": "realt.street",
+      "part": "street",
+      "scalar_verified": false
+    },
+    {
+      "platform_option_id": "realt.house_number",
+      "part": "house",
+      "scalar_verified": false
+    }
+  ],
+  "checks": [
+    {
+      "left": "realt.floor",
+      "right": "realt.building_floors",
+      "message": "Этаж квартиры не может быть выше этажности дома. Значения не изменены автоматически."
+    },
+    {
+      "left": "realt.living_area",
+      "right": "realt.total_area",
+      "message": "Площадь части квартиры не может превышать общую площадь."
+    },
+    {
+      "left": "realt.kitchen_area",
+      "right": "realt.total_area",
+      "message": "Площадь части квартиры не может превышать общую площадь."
+    }
+  ],
+  "review": [
+    {
+      "field": "realt.contact_phone_1",
+      "message": "Подтвердите номер/слот и маску в форме площадки. Профиль и подтверждение телефона не изменяются автоматически."
+    },
+    {
+      "field": "realt.contact_phone_2",
+      "message": "Подтвердите номер/слот и маску в форме площадки. Профиль и подтверждение телефона не изменяются автоматически."
+    },
+    {
+      "field": "realt.contact_phone_3",
+      "message": "Подтвердите номер/слот и маску в форме площадки. Профиль и подтверждение телефона не изменяются автоматически."
+    },
+    {
+      "field": "realt.contact_phone_4",
+      "message": "Подтвердите номер/слот и маску в форме площадки. Профиль и подтверждение телефона не изменяются автоматически."
+    },
+    {
+      "field": "realt.tenant_condition",
+      "message": "Это единственное условие сдачи, а не независимый флаг. Проверьте его совместно с прочими требованиями."
+    },
+    {
+      "field": "realt.title",
+      "message": "Доступность этого поля зависит от платной возможности площадки; подтвердите её без автоматической покупки."
+    },
+    {
+      "field": "realt.description",
+      "message": "Доступность этого поля зависит от платной возможности площадки; подтвердите её без автоматической покупки."
+    },
+    {
+      "field": "realt.youtube_video",
+      "message": "Доступность этого поля зависит от платной возможности площадки; подтвердите её без автоматической покупки."
+    }
+  ],
+  "coordinates": [],
+  "address_bound_fields": [
+    "realt.building_number",
+    "realt.house_number",
+    "realt.settlement",
+    "realt.street"
+  ],
+  "deferred_fields": {
+    "realt.settlement": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "realt.street": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "realt.house_number": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется.",
+    "realt.building_number": "Адрес сохранён в карточке. Подключение адресного справочника площадки ещё не завершено; повторный ввод здесь не требуется."
+  }
+}

@@ -1,0 +1,279 @@
+[
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.images",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "label:has(input.new-photos__input-file[name=\"file\"])"
+      ]
+    },
+    "action": "upload_files",
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "files_accepted"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.description",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "textarea[placeholder=\"Подробное описание\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.price_amount",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "#price-input"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.price_currency",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "select[data-bind=\"value: $root.data.price.currency\"]"
+      ]
+    },
+    "action": "select_option",
+    "events": [
+      "change"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "selected_text_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.agency_name",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "input[placeholder=\"Юридическое наименование\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.agency_unp",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "input[placeholder=\"УНП\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.agency_contract_number",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "input[placeholder=\"Номер договора\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.agency_contract_date",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "input[placeholder=\"Дата заключения договора\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.agency_licence_number",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "input[placeholder=\"Номер лицензии\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.agency_licence_date",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "input[placeholder=\"Дата выдачи лицензии\"]"
+      ]
+    },
+    "action": "set_value",
+    "events": [
+      "input",
+      "change",
+      "blur"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.call_time_from",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "select[data-bind*=\"value: $root.data.contact.callTime[0]\"]"
+      ]
+    },
+    "action": "select_option",
+    "events": [
+      "change"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "selected_text_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "onliner.call_time_to",
+    "platform": "onliner",
+    "target": {
+      "selectors": [
+        "select[data-bind*=\"value: $root.data.contact.callTime[1]\"]"
+      ]
+    },
+    "action": "select_option",
+    "events": [
+      "change"
+    ],
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "selected_text_equals"
+    }
+  }
+]

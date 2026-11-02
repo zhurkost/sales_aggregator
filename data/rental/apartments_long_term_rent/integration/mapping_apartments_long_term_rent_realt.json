@@ -1,0 +1,309 @@
+{
+  "category_id": "apartments_long_term_rent",
+  "platform": "realt",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "realt.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "rental.room_configuration",
+      "platform_option_id": "realt.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5+",
+            "to": 5
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall_material",
+      "platform_option_id": "realt.building_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "panel",
+            "to": 1
+          },
+          {
+            "from": "brick",
+            "to": 0
+          },
+          {
+            "from": "block_rooms",
+            "to": 2
+          },
+          {
+            "from": "silicate_blocks",
+            "to": 5
+          },
+          {
+            "from": "logs",
+            "to": 6
+          },
+          {
+            "from": "frame_block",
+            "to": 11
+          },
+          {
+            "from": "monolithic",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.bathroom",
+      "platform_option_id": "realt.bathroom",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "separate",
+            "to": 0
+          },
+          {
+            "from": "combined",
+            "to": 1
+          },
+          {
+            "from": "two_plus",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.balcony",
+      "platform_option_id": "realt.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "balcony",
+            "to": 1
+          },
+          {
+            "from": "none",
+            "to": 0
+          },
+          {
+            "from": "loggia",
+            "to": 2
+          },
+          {
+            "from": "balcony_and_loggia",
+            "to": 25
+          },
+          {
+            "from": "terrace",
+            "to": 19
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.repair",
+      "platform_option_id": "realt.repair",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "euro",
+            "to": 0
+          },
+          {
+            "from": "good",
+            "to": 2
+          },
+          {
+            "from": "normal",
+            "to": 3
+          },
+          {
+            "from": "poor",
+            "to": 5
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "realt.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "933"
+          },
+          {
+            "from": "USD",
+            "to": "840"
+          },
+          {
+            "from": "EUR",
+            "to": "978"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.prepayment",
+      "platform_option_id": "realt.prepayment",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "none",
+            "to": 7
+          },
+          {
+            "from": "months_1",
+            "to": 1
+          },
+          {
+            "from": "months_2",
+            "to": 2
+          },
+          {
+            "from": "months_3",
+            "to": 3
+          },
+          {
+            "from": "months_6",
+            "to": 6
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "realt.contact_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.email",
+      "platform_option_id": "realt.contact_email",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.communication_method",
+      "platform_option_id": "realt.communication_method",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "calls_and_messages",
+            "to": 1
+          },
+          {
+            "from": "calls_only",
+            "to": 2
+          },
+          {
+            "from": "messages_only",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "amenity.furniture",
+      "platform_option_id": "realt.furniture",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "present",
+            "to": 1
+          },
+          {
+            "from": "absent",
+            "to": 0
+          },
+          {
+            "from": "partial",
+            "to": 402
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "amenity.stove_type",
+      "platform_option_id": "realt.stove",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "gas",
+            "to": 0
+          },
+          {
+            "from": "electric",
+            "to": 1
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "realt.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.youtube_video",
+      "platform_option_id": "realt.youtube_video",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    }
+  ]
+}

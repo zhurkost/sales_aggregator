@@ -1,0 +1,25 @@
+{
+  "format_version": 1,
+  "source_schema_version": "1.2",
+  "category_id": "apartments_long_term_rent",
+  "common": "integration/apartments_long_term_rent_common.json",
+  "card": "runtime/card.json",
+  "platforms": {
+    "kufar": {
+      "schema": "kufar/apartments_long_term_rent_kufar.json",
+      "plan": "runtime/preparation_kufar.json"
+    },
+    "onliner": {
+      "schema": "onliner/apartments_long_term_rent_onliner.json",
+      "plan": "runtime/preparation_onliner.json"
+    },
+    "realt": {
+      "schema": "realt/apartments_long_term_rent_realt.json",
+      "plan": "runtime/preparation_realt.json"
+    },
+    "domovita": {
+      "schema": "domovita/apartments_long_term_rent_domovita.json",
+      "plan": "runtime/preparation_domovita.json"
+    }
+  }
+}
