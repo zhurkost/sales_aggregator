@@ -253,8 +253,10 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     const first = controls[0], last = controls[controls.length - 1];
     const active = document.activeElement as HTMLElement | null;
     const outside = !active || !active.closest(".rental-drawer");
-    if (event.shiftKey && (active === first || outside)) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && (active === last || outside)) { event.preventDefault(); first.focus(); }
+    const beforeFirst = active && !!(active.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING);
+    const afterLast = active && !!(last.compareDocumentPosition(active) & Node.DOCUMENT_POSITION_FOLLOWING);
+    if (event.shiftKey && (active === first || outside || beforeFirst)) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && (active === last || outside || afterLast)) { event.preventDefault(); first.focus(); }
   }
   async fillFromDescription() {
     if (this.busy || this.description.trim().length < 10 || !this.schema) return;

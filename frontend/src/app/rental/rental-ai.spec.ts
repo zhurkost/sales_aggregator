@@ -20,6 +20,19 @@ function setup(data:RentalAiResult=result) {
 }
 afterEach(()=>{vi.unstubAllGlobals();vi.useRealTimers();});
 describe("compact rental editor with AI",()=>{
+  it("traps reverse Tab from the dialog title without hijacking Tab inside a field group",()=>{
+    const panel=document.createElement("section");panel.className="rental-drawer";
+    panel.innerHTML='<h2 tabindex="-1">Title</h2><button>Close</button><div tabindex="-1"><input /></div><button>Done</button>';
+    document.body.append(panel);const c=new RentalEditorComponent();
+    try {
+      panel.querySelector("h2")!.focus();
+      const back=new KeyboardEvent("keydown",{key:"Tab",shiftKey:true,cancelable:true});c.panelKeys(back);
+      expect(back.defaultPrevented).toBe(true);expect(document.activeElement?.textContent).toBe("Done");
+      panel.querySelector("div")!.focus();
+      const forward=new KeyboardEvent("keydown",{key:"Tab",cancelable:true});c.panelKeys(forward);
+      expect(forward.defaultPrevented).toBe(false);
+    } finally { panel.remove();c.ngOnDestroy(); }
+  });
   it("fills empty fields including false but asks before replacing manual data",async()=>{
     const {c,fetch}=setup();c.draft.values.price="1600";
     await c.fillFromDescription();
