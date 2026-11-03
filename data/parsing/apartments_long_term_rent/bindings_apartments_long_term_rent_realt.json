@@ -1,0 +1,40 @@
+[
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "realt.building_number",
+    "platform": "realt",
+    "target": {
+      "selectors": [
+        "[id=\"location.buildingNumber\"]"
+      ]
+    },
+    "action": "set_value",
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  },
+  {
+    "category_id": "apartments_long_term_rent",
+    "option_id": "realt.short_description",
+    "platform": "realt",
+    "target": {
+      "selectors": [
+        "[id=\"description.shortDescription\"]"
+      ]
+    },
+    "action": "set_value",
+    "wait_for": [
+      "visible",
+      "enabled"
+    ],
+    "timeout_ms": 10000,
+    "verify": {
+      "kind": "value_equals"
+    }
+  }
+]
