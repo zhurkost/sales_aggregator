@@ -195,6 +195,9 @@ async function fixture(html, controls, extra = {}) {
   const window = new Window({ url: "https://www.kufar.by/ain/create" });
   window.document.body.innerHTML = html;
   window.eval(
+    fs.readFileSync(path.join(__dirname, "../rental-autocomplete.js"), "utf8"),
+  );
+  window.eval(
     fs.readFileSync(path.join(__dirname, "../rental-form.js"), "utf8"),
   );
   const form = new window.AutopostRentalForm.Form({

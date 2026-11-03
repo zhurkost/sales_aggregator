@@ -51,6 +51,28 @@ public final class BrowserRecipeValidator {
               .contains(text(control, "action")),
           "действие browser");
       selector(control);
+      if (control.has("autocomplete")) {
+        var config = control.path("autocomplete");
+        check(text(control, "action").equals("autocomplete") && config.isObject(), "autocomplete");
+        check(Set.of("settlement", "street").contains(text(config, "kind")), "тип autocomplete");
+        check(text(config, "confirm").equals("value-and-closed"), "подтверждение autocomplete");
+        for (String key : List.of("scopeSelector", "optionSelector"))
+          selectorValue(text(config, key));
+        for (String key : List.of("labelSelector", "busySelector", "contextSelector"))
+          if (config.has(key)) selectorValue(text(config, key));
+        if (config.has("contextParts")) {
+          check(
+              config.path("contextParts").isArray() && config.path("contextParts").size() <= 2,
+              "контекст autocomplete");
+          for (var part : config.path("contextParts"))
+            check(
+                Set.of("region", "district").contains(part.asText()),
+                "часть контекста autocomplete");
+          if (!config.path("contextParts").isEmpty())
+            selectorValue(text(config, "contextSelector"));
+        }
+        check(!config.has("code") && !config.has("script"), "исполняемый код autocomplete");
+      }
       if (control.has("addressPart"))
         check(
             Set.of("label", "settlement", "street", "house", "block")
@@ -73,9 +95,7 @@ public final class BrowserRecipeValidator {
   }
 
   private void selector(JsonNode row) {
-    check(
-        !text(row, "selector").isBlank() && text(row, "selector").length() <= 400,
-        "селектор browser");
+    selectorValue(text(row, "selector"));
     check(
         !row.has("index")
             || row.path("index").isInt()
@@ -83,6 +103,10 @@ public final class BrowserRecipeValidator {
                 && row.path("index").asInt() < 20,
         "index browser");
     check(!row.has("code") && !row.has("script") && !row.has("url"), "исполняемый код browser");
+  }
+
+  private void selectorValue(String value) {
+    check(!value.isBlank() && value.length() <= 400, "селектор browser");
   }
 
   private void check(boolean valid, String message) {

@@ -55,7 +55,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
       if (generation !== this.generation) return;
       this.ready =
         Array.isArray(ping["capabilities"]) &&
-        ping["capabilities"].includes("rental-publishing");
+        ping["capabilities"].includes("rental-publishing") &&
+        ping["capabilities"].includes("rental-address-suggestions");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)
@@ -83,7 +84,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     if (this.busy || this.store.busy || !this.store.draft.platforms.length)
       return;
     if (!this.ready) {
-      this.error = "Установите расширение 0.9.0 и обновите вкладку Автопоста.";
+      this.error = "Установите расширение 0.9.1 и обновите вкладку Автопоста.";
       return;
     }
     this.busy = true;

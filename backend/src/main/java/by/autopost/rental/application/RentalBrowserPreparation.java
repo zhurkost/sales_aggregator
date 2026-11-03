@@ -31,6 +31,12 @@ final class RentalBrowserPreparation {
                 || value.isArray() && value.isEmpty())) continue;
         ObjectNode control = source.deepCopy();
         control.set("value", value == null ? array() : value.deepCopy());
+        var matchContext = array();
+        for (var part : source.path("autocomplete").path("contextParts")) {
+          String context = text(draft.path("address"), part.asText());
+          if (!context.isBlank()) matchContext.add(context);
+        }
+        if (!matchContext.isEmpty()) control.set("matchContext", matchContext);
         control.put("name", text(fields.get(id), "name"));
         var labels = object();
         for (var choice : fields.get(id).path("options")) {

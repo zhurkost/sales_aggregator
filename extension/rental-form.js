@@ -197,24 +197,11 @@
         }
         const current = c.action === "richtext" ? e.textContent : e.value;
         if (c.action === "autocomplete") {
-          if (!this.pending.has(c.field)) {
-            if (current && norm(current) !== norm(value)) {
-              this.protected.add(c.field);
-              return;
-            }
-            setText(e, value);
-            this.pending.set(c.field, true);
-            this.waiting = { field: c.field, tries: 0 };
-            return;
-          }
-          // Addresses are confirmed only against one exact suggestion. Never choose the first result.
-          const options = query('[role="option"]').filter(
-            (o) => visible(o) && norm(o.textContent) === norm(value),
-          );
-          if (options.length === 1) {
-            options[0].click();
-            this.done.add(c.field);
-          }
+          root.AutopostRentalAutocomplete.fill(this, c, e, {
+            query,
+            visible,
+            enabled,
+          });
           return;
         }
         if (current && norm(current) !== norm(value)) {

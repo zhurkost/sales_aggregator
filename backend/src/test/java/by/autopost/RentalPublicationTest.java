@@ -69,6 +69,30 @@ class RentalPublicationTest {
   }
 
   @Test
+  void browserAddressKeepsTypesAndRegionalContextForUnambiguousSuggestions() {
+    var draft = partial();
+    ((ObjectNode) draft.path("address"))
+        .put("settlement", "г Минск")
+        .put("street", "ул Ольшевского")
+        .put("region", "Минская обл")
+        .put("district", "Минский р-н");
+    var job =
+        list(catalog.browser(draft).path("jobs")).stream()
+            .filter(j -> text(j, "platform").equals("realt"))
+            .findFirst()
+            .orElseThrow();
+    var city =
+        list(job.path("controls")).stream()
+            .filter(c -> text(c, "field").equals("realt.settlement"))
+            .findFirst()
+            .orElseThrow();
+    assertEquals("г Минск", text(city, "value"));
+    assertEquals("Минская обл", city.path("matchContext").get(0).asText());
+    assertEquals("Минский р-н", city.path("matchContext").get(1).asText());
+    assertEquals("value-and-closed", text(city.path("autocomplete"), "confirm"));
+  }
+
+  @Test
   void onlySavedSnapshotInOwnWorkspaceCanBeLaunched() {
     var drafts = mock(RentalDraftService.class);
     var service = new RentalPublicationService(drafts, catalog);
@@ -99,5 +123,13 @@ class RentalPublicationTest {
     assertThrows(
         ApiException.class,
         () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), other));
+    var invalidAddress = (ObjectNode) snapshot.browser("realt");
+    ((ObjectNode) invalidAddress.path("controls").get(0).path("autocomplete"))
+        .put("optionSelector", "");
+    assertThrows(
+        ApiException.class,
+        () ->
+            new BrowserRecipeValidator()
+                .validate("realt", snapshot.schema("realt"), invalidAddress));
   }
 }

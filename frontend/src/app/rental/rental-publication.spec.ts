@@ -4,7 +4,7 @@ import { RentalPublicationComponent } from "./rental-publication.component";
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 const extension = vi.fn(async () => ({
-  capabilities: ["rental-publishing"],
+  capabilities: ["rental-publishing", "rental-address-suggestions"],
   jobs: [],
 }));
 const gateway = {
@@ -14,6 +14,20 @@ const gateway = {
 };
 afterEach(() => vi.clearAllMocks());
 describe("publication of incomplete rental cards", () => {
+  it("asks to update older extensions without address suggestion support", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    c.store.draft.platforms = ["realt"];
+    extension.mockResolvedValueOnce({capabilities:["rental-publishing"], jobs:[]});
+    await c.ngOnChanges();
+    expect(c.ready).toBe(false);
+    await c.publish();
+    expect(c.error).toContain("0.9.1");
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    c.ngOnDestroy(); c.store.destroy();
+  });
   it("photo changes revise a saved card without altering its attributes", async () => {
     const c = new RentalPublicationComponent(gateway);
     c.store = new RentalDraftStore(
@@ -105,7 +119,7 @@ describe("publication of incomplete rental cards", () => {
     c.draftId = c.store.id;
     await c.publish();
     expect(extension).not.toHaveBeenCalled();
-    expect(c.error).toContain("0.9.0");
+    expect(c.error).toContain("0.9.1");
     c.ready = true;
     c.mode = "assist";
     vi.spyOn(c.store, "flush").mockResolvedValue();

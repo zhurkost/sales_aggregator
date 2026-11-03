@@ -203,6 +203,7 @@ async function appRequest(message, sender) {
       version: core.VERSION,
       capabilities: [
         "rental-publishing",
+        "rental-address-suggestions",
         "all-platforms",
         "category-routing",
         "queue",

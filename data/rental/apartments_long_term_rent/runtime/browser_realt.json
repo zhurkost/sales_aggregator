@@ -19,15 +19,51 @@
   ],
   "controls": [
     {
+      "field": "realt.settlement",
+      "action": "autocomplete",
+      "selector": "[id=\"location.settlement\"]",
+      "addressPart": "settlement",
+      "autocomplete": {
+        "kind": "settlement",
+        "scopeSelector": "div.relative:has(> div > input[id=\"location.settlement\"])",
+        "optionSelector": "ul > li > [role=\"button\"]",
+        "busySelector": "svg.animate-spin",
+        "confirm": "value-and-closed",
+        "labelSelector": "p:first-child",
+        "contextSelector": "p:not(:first-child)",
+        "contextParts": [
+          "region",
+          "district"
+        ]
+      }
+    },
+    {
+      "field": "realt.street",
+      "action": "autocomplete",
+      "selector": "[id=\"location.street\"]",
+      "addressPart": "street",
+      "after": "realt.settlement",
+      "autocomplete": {
+        "kind": "street",
+        "scopeSelector": "div.relative:has(> div > input[id=\"location.street\"])",
+        "optionSelector": "ul > li > [role=\"button\"]",
+        "busySelector": "svg.animate-spin",
+        "confirm": "value-and-closed"
+      }
+    },
+    {
       "field": "realt.house_number",
       "action": "text",
       "selector": "[id=\"location.houseNumber\"]",
-      "addressPart": "house"
+      "addressPart": "house",
+      "after": "realt.settlement"
     },
     {
       "field": "realt.building_number",
       "action": "text",
-      "selector": "[id=\"location.buildingNumber\"]"
+      "selector": "[id=\"location.buildingNumber\"]",
+      "after": "realt.settlement",
+      "addressPart": "block"
     },
     {
       "field": "realt.floor",
@@ -78,19 +114,6 @@
       "field": "realt.contact_email",
       "action": "text",
       "selector": "[id=\"contacts.email\"]"
-    },
-    {
-      "field": "realt.settlement",
-      "action": "autocomplete",
-      "selector": "[id=\"location.settlement\"]",
-      "addressPart": "settlement"
-    },
-    {
-      "field": "realt.street",
-      "action": "autocomplete",
-      "selector": "[id=\"location.street\"]",
-      "addressPart": "street",
-      "after": "realt.settlement"
     },
     {
       "field": "realt.bargain",
@@ -162,7 +185,7 @@
   "submit": [],
   "format": 1,
   "platform": "realt",
-  "observedAt": "2026-11-02",
+  "observedAt": "2026-11-03",
   "note": "Проверены элементы формы. Переходы после сохранения и окончательная публикация требуют проверки на реальном объявлении; без подтверждения успешной подачи статус published не выставляется.",
   "ready": [
     {
