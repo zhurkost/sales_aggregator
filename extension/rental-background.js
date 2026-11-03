@@ -110,7 +110,7 @@
               await chrome.tabs.sendMessage(j.tabId, {
                 kind: "RENTAL_WAKE",
                 jobId: j.id,
-                mode: old.mode,
+                autoSubmit: core.autoSubmit(old.mode, j.recipe),
               });
             } catch {
               j.status = "needs_action";
@@ -188,7 +188,7 @@
             task: {
               jobId: j.id,
               recipe: j.recipe,
-              mode: b.mode,
+              autoSubmit: core.autoSubmit(b.mode, j.recipe),
               photos: (await root.AutopostPhotos.get(b.photoKey)) || [],
               submitted: !!j.submitted,
               photoSent: !!j.photoSent,
@@ -217,7 +217,7 @@
       return { ok: true };
     }
     if (message.type === "BEFORE_SUBMIT") {
-      if (b.mode !== "automatic" || j.submitted) return { ok: false };
+      if (!core.autoSubmit(b.mode, j.recipe) || j.submitted) return { ok: false };
       const verified = await chrome.tabs.sendMessage(b.sourceTabId, {
         kind: "RENTAL_VERIFY",
         origin: b.origin,

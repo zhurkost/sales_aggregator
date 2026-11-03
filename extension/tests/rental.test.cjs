@@ -43,11 +43,24 @@ test("rental launch accepts partial cards for all four sites, independent of adv
   q.jobs.push(q.jobs[0]);
   assert.throws(() => core.validate(q));
 });
-test("rental worker opens every selected site once and isolates profile, origin and assigned tab", async () => {
+test("rental jobs accept only a boolean dataReady from the server", () => {
+  for (const dataReady of [true, false, undefined]) {
+    const p = payload();
+    p.jobs[0].dataReady = dataReady;
+    assert.equal(core.validate(p).jobs[0].dataReady, dataReady);
+  }
+  for (const dataReady of ["true", 1, null, {}]) {
+    const p = payload();
+    p.jobs[0].dataReady = dataReady;
+    assert.throws(() => core.validate(p), /Обновите правила площадки/);
+  }
+});
+function worker() {
   const data = {},
     created = [],
-    photos = new Map();
-  let verify = { ok: true };
+    photos = new Map(),
+    sent = [];
+  const state = { verify: { ok: true } };
   const chrome = {
     storage: {
       session: {
@@ -71,8 +84,9 @@ test("rental worker opens every selected site once and isolates profile, origin 
         if (!tab) throw new Error("closed");
         return tab;
       },
-      async sendMessage() {
-        return verify;
+      async sendMessage(tabId, message) {
+        sent.push({ tabId, message });
+        return state.verify;
       },
     },
   };
@@ -99,12 +113,21 @@ test("rental worker opens every selected site once and isolates profile, origin 
       message.type === "GET" ? {...message, payload:{navigation:{type:"navigate",referrer:""},...message.payload}} : message,
       {documentId:`document-${sender.tab.id}`,...sender},
     );
+  return { handle, created, sent, state, app };
+}
+test("rental worker opens every selected site once and isolates profile, origin and assigned tab", async () => {
+  const { handle, created, state, app } = worker(),
+    ready = () => {
+      const p = payload();
+      p.jobs.forEach((j) => (j.dataReady = true));
+      return p;
+    };
   const run = () =>
     handle(
       {
         kind: "RENTAL_REQUEST",
         type: "RENTAL_RUN",
-        payload: payload(),
+        payload: ready(),
         userGesture: true,
       },
       app,
@@ -156,11 +179,11 @@ test("rental worker opens every selected site once and isolates profile, origin 
     (await handle({ kind: "RENTAL_PAGE", type: "CLAIM_PHOTOS" }, sender)).ok,
     false,
   );
-  verify = { error: "Карточка изменилась" };
+  state.verify = { error: "Карточка изменилась" };
   await assert.rejects(() =>
     handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender),
   );
-  verify = { ok: true };
+  state.verify = { ok: true };
   assert.equal(
     (await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok,
     true,
@@ -339,4 +362,119 @@ test("positive total prevents automated payment while zero does not", async () =
   f.document.querySelector("p").textContent = "К оплате: 0 р.";
   assert.equal(f.window.AutopostRentalForm.paymentRequired(), false);
   f.window.happyDOM.abort();
+});
+test("final submission requires automatic mode and a server check without issues", async () => {
+  const cases = [
+    { mode: "assist", dataReady: true, submit: false },
+    { mode: "automatic", dataReady: undefined, submit: false },
+    { mode: "automatic", dataReady: false, submit: false },
+    { mode: "automatic", dataReady: true, submit: true },
+  ];
+  for (const { mode, dataReady, submit } of cases) {
+    const { handle, created, sent, app } = worker();
+    const p = payload();
+    p.mode = mode;
+    p.jobs = [recipe("kufar")];
+    if (dataReady !== undefined) p.jobs[0].dataReady = dataReady;
+    await handle(
+      { kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true },
+      app,
+    );
+    const sender = { url: core.starts.kufar, tab: { id: created[0].id } };
+    const { task } = await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender);
+    assert.equal(task.autoSubmit, submit, `${mode} / ${dataReady}`);
+    assert.equal(Object.hasOwn(task, "mode"), false);
+    const before = await handle(
+      { kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" },
+      sender,
+    );
+    assert.equal(before.ok, submit, `${mode} / ${dataReady}`);
+    assert.equal(
+      sent.some((s) => s.message.kind === "RENTAL_VERIFY"),
+      submit,
+      "the app is asked to verify only an allowed submission",
+    );
+  }
+});
+async function page(task, wake) {
+  const { Window } = await import("happy-dom");
+  const window = new Window({ url: "https://www.kufar.by/ain/create" });
+  window.document.body.innerHTML =
+    '<input id="title"><button type="submit">Подать объявление</button>';
+  const requests = [],
+    intervals = [];
+  let listener;
+  let submitted = 0;
+  window.document.querySelector("button").onclick = () => submitted++;
+  window.setInterval = (callback) => intervals.push(callback);
+  window.clearInterval = () => {};
+  window.AutopostCore = { fillNavigation: () => ({ type: "navigate", referrer: "" }) };
+  window.chrome = {
+    runtime: {
+      id: "extension",
+      async sendMessage({ type, payload }) {
+        requests.push(type);
+        if (type === "GET")
+          return payload?.metadataOnly
+            ? { task: { jobId: task.jobId, submitted: false } }
+            : { task: structuredClone(task) };
+        return { ok: true };
+      },
+      onMessage: { addListener: (callback) => (listener = callback) },
+    },
+  };
+  for (const script of ["rental-autocomplete.js", "rental-form.js", "rental-page.js"])
+    window.eval(fs.readFileSync(path.join(__dirname, "..", script), "utf8"));
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 5));
+  const ticks = async (count) => {
+    for (let i = 0; i < count; i++) {
+      intervals.at(-1)();
+      await settle();
+    }
+  };
+  await settle();
+  await ticks(6);
+  if (wake) {
+    listener({ kind: "RENTAL_WAKE", jobId: task.jobId, ...wake }, { id: "extension" }, () => {});
+    await settle();
+    await ticks(6);
+  }
+  const result = {
+    filled: window.document.querySelector("#title").value,
+    beforeSubmit: requests.filter((type) => type === "BEFORE_SUBMIT").length,
+    submitted,
+  };
+  window.happyDOM.abort();
+  return result;
+}
+test("rental page clicks the final button only for an allowed automatic submission", async () => {
+  const task = {
+    jobId: "job",
+    photos: [],
+    submitted: false,
+    photoSent: false,
+    recipe: {
+      platform: "kufar",
+      ready: [],
+      setup: [],
+      next: [],
+      submit: [{ action: "click", selector: "button", text: "Подать объявление" }],
+      controls: [{ field: "title", selector: "#title", action: "text", value: "Квартира" }],
+    },
+  };
+  for (const blocked of [
+    { autoSubmit: false },
+    { mode: "automatic" },
+    { mode: "automatic", recipe: { ...task.recipe, dataReady: true } },
+  ]) {
+    const result = await page({ ...task, ...blocked });
+    assert.equal(result.filled, "Квартира");
+    assert.deepEqual([result.beforeSubmit, result.submitted], [0, 0], JSON.stringify(blocked));
+  }
+  const allowed = await page({ ...task, autoSubmit: true });
+  assert.deepEqual([allowed.beforeSubmit, allowed.submitted], [1, 1]);
+  const woken = await page({ ...task, autoSubmit: false }, { autoSubmit: true });
+  assert.deepEqual([woken.beforeSubmit, woken.submitted], [1, 1]);
+  const legacyWake = await page({ ...task, autoSubmit: false }, { mode: "automatic" });
+  assert.deepEqual([legacyWake.beforeSubmit, legacyWake.submitted], [0, 0]);
 });

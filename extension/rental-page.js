@@ -94,7 +94,7 @@
         await report("running", "Перенесено полей: " + form.done.size);
         return;
       }
-      if (task.mode === "automatic" && !task.submitted && form.ready()) {
+      if (task.autoSubmit === true && !task.submitted && form.ready()) {
         if (api.paymentRequired()) {
           paused = true;
           await report(
@@ -167,7 +167,7 @@
       message.jobId !== task.jobId
     )
       return;
-    task.mode = message.mode;
+    task.autoSubmit = message.autoSubmit === true;
     paused = false;
     idle = 0;
     cycles = 0;

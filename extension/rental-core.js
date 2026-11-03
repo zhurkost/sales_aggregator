@@ -40,6 +40,7 @@
         !Object.hasOwn(starts, job.platform) ||
         starts[job.platform] !== job.startUrl ||
         job.format !== 1 ||
+        (job.dataReady !== undefined && typeof job.dataReady !== "boolean") ||
         !Array.isArray(job.controls) ||
         job.controls.length > 150 ||
         !Array.isArray(job.ready) ||
@@ -104,6 +105,16 @@
       throw new Error("Фотографии: до 12 файлов JPG, PNG, WebP.");
     return structuredClone(payload);
   }
-  root.AutopostRentalCore = Object.freeze({ starts, origin, validate, id });
+  // The final click needs both the user's explicit automatic mode and a server
+  // check of this platform without issues. A missing dataReady means "not ready".
+  const autoSubmit = (mode, job) =>
+    mode === "automatic" && object(job) && job.dataReady === true;
+  root.AutopostRentalCore = Object.freeze({
+    starts,
+    origin,
+    validate,
+    id,
+    autoSubmit,
+  });
   if (typeof module !== "undefined") module.exports = root.AutopostRentalCore;
 })(globalThis);
