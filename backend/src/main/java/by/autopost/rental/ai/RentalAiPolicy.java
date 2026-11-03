@@ -92,8 +92,19 @@ Enum — только точный код из choices; multi_enum — масс�
         + editor.path("card").path("valueLabels");
   }
 
+  /**
+   * Comparison form of a source text and of a model quote: models change case, spacing, ё, quote
+   * marks and dashes, so these differences must not drop a grounded suggestion.
+   */
   public static String normalized(String value) {
-    return value.strip().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
+    return value
+        .toLowerCase(Locale.ROOT)
+        .replace('ё', 'е')
+        .replaceAll("[\\u00a0\\u2007\\u202f]", " ")
+        .replaceAll("[«»„“”″]", "\"")
+        .replaceAll("[\\u2011\\u2013\\u2014]", "-")
+        .replaceAll("\\s+", " ")
+        .strip();
   }
 
   public static boolean grounded(String source, String quote) {

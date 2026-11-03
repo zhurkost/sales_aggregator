@@ -22,6 +22,7 @@ class RentalAiTest {
             new String[] {"wifi", "boolean"},
             new String[] {"rental.currency", "enum"},
             new String[] {"style", "multi_enum"},
+            new String[] {"complex", "text"},
             new String[] {"listing.description", "text"},
             new String[] {"photos", "files"}))
       fields.add(object("id", pair[0], "name", pair[0], "type", pair[1]));
@@ -30,7 +31,10 @@ class RentalAiTest {
         object("options", List.of(object("id", "main", "options", fields))),
         "canonicalValues",
         object(
-            "rental.currency", List.of("USD", "EUR", "BYN", "RUB"), "style", List.of("new", "old")),
+            "rental.currency",
+            List.of("USD", "EUR", "BYN", "RUB"),
+            "style",
+            List.of("new", "old")),
         "platforms",
         object(
             "one",
@@ -153,6 +157,31 @@ class RentalAiTest {
                     suggestion("price", 1500, "Цена 1500 BYN"), suggestion("floor", 3, "этаж 3"))));
     assertEquals(2, result.path("suggestions").size());
     assertEquals("1500", result.path("suggestions").get(0).path("value").asText());
+  }
+
+  @Test
+  void quotesMatchDespiteTypographyOfTheModel() {
+    String source =
+        "Сдаётся квартира в ЖК «Новая Боровая» — этаж 3, цена 1\u00a0500\u00a0BYN,"
+            + " Wi\u2011Fi есть.";
+    var result =
+        RentalAiPolicy.sanitize(
+            editor(),
+            source,
+            object(
+                "suggestions",
+                List.of(
+                    suggestion("wifi", true, "Wi-Fi есть"),
+                    suggestion("complex", "Новая Боровая", "ЖК \"Новая Боровая\""),
+                    suggestion("floor", "3", "Сдается квартира в ЖК “Новая Боровая” - этаж 3"),
+                    suggestion("price", "1500", "цена 1 500 BYN"),
+                    suggestion("rental.currency", "BYN", "1 500 BYN"))));
+    assertEquals(0, result.path("ignored").asInt(), result.toString());
+    assertEquals(5, result.path("suggestions").size());
+    assertEquals("Новая Боровая", text(result.path("suggestions").get(1), "value"));
+    // Normalization makes typography irrelevant, not words.
+    assertFalse(RentalAiPolicy.grounded(source, "ЖК «Старая Боровая»"));
+    assertTrue(RentalAiPolicy.grounded("«Ёлки»\u00a0—\u00a0рядом", "\"елки\" - РЯДОМ"));
   }
 
   @Test
