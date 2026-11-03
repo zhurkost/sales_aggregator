@@ -29,7 +29,9 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) workspaceId = "";
   @Input({ required: true }) draftId = "";
   readonly requiredVersion = REQUIRED_EXTENSION_VERSION;
-  mode: "automatic" | "assist" = "automatic";
+  // Final submission is never the default: the user opts in per launch and confirms it.
+  mode: "automatic" | "assist" = "assist";
+  confirmingAutomatic = false;
   busy = false;
   photosBusy = false;
   error = "";
@@ -69,6 +71,17 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     } catch {
       if (generation === this.generation) this.ready = false;
     }
+  }
+  setAutomatic(enabled: boolean) {
+    this.confirmingAutomatic = enabled && this.mode !== "automatic";
+    if (!enabled) this.mode = "assist";
+  }
+  confirmAutomatic() {
+    this.mode = "automatic";
+    this.confirmingAutomatic = false;
+  }
+  cancelAutomatic() {
+    this.confirmingAutomatic = false;
   }
   async refresh() {
     const generation = this.generation;

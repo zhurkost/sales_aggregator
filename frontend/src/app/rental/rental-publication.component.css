@@ -52,6 +52,24 @@
 .launch {
   justify-content: space-between;
 }
+.confirm {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fff7e6;
+  font-size: 13px;
+}
+.confirm p {
+  margin: 0 0 10px;
+}
+.confirm button {
+  margin-right: 8px;
+  padding: 7px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
 .launch label {
   display: flex;
   align-items: center;

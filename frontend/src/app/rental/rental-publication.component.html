@@ -38,8 +38,9 @@
     <label
       ><input
         type="checkbox"
-        [ngModel]="mode === 'automatic'"
-        (ngModelChange)="mode = $event ? 'automatic' : 'assist'"
+        class="automatic"
+        [ngModel]="mode === 'automatic' || confirmingAutomatic"
+        (ngModelChange)="setAutomatic($event)"
       />Автоматически пройти шаги формы</label
     ><button
       type="button"
@@ -52,6 +53,27 @@
       {{ busy ? "Передаём…" : "Опубликовать" }}
     </button>
   </div>
+  @if (confirmingAutomatic) {
+    <div
+      class="confirm"
+      role="group"
+      aria-label="Подтверждение автоматической подачи"
+    >
+      <p>
+        Расширение само нажмёт «Подать» на площадках, где проверка прошла без
+        замечаний. Платные услуги и CAPTCHA остаются за вами.
+      </p>
+      <button
+        type="button"
+        class="confirm-automatic"
+        (click)="confirmAutomatic()"
+      >
+        Включить</button
+      ><button type="button" class="cancel-automatic" (click)="cancelAutomatic()">
+        Отмена
+      </button>
+    </div>
+  }
   <p class="hint">
     Уточнения в проверке необязательны. Площадки могут запросить свои
     обязательные поля и подтверждения.

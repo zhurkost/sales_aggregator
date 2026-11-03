@@ -126,7 +126,7 @@ describe("publication of incomplete rental cards", () => {
       expect.objectContaining({
         id: store.id,
         profileId: "owner",
-        mode: "automatic",
+        mode: "assist",
         draft: store.draft,
       }),
       25000,
@@ -134,6 +134,56 @@ describe("publication of incomplete rental cards", () => {
     expect(store.draft.values).toEqual({
       "listing.description": "Сдам квартиру",
     });
+    fixture.destroy();
+    store.destroy();
+  });
+  it("starts in assist mode and enables final submission only after confirmation", async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
+    });
+    const fixture = TestBed.createComponent(RentalPublicationComponent),
+      store = new RentalDraftStore(
+        () => "owner",
+        () => {},
+      );
+    store.draft.platforms = ["kufar"];
+    extension.mockRejectedValueOnce(new Error("no extension"));
+    fixture.componentRef.setInput("store", store);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.componentRef.setInput("draftId", store.id);
+    const c = fixture.componentInstance,
+      el = fixture.nativeElement as HTMLElement,
+      box = () => el.querySelector("input.automatic") as HTMLInputElement,
+      render = async () => {
+        fixture.detectChanges();
+        await new Promise((resolve) => setTimeout(resolve));
+        fixture.detectChanges();
+      },
+      click = async (selector: string) => {
+        (el.querySelector(selector) as HTMLElement).click();
+        await render();
+      };
+    await render();
+    expect(c.mode).toBe("assist");
+    expect(box().checked).toBe(false);
+    await click("input.automatic");
+    expect(el.querySelector(".confirm")?.textContent).toContain(
+      "Расширение само нажмёт «Подать» на площадках, где проверка прошла без замечаний. Платные услуги и CAPTCHA остаются за вами.",
+    );
+    expect(c.mode).toBe("assist");
+    await click(".cancel-automatic");
+    expect(c.mode).toBe("assist");
+    expect(box().checked).toBe(false);
+    expect(el.querySelector(".confirm")).toBeNull();
+    await click("input.automatic");
+    await click(".confirm-automatic");
+    expect(c.mode).toBe("automatic");
+    expect(box().checked).toBe(true);
+    expect(el.querySelector(".confirm")).toBeNull();
+    await click("input.automatic");
+    expect(c.mode).toBe("assist");
+    expect(box().checked).toBe(false);
+    expect(el.querySelector(".confirm")).toBeNull();
     fixture.destroy();
     store.destroy();
   });
