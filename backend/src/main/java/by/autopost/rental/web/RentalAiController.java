@@ -19,6 +19,7 @@ class RentalAiController {
 
   @PostMapping("/api/workspace/rental/analyze")
   ObjectNode analyze(HttpServletRequest request, @RequestBody JsonNode input) {
-    return ai.analyze(access.require(request).id(), input);
+    var actor = access.require(request);
+    return ai.analyze(actor.id(), actor.workspace(), input);
   }
 }

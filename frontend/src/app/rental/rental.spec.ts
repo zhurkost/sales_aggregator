@@ -365,6 +365,26 @@ describe("rental preparation editor", () => {
     expect(c.selected).toBeNull();
     c.ngOnDestroy();
   });
+  it("opens manual components from an unresolved AI address and resets for another card", async () => {
+    const fixture = TestBed.createComponent(AddressInputComponent);
+    fixture.componentRef.setInput("workspaceId", "test");
+    fixture.componentRef.setInput("draftId", "one");
+    fixture.componentRef.setInput("value", {provider:"manual",countryIso:"BY",label:"город Минск, ул. Брикета, дом 18",settlement:"город Минск",street:"ул. Брикета",house:"18",confirmed:false,resolution:"not_found"});
+    fixture.detectChanges();await fixture.whenStable();fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector<HTMLInputElement>('[aria-label="Населённый пункт"]')?.value).toBe("город Минск");
+    expect(element.querySelector<HTMLInputElement>('[aria-label="Улица"]')?.value).toBe("ул. Брикета");
+    expect(element.querySelector<HTMLInputElement>('[aria-label="Дом, включая букву"]')?.value).toBe("18");
+    fixture.componentRef.setInput("draftId", "two");fixture.componentRef.setInput("value", null);fixture.detectChanges();
+    expect(fixture.componentInstance.manual).toBe(false);fixture.destroy();
+  });
+  it("drops provider identity and coordinates after manual address editing", () => {
+    const c = new AddressInputComponent();
+    c.value = {provider:"dadata",countryIso:"BY",label:"Минск, Брикета, 18",settlement:"Минск",street:"Брикета",house:"18",confirmed:true,resolution:"matched",sourceId:"way:25439815",confirmedAt:"2026-11-03",latitude:"53.9",longitude:"27.4"};
+    c.manual = true;c.setPart("house", "19");
+    expect(c.selected?.provider).toBe("manual");expect(c.selected?.confirmed).toBe(false);
+    expect(c.selected?.sourceId).toBeUndefined();expect(c.selected?.latitude).toBe("");c.ngOnDestroy();
+  });
   it("invalidates coordinates when the confirmed address changes", () => {
     const c = new RentalEditorComponent();
     c.draft.address = {

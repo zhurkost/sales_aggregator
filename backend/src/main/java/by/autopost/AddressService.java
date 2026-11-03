@@ -13,7 +13,7 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-/** Suggestions require an explicit choice; an OSM identifier is never a marketplace identifier. */
+/** Provider-backed selection; an OSM identifier is never a marketplace identifier. */
 @Service
 public class AddressService {
   private final URI endpoint;

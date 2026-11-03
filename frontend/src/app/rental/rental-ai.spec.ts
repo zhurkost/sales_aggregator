@@ -65,6 +65,29 @@ describe("compact rental editor with AI",()=>{
     c.ngOnDestroy();done(response(result));await pending;
     expect(c.draft.values.price).toBeUndefined();expect(c.aiBusy).toBe(false);
   });
+  it("upgrades an old literal AI address using the server-normalized result", async () => {
+    const sourceLabel = "город Минск, ул. Брикета, дом 18";
+    const address = {provider:"dadata",countryIso:"BY",label:"г Минск, ул Брикета, д 18",settlement:"г Минск",street:"ул Брикета",house:"18",confirmed:true,resolution:"matched" as const};
+    const {c} = setup({...result,address,addressResolution:{status:"matched",sourceLabel,message:"Адрес проверен по DaData."}});
+    c.draft.address = {provider:"manual",countryIso:"BY",label:sourceLabel,settlement:"",street:"",house:"",confirmed:false};
+    await c.fillFromDescription();
+    expect(c.draft.address).toEqual(address);expect(c.aiAddress).toBeNull();
+    expect(c.aiMessage).toContain("DaData");c.ngOnDestroy();
+  });
+  it("preserves manually filled address parts even when the source label is identical", async () => {
+    const address = {provider:"manual",countryIso:"BY",label:"Минск, Брикета, 18",settlement:"Минск",street:"Брикета",house:"18",confirmed:false};
+    const {c} = setup({...result,address:{...address,provider:"dadata",confirmed:true},addressResolution:{status:"matched",sourceLabel:address.label,message:"DaData"}});
+    c.draft.address = {...address,house:"18А"};
+    await c.fillFromDescription();
+    expect(c.draft.address.house).toBe("18А");expect(c.aiAddress?.house).toBe("18");c.ngOnDestroy();
+  });
+  it("keeps successful AI facts when address lookup falls back to manual entry", async () => {
+    const address = {provider:"manual",countryIso:"BY",label:"Минск, Брикета, 18",settlement:"Минск",street:"Брикета",house:"18",confirmed:false,resolution:"unavailable" as const};
+    const {c} = setup({...result,address,addressResolution:{status:"unavailable",sourceLabel:address.label,message:"DaData недоступна. Проверьте адрес в отдельных полях."}});
+    await c.fillFromDescription();
+    expect(c.draft.address).toEqual(address);expect(c.draft.values.price).toBe("1500");
+    expect(c.aiMessage).toContain("отдельных полях");expect(c.error).toBe("");c.ngOnDestroy();
+  });
   it("keeps address-dependent suggestions together and discards them after a manual address change",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Адрес B",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address,suggestions:[{field:"metro",value:"Метро B",quote:"Метро B"}]});

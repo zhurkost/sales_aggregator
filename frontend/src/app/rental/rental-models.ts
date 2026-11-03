@@ -34,6 +34,9 @@ export interface Address {
   precision?: string;
   confirmed: boolean;
   level?: string;
+  resolution?: "matched" | "not_found" | "ambiguous" | "unavailable";
+  sourceId?: string;
+  confirmedAt?: string;
 }
 export interface RentalDraft {
   localPhotoIds?: string[];
@@ -52,6 +55,7 @@ export interface RentalAiResult {
   model: string;
   suggestions: {field: string; value: JsonValue; quote: string}[];
   address: Address | null;
+  addressResolution?: { status: NonNullable<Address["resolution"]>; sourceLabel: string; message: string };
   questions: string[];
   ignored: number;
 }

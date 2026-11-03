@@ -101,6 +101,7 @@ export class AddressInputComponent implements OnDestroy {
     this.resetPending();
     this.selected = null;
     this.query = "";
+    this.manual = false;
   }
   @Input() set value(value: Address | null) {
     // A search already cleared our selection before notifying the parent.
@@ -108,6 +109,8 @@ export class AddressInputComponent implements OnDestroy {
     this.resetPending();
     this.selected = value;
     this.query = value?.label || "";
+    this.manual = value?.provider === "manual" &&
+      ((!!value.resolution && value.resolution !== "matched") || this.parts.some(part => !!this.partValue(part.key)));
   }
   @Input() set disabled(value: boolean) { this.locked = value; if (value) this.resetPending(); }
   get disabled() { return this.locked; }
@@ -122,7 +125,7 @@ export class AddressInputComponent implements OnDestroy {
   setPart(key: string, value: string) {
     if (this.disabled) return;
     this.resetPending();
-    const a = {provider:"manual", countryIso:"BY", settlement:"", street:"", house:"", ...this.selected, [key]:value, confirmed:false, latitude:"", longitude:""} as Address;
+    const a = {countryIso:"BY", settlement:"", street:"", house:"", ...this.selected, [key]:value, provider:"manual", confirmed:false, latitude:"", longitude:"", sourceId:undefined, confirmedAt:undefined, precision:undefined, resolution:undefined} as Address;
     a.label = [a.region, a.district, a.settlement, a.street, a.house, a.block].filter(Boolean).join(", ");
     this.selected = a; this.query = a.label; this.addressChange.emit(a);
   }

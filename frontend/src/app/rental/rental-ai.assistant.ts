@@ -2,7 +2,7 @@ import type { Address, RentalAiResult } from "./rental-models";
 import { rentalApi } from "./rental-api";
 import { RentalDraftStore } from "./rental-draft.store";
 import { hasValue } from "./rental-values";
-/** Proposes facts and resolves conflicts. It cannot publish or confirm a provider address. */
+/** Applies server-verified proposals while preserving manual edits and address conflicts. */
 export class RentalAiAssistant {
   constructor(private store: RentalDraftStore, private workspaceId: () => string,
     private replaceAddress: (address: Address | null) => void,
@@ -24,8 +24,17 @@ export class RentalAiAssistant {
       const result = await rentalApi<RentalAiResult>(this.workspaceId(), "analyze", {text:this.description(), schemaVersion});
       if (this.store.destroyed || this.store.id !== id || this.store.editVersion !== version || this.store.schema?.version !== result.schemaVersion) return;
       let count = 0;
-      if (result.address && !this.store.draft.address?.label) { this.replaceAddress(result.address); count++; }
-      else if (result.address && result.address.label !== this.store.draft.address?.label) this.address = result.address;
+      let appliedAddress = false;
+      const current = this.store.draft.address;
+      const plainLabel = (value: string) => value.trim().toLocaleLowerCase().replace(/\s+/g, " ");
+      // Upgrade older AI cards that contain only the same literal address, without replacing edits.
+      const enrichLiteral = current && !current.confirmed && current.provider === "manual" &&
+        ![current.settlement, current.street, current.house, current.block, current.region, current.district, current.latitude, current.longitude].some(Boolean) &&
+        plainLabel(current.label) === plainLabel(result.addressResolution?.sourceLabel || "");
+      if (result.address && (!current?.label || enrichLiteral)) {
+        this.replaceAddress(result.address); count++; appliedAddress = true;
+      } else if (result.address && (result.address.label !== current?.label ||
+        (!current?.confirmed && JSON.stringify(result.address) !== JSON.stringify(current)))) this.address = result.address;
       const fields = this.store.schema.category.options.flatMap(g => g.options);
       for (const item of result.suggestions) {
         if (!fields.some(f => f.id === item.field)) continue;
@@ -38,6 +47,7 @@ export class RentalAiAssistant {
       }
       this.questions = result.questions;
       this.message = count ? `Заполнено: ${count}. Проверьте карточку.` : this.conflicts.length || this.address ? "Есть отличия от заполненной карточки." : "Новых сведений не найдено.";
+      if (appliedAddress && result.addressResolution) this.message += ` ${result.addressResolution.message}`;
       if (count) { this.store.changed(); await this.store.flush(); }
     } catch (e) { this.store.error = (e as Error).message; }
     finally { this.store.busy = false; this.busy = false; }

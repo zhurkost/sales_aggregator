@@ -13,13 +13,15 @@ import org.springframework.stereotype.Service;
 public class RentalAiService {
   private final RentalCatalog catalog;
   private final AiGateway ai;
+  private final RentalAiAddressResolver addresses;
 
-  public RentalAiService(RentalCatalog catalog, AiGateway ai) {
+  public RentalAiService(RentalCatalog catalog, AiGateway ai, RentalAiAddressResolver addresses) {
     this.catalog = catalog;
     this.ai = ai;
+    this.addresses = addresses;
   }
 
-  public ObjectNode analyze(String identity, JsonNode input) {
+  public ObjectNode analyze(String identity, String workspace, JsonNode input) {
     if (!input.isObject() || !input.path("text").isTextual() || input.toString().length() > 18000)
       throw new ApiException(400, "Введите описание квартиры.");
     String source = input.path("text").asText().trim();
@@ -31,6 +33,7 @@ public class RentalAiService {
           409, "Правила обновились. Обновите поля карточки и повторите заполнение.");
     var parsed = ai.serverJson(identity, RentalAiPolicy.prompt(editor), source);
     ObjectNode result = RentalAiPolicy.sanitize(editor, source, parsed);
+    addresses.resolve(workspace, result);
     result.put("schemaVersion", text(editor, "version"));
     result.put("model", ai.model());
     return result;
