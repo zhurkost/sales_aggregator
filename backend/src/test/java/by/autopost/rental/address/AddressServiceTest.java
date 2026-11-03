@@ -71,7 +71,7 @@ class AddressServiceTest {
   long now = 1_800_000_000_000L;
 
   AddressService service(Fake fake) {
-    return new AddressService(fake, () -> now);
+    return new AddressService(fake, 10_000, () -> now);
   }
 
   @Test
@@ -185,6 +185,25 @@ class AddressServiceTest {
   }
 
   @Test
+  void dailyProviderBudgetIsConfigurableAndSpentOnlyByProviderCalls() {
+    var fake = new Fake();
+    var service = new AddressService(fake, 2, () -> now);
+    String id = firstId(service.suggest("a", "Минск Примерная"));
+    service.suggest("b", "Минск Примерная");
+    service.select("a", id);
+    var limited = assertThrows(ApiException.class, () -> service.suggest("a", "Минск Другая"));
+    assertEquals(429, limited.status);
+    assertTrue(limited.getMessage().startsWith("Суточный лимит адресных подсказок исчерпан"));
+    assertEquals(2, fake.calls.get());
+    // Cached answers stay available after the provider budget is spent.
+    assertFalse(service.suggest("c", "минск примерная").path("suggestions").isEmpty());
+    now += 24 * 60 * 60_000;
+    assertFalse(service.suggest("a", "Минск Другая").path("suggestions").isEmpty());
+    assertEquals(3, fake.calls.get());
+    assertThrows(IllegalArgumentException.class, () -> new AddressService(fake, 0));
+  }
+
+  @Test
   void relayUsesItsOwnCredentialAndWorksWithoutProviderKey() {
     String token = "relay-test-token-".repeat(3);
     var client = new DadataClient("", "https://relay.example/suggest", token);
@@ -214,6 +233,6 @@ class AddressServiceTest {
         IllegalArgumentException.class,
         () -> new DadataClient("key", "https://relay.example/suggest", "short"));
     assertFalse(new DadataClient("", "", "").configured());
-    assertFalse(new AddressService(new DadataClient("", "", "")).configured());
+    assertFalse(new AddressService(new DadataClient("", "", ""), 10_000).configured());
   }
 }

@@ -6,9 +6,11 @@ import by.autopost.shared.ApiException;
 import by.autopost.shared.Text;
 import com.fasterxml.jackson.databind.node.*;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.LongSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,6 +28,8 @@ public class AddressService {
   static final int REQUESTS_PER_MINUTE = 300;
   static final int WORKSPACE_REQUESTS_PER_MINUTE = 60;
   static final int PROVIDER_REQUESTS_PER_SECOND = 10;
+  /** The daily budget restarts at midnight in Belarus; it is kept in memory. */
+  static final ZoneId BUDGET_ZONE = ZoneId.of("Europe/Minsk");
 
   /**
    * Every issued ID passes the per-minute limit, so within one TTL at most this many IDs can be
@@ -35,6 +39,7 @@ public class AddressService {
       REQUESTS_PER_MINUTE * (int) (SUGGESTION_TTL / 60_000 + 1) * SUGGESTIONS_PER_QUERY;
 
   private final AddressProvider provider;
+  private final int dailyLimit;
   private final LongSupplier clock;
   private final Object lock = new Object();
 
@@ -48,18 +53,24 @@ public class AddressService {
   private long cooldownUntil;
   private long secondWindow;
   private int secondRequests;
+  private long budgetDay;
+  private int dayRequests;
 
   private record CachedQuery(long expires, List<DadataSuggestion> suggestions) {}
 
   private record Issued(long expires, String workspace, DadataSuggestion suggestion) {}
 
   @Autowired
-  public AddressService(AddressProvider provider) {
-    this(provider, System::currentTimeMillis);
+  public AddressService(
+      AddressProvider provider, @Value("${autopost.dadata-daily-limit}") int dailyLimit) {
+    this(provider, dailyLimit, System::currentTimeMillis);
   }
 
-  AddressService(AddressProvider provider, LongSupplier clock) {
+  AddressService(AddressProvider provider, int dailyLimit, LongSupplier clock) {
+    if (dailyLimit < 1)
+      throw new IllegalArgumentException("autopost.dadata-daily-limit must be positive");
     this.provider = provider;
+    this.dailyLimit = dailyLimit;
     this.clock = clock;
   }
 
@@ -164,7 +175,7 @@ public class AddressService {
     }
   }
 
-  /** Budget of real provider calls; cache hits do not spend it. */
+  /** Budget of real provider calls (pause, per second, per day); cache hits do not spend it. */
   private void reserveProvider(long now) {
     if (now < cooldownUntil)
       throw new ApiException(429, "Сервис адресов просит подождать. Введённые данные сохранены.");
@@ -174,7 +185,18 @@ public class AddressService {
     }
     if (secondRequests >= PROVIDER_REQUESTS_PER_SECOND)
       throw new ApiException(429, "Подождите секунду перед следующим поиском адреса.");
+    long day = Instant.ofEpochMilli(now).atZone(BUDGET_ZONE).toLocalDate().toEpochDay();
+    if (day != budgetDay) {
+      budgetDay = day;
+      dayRequests = 0;
+    }
+    if (dayRequests >= dailyLimit)
+      throw new ApiException(
+          429,
+          "Суточный лимит адресных подсказок исчерпан. Заполните адрес вручную или повторите"
+              + " поиск завтра.");
     secondRequests++;
+    dayRequests++;
   }
 
   /** Network call; must be made without holding the lock. */

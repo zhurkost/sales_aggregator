@@ -79,7 +79,7 @@ class RentalAiAddressTest {
     }
 
     Provider(Upstream upstream) {
-      super(upstream);
+      super(upstream, 10_000);
       this.upstream = upstream;
     }
 
