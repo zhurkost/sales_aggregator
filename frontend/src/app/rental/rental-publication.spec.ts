@@ -7,7 +7,7 @@ import {
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 const extension = vi.fn(async () => ({
-  capabilities: ["rental-publishing", "rental-address-suggestions"],
+  capabilities: ["rental-publishing", "rental-address-suggestions", "rental-checked-submit"],
   jobs: [],
 }));
 const gateway = {
@@ -24,6 +24,20 @@ describe("publication of incomplete rental cards", () => {
     c.draftId = c.store.id;
     c.store.draft.platforms = ["realt"];
     extension.mockResolvedValueOnce({capabilities:["rental-publishing"], jobs:[]});
+    await c.ngOnChanges();
+    expect(c.ready).toBe(false);
+    await c.publish();
+    expect(c.error).toContain(REQUIRED_EXTENSION_VERSION);
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    c.ngOnDestroy(); c.store.destroy();
+  });
+  it("does not launch with a 0.9.2 extension that would auto-submit without the server check", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    c.store.draft.platforms = ["kufar"];
+    extension.mockResolvedValueOnce({capabilities:["rental-publishing", "rental-address-suggestions"], jobs:[]});
     await c.ngOnChanges();
     expect(c.ready).toBe(false);
     await c.publish();
