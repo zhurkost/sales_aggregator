@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.9.1';
+  const VERSION = '0.9.2';
   const TTL_MS = 2 * 60 * 60 * 1000;
   const MAX_PHOTO_BYTES = 1024 * 1024;
   const MAX_TOTAL_PHOTO_BYTES = 3.25 * 1024 * 1024;
@@ -151,9 +151,38 @@
   function normalize(value) {
     return String(value ?? '').toLowerCase().replace(/ё/gu, 'е').replace(/[_\-.[\]/():*]/gu, ' ').replace(/\s+/gu, ' ').trim();
   }
+  // A tab assignment is not permission to fill every future document in that tab.
+  function fillNavigation() {
+    const entry = root.performance?.getEntriesByType?.('navigation')?.[0];
+    const legacy = root.performance?.navigation?.type;
+    return { type: entry?.type || (legacy === 1 ? 'reload' : legacy === 2 ? 'back_forward' : 'navigate'),
+      referrer: root.document?.referrer || '' };
+  }
+  function armFill(job) {
+    job.fillPending = true;
+    job.fillBlocked = false;
+    job.fillDocumentId = null;
+  }
+  function canFill(job, sender) {
+    return typeof sender.documentId === 'string' && job.fillDocumentId === sender.documentId && !job.fillBlocked;
+  }
+  function claimFill(job, sender, navigation, allowedOrigins) {
+    if (canFill(job, sender) && navigation?.type !== 'reload' && navigation?.type !== 'back_forward') return true;
+    // A late poll from the previous document must not revoke the new document.
+    if (!navigation || typeof sender.documentId !== 'string') return false;
+    // Reload/history never consume an outstanding launch as permission to fill.
+    // After a denied navigation only another app action may start the helper.
+    const allowed = typeof sender.documentId === 'string' && navigation?.type === 'navigate' &&
+      (job.fillPending || (!job.fillBlocked && job.fillDocumentId &&
+        allowedOrigins.includes(originOf(navigation.referrer))));
+    job.fillPending = false;
+    job.fillBlocked = !allowed;
+    job.fillDocumentId = sender.documentId || null;
+    return !!allowed;
+  }
   function startUrl(id,listing){if(id==='av'&&listing.category==='cars')return 'https://av.by/offer/draft/cars';if(id==='onliner'&&listing.category==='cars')return 'https://ab.onliner.by/';if(id==='abw'&&listing.category==='parts')return 'https://abw.by/carparts';return PLATFORMS[id].url;}
   function safeLink(id,value){try{const u=new URL(value);if(u.protocol!=='https:'||u.username||u.password||u.port||!PLATFORMS[id]?.origins.includes(u.origin)||u.hostname==='profile.onliner.by')return '';u.hash='';return u.href;}catch{return '';}}
-  const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, validateRecipe, publicJob, normalize,startUrl,safeLink };
+  const core = { VERSION, TTL_MS, MAX_TOTAL_PHOTO_BYTES, APP_ORIGINS, PLATFORMS, FIELD_LIMITS, STATUSES, object, originOf, isAppOrigin, platformForOrigin, platformId, validateRun, validateRecipe, publicJob, normalize,startUrl,safeLink,fillNavigation,armFill,canFill,claimFill };
   root.AutopostCore = Object.freeze(core);
   if (typeof module !== 'undefined' && module.exports) module.exports = core;
 })(globalThis);

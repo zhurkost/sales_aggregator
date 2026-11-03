@@ -138,7 +138,7 @@ function taskFor(state, sender) {
   return null;
 }
 async function openJob(job, batch, active = false) {
-  if (Number.isInteger(job.tabId))
+  if (Number.isInteger(job.tabId) && !job.fillBlocked)
     try {
       const existing = await chrome.tabs.get(job.tabId);
       if (core.platformForOrigin(core.originOf(existing.url))?.id !== job.canonicalId)
@@ -156,6 +156,7 @@ async function openJob(job, batch, active = false) {
       active,
     });
     job.tabId = tab.id;
+    core.armFill(job);
     job.status = "opening";
     job.message = "Открываем форму. Вход выполняется в вашей сессии браузера.";
   } catch {
@@ -493,6 +494,9 @@ async function marketplaceRequest(message, sender) {
   if (!found) return { task: null };
   const { batch, job } = found;
   if (message.kind === "GET_TASK") {
+    const allowed = core.claimFill(job, sender, message.navigation, core.PLATFORMS[job.canonicalId].origins);
+    await save(state);
+    if (!allowed) return { task: null };
     const photos = batch.photoKey
       ? (await photoStore.get(batch.photoKey)) || []
       : [];
@@ -519,6 +523,7 @@ async function marketplaceRequest(message, sender) {
       },
     };
   }
+  if (!core.canFill(job, sender)) return { task: null };
   if (message.kind === "CLAIM_NAVIGATION") {
     const navigation = globalThis.AutopostNavigation;
     if (message.jobId !== job.id || batch.paused || batch.cancelled || terminal(job.status) || job.submission ||

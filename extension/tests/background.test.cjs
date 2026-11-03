@@ -44,9 +44,13 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
   // Execute the actual imports: stubbing importScripts hid worker registration failures.
   context.importScripts = (...files) => files.forEach(file => vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file }));
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../background.js'), 'utf8'), context, { filename: 'background.js' });
-  function request(message, url = `${APP}/`, tabId = 1, frameId = 0) {
+  function request(message, url = `${APP}/`, tabId = 1, frameId = 0, documentId = `document-${tabId}`) {
+    if (message.kind === 'GET_TASK' && !Object.hasOwn(message, 'navigation'))
+      message = {...message, navigation:{type:'navigate',referrer:''}};
+    if (message.kind === 'RENTAL_PAGE' && message.type === 'GET')
+      message = {...message,payload:{navigation:{type:'navigate',referrer:''},...message.payload}};
     return new Promise((resolve) => {
-      const listening = onMessage(message, { id: 'test-id', frameId, url, tab: { id: tabId } }, resolve);
+      const listening = onMessage(message, { id: 'test-id', frameId, documentId, url, tab: { id: tabId } }, resolve);
       if (!listening) resolve(undefined);
     });
   }
@@ -54,6 +58,35 @@ function createWorker({ data = {}, localData = {}, indexedDB = new IDBFactory(),
 }
 function payload() { return { batchId: 'test-batch', listing: { title: 'Автомобиль', description: 'Тест', price: 100, currency: 'BYN' }, photos: [], platforms: [{ id: 'av', url: 'https://attacker.invalid' }, { id: 'kufar', url: 'javascript:alert(1)' }] }; }
 function run(worker) { return worker.request({ kind: 'APP_REQUEST', type: 'RUN', userGesture: true, payload: payload() }); }
+
+test('browser reload revokes filling until the app explicitly opens a fresh tab', async () => {
+  const w = createWorker(); await run(w);
+  const url = 'https://av.by/new_ad';
+  const {task} = await w.request({kind:'GET_TASK'}, url, 10);
+  assert.ok(task);
+  assert.ok((await w.request({kind:'GET_TASK',navigation:{type:'navigate',referrer:url}},
+    'https://av.by/offer/draft/cars',10,0,'step-2')).task, 'normal form steps continue');
+  assert.equal((await w.request({kind:'GET_TASK',navigation:{type:'reload',referrer:url}},url,10,0,'reload')).task,null);
+  assert.equal((await w.request({kind:'CLAIM_NAVIGATION',jobId:task.jobId,step:'entry',to:url},url,10,0,'reload')).task,null);
+  const restarted = createWorker({data:w.data,indexedDB:w.indexedDB});
+  assert.equal((await restarted.request({kind:'GET_TASK',navigation:{type:'navigate',referrer:url}},url,10,0,'next')).task,null);
+  await w.request({kind:'APP_REQUEST',type:'OPEN_JOB',userGesture:true,payload:{batchId:'test-batch',platformId:'av'}});
+  const reopened = w.created.at(-1);
+  assert.notEqual(reopened.id,10);
+  assert.ok((await w.request({kind:'GET_TASK'},reopened.url,reopened.id)).task);
+  assert.equal((await w.request({kind:'GET_TASK'},url,10)).task,null,'old tab is detached');
+});
+
+test('direct visits, history navigation and unknown documents cannot acquire an existing task', async () => {
+  for (const navigation of [{type:'back_forward',referrer:APP},{type:'navigate',referrer:''},{type:'navigate',referrer:'https://evil.test/'}]) {
+    const w=createWorker(); await run(w);
+    const url='https://www.kufar.by/ain/create';
+    assert.ok((await w.request({kind:'GET_TASK'},url,11)).task);
+    assert.equal((await w.request({kind:'GET_TASK',navigation},url,11,0,'unrelated')).task,null);
+  }
+  const w=createWorker();await run(w);
+  assert.equal((await w.request({kind:'GET_TASK'},'https://www.kufar.by/ain/create',99)).task,null);
+});
 
 test('navigation claims persist across reloads and worker restarts, with one grant for concurrent requests',async()=>{
  const w=createWorker();await run(w);

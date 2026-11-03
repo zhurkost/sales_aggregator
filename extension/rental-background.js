@@ -55,6 +55,7 @@
           j = b?.jobs.find((j) => j.id === payload.jobId);
         if (!j) throw new Error("Задание устарело. Запустите карточку заново.");
         try {
+          if (j.fillBlocked) throw new Error("Restart from the app in a fresh tab");
           await chrome.tabs.update(j.tabId, { active: true });
         } catch {
           const tab = await chrome.tabs.create({
@@ -62,6 +63,7 @@
             active: true,
           });
           j.tabId = tab.id;
+          root.AutopostCore.armFill(j);
           if (j.status !== "stopped") j.status = "running";
           await save(rows);
         }
@@ -82,7 +84,7 @@
       const old = own.find((b) => b.revision === data.revision);
       // Retrying a click or a timed-out response must not open/publish duplicates.
       if (old) {
-        if (old.jobs.every((j) => j.status === "stopped")) {
+        if (old.jobs.every((j) => j.status === "stopped") || old.jobs.some((j) => j.fillBlocked)) {
           old.sourceTabId = sender.tab.id;
           old.mode = data.mode;
           for (const j of old.jobs) {
@@ -92,6 +94,7 @@
           await save(rows);
           for (const j of old.jobs) {
             try {
+              if (j.fillBlocked) throw new Error("Restart from the app in a fresh tab");
               await chrome.tabs.get(j.tabId);
             } catch {
               const tab = await chrome.tabs.create({
@@ -99,6 +102,7 @@
                 active: false,
               });
               j.tabId = tab.id;
+              root.AutopostCore.armFill(j);
               await save(rows);
               continue;
             }
@@ -110,7 +114,8 @@
               });
             } catch {
               j.status = "needs_action";
-              j.message = "Обновите вкладку площадки для продолжения.";
+              j.fillBlocked = true;
+              j.message = "Нажмите «Открыть» в Автопосте для продолжения.";
             }
           }
           await save(rows);
@@ -153,6 +158,7 @@
             active: false,
           });
           j.tabId = tab.id;
+          root.AutopostCore.armFill(j);
           j.status = "running";
           j.message = "Заполняем карточку";
         } catch {
@@ -172,7 +178,10 @@
       ),
       j = b?.jobs.find((j) => j.tabId === sender.tab.id);
     if (!b || !j || j.status === "stopped") return { task: null };
-    if (message.type === "GET")
+    if (message.type === "GET") {
+      const allowed = root.AutopostCore.claimFill(j, sender, payload.navigation, [new URL(j.recipe.startUrl).origin]);
+      await save(rows);
+      if (!allowed) return { task: null };
       return payload.metadataOnly
         ? { task: { jobId: j.id, submitted: !!j.submitted } }
         : {
@@ -185,6 +194,8 @@
               photoSent: !!j.photoSent,
             },
           };
+    }
+    if (!root.AutopostCore.canFill(j, sender)) return { task: null };
     if (message.type === "CLAIM_PHOTOS") {
       if (j.photoSent) return { ok: false };
       j.photoSent = true;

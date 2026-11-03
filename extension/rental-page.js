@@ -5,7 +5,7 @@
     chrome.runtime.sendMessage({ kind: "RENTAL_PAGE", type, payload });
   let task;
   try {
-    task = (await request("GET"))?.task;
+    task = (await request("GET", { navigation: globalThis.AutopostCore.fillNavigation() }))?.task;
   } catch {
     return;
   }
@@ -34,6 +34,7 @@
   shadow.append(style, title, status, detail, retry, stop);
   document.documentElement.append(host);
   let running = false,
+    departed = false,
     paused = false,
     idle = 0,
     cycles = 0,
@@ -67,10 +68,11 @@
     ].some((e) => api.visible(e));
   }
   async function tick() {
-    if (running || paused) return;
+    if (running || paused || departed) return;
     running = true;
     try {
       const current = await request("GET", { metadataOnly: true });
+      if (departed) return;
       if (!current?.task) {
         paused = true;
         clearInterval(interval);
@@ -86,6 +88,7 @@
       }
       cycles++;
       const changed = await form.tick();
+      if (departed) return;
       idle = changed ? 0 : idle + 1;
       if (idle < 3) {
         await report("running", "Перенесено полей: " + form.done.size);
@@ -160,6 +163,7 @@
     if (
       sender.id !== chrome.runtime.id ||
       message?.kind !== "RENTAL_WAKE" ||
+      departed ||
       message.jobId !== task.jobId
     )
       return;
@@ -171,6 +175,16 @@
     interval = setInterval(() => void tick(), 900);
     void tick();
     reply({ ok: true });
+  });
+  window.addEventListener('pagehide', () => {
+    departed = true;
+    paused = true;
+    clearInterval(interval);
+    retry.disabled = stop.disabled = true;
+    status.textContent = 'Заполнение остановлено. Откройте форму из Автопоста.';
+  });
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) void request('GET', {navigation:{type:'back_forward',referrer:document.referrer}}).catch(()=>{});
   });
   void tick();
 })();

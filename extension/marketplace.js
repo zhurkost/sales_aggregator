@@ -9,7 +9,7 @@
   if (window !== window.top || !platform) return;
   let task;
   try {
-    task = (await chrome.runtime.sendMessage({ kind: "GET_TASK" }))?.task;
+    task = (await chrome.runtime.sendMessage({ kind: "GET_TASK", navigation: core.fillNavigation() }))?.task;
   } catch {
     return;
   }
@@ -516,6 +516,10 @@
     }
     if (s.id === chrome.runtime.id && m?.kind === "TASK_CLEARED")
       stop("Сеанс очищен. Карточка остаётся в личном кабинете.");
+  });
+  window.addEventListener('pagehide', () => stop('Заполнение остановлено. Откройте форму из Автопоста.'));
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) void chrome.runtime.sendMessage({kind:'GET_TASK',navigation:{type:'back_forward',referrer:document.referrer}}).catch(()=>{});
   });
   observer.observe(document.documentElement, {
     childList: true,

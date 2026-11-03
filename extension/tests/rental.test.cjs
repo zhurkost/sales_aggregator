@@ -95,7 +95,10 @@ test("rental worker opens every selected site once and isolates profile, origin 
     context,
   );
   const app = { url: "https://87.199.205.227/", tab: { id: 1 } },
-    handle = context.AutopostRentalBackground.handle;
+    handle = (message, sender) => context.AutopostRentalBackground.handle(
+      message.type === "GET" ? {...message, payload:{navigation:{type:"navigate",referrer:""},...message.payload}} : message,
+      {documentId:`document-${sender.tab.id}`,...sender},
+    );
   const run = () =>
     handle(
       {
@@ -189,6 +192,24 @@ test("rental worker opens every selected site once and isolates profile, origin 
     (await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok,
     false,
   );
+  // Refresh is a new document, even with the same URL, referrer and assigned tab.
+  const refreshed = {...sender,documentId:"refreshed"};
+  assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET",payload:{navigation:{type:"reload",referrer:app.url}}},refreshed)).task,null);
+  assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET",payload:{metadataOnly:true}},refreshed)).task,null);
+  assert.equal((await handle({kind:"RENTAL_PAGE",type:"CLAIM_PHOTOS"},refreshed)).task,null);
+  const job = (await status("owner"))[0];
+  await handle({kind:"RENTAL_REQUEST",type:"RENTAL_OPEN",userGesture:true,payload:{id:"card",profileId:"owner",jobId:job.id}},app);
+  const reopened = {...sender,tab:{id:created.at(-1).id},documentId:"reopened"};
+  assert.notEqual(reopened.tab.id,sender.tab.id);
+  assert.ok((await handle({kind:"RENTAL_PAGE",type:"GET"},reopened)).task);
+  assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET"},refreshed)).task,null);
+  // The explicit open must preserve the one-shot submission guard.
+  assert.equal((await handle({kind:"RENTAL_PAGE",type:"BEFORE_SUBMIT"},reopened)).ok,false);
+  assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET",payload:{navigation:{type:"reload",referrer:""}}},{...reopened,documentId:"reload-again"})).task,null);
+  const beforeRun = created.length;
+  await run();
+  assert.equal(created.length,beforeRun+1,'Publish reopens only the refreshed job');
+  assert.ok((await handle({kind:"RENTAL_PAGE",type:"GET"},{...sender,tab:{id:created.at(-1).id},documentId:"published-open"})).task);
 });
 async function fixture(html, controls, extra = {}) {
   const { Window } = await import("happy-dom");
