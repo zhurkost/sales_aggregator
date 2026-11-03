@@ -356,6 +356,89 @@ test("native option values and displayed chip labels use the server mapping", as
   assert.equal(f.document.querySelector("input").checked, true);
   f.window.happyDOM.abort();
 });
+// Same escaping as the server's plain_text_html conversion (RuleExecutor).
+const serverHtml = (text) =>
+  "<p>" +
+  text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/\r\n?/g, "\n")
+    .replace(/\n/g, "<br>") +
+  "</p>";
+const description =
+  'Сдам "уютную" квартиру & место для авто <script>alert(1)</script>\n\nВторой абзац\nс переносом';
+const editor =
+  '<div class="tiptap" contenteditable="true"><p><br class="ProseMirror-trailingBreak"></p></div>';
+// ProseMirror's plain-text paste: every line becomes a paragraph, text is never parsed as HTML.
+function proseMirror(document, pasted = []) {
+  const e = document.querySelector(".tiptap");
+  e.addEventListener("paste", (event) => {
+    const text = event.clipboardData.getData("text/plain");
+    pasted.push(text);
+    event.preventDefault();
+    e.replaceChildren(
+      ...text.split(/(?:\r\n?|\n)+/).map((line) => {
+        const p = document.createElement("p");
+        p.textContent = line;
+        return p;
+      }),
+    );
+  });
+  return { e, pasted };
+}
+const richtext = (value) => [
+  { field: "description", selector: ".tiptap[contenteditable=\"true\"]", action: "richtext", index: 0, value },
+];
+test("rich text description is pasted as plain text with decoded entities and line breaks", async () => {
+  const f = await fixture(editor, richtext(serverHtml(description)));
+  const { e, pasted } = proseMirror(f.document);
+  await f.form.tick();
+  assert.deepEqual(pasted, [description]);
+  assert.deepEqual(
+    [...e.querySelectorAll("p")].map((p) => p.textContent),
+    ['Сдам "уютную" квартиру & место для авто <script>alert(1)</script>', "Второй абзац", "с переносом"],
+  );
+  assert.equal(e.querySelector("script"), null);
+  assert.doesNotMatch(e.textContent, /&amp;|&quot;|&lt;/);
+  assert.equal(f.form.done.has("description"), true);
+  f.window.happyDOM.abort();
+});
+test("rich text falls back to insertText and drops tags the server never sends", async () => {
+  const f = await fixture(editor, richtext("<p>Текст <b>жирный</b><script>bad()</script></p><p>Абзац</p>"));
+  const e = f.document.querySelector(".tiptap"),
+    commands = [];
+  f.document.execCommand = (command, ui, text) => {
+    commands.push([command, text]);
+    e.innerHTML = text.split("\n").filter(Boolean).map(() => "<p></p>").join("");
+    text.split("\n").filter(Boolean).forEach((line, i) => (e.children[i].textContent = line));
+    return true;
+  };
+  await f.form.tick();
+  assert.deepEqual(commands, [["insertText", "Текст жирный\n\nАбзац"]]);
+  assert.equal(f.form.done.has("description"), true);
+  f.window.happyDOM.abort();
+});
+test("rich text never replaces a description the user already wrote or is editing", async () => {
+  const own = await fixture(
+    '<div class="tiptap" contenteditable="true"><p>Мой текст</p></div>',
+    richtext(serverHtml(description)),
+  );
+  const first = proseMirror(own.document);
+  await own.form.tick();
+  assert.deepEqual(first.pasted, []);
+  assert.equal(first.e.textContent, "Мой текст");
+  assert.equal(own.form.done.has("description"), false);
+  own.window.happyDOM.abort();
+  const typing = await fixture(editor, richtext(serverHtml(description)));
+  const second = proseMirror(typing.document);
+  typing.form.protect(second.e.querySelector("p"));
+  await typing.form.tick();
+  assert.deepEqual(second.pasted, []);
+  typing.window.happyDOM.abort();
+});
 test("positive total prevents automated payment while zero does not", async () => {
   const f = await fixture("<p>К оплате: 9,9 р.</p>", []);
   assert.equal(f.window.AutopostRentalForm.paymentRequired(), true);

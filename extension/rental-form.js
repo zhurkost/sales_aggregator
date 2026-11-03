@@ -58,6 +58,76 @@
     );
     events(e);
   }
+  // The server prepares rich text as escaped HTML: one <p> per paragraph and <br>
+  // per line break. Entities are decoded by the HTML parser, never by a regex.
+  // Other tags are not produced: they are dropped (script/style with content).
+  function htmlText(html) {
+    const body = new DOMParser().parseFromString(String(html), "text/html").body;
+    const paragraphs = [];
+    let current = "";
+    const end = () => {
+      if (current.trim()) paragraphs.push(current);
+      current = "";
+    };
+    const walk = (node) => {
+      for (const child of node.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) current += child.data;
+        else if (child.nodeType !== Node.ELEMENT_NODE) continue;
+        else if (child.nodeName === "BR") current += "\n";
+        else if (child.nodeName === "P") {
+          end();
+          walk(child);
+          end();
+        } else if (!/^(?:SCRIPT|STYLE|TEMPLATE)$/.test(child.nodeName)) walk(child);
+      }
+    };
+    walk(body);
+    end();
+    return paragraphs.join("\n\n");
+  }
+  // Editor text with block and <br> boundaries as line breaks.
+  function editorText(e) {
+    let text = "";
+    const walk = (node) => {
+      for (const child of node.childNodes) {
+        if (child.nodeType === Node.TEXT_NODE) text += child.data;
+        else if (child.nodeType !== Node.ELEMENT_NODE) continue;
+        else if (child.nodeName === "BR") text += "\n";
+        else {
+          const block = /^(?:P|DIV|LI|H[1-6]|BLOCKQUOTE|PRE)$/.test(child.nodeName);
+          if (block) text += "\n";
+          walk(child);
+          if (block) text += "\n";
+        }
+      }
+    };
+    walk(e);
+    return text;
+  }
+  // Rich editors turn every pasted line into a paragraph, so blank lines are not compared.
+  const lines = (text) =>
+    String(text).split("\n").map(norm).filter(Boolean).join("\n");
+  // Insert like a user paste so TipTap/ProseMirror updates its own document state.
+  function pasteText(e, text) {
+    const doc = e.ownerDocument,
+      before = editorText(e);
+    e.focus();
+    const range = doc.createRange(),
+      selection = doc.getSelection();
+    range.selectNodeContents(e);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    const data = new DataTransfer();
+    data.setData("text/plain", text);
+    e.dispatchEvent(
+      new ClipboardEvent("paste", {
+        clipboardData: data,
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    if (editorText(e) === before) doc.execCommand?.("insertText", false, text);
+  }
   function selected(e) {
     return (
       e.checked === true ||
@@ -195,7 +265,18 @@
           }
           return;
         }
-        const current = c.action === "richtext" ? e.textContent : e.value;
+        if (c.action === "richtext") {
+          const text = htmlText(value),
+            current = lines(editorText(e));
+          if (current && current !== lines(text)) {
+            this.protected.add(c.field);
+            return;
+          }
+          if (!current) pasteText(e, text);
+          if (lines(editorText(e)) === lines(text)) this.done.add(c.field);
+          return;
+        }
+        const current = e.value;
         if (c.action === "autocomplete") {
           root.AutopostRentalAutocomplete.fill(this, c, e, {
             query,
@@ -208,17 +289,8 @@
           this.protected.add(c.field);
           return;
         }
-        if (c.action === "richtext") {
-          e.textContent = String(value).replace(/<[^>]*>/g, "");
-          events(e);
-          if (
-            norm(e.textContent) === norm(String(value).replace(/<[^>]*>/g, ""))
-          )
-            this.done.add(c.field);
-        } else {
-          setText(e, value);
-          if (norm(e.value) === norm(value)) this.done.add(c.field);
-        }
+        setText(e, value);
+        if (norm(e.value) === norm(value)) this.done.add(c.field);
         return;
       }
       let all = true;
