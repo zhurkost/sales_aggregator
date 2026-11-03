@@ -23,6 +23,8 @@ class RentalAiTest {
             new String[] {"rental.currency", "enum"},
             new String[] {"style", "multi_enum"},
             new String[] {"complex", "text"},
+            new String[] {"rooms", "enum"},
+            new String[] {"levels", "multi_enum"},
             new String[] {"listing.description", "text"},
             new String[] {"photos", "files"}))
       fields.add(object("id", pair[0], "name", pair[0], "type", pair[1]));
@@ -34,7 +36,11 @@ class RentalAiTest {
             "rental.currency",
             List.of("USD", "EUR", "BYN", "RUB"),
             "style",
-            List.of("new", "old")),
+            List.of("new", "old"),
+            "rooms",
+            List.of("studio", "1", "2", "5+"),
+            "levels",
+            List.of("1", "2", "3")),
         "platforms",
         object(
             "one",
@@ -182,6 +188,36 @@ class RentalAiTest {
     // Normalization makes typography irrelevant, not words.
     assertFalse(RentalAiPolicy.grounded(source, "ЖК «Старая Боровая»"));
     assertTrue(RentalAiPolicy.grounded("«Ёлки»\u00a0—\u00a0рядом", "\"елки\" - РЯДОМ"));
+  }
+
+  @Test
+  void numericOptionCodeFromTheModelBecomesItsStringCode() {
+    var result =
+        RentalAiPolicy.sanitize(
+            editor(),
+            "Сдам 2 комнаты, уровни 1 и 3, этаж 2.",
+            object(
+                "suggestions",
+                List.of(
+                    suggestion("rooms", 2, "Сдам 2 комнаты"),
+                    suggestion("levels", List.of(1, "3"), "уровни 1 и 3"))));
+    assertEquals(0, result.path("ignored").asInt(), result.toString());
+    assertEquals(TextNode.valueOf("2"), result.path("suggestions").get(0).path("value"));
+    assertEquals(
+        array(List.of("1", "3")), result.path("suggestions").get(1).path("value"));
+    var rejected =
+        RentalAiPolicy.sanitize(
+            editor(),
+            "Сдам 2 комнаты",
+            object(
+                "suggestions",
+                List.of(
+                    suggestion("rooms", 4, "Сдам 2 комнаты"),
+                    suggestion("rooms", 2.5, "Сдам 2 комнаты"),
+                    suggestion("rooms", true, "Сдам 2 комнаты"),
+                    suggestion("levels", List.of(4), "Сдам 2 комнаты"))));
+    assertTrue(rejected.path("suggestions").isEmpty());
+    assertEquals(4, rejected.path("ignored").asInt());
   }
 
   @Test

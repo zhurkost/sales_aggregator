@@ -175,15 +175,17 @@ Enum — только точный код из choices; multi_enum — масс�
         if (!value.isArray() || value.size() > choices.size()) return null;
         ArrayNode result = array();
         for (var item : value) {
-          if (!item.isTextual() || list(choices).stream().noneMatch(item::equals)) return null;
-          if (list(result).stream().noneMatch(item::equals)) result.add(item);
+          JsonNode code = code(choices, item);
+          if (code == null) return null;
+          if (list(result).stream().noneMatch(code::equals)) result.add(code);
         }
         return result.isEmpty() ? null : result;
       }
-      if (!value.isTextual() || list(choices).stream().noneMatch(value::equals)) return null;
-      if (text(field, "id").equals("rental.currency") && !currencyGrounded(value.asText(), quote))
+      JsonNode code = code(choices, value);
+      if (code == null) return null;
+      if (text(field, "id").equals("rental.currency") && !currencyGrounded(code.asText(), quote))
         return null;
-      return value.deepCopy();
+      return code;
     }
     if (type.equals("number") || type.equals("integer")) {
       if (!value.isTextual() && !value.isNumber()) return null;
@@ -228,6 +230,16 @@ Enum — только точный код из choices; multi_enum — масс�
     if (!id.equals("listing.title") && !normalized(quote).contains(normalized(value.asText())))
       return null;
     return TextNode.valueOf(value.asText().strip());
+  }
+
+  /** The option code for a value; a number such as 2 stands for the code "2". */
+  private static JsonNode code(JsonNode choices, JsonNode value) {
+    JsonNode candidate =
+        value.isNumber()
+            ? TextNode.valueOf(value.decimalValue().stripTrailingZeros().toPlainString())
+            : value;
+    if (!candidate.isTextual()) return null;
+    return list(choices).stream().anyMatch(candidate::equals) ? candidate.deepCopy() : null;
   }
 
   public static boolean currencyGrounded(String code, String quote) {
