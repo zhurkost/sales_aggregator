@@ -127,17 +127,18 @@
     );
     if (editorText(e) === before) doc.execCommand?.("insertText", false, text);
   }
-  function selected(e) {
+  // `rule.selectedClass` is the recipe's class fragment of a chosen chip on its platform.
+  function selected(e, rule) {
+    const className = String(e.className || "");
     return (
       e.checked === true ||
       ["true"].includes(e.getAttribute("aria-pressed")) ||
       e.getAttribute("aria-selected") === "true" ||
       e.getAttribute("data-state") === "checked" ||
-      /(?:^|[\s_\-])(?:selected|active|checked)(?:[\s_\-]|$)/i.test(
-        e.className || "",
-      ) ||
-      String(e.className || "").includes("text-white bg-basic") ||
-      String(e.className || "").includes("chip__filled-green")
+      /(?:^|[\s_\-])(?:selected|active|checked)(?:[\s_\-]|$)/i.test(className) ||
+      // The platform using this class is not established by the research reports yet.
+      className.includes("text-white bg-basic") ||
+      (!!rule?.selectedClass && className.includes(rule.selectedClass))
     );
   }
   function paymentRequired() {
@@ -356,7 +357,7 @@
           continue;
         }
         const e = candidates[0];
-        if (selected(e)) {
+        if (selected(e, c)) {
           continue;
         }
         if (this.tried.has(key)) {
@@ -365,7 +366,7 @@
         }
         e.click();
         this.tried.add(key);
-        if (!selected(e)) all = false;
+        if (!selected(e, c)) all = false;
       }
       if (all) this.done.add(c.field);
     }
@@ -389,7 +390,7 @@
         );
         if (
           els.length === 1 &&
-          !selected(els[0]) &&
+          !selected(els[0], s) &&
           !els[0].querySelector("input:checked")
         ) {
           this.stepClicks.add(key);

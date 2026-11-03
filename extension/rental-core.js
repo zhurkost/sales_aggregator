@@ -8,6 +8,9 @@
   });
   const object = (v) => v && typeof v === "object" && !Array.isArray(v);
   const id = (v) => typeof v === "string" && /^[a-zA-Z0-9_.:-]{1,120}$/.test(v);
+  // Optional class fragment that marks a chosen chip on a platform.
+  const selectedClass = (v) =>
+    v === undefined || (typeof v === "string" && /^[a-zA-Z0-9_-]{1,80}$/.test(v));
   function origin(platform, url) {
     try {
       return new URL(url).origin === new URL(starts[platform]).origin;
@@ -56,6 +59,7 @@
           typeof c.field !== "string" ||
           typeof c.selector !== "string" ||
           c.selector.length > 400 ||
+          !selectedClass(c.selectedClass) ||
           ![
             "text",
             "richtext",
@@ -82,7 +86,8 @@
             (s) =>
               s.action !== "click" ||
               typeof s.selector !== "string" ||
-              typeof s.text !== "string",
+              typeof s.text !== "string" ||
+              !selectedClass(s.selectedClass),
           )
         )
           throw new Error("Неизвестный переход формы.");

@@ -20,7 +20,8 @@
     {
       "action": "click",
       "selector": "[data-name=\"type\"] [role=\"button\"]",
-      "text": "Долгосрочная аренда"
+      "text": "Долгосрочная аренда",
+      "selectedClass": "chip__filled-green"
     }
   ],
   "controls": [
@@ -74,57 +75,68 @@
     {
       "field": "kufar.rooms",
       "action": "choices",
-      "selector": "[data-name=\"rooms\"]"
+      "selector": "[data-name=\"rooms\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.bathroom",
       "action": "choices",
-      "selector": "[data-name=\"bathroom\"]"
+      "selector": "[data-name=\"bathroom\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.balcony",
       "action": "choices",
-      "selector": "[data-name=\"balcony\"]"
+      "selector": "[data-name=\"balcony\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.repair",
       "action": "choices",
-      "selector": "[data-name=\"flat_repair\"]"
+      "selector": "[data-name=\"flat_repair\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.household_amenities",
       "action": "choices",
-      "selector": "[data-name=\"flat_improvement\"]"
+      "selector": "[data-name=\"flat_improvement\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.bathroom_amenities",
       "action": "choices",
-      "selector": "[data-name=\"flat_bath\"]"
+      "selector": "[data-name=\"flat_bath\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.kitchen_amenities",
       "action": "choices",
-      "selector": "[data-name=\"flat_kitchen\"]"
+      "selector": "[data-name=\"flat_kitchen\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.rental_conditions",
       "action": "choices",
-      "selector": "[data-name=\"flat_rent_for_whom\"]"
+      "selector": "[data-name=\"flat_rent_for_whom\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.prepayment",
       "action": "choices",
-      "selector": "[data-name=\"flat_rent_prepayment\"]"
+      "selector": "[data-name=\"flat_rent_prepayment\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.wall_material",
       "action": "choices",
-      "selector": "[data-name=\"house_type\"]"
+      "selector": "[data-name=\"house_type\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.condition",
       "action": "choices",
-      "selector": "[data-name=\"condition\"]"
+      "selector": "[data-name=\"condition\"]",
+      "selectedClass": "chip__filled-green"
     },
     {
       "field": "kufar.walk_through_room",

@@ -578,3 +578,63 @@ test("hidden form controls are skipped exactly as a browser without layout repor
   assert.deepEqual([...f.form.done], ["price"]);
   f.window.happyDOM.abort();
 });
+test("a platform's chosen-chip class comes from its recipe, not from shared code", async () => {
+  const chips =
+    '<div data-name="rooms"><div role="button" class="styles_chip__filled-green__a1">2</div><div role="button" class="styles_chip__b2">3</div></div>';
+  const rooms = { field: "rooms", selector: '[data-name="rooms"]', action: "choices", value: "2" };
+  for (const [control, clicks] of [
+    [{ ...rooms, selectedClass: "chip__filled-green" }, 0],
+    [rooms, 1],
+  ]) {
+    const f = await fixture(chips, [control]);
+    let clicked = 0;
+    f.document.querySelector('[role="button"]').onclick = () => clicked++;
+    await f.form.tick();
+    assert.equal(clicked, clicks, JSON.stringify(control));
+    f.window.happyDOM.abort();
+  }
+  const type = { action: "click", selector: '[data-name="type"] [role="button"]', text: "Долгосрочная аренда" };
+  for (const [step, clicks] of [
+    [{ ...type, selectedClass: "chip__filled-green" }, 0],
+    [type, 1],
+  ]) {
+    const f = await fixture(
+      '<div data-name="type"><div role="button" class="styles_chip__filled-green__a1">Долгосрочная аренда</div></div>',
+      [],
+      { ready: [{ selector: "#rental-form" }], setup: [step] },
+    );
+    let clicked = 0;
+    f.document.querySelector('[role="button"]').onclick = () => clicked++;
+    await f.form.tick();
+    assert.equal(clicked, clicks, JSON.stringify(step));
+    f.window.happyDOM.abort();
+  }
+});
+test("Kufar recipe marks its chips with the class proven by its ready guard", () => {
+  const kufar = recipe("kufar");
+  const guard = kufar.ready.find((r) => r.selector.startsWith('[data-name="type"]'));
+  assert.match(guard.selector, /\[class\*="chip__filled-green"\]/);
+  for (const c of kufar.controls)
+    assert.equal(c.selectedClass, c.action === "choices" ? "chip__filled-green" : undefined, c.field);
+  assert.deepEqual(
+    kufar.setup.filter((s) => s.selectedClass).map((s) => s.selector),
+    ['[data-name="type"] [role="button"]'],
+  );
+  for (const p of ["onliner", "realt", "domovita"]) {
+    const other = recipe(p);
+    assert.equal(
+      [...other.controls, ...other.setup, ...other.next, ...other.submit].some((r) => r.selectedClass),
+      false,
+      p,
+    );
+  }
+  for (const bad of ["chip filled", 'x"]', 5, ""]) {
+    const control = payload();
+    control.jobs[0].controls[0].selectedClass = bad;
+    assert.throws(() => core.validate(control), /Неизвестное правило заполнения/);
+    const step = payload();
+    step.jobs[0].setup[0].selectedClass = bad;
+    assert.throws(() => core.validate(step), /Неизвестный переход формы/);
+  }
+  assert.doesNotThrow(() => core.validate(payload()));
+});
