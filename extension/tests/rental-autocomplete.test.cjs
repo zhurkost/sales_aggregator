@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const layout = require("./layout.cjs");
 const recipe = JSON.parse(
   fs.readFileSync(
     path.join(
@@ -20,7 +21,7 @@ const cityRows = `<li><div role="button"><p>г. <span>Минск</span></p><p>М
 // Reduced markup observed in the authenticated form on 2026-11-03. No account data.
 async function setup(rows = cityRows, city = field("settlement", "г Минск")) {
   const { Window } = await import("happy-dom");
-  const window = new Window({ url: "https://realt.by/podat-obyavlenie/" }),
+  const window = layout(new Window({ url: "https://realt.by/podat-obyavlenie/" })),
     document = window.document;
   document.body.innerHTML = `<div class="relative" id="city-wrap"><label>Адрес</label><div class="relative"><input id="location.settlement"></div><div><ul>${rows}</ul></div></div>
     <div class="relative" id="street-wrap"><div class="relative"><input id="location.street" disabled></div><div><ul>

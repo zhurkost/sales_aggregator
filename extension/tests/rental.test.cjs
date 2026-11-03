@@ -4,6 +4,7 @@ const test = require("node:test"),
   vm = require("node:vm"),
   path = require("node:path");
 const core = require("../rental-core.js");
+const layout = require("./layout.cjs");
 const recipe = (p) =>
   JSON.parse(
     fs.readFileSync(
@@ -236,7 +237,7 @@ test("rental worker opens every selected site once and isolates profile, origin 
 });
 async function fixture(html, controls, extra = {}) {
   const { Window } = await import("happy-dom");
-  const window = new Window({ url: "https://www.kufar.by/ain/create" });
+  const window = layout(new Window({ url: "https://www.kufar.by/ain/create" }));
   window.document.body.innerHTML = html;
   window.eval(
     fs.readFileSync(path.join(__dirname, "../rental-autocomplete.js"), "utf8"),
@@ -481,7 +482,7 @@ test("final submission requires automatic mode and a server check without issues
 });
 async function page(task, wake) {
   const { Window } = await import("happy-dom");
-  const window = new Window({ url: "https://www.kufar.by/ain/create" });
+  const window = layout(new Window({ url: "https://www.kufar.by/ain/create" }));
   window.document.body.innerHTML =
     '<input id="title"><button type="submit">Подать объявление</button>';
   const requests = [],
@@ -560,4 +561,20 @@ test("rental page clicks the final button only for an allowed automatic submissi
   assert.deepEqual([woken.beforeSubmit, woken.submitted], [1, 1]);
   const legacyWake = await page({ ...task, autoSubmit: false }, { mode: "automatic" });
   assert.deepEqual([legacyWake.beforeSubmit, legacyWake.submitted], [0, 0]);
+});
+test("hidden form controls are skipped exactly as a browser without layout reports them", async () => {
+  const f = await fixture(
+    '<div style="display:none"><input id="hidden-price"></div><div hidden><input id="hidden-area"></div><input id="price">',
+    [
+      { field: "hidden-price", selector: "#hidden-price", action: "text", value: 10 },
+      { field: "hidden-area", selector: "#hidden-area", action: "text", value: 20 },
+      { field: "price", selector: "#price", action: "text", value: 30 },
+    ],
+  );
+  await f.form.tick();
+  assert.equal(f.document.querySelector("#hidden-price").value, "");
+  assert.equal(f.document.querySelector("#hidden-area").value, "");
+  assert.equal(f.document.querySelector("#price").value, "30");
+  assert.deepEqual([...f.form.done], ["price"]);
+  f.window.happyDOM.abort();
 });

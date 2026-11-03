@@ -10,8 +10,7 @@
     !e.closest('[hidden],[aria-hidden="true"]') &&
     getComputedStyle(e).display !== "none" &&
     getComputedStyle(e).visibility !== "hidden" &&
-    (e.getClientRects().length > 0 ||
-      e.ownerDocument.defaultView?.navigator?.userAgent?.includes("HappyDOM"));
+    e.getClientRects().length > 0;
   const enabled = (e) =>
     !e.disabled &&
     e.getAttribute("aria-disabled") !== "true" &&
