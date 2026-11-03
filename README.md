@@ -12,6 +12,8 @@
 
 [DaData через Cloudflare](ops/cloudflare-dadata-relay/README.md): сайт, Spring и SQLite остаются на VPS, Worker обслуживает только адресные подсказки. Перенос базы и Cloudflare Containers не нужны.
 
+[Правила для агентов](AGENTS.md) и [план рефакторинга аренды](docs/refactoring/rental/README.md) — обязательное чтение перед работой агента с модулем аренды; ревью модуля — [docs/refactoring/rental/review.md](docs/refactoring/rental/review.md).
+
 [Задание независимому агенту: единая карточка квартиры и аудит интерфейса](docs/agents/rental-editor-independent-review.txt) — сценарии проверки, модель без повторного ввода и цикл независимой приёмки переделки.
 
 ## Последовательная форма AV.by — 0.8.4
