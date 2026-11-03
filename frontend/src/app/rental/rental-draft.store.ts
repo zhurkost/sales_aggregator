@@ -1,11 +1,13 @@
 import type { EditorSchema, Prepared, RentalDraft } from "./rental-models";
-import { rentalApi } from "./rental-api";
+import { RentalApiError, rentalApi } from "./rental-api";
 import { RentalCardCheck } from "./rental-card-check";
 import {
   applyProfileDefaults,
   type RentalProfile,
 } from "./rental-profile-defaults";
 import { rentalPhotos } from "./rental-photos";
+const CONFLICT =
+  "Карточка изменена в другой вкладке. Сохраните копию или загрузите сохранённую версию.";
 /** Per-editor session: persistence, revision checks and serialized writes. No DOM. */
 export class RentalDraftStore {
   constructor(
@@ -24,6 +26,8 @@ export class RentalDraftStore {
   id: string = crypto.randomUUID();
   revision = 0;
   dirty = false;
+  /** The server has a newer revision: autosave stops until a copy is saved or it is loaded. */
+  conflict = false;
   status = "";
   error = "";
   busy = false;
@@ -142,6 +146,7 @@ export class RentalDraftStore {
       this.id = crypto.randomUUID();
       this.revision = 0;
       this.dirty = true;
+      this.conflict = false;
       await this.save();
       this.error = "";
     } catch (e) {
@@ -155,7 +160,7 @@ export class RentalDraftStore {
     const save = this.queue
       .catch(() => {})
       .then(async () => {
-        if (!this.dirty || this.deletingId === this.id) return;
+        if (!this.dirty || this.deletingId === this.id || this.conflict) return;
         const version = this.editVersion,
           id = this.id,
           snapshot = structuredClone(this.draft);
@@ -164,7 +169,13 @@ export class RentalDraftStore {
           this.workspaceId(),
           "drafts/" + id,
           { revision: this.revision, draft: snapshot },
-        );
+        ).catch((e: unknown) => {
+          if (e instanceof RentalApiError && e.status === 409 && this.id === id) {
+            this.conflict = true;
+            this.status = "Не сохранено";
+          }
+          throw e;
+        });
         if (this.id === id) {
           this.revision = result.revision;
           this.dirty = this.editVersion !== version;
@@ -179,6 +190,7 @@ export class RentalDraftStore {
     // Leaving the editor must also save changes typed while a prior request was running.
     do {
       await this.save();
+      if (this.conflict) throw new Error(CONFLICT);
     } while (this.dirty);
   }
   async open(id: string) {
@@ -188,33 +200,53 @@ export class RentalDraftStore {
     this.pendingDelete = null;
     try {
       await this.flush();
-      const beforeLoad = this.editVersion;
-      const result = await rentalApi<{
-        id: string;
-        revision: number;
-        draft: RentalDraft;
-      }>(this.workspaceId(), "drafts/" + id);
-      if (beforeLoad !== this.editVersion)
-        throw new Error(
-          "Текущая карточка изменилась. Сначала сохраните её, затем откройте другую.",
-        );
-      this.id = result.id;
-      this.revision = result.revision;
-      this.draft = result.draft;
-      this.onTransition();
-      this.check.clear();
-      this.dirty = false;
-      this.status = "Карточка открыта";
-      if (applyProfileDefaults(this.draft, this.schema, this.profile()))
-        this.changed();
-      if (this.schema && this.draft.schemaVersion !== this.schema.version)
-        this.error =
-          "Правила обновились. Нажмите «Обновить поля карточки» — введённые сведения сохранятся.";
+      await this.read(id, "Карточка открыта");
     } catch (e) {
       this.error = (e as Error).message;
     } finally {
       this.busy = false;
     }
+  }
+  /** Leaves a revision conflict by discarding local edits and opening the server revision. */
+  async loadSaved() {
+    if (this.busy || !this.conflict) return;
+    this.busy = true;
+    this.error = "";
+    try {
+      await this.queue.catch(() => {});
+      clearTimeout(this.timer);
+      this.editVersion++;
+      await this.read(this.id, "Открыта сохранённая версия");
+    } catch (e) {
+      this.error = (e as Error).message;
+    } finally {
+      this.busy = false;
+    }
+  }
+  private async read(id: string, status: string) {
+    const beforeLoad = this.editVersion;
+    const result = await rentalApi<{
+      id: string;
+      revision: number;
+      draft: RentalDraft;
+    }>(this.workspaceId(), "drafts/" + id);
+    if (beforeLoad !== this.editVersion)
+      throw new Error(
+        "Текущая карточка изменилась. Сначала сохраните её, затем откройте другую.",
+      );
+    this.id = result.id;
+    this.revision = result.revision;
+    this.draft = result.draft;
+    this.onTransition();
+    this.check.clear();
+    this.dirty = false;
+    this.conflict = false;
+    this.status = status;
+    if (applyProfileDefaults(this.draft, this.schema, this.profile()))
+      this.changed();
+    if (this.schema && this.draft.schemaVersion !== this.schema.version)
+      this.error =
+        "Правила обновились. Нажмите «Обновить поля карточки» — введённые сведения сохранятся.";
   }
   async fresh() {
     if (this.busy) return;
@@ -247,6 +279,7 @@ export class RentalDraftStore {
     };
     applyProfileDefaults(this.draft, this.schema, this.profile());
     this.dirty = false;
+    this.conflict = false;
     this.pendingDelete = null;
   }
   async remove(id: string) {

@@ -407,3 +407,129 @@ describe("rental API errors", () => {
     store.destroy();
   });
 });
+
+describe("rental revision conflicts", () => {
+  const conflictBody = {
+    error: "Карточка изменена в другой вкладке. Сохраните свои правки перед обновлением.",
+  };
+  it("stops autosaving after 409 until the edits are saved as a copy", async () => {
+    vi.useFakeTimers();
+    const store = new RentalDraftStore(
+      () => "owner",
+      () => {},
+    );
+    const original = store.id,
+      calls: { url: string; body: any }[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string, init?: RequestInit) => {
+        calls.push({ url, body: init?.body ? JSON.parse(String(init.body)) : null });
+        return url.endsWith("/drafts/" + original)
+          ? response(conflictBody, 409)
+          : response({ revision: 1 });
+      }),
+    );
+    store.revision = 2;
+    store.draft.values["listing.title"] = "Моя правка";
+    store.changed();
+    await vi.advanceTimersByTimeAsync(1300);
+    expect(store.conflict).toBe(true);
+    expect(store.error).toBe(conflictBody.error);
+    calls.length = 0;
+    for (const title of ["Ещё", "Ещё правка", "Ещё правка 3"]) {
+      store.draft.values["listing.title"] = title;
+      store.changed();
+      await vi.advanceTimersByTimeAsync(1300);
+    }
+    expect(calls).toEqual([]);
+    await expect(store.flush()).rejects.toThrow("Сохраните копию");
+    expect(calls).toEqual([]);
+    await store.saveCopy();
+    expect(store.conflict).toBe(false);
+    expect(store.id).not.toBe(original);
+    expect(calls).toEqual([
+      {
+        url: "/api/workspace/rental/drafts/" + store.id,
+        body: expect.objectContaining({ revision: 0 }),
+      },
+    ]);
+    expect(calls[0].body.draft.values["listing.title"]).toBe("Ещё правка 3");
+    store.draft.values["listing.title"] = "После копии";
+    store.changed();
+    await vi.advanceTimersByTimeAsync(1300);
+    expect(calls.map((call) => call.url)).toEqual(
+      Array(2).fill("/api/workspace/rental/drafts/" + store.id),
+    );
+    store.destroy();
+  });
+
+  it("loads the saved version after confirmation and continues from its revision", async () => {
+    let id = "";
+    const saved = {
+      schemaVersion: "test",
+      values: { "listing.description": "Сохранённая версия" },
+      extras: {},
+      platforms: ["kufar"],
+      address: null,
+    };
+    const calls: { method?: string; url: string; body: any }[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string, init?: RequestInit) => {
+        const body = init?.body ? JSON.parse(String(init.body)) : null;
+        calls.push({ method: init?.method, url, body });
+        if (url.endsWith("/editor")) return response(schema);
+        if (url.endsWith("/drafts")) return response({ drafts: [] });
+        if (url.endsWith("/drafts/" + id) && init?.method === "GET")
+          return response({ id, revision: 5, draft: saved });
+        return body?.revision === 4
+          ? response(conflictBody, 409)
+          : response({ revision: body.revision + 1 });
+      }),
+    );
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    const c = fixture.componentInstance,
+      el = fixture.nativeElement as HTMLElement,
+      button = (selector: string) =>
+        el.querySelector<HTMLButtonElement>(selector)!;
+    try {
+      await vi.waitFor(() => expect(c.schema).not.toBeNull());
+      id = c.id;
+      c.revision = 4;
+      vi.useFakeTimers();
+      c.setDescription("Моя локальная правка");
+      await vi.advanceTimersByTimeAsync(1300);
+      fixture.detectChanges();
+      expect(c.store.conflict).toBe(true);
+      expect(button(".conflict .save-copy").textContent).toContain("Сохранить копию");
+      button(".conflict .load-saved").click();
+      fixture.detectChanges();
+      expect(el.querySelector(".load-saved-confirmation")?.textContent).toContain(
+        "Ваши несохранённые правки пропадут.",
+      );
+      expect(c.store.conflict).toBe(true);
+      button(".confirm-load-saved").click();
+      await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
+      expect(c.store.conflict).toBe(false);
+      expect(c.dirty).toBe(false);
+      expect(c.revision).toBe(5);
+      expect(c.description).toBe("Сохранённая версия");
+      expect(el.querySelector(".conflict")).toBeNull();
+      calls.length = 0;
+      c.setDescription("Правка поверх сохранённой");
+      await vi.advanceTimersByTimeAsync(1300);
+      expect(calls.filter((call) => call.method === "POST")).toEqual([
+        {
+          method: "POST",
+          url: "/api/workspace/rental/drafts/" + id,
+          body: expect.objectContaining({ revision: 5 }),
+        },
+      ]);
+    } finally {
+      fixture.destroy();
+    }
+  });
+});

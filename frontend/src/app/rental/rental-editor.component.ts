@@ -46,10 +46,11 @@ function houseKey(a: Address) {
 export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
   @Input() profileDefaults: RentalProfile = {};
-  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); this.resetFacts = null; }, () => this.profileDefaults);
+  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); this.resetFacts = null; this.confirmLoadSaved = false; }, () => this.profileDefaults);
   readonly ai = new RentalAiAssistant(this.store, () => this.workspaceId, address => this.replaceAddress(address), address => this.addressChanged(address));
   readonly view = new RentalViewModel(this.store);
   panel: "parameters" | "saved" | "result" | null = null;
+  confirmLoadSaved = false;
   /** Nearby facts removed by the last change of the confirmed house, until the next address change. */
   resetFacts: { names: string[]; values: Record<string, JsonValue>; evidence: Record<string, string> } | null = null;
   // The confirmed house the nearby facts belong to; typing over it does not forget it.
@@ -93,6 +94,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   saveCopy = (...args: Parameters<RentalDraftStore["saveCopy"]>) => this.store.saveCopy(...args);
   prepare = (...args: Parameters<RentalDraftStore["prepare"]>) => this.store.prepare(...args);
   acceptSchema = (...args: Parameters<RentalDraftStore["acceptSchema"]>) => this.store.acceptSchema(...args);
+  loadSaved() { this.confirmLoadSaved = false; return this.store.loadSaved(); }
   get aiBusy() { return this.ai.busy; }
   set aiBusy(value: RentalAiAssistant["busy"]) { this.ai.busy = value; }
   get aiMessage() { return this.ai.message; }

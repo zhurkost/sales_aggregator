@@ -1,5 +1,15 @@
 export type * from "./rental-models";
 
+/** Carries the HTTP status so callers can tell a revision conflict from an outage. */
+export class RentalApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
 export async function rentalApi<T>(
   workspace: string,
   path: string,
@@ -20,15 +30,17 @@ export async function rentalApi<T>(
   try {
     body = JSON.parse(text);
   } catch {
-    throw new Error(
+    throw new RentalApiError(
       `Сервер временно недоступен (код ${response.status}). Изменения сохранятся при следующей попытке.`,
+      response.status,
     );
   }
   if (!response.ok)
-    throw new Error(
+    throw new RentalApiError(
       typeof body?.error === "string" && body.error
         ? body.error
         : "Не удалось выполнить запрос.",
+      response.status,
     );
   return body as T;
 }

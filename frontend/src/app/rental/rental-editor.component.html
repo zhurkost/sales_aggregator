@@ -6,7 +6,16 @@
       <button type="button" class="quiet-button" [disabled]="busy" (click)="fresh()">＋ Новая</button>
     </div>
   </header>
-  @if (error) {
+  @if (store.conflict) {
+    <div class="error-banner conflict" role="alert">{{ error || "Карточка изменена в другой вкладке." }}
+      <button type="button" class="text-button save-copy" [disabled]="busy" (click)="saveCopy()">Сохранить копию</button>
+      @if (confirmLoadSaved) {
+        <span class="load-saved-confirmation">Ваши несохранённые правки пропадут. <button type="button" class="text-button confirm-load-saved" [disabled]="busy" (click)="loadSaved()">Да, загрузить</button> <button type="button" class="text-button" [disabled]="busy" (click)="confirmLoadSaved = false">Отмена</button></span>
+      } @else {
+        <button type="button" class="text-button load-saved" [disabled]="busy" (click)="confirmLoadSaved = true">Загрузить сохранённую версию</button>
+      }
+    </div>
+  } @else if (error) {
     <div class="error-banner" role="alert">{{ error }}
       @if (dirty) { <button type="button" class="text-button" [disabled]="busy" (click)="saveCopy()">Сохранить копию</button> }
     </div>
