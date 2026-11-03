@@ -554,4 +554,85 @@ describe("rental preparation editor", () => {
       fixture.destroy();
     });
   });
+  describe("address suggestions from the keyboard", () => {
+    const suggestions = [{id:"a", label:"Минск, ул Брикета, д 18"}, {id:"b", label:"Минск, ул Брикета, д 19"}];
+    async function render() {
+      vi.useFakeTimers();
+      const calls: {url: string; body: any}[] = [];
+      vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+        const body = init?.body ? JSON.parse(String(init.body)) : null;
+        calls.push({url, body});
+        return response(url.endsWith("/address/suggest") ? {suggestions}
+          : {address:{provider:"dadata", label:suggestions.find(s => s.id === body.id)!.label, countryIso:"BY", settlement:"Минск", street:"ул Брикета", house:"18", confirmed:true}});
+      }));
+      const fixture = TestBed.createComponent(AddressInputComponent);
+      fixture.componentRef.setInput("workspaceId", "owner");
+      fixture.componentRef.setInput("value", null);
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement, input = el.querySelector<HTMLInputElement>("#rental-address")!;
+      const emitted: unknown[] = [];
+      fixture.componentInstance.addressChange.subscribe(a => emitted.push(a));
+      const type = async (text: string) => {
+        input.value = text; input.dispatchEvent(new Event("input"));
+        await vi.advanceTimersByTimeAsync(400); fixture.detectChanges();
+      };
+      const key = async (name: string) => {
+        const event = new KeyboardEvent("keydown", {key:name, bubbles:true, cancelable:true});
+        input.dispatchEvent(event); await vi.advanceTimersByTimeAsync(0); fixture.detectChanges();
+        return event;
+      };
+      const options = () => Array.from(el.querySelectorAll<HTMLElement>('[role="option"]'));
+      return {fixture, el, input, calls, emitted, type, key, options};
+    }
+    it("is a combobox whose arrows move the active option without choosing the first one", async () => {
+      const {fixture, el, input, calls, type, key, options} = await render();
+      await type("Минск, Брикета");
+      const list = el.querySelector('[role="listbox"]')!;
+      expect(input.getAttribute("role")).toBe("combobox");
+      expect(input.getAttribute("aria-expanded")).toBe("true");
+      expect(input.getAttribute("aria-controls")).toBe(list.id);
+      expect(options()).toHaveLength(2);
+      expect(input.getAttribute("aria-activedescendant")).toBeNull();
+      expect(options().map(o => o.getAttribute("aria-selected"))).toEqual(["false", "false"]);
+      expect((await key("Enter")).defaultPrevented).toBe(false);
+      expect(calls.some(c => c.url.endsWith("/address/select"))).toBe(false);
+      expect((await key("ArrowDown")).defaultPrevented).toBe(true);
+      expect(input.getAttribute("aria-activedescendant")).toBe(options()[0].id);
+      expect(options()[0].getAttribute("aria-selected")).toBe("true");
+      await key("ArrowDown");
+      expect(input.getAttribute("aria-activedescendant")).toBe(options()[1].id);
+      await key("ArrowDown");
+      expect(input.getAttribute("aria-activedescendant")).toBe(options()[0].id);
+      await key("ArrowUp");
+      expect(input.getAttribute("aria-activedescendant")).toBe(options()[1].id);
+      fixture.destroy();
+    });
+    it("Enter chooses the active option", async () => {
+      const {fixture, input, calls, emitted, type, key, options} = await render();
+      await type("Минск, Брикета");
+      await key("ArrowDown"); await key("ArrowDown");
+      expect((await key("Enter")).defaultPrevented).toBe(true);
+      expect(calls.filter(c => c.url.endsWith("/address/select")).map(c => c.body)).toEqual([{id:"b"}]);
+      expect(emitted.at(-1)).toEqual(expect.objectContaining({label:"Минск, ул Брикета, д 19", confirmed:true}));
+      expect(options()).toHaveLength(0);
+      expect(input.getAttribute("aria-expanded")).toBe("false");
+      expect(input.getAttribute("aria-activedescendant")).toBeNull();
+      fixture.destroy();
+    });
+    it("Escape closes the list without choosing", async () => {
+      const {fixture, input, calls, emitted, type, key, options} = await render();
+      await type("Минск, Брикета");
+      await key("ArrowDown");
+      const count = emitted.length;
+      expect((await key("Escape")).defaultPrevented).toBe(true);
+      expect(options()).toHaveLength(0);
+      expect(input.getAttribute("aria-expanded")).toBe("false");
+      expect(input.getAttribute("aria-activedescendant")).toBeNull();
+      await key("Enter");
+      expect(calls.some(c => c.url.endsWith("/address/select"))).toBe(false);
+      expect(emitted).toHaveLength(count);
+      expect(input.value).toBe("Минск, Брикета");
+      fixture.destroy();
+    });
+  });
 });

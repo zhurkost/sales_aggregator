@@ -23,15 +23,18 @@ import { Address, rentalApi } from "./rental-api";
     }
     @if (!manual) {
       <label class="full-label" [class.compact-input]="compact">@if (!compact) { Адрес квартиры }
-        <input id="rental-address" aria-label="Поиск адреса квартиры" [disabled]="disabled" [ngModel]="query"
-          (ngModelChange)="search($event)" (focus)="suggestCurrent()" autocomplete="off" maxlength="300" placeholder="Город, улица, дом" />
+        <input id="rental-address" role="combobox" aria-autocomplete="list" aria-controls="rental-address-options"
+          [attr.aria-expanded]="suggestions.length > 0" [attr.aria-activedescendant]="active >= 0 ? optionId(active) : null"
+          aria-label="Поиск адреса квартиры" [disabled]="disabled" [ngModel]="query"
+          (ngModelChange)="search($event)" (focus)="suggestCurrent()" (keydown)="keys($event)" autocomplete="off" maxlength="300" placeholder="Город, улица, дом" />
       </label>
       @if (busy) { <p role="status">Ищем адрес…</p> }
       @if (error) { <p role="status">{{ error }}</p> }
       @if (suggestions.length) {
-        <ul class="address-options" aria-label="Варианты адреса">
-          @for (item of suggestions; track item.id) {
-            <li><button type="button" (click)="choose(item.id)" [disabled]="choosing || disabled">{{ item.label }}</button></li>
+        <ul class="address-options" id="rental-address-options" role="listbox" aria-label="Варианты адреса">
+          @for (item of suggestions; track item.id; let i = $index) {
+            <li role="option" [id]="optionId(i)" [class.active]="i === active" [attr.aria-selected]="i === active"
+              [attr.aria-disabled]="choosing || disabled" (mousedown)="$event.preventDefault()" (click)="pick(i)">{{ item.label }}</li>
           }
         </ul>
       }
@@ -73,16 +76,18 @@ import { Address, rentalApi } from "./rental-api";
         border-radius: 12px;
         overflow: hidden;
       }
-      .address-options button {
-        width: 100%;
-        text-align: left;
-        border: 0;
-        border-radius: 0;
+      .address-options li {
         padding: 12px;
         background: white;
+        cursor: pointer;
       }
-      .address-options button:hover {
+      .address-options li:hover,
+      .address-options li.active {
         background: #edf2ff;
+      }
+      .address-options li[aria-disabled=true] {
+        opacity: .55;
+        cursor: default;
       }
       .address-confirmation {
         padding: 12px;
@@ -136,6 +141,8 @@ export class AddressInputComponent implements OnDestroy {
   choosing = false;
   error = "";
   suggestions: { id: string; label: string }[] = [];
+  /** Option highlighted by the arrow keys; none until the user moves to one. */
+  active = -1;
   private generation = 0;
   private currentDraft = "";
   private timer?: ReturnType<typeof setTimeout>;
@@ -143,6 +150,7 @@ export class AddressInputComponent implements OnDestroy {
     clearTimeout(this.timer);
     this.generation++;
     this.suggestions = [];
+    this.active = -1;
     this.error = "";
     this.busy = false;
     this.choosing = false;
@@ -152,6 +160,7 @@ export class AddressInputComponent implements OnDestroy {
     this.query = value;
     this.selected = null;
     this.suggestions = [];
+    this.active = -1;
     this.error = "";
     this.choosing = false;
     const address: Address = {provider:"manual", label:value, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false};
@@ -176,6 +185,7 @@ export class AddressInputComponent implements OnDestroy {
       }>(this.workspaceId, "address/suggest", { query });
       if (generation !== this.generation) return;
       this.suggestions = result.suggestions;
+      this.active = -1;
       if (!result.suggestions.length)
         this.error =
           "Адрес не найден. Уточните запрос или заполните адрес вручную.";
@@ -183,6 +193,26 @@ export class AddressInputComponent implements OnDestroy {
       if (generation === this.generation) this.error = (e as Error).message;
     } finally {
       if (generation === this.generation) this.busy = false;
+    }
+  }
+  optionId(index: number) { return "rental-address-option-" + index; }
+  pick(index: number) {
+    const item = this.suggestions[index];
+    if (item && !this.choosing) void this.choose(item.id);
+  }
+  keys(event: KeyboardEvent) {
+    const count = this.suggestions.length;
+    if ((event.key === "ArrowDown" || event.key === "ArrowUp") && count) {
+      event.preventDefault();
+      this.active = event.key === "ArrowDown"
+        ? (this.active + 1) % count
+        : this.active <= 0 ? count - 1 : this.active - 1;
+    } else if (event.key === "Enter" && this.active >= 0 && this.active < count) {
+      event.preventDefault();
+      this.pick(this.active);
+    } else if (event.key === "Escape" && (count || this.busy) && !this.choosing) {
+      event.preventDefault();
+      this.resetPending();
     }
   }
   async choose(id: string) {
@@ -201,6 +231,7 @@ export class AddressInputComponent implements OnDestroy {
       this.selected = address;
       this.query = address.label;
       this.suggestions = [];
+      this.active = -1;
       this.addressChange.emit(address);
     } catch (e) {
       if (generation === this.generation) this.error = (e as Error).message;
