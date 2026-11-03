@@ -23,8 +23,7 @@ public class RentalDraftService {
 
   public ObjectNode list(String workspace) {
     ArrayNode items = array();
-    for (var row : drafts.list(workspace)) {
-      JsonNode data = parse(row.data());
+    for (var row : drafts.list(workspace))
       items.add(
           object(
               "id",
@@ -32,12 +31,11 @@ public class RentalDraftService {
               "revision",
               row.revision(),
               "title",
-              text(data.path("values"), "listing.title"),
+              row.title(),
               "address",
-              text(data.path("address"), "label"),
+              row.addressLabel(),
               "updatedAt",
               row.updated()));
-    }
     return object("drafts", items);
   }
 
@@ -75,13 +73,23 @@ public class RentalDraftService {
       throw new ApiException(400, "Достигнут лимит карточек аренды.");
     var next =
         new RentalDraftRepository.StoredDraft(
-            id, revision + 1, draft.toString(), Instant.now().toString());
+            id,
+            revision + 1,
+            draft.toString(),
+            textual(draft.path("values").path("listing.title")),
+            textual(draft.path("address").path("label")),
+            Instant.now().toString());
     boolean saved =
         revision == 0 ? drafts.insert(workspace, next) : drafts.update(workspace, next, revision);
     if (!saved)
       throw new ApiException(
           409, "Карточка изменена в другой вкладке. Сохраните свои правки перед обновлением.");
     return object("id", id, "revision", revision + 1);
+  }
+
+  /** The list shows only text; any other JSON value is not a title or an address. */
+  private static String textual(JsonNode value) {
+    return value.isTextual() ? value.asText() : "";
   }
 
   @Transactional
