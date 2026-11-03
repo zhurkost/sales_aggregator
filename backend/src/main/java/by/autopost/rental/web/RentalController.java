@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/workspace/rental")
 class RentalController {
+  /** The only size limit of a rental card, for every endpoint that receives one. */
+  static final int CARD_CHARACTERS = 250_000;
+
   private final Access access;
   private final RentalCatalog catalog;
   private final AddressService addresses;
@@ -56,15 +59,13 @@ class RentalController {
   @PostMapping("/normalize")
   ObjectNode normalize(HttpServletRequest req, @RequestBody JsonNode input) {
     access.require(req);
-    if (!input.isObject() || input.toString().length() > 250000)
-      throw new ApiException(400, "Некорректная карточка.");
-    return catalog.normalize(input);
+    return catalog.normalize(card(input));
   }
 
   @PostMapping("/prepare")
   ObjectNode prepare(HttpServletRequest req, @RequestBody JsonNode input) {
     access.require(req);
-    return catalog.prepare(input);
+    return catalog.prepare(card(input));
   }
 
   @GetMapping("/drafts")
@@ -74,7 +75,9 @@ class RentalController {
 
   @PostMapping("/extension-config")
   ObjectNode extensionConfig(HttpServletRequest req, @RequestBody JsonNode input) {
-    return publication.configuration(access.require(req).workspace(), input);
+    String workspace = access.require(req).workspace();
+    card(input.path("draft"));
+    return publication.configuration(workspace, input);
   }
 
   @GetMapping("/drafts/{id}")
@@ -84,7 +87,15 @@ class RentalController {
 
   @PostMapping("/drafts/{id}")
   ObjectNode save(HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
-    return drafts.save(access.require(req).workspace(), id, input);
+    String workspace = access.require(req).workspace();
+    card(input.path("draft"));
+    return drafts.save(workspace, id, input);
+  }
+
+  private static JsonNode card(JsonNode card) {
+    if (card.toString().length() > CARD_CHARACTERS)
+      throw new ApiException(413, "Карточка слишком большая.");
+    return card;
   }
 
   @PostMapping("/drafts/{id}/delete")

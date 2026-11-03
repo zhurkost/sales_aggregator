@@ -66,8 +66,6 @@ public class RentalDraftService {
         || version.asInt() < 0
         || version.asInt() == Integer.MAX_VALUE)
       throw new ApiException(400, "Некорректная карточка.");
-    if (draft.toString().length() > 250000)
-      throw new ApiException(413, "Карточка слишком большая.");
     int revision = version.asInt();
     if (revision == 0 && drafts.count(workspace) >= 500)
       throw new ApiException(400, "Достигнут лимит карточек аренды.");

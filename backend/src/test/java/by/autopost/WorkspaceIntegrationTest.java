@@ -70,6 +70,35 @@ class WorkspaceIntegrationTest {
   }
 
   @Test
+  void everyRentalCardEndpointHasTheSameSizeLimit() throws Exception {
+    var account = register();
+    String id = UUID.randomUUID().toString();
+    var oversized =
+        object(
+            "schemaVersion",
+            "example",
+            "values",
+            object("listing.description", "x".repeat(250_001)),
+            "platforms",
+            List.of("kufar"));
+    var requests = new LinkedHashMap<String, JsonNode>();
+    requests.put("rental/drafts/" + id, object("revision", 0, "draft", oversized));
+    requests.put("rental/normalize", oversized);
+    requests.put("rental/prepare", oversized);
+    requests.put("rental/extension-config", object("id", id, "draft", oversized));
+    for (var request : requests.entrySet()) {
+      var response = postJson(request.getKey(), account.cookie(), request.getValue(), 413);
+      assertEquals(
+          "Карточка слишком большая.",
+          text(parse(response.getResponse().getContentAsString()), "error"),
+          request.getKey());
+    }
+    // A card just under the limit passes the size check.
+    var fits = object("values", object("listing.description", "x".repeat(249_000)));
+    postJson("rental/drafts/" + id, account.cookie(), object("revision", 0, "draft", fits), 200);
+  }
+
+  @Test
   void deletesOnlyTheConfirmedRentalRevisionInTheCurrentWorkspace() throws Exception {
     var owner = register();
     var other = register();

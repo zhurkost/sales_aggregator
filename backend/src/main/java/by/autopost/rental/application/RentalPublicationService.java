@@ -19,8 +19,7 @@ public final class RentalPublicationService {
   }
 
   public ObjectNode configuration(String workspace, JsonNode input) {
-    if (!input.isObject() || input.toString().length() > 250000)
-      throw new ApiException(400, "Некорректная карточка.");
+    if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
     String id = clean(input, "id", 100);
     var saved = drafts.get(workspace, id);
     if (!saved.path("draft").equals(catalog.normalize(input.path("draft"))))
