@@ -142,6 +142,57 @@ class ReferenceBundleTest {
   }
 
   @Test
+  void browserJobCarriesDataReadyOfItsOwnPreparation() throws Exception {
+    var repo = fixture();
+    var manifest = (ObjectNode) read("manifest.json");
+    ((ObjectNode) manifest.path("platforms").path("example"))
+        .put("browser", "example.browser.json");
+    write("manifest.json", manifest);
+    write(
+        "example.browser.json",
+        object(
+            "format",
+            1,
+            "platform",
+            "example",
+            "startUrl",
+            "https://form.example/new",
+            "ready",
+            List.of(object("selector", "form")),
+            "controls",
+            List.of(
+                object("field", "rent", "action", "text", "selector", "input[name=rent]"),
+                object("field", "currency", "action", "select", "selector", "select")),
+            "setup",
+            List.of(),
+            "next",
+            List.of(),
+            "submit",
+            List.of()));
+    var catalog = new RentalCatalog(repo);
+    for (var values :
+        List.of(
+            object("rental.price", "1500", "rental.currency", "BYN"),
+            object("rental.currency", "BYN"))) {
+      var draft =
+          object(
+              "schemaVersion",
+              catalog.version(),
+              "modelVersion",
+              2,
+              "values",
+              values,
+              "platforms",
+              List.of("example"));
+      boolean clean = catalog.prepare(draft).path("platforms").get(0).path("issues").isEmpty();
+      var job = catalog.browser(draft).path("jobs").get(0);
+      assertTrue(job.path("dataReady").isBoolean(), values.toString());
+      assertEquals(clean, job.path("dataReady").asBoolean(), values.toString());
+      assertEquals(values.has("rental.price"), clean, values.toString());
+    }
+  }
+
+  @Test
   void snapshotsAreDefensiveAndCachedUntilFilesChange() throws Exception {
     var repo = fixture();
     var first = repo.snapshot();

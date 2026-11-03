@@ -56,6 +56,12 @@ class RentalPublicationTest {
     var launch = catalog.browser(draft);
     assertEquals(4, launch.path("jobs").size());
     for (var job : launch.path("jobs")) {
+      var prepared =
+          list(check.path("platforms")).stream()
+              .filter(p -> text(p, "platform").equals(text(job, "platform")))
+              .findFirst()
+              .orElseThrow();
+      assertEquals(prepared.path("dataReady"), job.path("dataReady"), text(job, "platform"));
       assertTrue(text(job, "startUrl").startsWith("https://"));
       var controls = list(job.path("controls"));
       assertTrue(controls.stream().anyMatch(c -> text(c, "action").equals("files")));
