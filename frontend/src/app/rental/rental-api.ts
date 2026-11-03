@@ -14,8 +14,21 @@ export async function rentalApi<T>(
     },
     ...(data === undefined ? {} : { body: JSON.stringify(data) }),
   });
-  const body = await response.json();
+  // A proxy (nginx 502/504) answers with HTML or an empty body, not with JSON.
+  const text = await response.text();
+  let body: { error?: unknown } | null;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Сервер временно недоступен (код ${response.status}). Изменения сохранятся при следующей попытке.`,
+    );
+  }
   if (!response.ok)
-    throw new Error(body.error || "Не удалось выполнить запрос.");
+    throw new Error(
+      typeof body?.error === "string" && body.error
+        ? body.error
+        : "Не удалось выполнить запрос.",
+    );
   return body as T;
 }

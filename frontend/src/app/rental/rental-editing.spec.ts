@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { RentalDraftStore } from "./rental-draft.store";
+import { rentalApi } from "./rental-api";
 import type { EditorSchema, Prepared } from "./rental-models";
 
 const schema: EditorSchema = {
@@ -358,6 +359,50 @@ describe("rental contacts from the active profile", () => {
       "contact.name": "Другой контакт",
       "contact.organization_name": "Компания",
     });
+    expect(store.dirty).toBe(true);
+    store.destroy();
+  });
+});
+
+describe("rental API errors", () => {
+  it("explains a proxy error page or an empty body instead of a JSON parse error", async () => {
+    for (const [status, body] of [
+      [502, "<html><body><h1>502 Bad Gateway</h1></body></html>"],
+      [504, ""],
+    ] as const) {
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => new Response(body, { status })),
+      );
+      await expect(rentalApi("owner", "drafts")).rejects.toThrow(
+        `Сервер временно недоступен (код ${status}). Изменения сохранятся при следующей попытке.`,
+      );
+    }
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => response({ error: "Карточка изменена" }, 409)),
+    );
+    await expect(rentalApi("owner", "drafts")).rejects.toThrow(
+      "Карточка изменена",
+    );
+  });
+
+  it("keeps unsaved edits and shows the outage message after a failed autosave", async () => {
+    vi.useFakeTimers();
+    const store = new RentalDraftStore(
+      () => "owner",
+      () => {},
+    );
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("<html>502</html>", { status: 502 })),
+    );
+    store.draft.values["listing.title"] = "Квартира";
+    store.changed();
+    await vi.advanceTimersByTimeAsync(1300);
+    expect(store.error).toBe(
+      "Сервер временно недоступен (код 502). Изменения сохранятся при следующей попытке.",
+    );
     expect(store.dirty).toBe(true);
     store.destroy();
   });
