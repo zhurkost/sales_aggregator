@@ -93,6 +93,75 @@ class RentalPublicationTest {
   }
 
   @Test
+  void cityRegionFromDadataDoesNotRejectTheCitySuggestion() {
+    for (String region : List.of("г Минск", "г. Минск", "город Минск")) {
+      var draft = partial();
+      draft.set(
+          "address",
+          object(
+              "provider",
+              "dadata",
+              "sourceId",
+              "way:25439815",
+              "label",
+              "г Минск, ул Брикета, д 18",
+              "countryIso",
+              "BY",
+              "region",
+              region,
+              "district",
+              "",
+              "settlement",
+              "г Минск",
+              "street",
+              "ул Брикета",
+              "house",
+              "18",
+              "block",
+              "",
+              "blockType",
+              "",
+              "precision",
+              "0",
+              "confirmed",
+              false,
+              "level",
+              "house",
+              "longitude",
+              "27.4150416",
+              "latitude",
+              "53.908548"));
+      var addressBefore = draft.path("address").deepCopy();
+      var job =
+          list(catalog.browser(draft).path("jobs")).stream()
+              .filter(j -> text(j, "platform").equals("realt"))
+              .findFirst()
+              .orElseThrow();
+      var controls = list(job.path("controls"));
+      var city =
+          controls.stream()
+              .filter(c -> text(c, "field").equals("realt.settlement"))
+              .findFirst()
+              .orElseThrow();
+      assertFalse(city.has("matchContext"), "City-region is already checked against primary label");
+      assertEquals("г Минск", text(city, "value"));
+      assertTrue(
+          controls.stream()
+              .anyMatch(
+                  c ->
+                      text(c, "field").equals("realt.street")
+                          && text(c, "value").equals("ул Брикета")));
+      assertTrue(
+          controls.stream()
+              .anyMatch(
+                  c ->
+                      text(c, "field").equals("realt.house_number")
+                          && text(c, "value").equals("18")));
+      assertEquals(addressBefore, draft.path("address"));
+    }
+  }
+
+  @Test
   void onlySavedSnapshotInOwnWorkspaceCanBeLaunched() {
     var drafts = mock(RentalDraftService.class);
     var service = new RentalPublicationService(drafts, catalog);

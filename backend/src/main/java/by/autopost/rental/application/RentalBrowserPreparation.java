@@ -34,6 +34,12 @@ final class RentalBrowserPreparation {
         var matchContext = array();
         for (var part : source.path("autocomplete").path("contextParts")) {
           String context = text(draft.path("address"), part.asText());
+          // A city may be its own first-level region (DaData's "г Минск").
+          // The city already matches the primary suggestion label; treating it as an
+          // additional oblast would reject the correct suggestion on another platform.
+          if (part.asText().equals("region")
+              && placeName(context).equals(placeName(text(draft.path("address"), "settlement"))))
+            continue;
           if (!context.isBlank()) matchContext.add(context);
         }
         if (!matchContext.isEmpty()) control.set("matchContext", matchContext);
@@ -59,5 +65,13 @@ final class RentalBrowserPreparation {
       jobs.add(recipe);
     }
     return object("format", 1, "schemaVersion", snapshot.version(), "jobs", jobs);
+  }
+
+  private String placeName(String value) {
+    return value
+        .toLowerCase(java.util.Locale.ROOT)
+        .replaceAll("\\s+", " ")
+        .trim()
+        .replaceFirst("^(?:г\\.?|город)\\s+", "");
   }
 }
