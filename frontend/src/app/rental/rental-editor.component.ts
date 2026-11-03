@@ -27,6 +27,15 @@ import {
   RentalAiResult,
 } from "./rental-models";
 
+const blankAddress = (a: Address | null) =>
+  !a || ![a.label, a.settlement, a.street, a.house, a.block, a.region, a.district].some(v => v?.trim());
+const plain = (v: string | undefined) => (v || "").trim().toLocaleLowerCase().replace(/\s+/g, " ");
+// Providers format labels differently; the house is identified by its parts when known.
+function houseKey(a: Address) {
+  const parts = [a.settlement, a.street, a.house, a.block].map(plain);
+  return parts.some(Boolean) ? parts.join("|") : plain(a.label);
+}
+
 @Component({
   selector: "app-rental-editor",
   standalone: true,
@@ -37,10 +46,14 @@ import {
 export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
   @Input() profileDefaults: RentalProfile = {};
-  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); }, () => this.profileDefaults);
+  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); this.resetFacts = null; }, () => this.profileDefaults);
   readonly ai = new RentalAiAssistant(this.store, () => this.workspaceId, address => this.replaceAddress(address), address => this.addressChanged(address));
   readonly view = new RentalViewModel(this.store);
   panel: "parameters" | "saved" | "result" | null = null;
+  /** Nearby facts removed by the last change of the confirmed house, until the next address change. */
+  resetFacts: { names: string[]; values: Record<string, JsonValue>; evidence: Record<string, string> } | null = null;
+  // The confirmed house the nearby facts belong to; typing over it does not forget it.
+  private house: { id: string; address: Address | null } = { id: "", address: null };
   private panelTrigger: HTMLElement | null = null;
   private focusTimer?: ReturnType<typeof setTimeout>;
   ngOnInit() { return this.store.load(); }
@@ -148,12 +161,41 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.changed();
   }
   private replaceAddress(address: Address | null) {
+    if (this.house.id !== this.id)
+      this.house = { id: this.id, address: this.draft.address?.confirmed ? this.draft.address : null };
+    const previous = this.house.address, cleared = blankAddress(address);
     this.draft.address = address;
+    this.resetFacts = null;
+    // Coordinates and native address parts belong to any address text.
     for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
       delete this.draft.values[key];
-    for (const key of this.schema?.card?.addressDependentFacts || []) { delete this.draft.values[key]; delete this.draft.aiEvidence?.[key]; }
     for (const p of this.platforms)
       for (const key of this.schema?.platforms[p].addressBoundFields || []) delete this.draft.extras[p]?.[key];
+    // Nearby facts belong to a confirmed house: typing and manual parts keep them.
+    if (cleared || (address?.confirmed && previous && houseKey(previous) !== houseKey(address))) this.dropFacts();
+    this.house.address = cleared ? null : address?.confirmed ? address : previous;
+  }
+  private dropFacts() {
+    const values: Record<string, JsonValue> = {}, evidence: Record<string, string> = {};
+    for (const key of this.schema?.card?.addressDependentFacts || []) {
+      if (hasValue(this.draft.values[key])) {
+        values[key] = this.draft.values[key];
+        const quote = this.draft.aiEvidence?.[key];
+        if (quote !== undefined) evidence[key] = quote;
+      }
+      delete this.draft.values[key];
+      delete this.draft.aiEvidence?.[key];
+    }
+    const ids = Object.keys(values);
+    if (ids.length) this.resetFacts = { names: ids.map(id => this.view.fieldName(id)), values, evidence };
+  }
+  restoreFacts() {
+    const facts = this.resetFacts;
+    if (this.busy || !facts) return;
+    Object.assign(this.draft.values, facts.values);
+    if (Object.keys(facts.evidence).length) Object.assign((this.draft.aiEvidence ||= {}), facts.evidence);
+    this.resetFacts = null;
+    this.changed();
   }
   setTyped(field: Field, value: JsonValue) {
     if (this.busy) return;

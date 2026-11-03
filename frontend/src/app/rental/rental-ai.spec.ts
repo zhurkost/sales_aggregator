@@ -51,12 +51,22 @@ describe("compact rental editor with AI",()=>{
     c.setTyped(field("price"),"1800");expect(c.draft.aiEvidence?.price).toBeUndefined();c.ngOnDestroy();
   });
   it("preserves a confirmed address and clears stale dependencies only when replacement is accepted",async()=>{
+    const address={provider:"dadata",countryIso:"BY",label:"Новый адрес",settlement:"Минск",street:"Новая",house:"2",confirmed:true};
+    const {c}=setup({...result,address});
+    c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
+    c.draft.address={...address,label:"Старый адрес",street:"Старая",house:"1",latitude:"53.9"}; c.draft.values.metro="old";
+    await c.fillFromDescription();expect(c.draft.address.label).toBe("Старый адрес");expect(c.aiAddress?.label).toBe("Новый адрес");expect(c.draft.values.metro).toBe("old");
+    c.acceptAiAddress();expect(c.draft.address.label).toBe("Новый адрес");expect(c.draft.values.metro).toBeUndefined();
+    expect(c.resetFacts?.values).toEqual({metro:"old"});c.ngOnDestroy();
+  });
+  it("accepting an unconfirmed AI address follows the typing rule and keeps nearby facts",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Новый адрес",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address});
     c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
     c.draft.address={...address,label:"Старый адрес",confirmed:true,latitude:"53.9"}; c.draft.values.metro="old";
-    await c.fillFromDescription();expect(c.draft.address.confirmed).toBe(true);expect(c.aiAddress?.label).toBe("Новый адрес");
-    c.acceptAiAddress();expect(c.draft.address.label).toBe("Новый адрес");expect(c.draft.address.confirmed).toBe(false);expect(c.draft.values.metro).toBeUndefined();c.ngOnDestroy();
+    await c.fillFromDescription();c.acceptAiAddress();
+    expect(c.draft.address.label).toBe("Новый адрес");expect(c.draft.address.confirmed).toBe(false);
+    expect(c.draft.values.metro).toBe("old");expect(c.resetFacts).toBeNull();c.ngOnDestroy();
   });
   it("does not apply a late AI response to a destroyed or changed card",async()=>{
     const {c}=setup();let done!:(r:Response)=>void;
@@ -96,9 +106,11 @@ describe("compact rental editor with AI",()=>{
     c.draft.address={...address,label:"Адрес A"};
     await c.fillFromDescription();expect(c.draft.values.metro).toBeUndefined();
     c.acceptAiAddress();expect(c.draft.address.label).toBe("Адрес B");expect(c.draft.values.metro).toBe("Метро B");
-    c.addressChanged({...address,label:"Адрес A"});
-    await c.fillFromDescription();c.addressChanged({...address,label:"Адрес C"});c.acceptAiAddress();c.acceptAiField(0);
-    expect(c.draft.address.label).toBe("Адрес C");expect(c.draft.values.metro).toBeUndefined();expect(c.aiAddress).toBeNull();c.ngOnDestroy();
+    c.addressChanged({...address,label:"Адрес A"});expect(c.draft.values.metro).toBe("Метро B");
+    c.setTyped(field("metro"),"Своё метро");
+    await c.fillFromDescription();expect(c.aiAddressFacts).toHaveLength(1);
+    c.addressChanged({...address,label:"Адрес C"});c.acceptAiAddress();c.acceptAiField(0);
+    expect(c.draft.address.label).toBe("Адрес C");expect(c.draft.values.metro).toBe("Своё метро");expect(c.aiAddress).toBeNull();c.ngOnDestroy();
   });
   it("keeps description and manual data after a provider error",async()=>{
     const {c}=setup();c.draft.values.price="1600";

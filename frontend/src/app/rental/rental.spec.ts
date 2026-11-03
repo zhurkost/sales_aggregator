@@ -61,9 +61,10 @@ describe("rental preparation editor", () => {
     const c = new RentalEditorComponent();
     c.schema = {card:{version:2,expandedGroups:[],addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
       platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress","coordinates"]}}};
+    c.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
     c.draft.values["location.metro"] = "Old metro";
     c.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
-    c.addressChanged({provider:"manual",label:"New",countryIso:"BY",settlement:"New",street:"",house:"",confirmed:false});
+    c.addressChanged({provider:"dadata",label:"New",countryIso:"BY",settlement:"New",street:"New",house:"2",confirmed:true});
     expect(c.draft.extras.example).toEqual({other:"Keep"});
     expect(c.draft.values["location.metro"]).toBeUndefined();
     c.ngOnDestroy();
@@ -459,5 +460,98 @@ describe("rental preparation editor", () => {
     expect(c.dirty).toBe(true);
     expect(c.draft.values["listing.title"]).toBe("Keep");
     c.ngOnDestroy();
+  });
+  describe("nearby facts follow the confirmed house", () => {
+    const facts = ["location.metro_1_station", "location.residential_complex"];
+    const house = (n: number, confirmed = true) => ({provider: confirmed ? "dadata" : "manual", label:`Минск, ул Брикета, д ${n}`, countryIso:"BY",
+      settlement:"Минск", street:"ул Брикета", house:String(n), confirmed, latitude:"53.9", longitude:"27.5"});
+    const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
+    function editor() {
+      const c = new RentalEditorComponent();
+      c.schema = {card:{version:2,expandedGroups:[],addressDependentFacts:facts}, canonicalValues:{}, version:"2", addressSuggestions:true,
+        category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
+          {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
+          {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},
+        platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress"]}}};
+      c.draft.address = house(18);
+      c.draft.values = {[facts[0]]:"Немига", [facts[1]]:"Новая Боровая", "location.latitude":"53.9"};
+      c.draft.aiEvidence = {[facts[0]]:"рядом метро Немига"};
+      c.draft.extras.example = {nativeAddress:"Брикета 18"};
+      return c;
+    }
+    it("typing in the search and editing parts keep nearby facts but drop coordinates", () => {
+      const c = editor();
+      for (const text of ["М", "Минск, Брик", "Минск, Брикета 1"]) c.addressChanged(typed(text));
+      c.addressChanged({...house(19), provider:"manual", confirmed:false});
+      expect(c.draft.values[facts[0]]).toBe("Немига");
+      expect(c.draft.values[facts[1]]).toBe("Новая Боровая");
+      expect(c.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
+      expect(c.draft.values["location.latitude"]).toBeUndefined();
+      expect(c.draft.extras.example).toEqual({});
+      expect(c.resetFacts).toBeNull();
+      c.addressChanged(house(18));
+      expect(c.draft.values[facts[0]]).toBe("Немига");
+      c.ngOnDestroy();
+    });
+    it("another confirmed house resets them once and Вернуть restores them", () => {
+      const c = editor();
+      c.addressChanged(typed("Минск, Брикета 2"));
+      c.addressChanged(house(20));
+      expect(c.draft.values[facts[0]]).toBeUndefined();
+      expect(c.draft.values[facts[1]]).toBeUndefined();
+      expect(c.resetFacts?.names).toEqual(["Метро", "Жилой комплекс"]);
+      c.dirty = false;
+      c.restoreFacts();
+      expect(c.draft.values[facts[0]]).toBe("Немига");
+      expect(c.draft.values[facts[1]]).toBe("Новая Боровая");
+      expect(c.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
+      expect(c.draft.address?.house).toBe("20");
+      expect(c.resetFacts).toBeNull();
+      expect(c.dirty).toBe(true);
+      c.addressChanged(house(20));
+      expect(c.draft.values[facts[0]]).toBe("Немига");
+      c.ngOnDestroy();
+    });
+    it("the restore offer lasts until the next address change", () => {
+      const c = editor();
+      c.addressChanged(house(20));
+      expect(c.resetFacts).not.toBeNull();
+      c.addressChanged(typed("Минск"));
+      expect(c.resetFacts).toBeNull();
+      c.restoreFacts();
+      expect(c.draft.values[facts[0]]).toBeUndefined();
+      c.ngOnDestroy();
+    });
+    it("clearing the address resets them", () => {
+      for (const empty of [null, typed("")]) {
+        const c = editor();
+        c.addressChanged(empty);
+        expect(c.draft.values[facts[0]]).toBeUndefined();
+        expect(c.resetFacts?.names).toEqual(["Метро", "Жилой комплекс"]);
+        c.ngOnDestroy();
+      }
+    });
+    it("shows what was reset with a Вернуть button", async () => {
+      const prepared = editor();
+      prepared.ngOnDestroy();
+      vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? prepared.schema : {drafts: []})));
+      const fixture = TestBed.createComponent(RentalEditorComponent);
+      fixture.componentRef.setInput("workspaceId", "owner");
+      fixture.detectChanges();
+      const c = fixture.componentInstance;
+      await vi.waitFor(() => expect(c.schema?.version).toBe("2"));
+      c.draft.address = prepared.draft.address;
+      Object.assign(c.draft.values, prepared.draft.values);
+      c.addressChanged(house(20));
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector(".reset-facts")?.textContent).toContain("Сброшены сведения рядом с домом: Метро, Жилой комплекс");
+      const restore = Array.from(el.querySelectorAll<HTMLButtonElement>(".reset-facts button")).find(b => b.textContent?.trim() === "Вернуть")!;
+      restore.click();
+      fixture.detectChanges();
+      expect(el.querySelector(".reset-facts")).toBeNull();
+      expect(c.draft.values[facts[0]]).toBe("Немига");
+      fixture.destroy();
+    });
   });
 });

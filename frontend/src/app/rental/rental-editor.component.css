@@ -11,6 +11,7 @@ h2 { margin:0; font-size:16px; }
 .ai-button { white-space:nowrap; background:#3e56d4; color:white; font-weight:650; border:0; border-radius:9px; padding:11px 17px; cursor:pointer; }
 .ai-status { color:#52627d; font-size:13px; }
 .address-section { padding:22px 0; margin-top:12px; border-top:1px solid #edf0f5; }
+.reset-facts { margin:10px 0 0; padding:10px 12px; border-radius:8px; background:#fff7e6; font-size:13px; color:#5b4a1f; }
 .extra-section { margin-top:24px; padding:19px 0; border-top:1px solid #edf0f5; }
 .fact-chips,.platform-row,.result-platforms { display:flex; flex-wrap:wrap; gap:8px; }
 .fact-chips { margin-top:12px; }

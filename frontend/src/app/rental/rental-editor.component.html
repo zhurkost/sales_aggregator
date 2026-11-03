@@ -28,6 +28,9 @@
       </section>
       <section class="address-section">
         <app-address-input [workspaceId]="workspaceId" [draftId]="id" [value]="draft.address" [disabled]="busy" [compact]="true" (addressChange)="addressChanged($event)" />
+        @if (resetFacts) {
+          <p class="reset-facts" role="status">Сброшены сведения рядом с домом: {{ resetFacts.names.join(", ") }} <button type="button" class="text-button" [disabled]="busy" (click)="restoreFacts()">Вернуть</button></p>
+        }
       </section>
       <section class="main-section" aria-label="Основные характеристики">
         <app-rental-fields class="main-fields" [fields]="mainFields" [values]="draft.values" [choices]="schema.canonicalValues" [labels]="schema.card?.valueLabels || {}" [evidence]="draft.aiEvidence || {}" [disabled]="busy" (edit)="editField($event)" />
