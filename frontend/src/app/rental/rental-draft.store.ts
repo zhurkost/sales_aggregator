@@ -63,13 +63,26 @@ export class RentalDraftStore {
   get platforms() {
     return Object.keys(this.schema?.platforms || {});
   }
+  /** Full list from the server: on editor load and when «Мои квартиры» opens. */
   async refresh() {
+    await this.queue.catch(() => {});
     this.drafts = (
       await rentalApi<{ drafts: RentalDraftStore["drafts"] }>(
         this.workspaceId(),
         "drafts",
       )
     ).drafts;
+  }
+  // Same projection and order (latest first) as the server list, without re-reading it.
+  private listed(id: string, revision: number, draft: RentalDraft) {
+    const title = draft.values["listing.title"];
+    const item = {
+      id,
+      revision,
+      title: title === null || Array.isArray(title) ? "" : String(title ?? ""),
+      address: draft.address?.label || "",
+    };
+    this.drafts = [item, ...this.drafts.filter((d) => d.id !== id)];
   }
   changed() {
     this.editVersion++;
@@ -157,7 +170,7 @@ export class RentalDraftStore {
           this.dirty = this.editVersion !== version;
           this.status = this.dirty ? "Есть новые изменения" : "Сохранено";
         }
-        if (!this.destroyed) await this.refresh();
+        this.listed(id, result.revision, snapshot);
       });
     this.queue = save;
     return save;

@@ -230,6 +230,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   openPanel(panel: NonNullable<RentalEditorComponent["panel"]>) {
     this.panelTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     this.panel = panel;
+    if (panel === "saved") this.store.refresh().catch(e => { this.error = (e as Error).message; });
     clearTimeout(this.focusTimer);
     this.focusTimer = setTimeout(() => document.getElementById("rental-panel-title")?.focus(), 0);
   }

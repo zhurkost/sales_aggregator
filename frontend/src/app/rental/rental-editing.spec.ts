@@ -148,6 +148,69 @@ describe("rental editing and validation", () => {
     }
   });
 
+  it("updates «Мои квартиры» locally after autosaves and re-reads it only when the panel opens", async () => {
+    let revision = 0;
+    const other = { id: "other", title: "Другая", address: "", revision: 3 };
+    const fetch = vi.fn(async (url: string, _init?: RequestInit) =>
+      response(
+        url.endsWith("/editor")
+          ? schema
+          : url.endsWith("/drafts")
+            ? { drafts: [other] }
+            : { revision: ++revision },
+      ),
+    );
+    vi.stubGlobal("fetch", fetch);
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    const c = fixture.componentInstance,
+      el = fixture.nativeElement as HTMLElement;
+    try {
+      await vi.waitFor(() => expect(c.drafts).toEqual([other]));
+      fetch.mockClear();
+      vi.useFakeTimers();
+      for (const title of ["Квартира", "Квартира у метро", "Квартира у метро Немига"]) {
+        c.draft.values["listing.title"] = title;
+        c.changed();
+        await vi.advanceTimersByTimeAsync(1300);
+      }
+      c.addressChanged({
+        provider: "manual",
+        label: "Минск, Брикета 18",
+        countryIso: "BY",
+        settlement: "",
+        street: "",
+        house: "",
+        confirmed: false,
+      });
+      await vi.advanceTimersByTimeAsync(1300);
+      expect(
+        fetch.mock.calls.map(([url, init]) => `${init?.method} ${url}`),
+      ).toEqual(Array(4).fill(`POST /api/workspace/rental/drafts/${c.id}`));
+      expect(c.drafts).toEqual([
+        {
+          id: c.id,
+          revision: 4,
+          title: "Квартира у метро Немига",
+          address: "Минск, Брикета 18",
+        },
+        other,
+      ]);
+      fixture.detectChanges();
+      expect(el.textContent).toContain("Мои квартиры · 2");
+      c.openPanel("saved");
+      await vi.advanceTimersByTimeAsync(0);
+      expect(
+        fetch.mock.calls.filter(
+          ([url, init]) => init?.method === "GET" && url.endsWith("/drafts"),
+        ),
+      ).toHaveLength(1);
+    } finally {
+      fixture.destroy();
+    }
+  });
+
   it("ignores a late validation response after editing and after changing apartments", async () => {
     vi.useFakeTimers();
     const store = new RentalDraftStore(
