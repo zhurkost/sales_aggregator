@@ -3,7 +3,7 @@ package by.autopost.rental.web;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.Access;
-import by.autopost.AddressService;
+import by.autopost.rental.address.AddressService;
 import by.autopost.rental.application.*;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -2,7 +2,7 @@ package by.autopost.rental.ai;
 
 import static by.autopost.shared.Json.*;
 
-import by.autopost.AddressService;
+import by.autopost.rental.address.AddressService;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

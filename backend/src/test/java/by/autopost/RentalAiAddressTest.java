@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import by.autopost.ai.AiGateway;
+import by.autopost.rental.address.*;
 import by.autopost.rental.ai.*;
 import by.autopost.rental.application.RentalCatalog;
 import by.autopost.rental.catalog.FileReferenceRepository;
@@ -51,32 +52,45 @@ class RentalAiAddressTest {
             "0"));
   }
 
-  class Provider extends AddressService {
+  /** Replaces the DaData transport. */
+  class Upstream implements AddressProvider {
     List<String> queries = new ArrayList<>();
-    List<String> workspaces = new ArrayList<>();
     JsonNode response = array(List.of(raw()));
     JsonNode confirmation;
     ApiException failure;
 
-    Provider() {
-      super("test", "", "");
-    }
-
     @Override
-    JsonNode fetch(String query, int count) {
+    public List<DadataSuggestion> suggest(String query, int count) {
       queries.add(query);
       if (failure != null) throw failure;
-      return count == 1 && confirmation != null ? confirmation : response;
+      List<DadataSuggestion> result = new ArrayList<>();
+      for (var item : count == 1 && confirmation != null ? confirmation : response)
+        result.add(DadataSuggestion.parse(item));
+      return result;
+    }
+  }
+
+  class Provider extends AddressService {
+    final Upstream upstream;
+    List<String> workspaces = new ArrayList<>();
+
+    Provider() {
+      this(new Upstream());
+    }
+
+    Provider(Upstream upstream) {
+      super(upstream);
+      this.upstream = upstream;
     }
 
     @Override
-    public synchronized ObjectNode suggest(String workspace, String query) {
+    public ObjectNode suggest(String workspace, String query) {
       workspaces.add(workspace);
       return super.suggest(workspace, query);
     }
 
     @Override
-    public synchronized ObjectNode select(String workspace, String id) {
+    public ObjectNode select(String workspace, String id) {
       workspaces.add(workspace);
       return super.select(workspace, id);
     }
@@ -110,7 +124,7 @@ class RentalAiAddressTest {
     assertEquals("27.4150416", text(address, "longitude"));
     assertTrue(address.path("confirmed").asBoolean());
     assertEquals(List.of("workspace", "workspace"), provider.workspaces);
-    assertEquals(List.of(LABEL, "г Минск, ул Брикета, д 18"), provider.queries);
+    assertEquals(List.of(LABEL, "г Минск, ул Брикета, д 18"), provider.upstream.queries);
     assertEquals(1, result.path("suggestions").size());
     var draft =
         object(
@@ -149,8 +163,8 @@ class RentalAiAddressTest {
   void noMatchAndProviderFailuresKeepLiteralPartsAndOtherFacts() {
     for (int status : List.of(0, 429, 503, 502)) {
       var provider = new Provider();
-      provider.response = array();
-      if (status != 0) provider.failure = new ApiException(status, "unavailable");
+      provider.upstream.response = array();
+      if (status != 0) provider.upstream.failure = new ApiException(status, "unavailable");
       var result = analyze(provider, LABEL);
       var address = result.path("address");
       assertEquals(status == 0 ? "not_found" : "unavailable", text(address, "resolution"));
@@ -180,26 +194,27 @@ class RentalAiAddressTest {
                 "RU")
             .entrySet()) {
       var provider = new Provider();
-      ((ObjectNode) provider.response.get(0).path("data")).put(pair.getKey(), pair.getValue());
+      ((ObjectNode) provider.upstream.response.get(0).path("data"))
+          .put(pair.getKey(), pair.getValue());
       var result = analyze(provider, LABEL);
       assertFalse(result.path("address").path("confirmed").asBoolean(), pair.getKey());
-      assertEquals(1, provider.queries.size());
+      assertEquals(1, provider.upstream.queries.size());
     }
   }
 
   @Test
   void ambiguousOrIncompleteEvidenceNeverSelectsFirstSuggestion() {
     var provider = new Provider();
-    provider.response = array(List.of(raw(), raw()));
+    provider.upstream.response = array(List.of(raw(), raw()));
     assertEquals("ambiguous", text(analyze(provider, LABEL).path("address"), "resolution"));
-    assertEquals(1, provider.queries.size());
+    assertEquals(1, provider.upstream.queries.size());
     provider = new Provider();
     assertFalse(
         analyze(provider, "город Минск, ул. Брикета")
             .path("address")
             .path("confirmed")
             .asBoolean());
-    assertEquals(1, provider.queries.size());
+    assertEquals(1, provider.upstream.queries.size());
   }
 
   @Test
@@ -207,7 +222,7 @@ class RentalAiAddressTest {
     var provider = new Provider();
     var changed = raw();
     ((ObjectNode) changed.path("data")).put("block", "2");
-    provider.confirmation = array(List.of(changed));
+    provider.upstream.confirmation = array(List.of(changed));
     var result = analyze(provider, LABEL);
     assertEquals("ambiguous", text(result.path("address"), "resolution"));
     assertEquals("", text(result.path("address"), "block"));
@@ -223,7 +238,7 @@ class RentalAiAddressTest {
             "Сдам квартиру",
             object("address", object("label", LABEL, "quote", LABEL)));
     new RentalAiAddressResolver(provider).resolve("workspace", result);
-    assertTrue(provider.queries.isEmpty());
+    assertTrue(provider.upstream.queries.isEmpty());
     assertTrue(result.path("address").isNull());
   }
 
@@ -237,7 +252,7 @@ class RentalAiAddressTest {
             "г Минск ул Брикета д. 18"))
       assertTrue(
           LiteralAddress.matches(
-              LiteralAddress.parse(label, object()), AddressService.normalize(raw())),
+              LiteralAddress.parse(label, object()), DadataSuggestion.parse(raw()).address()),
           label);
     var parsed =
         LiteralAddress.parse(
@@ -255,7 +270,7 @@ class RentalAiAddressTest {
                 "8",
                 "sourceId",
                 "fake"));
-    assertTrue(LiteralAddress.matches(parsed, AddressService.normalize(raw())));
+    assertTrue(LiteralAddress.matches(parsed, DadataSuggestion.parse(raw()).address()));
     assertEquals("", text(parsed, "district"));
     assertEquals("", text(parsed, "block"));
     assertFalse(parsed.has("sourceId"));
