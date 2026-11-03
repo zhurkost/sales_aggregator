@@ -4,6 +4,9 @@ import { type Photo } from "../../../../lib/workspace";
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 
+/** Версия расширения, которую требует аренда; её же предлагает ссылка на ZIP. */
+export const REQUIRED_EXTENSION_VERSION = "0.9.2";
+
 type Job = {
   id: string;
   platform: string;
@@ -25,6 +28,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) store!: RentalDraftStore;
   @Input({ required: true }) workspaceId = "";
   @Input({ required: true }) draftId = "";
+  readonly requiredVersion = REQUIRED_EXTENSION_VERSION;
   mode: "automatic" | "assist" = "automatic";
   busy = false;
   photosBusy = false;
@@ -84,7 +88,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     if (this.busy || this.store.busy || !this.store.draft.platforms.length)
       return;
     if (!this.ready) {
-      this.error = "Установите расширение 0.9.2 и обновите вкладку Автопоста.";
+      this.error = `Установите расширение ${REQUIRED_EXTENSION_VERSION} и обновите вкладку Автопоста.`;
       return;
     }
     this.busy = true;

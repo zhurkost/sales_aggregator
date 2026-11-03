@@ -16,3 +16,11 @@ test('rental presentation and projections do not own persistence or AI requests'
   assert.doesNotMatch(read('rental-ai.assistant.ts'), /rental-view\.model/, 'AI depends on the model, not presentation');
   assert.doesNotMatch(read('rental-models.ts'), /fetch\(|from ["']@angular|rental-api/, 'data contracts are independent');
 });
+
+test('rental asks for the extension version that the download link ships', () => {
+  const required = read('rental-publication.component.ts').match(/export const REQUIRED_EXTENSION_VERSION = "([\d.]+)"/)?.[1];
+  const manifest = JSON.parse(readFileSync(new URL('../extension/manifest.json', import.meta.url), 'utf8'));
+  assert.equal(required, manifest.version);
+  for (const name of ['rental-publication.component.ts', 'rental-publication.component.html'])
+    assert.doesNotMatch(read(name).replace(/REQUIRED_EXTENSION_VERSION = "[\d.]+"/, ''), /\b\d+\.\d+\.\d+\b/, name);
+});

@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
-import { RentalPublicationComponent } from "./rental-publication.component";
+import {
+  REQUIRED_EXTENSION_VERSION,
+  RentalPublicationComponent,
+} from "./rental-publication.component";
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 const extension = vi.fn(async () => ({
@@ -24,9 +27,35 @@ describe("publication of incomplete rental cards", () => {
     await c.ngOnChanges();
     expect(c.ready).toBe(false);
     await c.publish();
-    expect(c.error).toContain("0.9.1");
+    expect(c.error).toContain(REQUIRED_EXTENSION_VERSION);
     expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
     c.ngOnDestroy(); c.store.destroy();
+  });
+  it("offers the download of the required extension version when it is missing", async () => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
+    });
+    const fixture = TestBed.createComponent(RentalPublicationComponent),
+      store = new RentalDraftStore(
+        () => "owner",
+        () => {},
+      );
+    extension.mockRejectedValueOnce(new Error("no extension"));
+    fixture.componentRef.setInput("store", store);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.componentRef.setInput("draftId", store.id);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const link = fixture.nativeElement.querySelector(
+      'a[href="/autopost-extension.zip"]',
+    ) as HTMLAnchorElement;
+    expect(fixture.componentInstance.ready).toBe(false);
+    expect(link.textContent?.trim()).toBe(
+      "Скачать расширение " + REQUIRED_EXTENSION_VERSION,
+    );
+    fixture.destroy();
+    store.destroy();
   });
   it("photo changes revise a saved card without altering its attributes", async () => {
     const c = new RentalPublicationComponent(gateway);
@@ -119,7 +148,7 @@ describe("publication of incomplete rental cards", () => {
     c.draftId = c.store.id;
     await c.publish();
     expect(extension).not.toHaveBeenCalled();
-    expect(c.error).toContain("0.9.1");
+    expect(c.error).toContain(REQUIRED_EXTENSION_VERSION);
     c.ready = true;
     c.mode = "assist";
     vi.spyOn(c.store, "flush").mockResolvedValue();
