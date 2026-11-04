@@ -213,6 +213,55 @@ class RentalPublicationTest {
   }
 
   @Test
+  void browserRecipeRejectsKeysAndTypesTheExtensionDoesNotRead() {
+    var snapshot =
+        new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
+    Map<String, java.util.function.Consumer<ObjectNode>> unknown =
+        Map.of(
+            "selectedClas",
+            r -> control(r, 9).put("selectedClas", "chip__filled-green"),
+            "observedAt",
+            r -> r.put("observedAt", "2026-11-02"),
+            "optionsSelector",
+            r -> control(r, 0).put("optionsSelector", "[role=option]"),
+            "matchText",
+            r -> ((ObjectNode) r.path("submit").get(0)).put("matchText", false),
+            "script",
+            r -> ((ObjectNode) r.path("ready").get(0)).put("script", "alert(1)"));
+    for (var edit : unknown.entrySet()) {
+      var recipe = (ObjectNode) snapshot.browser("kufar");
+      edit.getValue().accept(recipe);
+      var error =
+          assertThrows(
+              ApiException.class,
+              () ->
+                  new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe),
+              edit.getKey());
+      assertTrue(
+          error.getMessage().contains("неизвестный ключ " + edit.getKey()), error.getMessage());
+    }
+    List<java.util.function.Consumer<ObjectNode>> mistyped =
+        List.of(
+            r -> ((ObjectNode) r.path("ready").get(0)).put("absent", "yes"),
+            r -> control(r, 9).put("selectedClass", "chip filled"),
+            r -> control(r, 9).put("label", ""),
+            r -> control(r, 23).set("uiLabels", object("BYR", 1)),
+            r -> control(r, 23).put("displaySelector", ""),
+            r -> ((ObjectNode) r.path("setup").get(0)).put("matchText", "false"));
+    for (var edit : mistyped) {
+      var recipe = (ObjectNode) snapshot.browser("kufar");
+      edit.accept(recipe);
+      assertThrows(
+          ApiException.class,
+          () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe));
+    }
+  }
+
+  static ObjectNode control(ObjectNode recipe, int index) {
+    return (ObjectNode) recipe.path("controls").get(index);
+  }
+
+  @Test
   void browserContractRejectsUnknownFieldsAndExecutableActions() {
     var snapshot =
         new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
