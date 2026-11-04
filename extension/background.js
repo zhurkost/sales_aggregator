@@ -206,6 +206,7 @@ async function appRequest(message, sender) {
         "rental-publishing",
         "rental-address-suggestions",
         "rental-checked-submit",
+        "rental-integration-version",
         "all-platforms",
         "category-routing",
         "queue",

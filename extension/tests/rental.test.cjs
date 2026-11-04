@@ -17,10 +17,12 @@ const recipe = (p) =>
       "utf8",
     ),
   );
+const RULES = "a".repeat(64);
 const payload = () => ({
   id: "card",
   profileId: "owner",
   revision: 1,
+  integrationVersion: RULES,
   mode: "automatic",
   draft: { values: {} },
   jobs: Object.keys(core.starts).map(recipe),
@@ -54,6 +56,14 @@ test("rental jobs accept only a boolean dataReady from the server", () => {
     const p = payload();
     p.jobs[0].dataReady = dataReady;
     assert.throws(() => core.validate(p), /Обновите правила площадки/);
+  }
+});
+test("rental launch carries the integration version the server compiled its jobs with", () => {
+  assert.equal(core.validate(payload()).integrationVersion, RULES);
+  for (const integrationVersion of [undefined, "", 7, "<script>", "x".repeat(121)]) {
+    const p = payload();
+    p.integrationVersion = integrationVersion;
+    assert.throws(() => core.validate(p), /Обновите правила площадки/, String(integrationVersion));
   }
 });
 function worker() {
@@ -479,6 +489,39 @@ test("final submission requires automatic mode and a server check without issues
       "the app is asked to verify only an allowed submission",
     );
   }
+});
+test("the final click is verified against the launched revision and integration version", async () => {
+  const { handle, created, sent, app } = worker();
+  const launch = (integrationVersion) => {
+    const p = payload();
+    p.integrationVersion = integrationVersion;
+    p.jobs = [recipe("kufar")];
+    p.jobs[0].dataReady = true;
+    return handle(
+      { kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true },
+      app,
+    );
+  };
+  const verified = async () => {
+    const sender = { url: core.starts.kufar, tab: { id: created.at(-1).id } };
+    await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender);
+    assert.equal((await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok, true);
+    return sent.filter((s) => s.message.kind === "RENTAL_VERIFY").at(-1).message;
+  };
+  await launch(RULES);
+  assert.equal(created.length, 1);
+  const first = await verified();
+  assert.equal(first.revision, 1);
+  assert.equal(first.integrationVersion, RULES);
+  // Same card revision under new rules: a new launch, never a resume of jobs filled by old ones.
+  await assert.rejects(() => launch("b".repeat(64)), /Остановите предыдущий запуск/);
+  await handle(
+    { kind: "RENTAL_REQUEST", type: "RENTAL_STOP", payload: { profileId: "owner", id: "card" }, userGesture: true },
+    app,
+  );
+  await launch("b".repeat(64));
+  assert.equal(created.length, 2);
+  assert.equal((await verified()).integrationVersion, "b".repeat(64));
 });
 async function page(task, wake) {
   const { Window } = await import("happy-dom");

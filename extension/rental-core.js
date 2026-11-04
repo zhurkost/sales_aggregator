@@ -28,6 +28,9 @@
       !["assist", "automatic"].includes(payload.mode)
     )
       throw new Error("Неверная карточка аренды.");
+    // The server's version of the plans and recipes these jobs were compiled with.
+    if (!id(payload.integrationVersion))
+      throw new Error("Обновите правила площадки.");
     if (
       !Array.isArray(payload.jobs) ||
       !payload.jobs.length ||

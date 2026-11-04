@@ -391,10 +391,10 @@ test('default GPU mappings and per-marketplace corrections survive the worker qu
 
 test('real worker registration routes rental jobs to all four sites without legacy listing validation',async()=>{
  const w=createWorker();
- const input={id:'rental',profileId:'owner',revision:1,mode:'assist',draft:{values:{}},photos:[],jobs:['kufar','onliner','realt','domovita'].map(p=>({...JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/apartments_long_term_rent/runtime/browser_'+p+'.json'),'utf8')),controls:[]}))};
+ const input={id:'rental',profileId:'owner',revision:1,integrationVersion:'a'.repeat(64),mode:'assist',draft:{values:{}},photos:[],jobs:['kufar','onliner','realt','domovita'].map(p=>({...JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/apartments_long_term_rent/runtime/browser_'+p+'.json'),'utf8')),controls:[]}))};
  const result=await w.request({kind:'RENTAL_REQUEST',type:'RENTAL_RUN',payload:input,userGesture:true});
  assert.equal(result.jobs.length,4);assert.equal(w.created.length,4);
- const ping=await w.request({kind:'APP_REQUEST',type:'PING'});assert.ok(ping.capabilities.includes('rental-publishing'));
+ const ping=await w.request({kind:'APP_REQUEST',type:'PING'});assert.ok(ping.capabilities.includes('rental-publishing'));assert.ok(ping.capabilities.includes('rental-integration-version'));
  const task=await w.request({kind:'RENTAL_PAGE',type:'GET'},input.jobs[2].startUrl,12);assert.equal(task.task.recipe.platform,'realt');
  const frame=await w.request({kind:'RENTAL_PAGE',type:'GET'},input.jobs[2].startUrl,12,1);assert.equal(frame,undefined);
 });

@@ -81,8 +81,14 @@
       if (message.type !== "RENTAL_RUN")
         throw new Error("Неизвестная команда.");
       const data = core.validate(payload);
-      const old = own.find((b) => b.revision === data.revision);
-      // Retrying a click or a timed-out response must not open/publish duplicates.
+      // A launch is one card revision under one integration version (plans and recipes).
+      // Retrying a click or a timed-out response must not open/publish duplicates;
+      // new rules for the same revision are a new launch, not a resume of the old jobs.
+      const old = own.find(
+        (b) =>
+          b.revision === data.revision &&
+          b.integrationVersion === data.integrationVersion,
+      );
       if (old) {
         if (old.jobs.every((j) => j.status === "stopped") || old.jobs.some((j) => j.fillBlocked)) {
           old.sourceTabId = sender.tab.id;
@@ -133,6 +139,7 @@
       const batch = {
         id: data.id,
         revision: data.revision,
+        integrationVersion: data.integrationVersion,
         profileId: data.profileId,
         origin: senderOrigin,
         sourceTabId: sender.tab.id,
@@ -225,6 +232,7 @@
         id: b.id,
         draft: b.draft,
         revision: b.revision,
+        integrationVersion: b.integrationVersion,
       });
       if (!verified?.ok)
         throw new Error(

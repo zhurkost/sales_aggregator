@@ -145,7 +145,8 @@
     const api = runtime();
     if (!api || sender.id !== api.id) return;
     if(message?.kind==='RENTAL_VERIFY' && message.origin===origin) {
-      rentalConfig(message).then(data=>reply(data.revision===message.revision?{ok:true}:{error:'Карточка изменена. Остановите старый запуск и передайте новую версию.'}),e=>reply({error:e.message}));return true;
+      // The final click needs the launched card revision and the rules it was filled with.
+      rentalConfig(message).then(data=>reply(data.revision!==message.revision?{error:'Карточка изменена. Остановите старый запуск и передайте новую версию.'}:data.integrationVersion!==message.integrationVersion?{error:'Правила площадок обновились. Остановите старый запуск и передайте карточку заново.'}:{ok:true}),e=>reply({error:e.message}));return true;
     }
     if(message?.kind==='VERIFY_SNAPSHOT'  && message.origin===origin) {
       recipes([message.item],message.profileId,false,true).then(()=>reply({ok:true}),e=>reply({error:e.message||'Не удалось сверить карточку с кабинетом.'}));

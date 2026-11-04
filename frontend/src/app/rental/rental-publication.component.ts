@@ -5,7 +5,7 @@ import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 
 /** Версия расширения, которую требует аренда; её же предлагает ссылка на ZIP. */
-export const REQUIRED_EXTENSION_VERSION = "0.9.3";
+export const REQUIRED_EXTENSION_VERSION = "0.9.4";
 
 type Job = {
   id: string;
@@ -64,7 +64,9 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-publishing") &&
         ping["capabilities"].includes("rental-address-suggestions") &&
         // Older extensions would press the final button without the server check.
-        ping["capabilities"].includes("rental-checked-submit");
+        ping["capabilities"].includes("rental-checked-submit") &&
+        // ...or after a release replaced the rules the form was filled with.
+        ping["capabilities"].includes("rental-integration-version");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)

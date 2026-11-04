@@ -62,6 +62,16 @@ test('rental launch obtains a server recipe after a trusted click and never send
  const request=bridge.catalogRequests[0].options;assert.equal(request.headers['X-Autopost-Workspace'],'owner');assert.equal('photos' in JSON.parse(request.body),false);
  assert.equal(bridge.forwarded[0].kind,'RENTAL_REQUEST');assert.deepEqual(bridge.forwarded[0].payload.jobs,recipe.jobs);assert.equal(bridge.forwarded[0].payload.mode,'assist');
 });
+test('before the final click the app confirms the launched revision and integration version',async()=>{
+ const current={format:1,id:'rental',revision:3,integrationVersion:'b'.repeat(64),jobs:[]};
+ const bridge=createBridge({fetchCatalog:async()=>Response.json(current)});
+ const verify=(revision,integrationVersion)=>new Promise(resolve=>bridge.fromExtension({kind:'RENTAL_VERIFY',origin:bridge.origin,profileId:'owner',id:'rental',draft:{values:{}},revision,integrationVersion},{id:'test-id'},resolve));
+ assert.equal((await verify(3,'b'.repeat(64))).ok,true);
+ assert.match((await verify(2,'b'.repeat(64))).error,/Карточка изменена/);
+ assert.match((await verify(3,'a'.repeat(64))).error,/Правила площадок обновились/);
+ const body=JSON.parse(bridge.catalogRequests[0].options.body);
+ assert.equal(Object.keys(body).sort().join(),'draft,id');
+});
 test('catalog failures prevent launch; no stale dictionary or executable response is used',async()=>{
   const bridge=createBridge({fetchCatalog:async()=>Response.json({error:'Catalog unavailable'},{status:503})});
   await bridge.event('click',{isTrusted:true});await bridge.request('RUN');
