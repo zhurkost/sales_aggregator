@@ -44,9 +44,7 @@ public class RentalCatalog {
 
   private ObjectNode normalize(ReferenceSnapshot snapshot, JsonNode draft) {
     if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
-    return snapshot.card().path("version").asInt() < 2
-        ? draft.deepCopy()
-        : new CardMigration(snapshot).normalize(draft);
+    return new CardMigration(snapshot).normalize(draft);
   }
 
   public ObjectNode prepare(JsonNode input) {

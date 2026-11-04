@@ -94,8 +94,7 @@ public final class EditorSchemaBuilder {
             snapshot.version(),
             "runtimeVersion",
             ReferenceContract.PREPARATION_VERSION);
-    if (snapshot.card().path("version").asInt() >= 2)
-      EditorCardDecorator.decorate(result, snapshot.card());
+    EditorCardDecorator.decorate(result, snapshot.card());
     return result;
   }
 

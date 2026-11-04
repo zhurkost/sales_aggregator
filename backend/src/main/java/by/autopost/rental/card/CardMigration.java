@@ -5,6 +5,7 @@ import static by.autopost.rental.model.Values.*;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.rental.catalog.ReferenceSnapshot;
+import by.autopost.rental.model.ReferenceContract;
 import by.autopost.rental.model.Values;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -33,7 +34,7 @@ public final class CardMigration {
     ObjectNode address =
         draft.path("address").isObject() ? (ObjectNode) draft.get("address") : object();
     JsonNode projection = catalog.card().path("addressProjection");
-    if (draft.path("modelVersion").asInt() < 2) {
+    if (draft.path("modelVersion").asInt() < ReferenceContract.CARD_MODEL_VERSION) {
       projection
           .fields()
           .forEachRemaining(
@@ -202,7 +203,7 @@ public final class CardMigration {
                         });
               });
     draft.set("extras", extras);
-    draft.put("modelVersion", 2);
+    draft.put("modelVersion", ReferenceContract.CARD_MODEL_VERSION);
     draft.put("schemaVersion", catalog.version());
     return draft;
   }

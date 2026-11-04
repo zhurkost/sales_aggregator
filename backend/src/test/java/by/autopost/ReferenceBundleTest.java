@@ -40,6 +40,17 @@ class ReferenceBundleTest {
   }
 
   @Test
+  void cardModelOtherThanVersion2IsRejected() throws Exception {
+    var repo = fixture();
+    var card = (ObjectNode) read("card.json");
+    card.put("version", 1);
+    write("card.json", card);
+    var error = assertThrows(ApiException.class, repo::snapshot);
+    assertEquals(409, error.status);
+    assertTrue(error.getMessage().contains("версии 2"), error.getMessage());
+  }
+
+  @Test
   void ambiguousLookupIsRejectedButExplicitPartialCoverageCannotInventCodes() throws Exception {
     var repo = fixture();
     var plan = read("example.plan.json");
