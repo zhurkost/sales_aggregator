@@ -59,7 +59,7 @@ class RentalController {
   @PostMapping("/normalize")
   ObjectNode normalize(HttpServletRequest req, @RequestBody JsonNode input) {
     access.require(req);
-    return catalog.normalize(card(input));
+    return catalog.acceptRules(card(input));
   }
 
   @PostMapping("/prepare")

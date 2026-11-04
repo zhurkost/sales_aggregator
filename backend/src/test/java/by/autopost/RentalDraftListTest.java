@@ -2,11 +2,10 @@ package by.autopost;
 
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import by.autopost.rental.application.RentalCatalog;
 import by.autopost.rental.application.RentalDraftService;
 import by.autopost.rental.persistence.JdbcRentalDraftRepository;
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.nio.file.Path;
 import java.util.*;
@@ -33,7 +32,7 @@ class RentalDraftListTest {
   void listReadsStoredColumnsAndNeverParsesCardData() {
     var jdbc = database();
     var service =
-        new RentalDraftService(new JdbcRentalDraftRepository(jdbc), mock(RentalCatalog.class));
+        new RentalDraftService(new JdbcRentalDraftRepository(jdbc));
     var draft =
         object(
             "values",
@@ -52,10 +51,40 @@ class RentalDraftListTest {
   }
 
   @Test
+  void openingReturnsTheSavedCardUnchanged() {
+    var service = new RentalDraftService(new JdbcRentalDraftRepository(database()));
+    var draft =
+        object(
+            "modelVersion",
+            2,
+            "schemaVersion",
+            "rules-of-an-older-release",
+            "values",
+            object("listing.title", "Двушка", "location.street", "Old street"),
+            "extras",
+            object("kufar", object("rooms", 2)),
+            "platforms",
+            List.of("kufar"));
+    service.save("ws", "flat", object("revision", 0, "draft", draft));
+    var opened = service.get("ws", "flat");
+    assertEquals(draft, opened.path("draft"));
+    assertEquals(draft, service.get("ws", "flat").path("draft"));
+  }
+
+  @Test
+  void oldCardModelIsNotOpenedUntilMigrated() {
+    var service = new RentalDraftService(new JdbcRentalDraftRepository(database()));
+    service.save(
+        "ws", "flat", object("revision", 0, "draft", object("values", object("rooms", "2"))));
+    var error = assertThrows(ApiException.class, () -> service.get("ws", "flat"));
+    assertEquals(409, error.status);
+    assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
+  }
+
+  @Test
   void saveRewritesTitleAndAddressOfTheList() {
     var service =
-        new RentalDraftService(
-            new JdbcRentalDraftRepository(database()), mock(RentalCatalog.class));
+        new RentalDraftService(new JdbcRentalDraftRepository(database()));
     service.save(
         "ws",
         "flat",

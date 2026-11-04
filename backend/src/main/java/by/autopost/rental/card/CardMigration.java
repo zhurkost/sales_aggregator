@@ -7,6 +7,7 @@ import static by.autopost.shared.Json.*;
 import by.autopost.rental.catalog.ReferenceSnapshot;
 import by.autopost.rental.model.ReferenceContract;
 import by.autopost.rental.model.Values;
+import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -27,6 +28,12 @@ public final class CardMigration {
   /** A card saved before the current card model; it has to be migrated before use. */
   public static boolean outdated(JsonNode draft) {
     return draft.path("modelVersion").asInt() < ReferenceContract.CARD_MODEL_VERSION;
+  }
+
+  /** Reading, checking and publishing accept only cards of the current model. */
+  public static void requireCurrent(JsonNode draft) {
+    if (outdated(draft))
+      throw new ApiException(409, "Карточку нужно перенести командой миграции.");
   }
 
   public CardMigration(ReferenceSnapshot catalog) {
@@ -109,7 +116,7 @@ public final class CardMigration {
         draft.set("address", address);
       }
     }
-    // Address object is the only editable source. Legacy projections never reach preparation.
+    // Address object is the only editable source.
     projection.fieldNames().forEachRemaining(values::remove);
     ObjectNode extras = object();
     if (draft.path("extras").isObject())

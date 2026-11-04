@@ -156,6 +156,11 @@ class RentalCardTest {
     return new RentalCatalog(new FileReferenceRepository(dir.toString()));
   }
 
+  /** The one-time conversion with the current fixture files. */
+  CardMigration migration() {
+    return new CardMigration(new FileReferenceRepository(dir.toString()).snapshot());
+  }
+
   @Test
   void canonicalValuesComeOnlyFromCardJson() throws Exception {
     fixture();
@@ -221,12 +226,12 @@ class RentalCardTest {
             object("one", object("rooms", 2, "address", "Old native address")),
             "platforms",
             List.of("one"));
-    var migrated = c.normalize(old);
+    var migrated = migration().normalize(old);
     assertEquals("one", migrated.path("values").path("rental.rooms").asText());
     assertFalse(migrated.path("values").has("location.street"));
     assertTrue(migrated.path("extras").isEmpty());
     assertEquals(3, migrated.path("legacy").size());
-    assertEquals(migrated, c.normalize(migrated));
+    assertEquals(migrated, migration().normalize(migrated));
     var output = c.prepare(migrated).path("platforms").get(0);
     assertFalse(output.path("values").has("address"));
     assertFalse(output.path("dataReady").asBoolean());
@@ -235,19 +240,20 @@ class RentalCardTest {
 
   @Test
   void unambiguousLegacyValueBecomesCanonicalAndSurvivesSecondOpen() throws Exception {
-    var c = fixture();
+    fixture();
     var migrated =
-        c.normalize(
-            object(
-                "values",
-                object(),
-                "extras",
-                object("fifth", object("rooms", 2)),
-                "platforms",
-                List.of("fifth")));
+        migration()
+            .normalize(
+                object(
+                    "values",
+                    object(),
+                    "extras",
+                    object("fifth", object("rooms", 2)),
+                    "platforms",
+                    List.of("fifth")));
     assertEquals("two", migrated.path("values").path("rental.rooms").asText());
     assertTrue(migrated.path("legacy").isEmpty());
-    assertEquals(migrated, c.normalize(migrated));
+    assertEquals(migrated, migration().normalize(migrated));
   }
 
   @Test
@@ -292,11 +298,12 @@ class RentalCardTest {
                 true),
             "extras",
             object());
-    var migrated = c.normalize(old);
+    var migrated = migration().normalize(old);
     assertTrue(migrated.path("legacy").isEmpty());
     assertEquals("City", migrated.path("address").path("settlement").asText());
     var unconfirmed =
-        c.normalize(object("values", object("location.latitude", "53.9"), "extras", object()));
+        migration()
+            .normalize(object("values", object("location.latitude", "53.9"), "extras", object()));
     assertEquals("53.9", unconfirmed.path("legacy").get(0).path("value").asText());
   }
 
@@ -347,6 +354,58 @@ class RentalCardTest {
       assertEquals(1, migrated.path("legacy").size());
       assertEquals(oldList, migrated.path("legacy").get(0).path("value"));
     }
+  }
+
+  @Test
+  void oldCardModelIsNeitherPreparedNorAcceptedUntilMigrated() throws Exception {
+    var c = fixture();
+    var old =
+        object(
+            "schemaVersion",
+            c.version(),
+            "values",
+            object("rental.rooms", "two"),
+            "extras",
+            object("one", object("rooms", 2)),
+            "platforms",
+            List.of("one"));
+    for (Runnable call : List.<Runnable>of(() -> c.prepare(old), () -> c.acceptRules(old))) {
+      var error = assertThrows(ApiException.class, call::run);
+      assertEquals(409, error.status);
+      assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
+    }
+  }
+
+  @Test
+  void acceptingNewRulesKeepsTheCardAndOnlyMovesItsVersion() throws Exception {
+    var c = fixture();
+    var card =
+        object(
+            "modelVersion",
+            2,
+            "schemaVersion",
+            "previous",
+            "values",
+            object("rental.rooms", "two"),
+            "extras",
+            object(),
+            "legacy",
+            List.of(object("platform", "one", "field", "rooms", "value", 3)),
+            "platforms",
+            List.of("one"));
+    var accepted = c.acceptRules(card);
+    assertEquals(c.version(), text(accepted, "schemaVersion"));
+    accepted.put("schemaVersion", "previous");
+    assertEquals(card, accepted);
+  }
+
+  @Test
+  void projectedAddressValuesComeOnlyFromTheAddress() throws Exception {
+    var values = object("location.street", "Old street", "rental.rooms", "two");
+    CardProjection.projectAddress(values, object(), fixture().card());
+    assertEquals(object("rental.rooms", "two"), values);
+    CardProjection.projectAddress(values, object("street", "New street"), fixture().card());
+    assertEquals("New street", text(values, "location.street"));
   }
 
   @Test

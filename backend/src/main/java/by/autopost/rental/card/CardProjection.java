@@ -15,7 +15,9 @@ import java.util.Map;
 import java.util.Set;
 
 public final class CardProjection {
+  /** The address object is the only source: stale projected values never reach preparation. */
   public static void projectAddress(ObjectNode values, JsonNode address, JsonNode card) {
+    card.path("addressProjection").fieldNames().forEachRemaining(values::remove);
     card.path("addressProjection")
         .fields()
         .forEachRemaining(

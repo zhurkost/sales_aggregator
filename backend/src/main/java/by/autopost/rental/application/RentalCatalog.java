@@ -38,13 +38,16 @@ public class RentalCatalog {
     return references.snapshot().plan(platform);
   }
 
-  public ObjectNode normalize(JsonNode draft) {
-    return normalize(references.snapshot(), draft);
-  }
-
-  private ObjectNode normalize(ReferenceSnapshot snapshot, JsonNode draft) {
+  /**
+   * «Обновить поля карточки»: a card of the current model keeps its data and is checked against
+   * the current rules from now on. Older cards are converted only by --migrate-rental-drafts.
+   */
+  public ObjectNode acceptRules(JsonNode draft) {
     if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
-    return new CardMigration(snapshot).normalize(draft);
+    CardMigration.requireCurrent(draft);
+    ObjectNode accepted = draft.deepCopy();
+    accepted.put("schemaVersion", references.snapshot().version());
+    return accepted;
   }
 
   public ObjectNode prepare(JsonNode input) {
@@ -60,10 +63,10 @@ public class RentalCatalog {
   private ObjectNode prepare(ReferenceSnapshot snapshot, JsonNode input) {
     if (!text(input, "schemaVersion").equals(snapshot.version()))
       throw new ApiException(409, "Правила обновились. Обновите поля карточки.");
-    input = normalize(snapshot, input);
+    if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
+    CardMigration.requireCurrent(input);
     ObjectNode values =
         input.path("values").isObject() ? (ObjectNode) input.get("values").deepCopy() : object();
-    JsonNode extras = input.path("extras");
     CardProjection.projectAddress(values, input.path("address"), snapshot.card());
     var selected = list(input.path("platforms"));
     if (selected.isEmpty() || selected.size() > snapshot.platforms().size())
@@ -75,17 +78,9 @@ public class RentalCatalog {
       if (!seen.add(platform)) continue;
       var schema = snapshot.schema(platform);
       var plan = snapshot.plan(platform);
-      var specific = extras.path(platform);
-      if (!specific.isObject() && !specific.isMissingNode())
-        throw new ApiException(400, "Уточнения площадки должны быть объектом.");
+      // A card of model 2 keeps every fact in values; platform extras are not a second source.
       var prepared =
-          new PreparationEngine()
-              .prepare(
-                  schema,
-                  plan,
-                  values,
-                  specific.isObject() ? (ObjectNode) specific : object(),
-                  input.path("address"));
+          new PreparationEngine().prepare(schema, plan, values, object(), input.path("address"));
       CardProjection.annotate(prepared, plan, input);
       output.add(prepared);
     }

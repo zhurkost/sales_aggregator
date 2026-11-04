@@ -2,6 +2,7 @@ package by.autopost.rental.application;
 
 import static by.autopost.shared.Json.*;
 
+import by.autopost.rental.card.CardMigration;
 import by.autopost.shared.ApiException;
 import by.autopost.shared.Json;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,11 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RentalDraftService {
   private final RentalDraftRepository drafts;
-  private final RentalCatalog catalog;
 
-  public RentalDraftService(RentalDraftRepository drafts, RentalCatalog catalog) {
+  public RentalDraftService(RentalDraftRepository drafts) {
     this.drafts = drafts;
-    this.catalog = catalog;
   }
 
   public ObjectNode list(String workspace) {
@@ -44,16 +43,11 @@ public class RentalDraftService {
         drafts
             .find(workspace, id)
             .orElseThrow(() -> new ApiException(404, "Карточка аренды не найдена."));
-    return object("id", id, "revision", row.revision(), "draft", readableDraft(parse(row.data())));
-  }
-
-  private JsonNode readableDraft(JsonNode data) {
-    try {
-      return catalog.normalize(data);
-    } catch (ApiException e) {
-      if (e.status == 503) return data;
-      throw e;
-    }
+    // The stored card is returned as saved; an older card model waits for the migration.
+    JsonNode draft = parse(row.data());
+    if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
+    CardMigration.requireCurrent(draft);
+    return object("id", id, "revision", row.revision(), "draft", draft);
   }
 
   @Transactional

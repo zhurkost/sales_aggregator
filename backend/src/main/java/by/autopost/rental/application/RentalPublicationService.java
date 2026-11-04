@@ -21,8 +21,9 @@ public final class RentalPublicationService {
   public ObjectNode configuration(String workspace, JsonNode input) {
     if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
     String id = clean(input, "id", 100);
+    if (!input.path("draft").isObject()) throw new ApiException(400, "Некорректная карточка.");
     var saved = drafts.get(workspace, id);
-    if (!saved.path("draft").equals(catalog.normalize(input.path("draft"))))
+    if (!saved.path("draft").equals(input.path("draft")))
       throw new ApiException(
           409, "Карточка изменилась. Дождитесь сохранения и повторите публикацию.");
     var result = catalog.browser(saved.path("draft"));

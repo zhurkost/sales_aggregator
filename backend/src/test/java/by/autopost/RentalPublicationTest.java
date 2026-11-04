@@ -6,12 +6,19 @@ import static org.mockito.Mockito.*;
 
 import by.autopost.rental.application.*;
 import by.autopost.rental.catalog.*;
+import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.nio.file.Path;
 import java.util.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 class RentalPublicationTest {
+  @TempDir Path dir;
+
   final RentalCatalog catalog =
       new RentalCatalog(new FileReferenceRepository("../data/rental/apartments_long_term_rent"));
 
@@ -174,7 +181,7 @@ class RentalPublicationTest {
     var draft = partial();
     String id = UUID.randomUUID().toString();
     when(drafts.get("owner", id))
-        .thenReturn(object("id", id, "revision", 3, "draft", catalog.normalize(draft)));
+        .thenReturn(object("id", id, "revision", 3, "draft", draft.deepCopy()));
     when(drafts.get("other", id)).thenThrow(new ApiException(404, "Не найдено"));
     var request = object("id", id, "draft", draft);
     assertEquals(3, service.configuration("owner", request).path("revision").asInt());
@@ -182,6 +189,27 @@ class RentalPublicationTest {
     ((ObjectNode) request.path("draft").path("values"))
         .put("listing.description", "Изменено после сохранения");
     assertThrows(ApiException.class, () -> service.configuration("owner", request));
+  }
+
+  @Test
+  void savedCardOfAnOldModelIsNeverPublished() {
+    var drafts =
+        new RentalDraftService(
+            new JdbcRentalDraftRepository(
+                new JdbcTemplate(
+                    new DriverManagerDataSource("jdbc:sqlite:" + dir.resolve("drafts.sqlite")))));
+    var old = partial();
+    old.remove("modelVersion");
+    String id = UUID.randomUUID().toString();
+    drafts.save("owner", id, object("revision", 0, "draft", old));
+    var service = new RentalPublicationService(drafts, catalog);
+    var error =
+        assertThrows(
+            ApiException.class,
+            () -> service.configuration("owner", object("id", id, "draft", old)));
+    assertEquals(409, error.status);
+    assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
+    assertThrows(ApiException.class, () -> catalog.browser(old));
   }
 
   @Test

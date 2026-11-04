@@ -92,7 +92,10 @@ class PreparationEngineTest {
     nativePlan.put("schema_hash", "changed-codes");
     assertThrows(
         ApiException.class,
-        () -> catalog.prepare(object("schemaVersion", previous, "platforms", List.of("kufar"))));
+        () ->
+            catalog.prepare(
+                object(
+                    "schemaVersion", previous, "modelVersion", 2, "platforms", List.of("kufar"))));
   }
 
   JsonNode option(String id, String type, JsonNode rule, JsonNode... choices) {

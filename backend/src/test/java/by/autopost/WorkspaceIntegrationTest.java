@@ -30,6 +30,8 @@ class WorkspaceIntegrationTest {
     String id = UUID.randomUUID().toString();
     var draft =
         object(
+            "modelVersion",
+            2,
             "schemaVersion",
             "example",
             "values",
@@ -103,7 +105,7 @@ class WorkspaceIntegrationTest {
     var owner = register();
     var other = register();
     String id = UUID.randomUUID().toString(), keep = UUID.randomUUID().toString();
-    var draft = object("values", object("listing.title", "Delete test"));
+    var draft = object("modelVersion", 2, "values", object("listing.title", "Delete test"));
     String path = "rental/drafts/" + id;
     postJson(path, owner.cookie(), object("revision", 0, "draft", draft), 200);
     postJson("rental/drafts/" + keep, owner.cookie(), object("revision", 0, "draft", draft), 200);
