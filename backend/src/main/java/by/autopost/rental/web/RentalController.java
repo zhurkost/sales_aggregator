@@ -78,10 +78,12 @@ class RentalController {
     return catalog.acceptRules(card(input));
   }
 
+  /** The check of the card being edited: {id, draft}; the photos are those stored with it. */
   @PostMapping("/prepare")
   ObjectNode prepare(HttpServletRequest req, @RequestBody JsonNode input) {
-    access.require(req);
-    return catalog.prepare(card(input));
+    String workspace = access.require(req).workspace();
+    var draft = card(input.path("draft"));
+    return catalog.prepare(draft, photos.count(workspace, clean(input, "id", 100)));
   }
 
   @GetMapping("/drafts")

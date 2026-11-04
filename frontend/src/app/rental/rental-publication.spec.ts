@@ -310,6 +310,20 @@ describe("publication of incomplete rental cards", () => {
     c.ngOnDestroy();
     c.store.destroy();
   });
+  it("checks the card again after a photo change, as photos are part of the check", async () => {
+    const requests = photoServer();
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store.revision = 1;
+    c.store.check.checked = true;
+    const refresh = vi.spyOn(c.store.check, "refresh").mockResolvedValue();
+    await c.add([new File(["a"], "room.jpg")]);
+    expect(requests.map((r) => r.path)).toEqual(["card/photos"]);
+    expect(c.store.check.stale).toBe(true);
+    expect(refresh).toHaveBeenCalledOnce();
+    c.ngOnDestroy();
+    c.store.destroy();
+  });
   it("shows the server's photo limit and does not compress a batch beyond it", async () => {
     const requests = photoServer();
     const c = new RentalPublicationComponent(gateway);

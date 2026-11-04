@@ -243,6 +243,7 @@ export class RentalDraftStore {
         );
         // Whether a platform gets photos is part of the check.
         this.check.invalidate();
+        if (this.check.checked && !this.destroyed) void this.check.refresh();
       });
     this.queue = change;
     return change;

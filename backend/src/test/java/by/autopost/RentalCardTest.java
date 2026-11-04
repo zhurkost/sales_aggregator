@@ -224,7 +224,8 @@ class RentalCardTest {
                 "extras",
                 object(),
                 "platforms",
-                List.of("one", "two", "three", "four", "fifth")));
+                List.of("one", "two", "three", "four", "fifth")),
+            0);
     assertEquals(5, result.path("platforms").size());
     for (var p : result.path("platforms")) assertEquals(2, p.path("values").path("rooms").asInt());
   }
@@ -250,7 +251,7 @@ class RentalCardTest {
     assertTrue(migrated.path("extras").isEmpty());
     assertEquals(3, migrated.path("legacy").size());
     assertEquals(migrated, migration().normalize(migrated));
-    var output = c.prepare(migrated).path("platforms").get(0);
+    var output = c.prepare(migrated, 0).path("platforms").get(0);
     assertFalse(output.path("values").has("address"));
     assertFalse(output.path("checksPassed").asBoolean());
     assertEquals("Old native address", old.path("extras").path("one").path("address").asText());
@@ -389,7 +390,7 @@ class RentalCardTest {
             object("one", object("rooms", 2)),
             "platforms",
             List.of("one"));
-    for (Runnable call : List.<Runnable>of(() -> c.prepare(old), () -> c.acceptRules(old))) {
+    for (Runnable call : List.<Runnable>of(() -> c.prepare(old, 0), () -> c.acceptRules(old))) {
       var error = assertThrows(ApiException.class, call::run);
       assertEquals(409, error.status);
       assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
@@ -441,10 +442,10 @@ class RentalCardTest {
             object(),
             "platforms",
             List.of("fifth"));
-    var error = assertThrows(ApiException.class, () -> c.prepare(card));
+    var error = assertThrows(ApiException.class, () -> c.prepare(card, 0));
     assertEquals(409, error.status);
     assertEquals("Правила обновились. Обновите поля карточки.", error.getMessage());
-    assertDoesNotThrow(() -> c.prepare(c.acceptRules(card)));
+    assertDoesNotThrow(() -> c.prepare(c.acceptRules(card), 0));
   }
 
   @Test

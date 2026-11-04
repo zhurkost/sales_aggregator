@@ -80,7 +80,8 @@ class ReferenceBundleTest {
                     "values",
                     object("rental.currency", "BYN"),
                     "platforms",
-                    List.of("example")))
+                    List.of("example")),
+                0)
             .path("platforms")
             .get(0);
     assertFalse(result.path("values").has("currency"));
@@ -185,7 +186,8 @@ class ReferenceBundleTest {
                       "values",
                       object("rental.price", "1 500,50", "rental.currency", code),
                       "platforms",
-                      List.of("example")))
+                      List.of("example")),
+                  0)
               .path("platforms")
               .get(0);
       assertEquals("1500.5", result.path("values").path("rent").asText());
@@ -264,7 +266,7 @@ class ReferenceBundleTest {
     ((ObjectNode) card.path("values")).put("rental.price", "1600");
     var saved = drafts.save("owner", id, object("revision", 1, "draft", card));
     assertEquals(2, saved.path("revision").asInt());
-    var check = after.prepare(card).path("platforms").get(0);
+    var check = after.prepare(card, 0).path("platforms").get(0);
     assertTrue(check.path("issues").isEmpty(), check.toString());
     assertEquals(1600, check.path("values").path("rent").asInt());
     var relaunched =
@@ -327,8 +329,8 @@ class ReferenceBundleTest {
               values,
               "platforms",
               List.of("example"));
-      boolean clean = catalog.prepare(draft).path("platforms").get(0).path("issues").isEmpty();
-      var job = catalog.browser(draft).path("jobs").get(0);
+      boolean clean = catalog.prepare(draft, 0).path("platforms").get(0).path("issues").isEmpty();
+      var job = catalog.browser(draft, 0).path("jobs").get(0);
       assertTrue(job.path("checksPassed").isBoolean(), values.toString());
       assertFalse(job.has("dataReady"), values.toString());
       assertEquals(clean, job.path("checksPassed").asBoolean(), values.toString());
@@ -494,7 +496,8 @@ class ReferenceBundleTest {
                     "values",
                     object("rental.price", "100", "rental.currency", "BYN"),
                     "platforms",
-                    List.of("example"))));
+                    List.of("example")),
+                0));
     assertEquals(1, calls[0]);
   }
 }

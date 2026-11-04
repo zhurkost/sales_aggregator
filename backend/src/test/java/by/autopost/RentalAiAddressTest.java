@@ -140,7 +140,7 @@ class RentalAiAddressTest {
             List.of("realt"),
             "address",
             address);
-    var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+    var controls = list(catalog.browser(draft, 0).path("jobs").get(0).path("controls"));
     for (var pair :
         Map.of(
                 "realt.settlement",

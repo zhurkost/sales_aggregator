@@ -201,10 +201,17 @@ describe("rental editing and validation", () => {
         fetch.mock.calls.filter(([url]) => url.endsWith("/prepare")),
       ).toHaveLength(1);
       const writes = fetch.mock.calls.filter(
-        ([, init]) =>
-          init?.method === "POST" && JSON.parse(String(init.body)).draft,
+        ([url, init]) => init?.method === "POST" && url.includes("/drafts/"),
       );
       expect(writes).toHaveLength(1);
+      // The check names the card, so the server adds the photos stored with it.
+      const check = fetch.mock.calls.find(([url]) => url.endsWith("/prepare"))!;
+      expect(JSON.parse(String(check[1]?.body))).toEqual({
+        id: c.store.id,
+        draft: expect.objectContaining({
+          values: expect.objectContaining({ "listing.description": "Сдам квартиру" }),
+        }),
+      });
       expect(
         JSON.parse(String(writes[0][1]?.body)).draft.values[
           "listing.description"

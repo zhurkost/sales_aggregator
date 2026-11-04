@@ -253,13 +253,13 @@ class RentalCoverageTest {
                 List.of("example"));
     // The manual field is empty: nothing would be lost, the checks pass.
     var empty = card.apply(object("rental.price", "1500"));
-    var passed = catalog.prepare(empty).path("platforms").get(0);
+    var passed = catalog.prepare(empty, 0).path("platforms").get(0);
     assertTrue(passed.path("issues").isEmpty(), passed.toString());
     assertTrue(passed.path("checksPassed").asBoolean());
-    assertTrue(catalog.browser(empty).path("jobs").get(0).path("checksPassed").asBoolean());
+    assertTrue(catalog.browser(empty, 0).path("jobs").get(0).path("checksPassed").asBoolean());
     // A filled manual field would be missing from an automatically submitted ad.
     var filled = card.apply(object("rental.price", "1500", "rental.currency", "BYN"));
-    var blocked = catalog.prepare(filled).path("platforms").get(0);
+    var blocked = catalog.prepare(filled, 0).path("platforms").get(0);
     assertFalse(blocked.path("checksPassed").asBoolean());
     assertEquals(1, blocked.path("issues").size(), blocked.toString());
     var issue = blocked.path("issues").get(0);
@@ -270,7 +270,7 @@ class RentalCoverageTest {
         text(issue, "message"));
     assertEquals(1, blocked.path("manual").size());
     // The extension sees only checksPassed; the assisted launch still fills the form.
-    var job = catalog.browser(filled).path("jobs").get(0);
+    var job = catalog.browser(filled, 0).path("jobs").get(0);
     assertFalse(job.path("checksPassed").asBoolean());
     assertEquals("rent", text(job.path("controls").get(0), "field"));
   }

@@ -87,7 +87,7 @@ class WorkspaceIntegrationTest {
     var requests = new LinkedHashMap<String, JsonNode>();
     requests.put("rental/drafts/" + id, object("revision", 0, "draft", oversized));
     requests.put("rental/normalize", oversized);
-    requests.put("rental/prepare", oversized);
+    requests.put("rental/prepare", object("id", id, "draft", oversized));
     requests.put("rental/extension-config", object("id", id, "draft", oversized));
     for (var request : requests.entrySet()) {
       var response = postJson(request.getKey(), account.cookie(), request.getValue(), 413);
@@ -181,6 +181,22 @@ class WorkspaceIntegrationTest {
     var saved = getJson(path, owner.cookie(), 200);
     assertEquals(4, saved.path("revision").asInt());
     assertEquals(second, text(saved.path("photos").get(0), "id"));
+    // The check counts the photos of this card in this cabinet only.
+    var card =
+        object(
+            "modelVersion",
+            2,
+            "cardVersion",
+            text(getJson("rental/editor", owner.cookie(), 200), "cardVersion"),
+            "values",
+            object(),
+            "platforms",
+            List.of("onliner"));
+    var check = object("id", id, "draft", card);
+    var own = postJson("rental/prepare", owner.cookie(), check, 200).getResponse();
+    var foreign = postJson("rental/prepare", other.cookie(), check, 200).getResponse();
+    assertFalse(own.getContentAsString().contains("photos_required"));
+    assertTrue(foreign.getContentAsString().contains("photos_required"));
   }
 
   static final Path DATA;

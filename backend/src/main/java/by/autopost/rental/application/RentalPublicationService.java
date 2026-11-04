@@ -35,11 +35,12 @@ public class RentalPublicationService {
     if (!saved.path("draft").equals(input.path("draft")))
       throw new ApiException(
           409, "Карточка изменилась. Дождитесь сохранения и повторите публикацию.");
-    var result = catalog.browser(saved.path("draft"));
+    var stored = photos.forExtension(workspace, id);
+    var result = catalog.browser(saved.path("draft"), stored.size());
     result.put("id", id);
     result.set("revision", saved.path("revision"));
     // The extension puts these into the form's file inputs; the browser keeps no copy of its own.
-    result.set("photos", MAPPER.valueToTree(photos.forExtension(workspace, id)));
+    result.set("photos", MAPPER.valueToTree(stored));
     return result;
   }
 }

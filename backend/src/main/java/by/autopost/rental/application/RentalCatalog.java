@@ -7,9 +7,13 @@ import by.autopost.rental.catalog.*;
 import by.autopost.rental.preparation.PreparationEngine;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
+import by.autopost.rental.model.SchemaFields;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 
@@ -51,21 +55,23 @@ public class RentalCatalog {
     return accepted;
   }
 
-  public ObjectNode prepare(JsonNode input) {
+  /** The check of a card that has {@code photos} photos stored with it. */
+  public ObjectNode prepare(JsonNode input, int photos) {
     ReferenceSnapshot snapshot = references.snapshot();
-    return prepare(snapshot, input);
+    return prepare(snapshot, input, photos);
   }
 
-  public ObjectNode browser(JsonNode input) {
+  public ObjectNode browser(JsonNode input, int photos) {
     ReferenceSnapshot snapshot = references.snapshot();
-    return new RentalBrowserPreparation().compile(snapshot, prepare(snapshot, input), input);
+    return new RentalBrowserPreparation()
+        .compile(snapshot, prepare(snapshot, input, photos), input);
   }
 
   /**
    * Only the card model is compared: plans, schemas and browser recipes may change under an open
    * card, the card's values keep their meaning and are prepared with the current rules.
    */
-  private ObjectNode prepare(ReferenceSnapshot snapshot, JsonNode input) {
+  private ObjectNode prepare(ReferenceSnapshot snapshot, JsonNode input, int photos) {
     if (!text(input, "cardVersion").equals(snapshot.cardVersion()))
       throw new ApiException(409, "Правила обновились. Обновите поля карточки.");
     if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
@@ -86,11 +92,23 @@ public class RentalCatalog {
       // A card of model 2 keeps every fact in values; platform extras are not a second source.
       var prepared =
           new PreparationEngine().prepare(schema, plan, values, object(), input.path("address"));
+      var photoFields = photoFields(snapshot.browser(platform));
+      requirePhotos(prepared, schema, photoFields, photos);
       CardProjection.annotate(prepared, plan, input);
       // What the form receives and what the user enters there: the check shows both.
       var transfer =
           snapshot.coverage(platform).transfer(prepared.path("values"), input.path("address"));
-      prepared.set("form", MAPPER.valueToTree(transfer.form()));
+      var form = new ArrayList<CardTransfer.FormValue>();
+      for (var value : transfer.form())
+        if (!photoFields.contains(value.field())) form.add(value);
+      if (photos > 0)
+        for (String field : photoFields)
+          form.add(
+              new CardTransfer.FormValue(
+                  field,
+                  text(SchemaFields.fields(schema).get(field), "name"),
+                  TextNode.valueOf(photos + " фото")));
+      prepared.set("form", MAPPER.valueToTree(form));
       prepared.set("manual", MAPPER.valueToTree(transfer.manual()));
       // An automatic submission would publish the ad without the values entered by hand.
       if (!transfer.manual().isEmpty()) {
@@ -111,5 +129,41 @@ public class RentalCatalog {
       output.add(prepared);
     }
     return object("platforms", output);
+  }
+
+  /** The fields the extension puts the stored photos into: the recipe's file inputs. */
+  private static List<String> photoFields(JsonNode recipe) {
+    var fields = new ArrayList<String>();
+    for (var control : recipe.path("controls"))
+      if (text(control, "action").equals("files")) fields.add(text(control, "field"));
+    return fields;
+  }
+
+  /**
+   * A photo field is filled from the photos stored with the card, not from the links in the card:
+   * the plan's own «required» remark on it is replaced by this one. A platform whose schema
+   * requires the field gets the remark when the card has no photo, instead of a launch without
+   * photos.
+   */
+  private static void requirePhotos(
+      ObjectNode prepared, JsonNode schema, List<String> photoFields, int photos) {
+    var issues = (ArrayNode) prepared.get("issues");
+    var fields = SchemaFields.fields(schema);
+    for (String field : photoFields) {
+      for (int i = issues.size() - 1; i >= 0; i--)
+        if (text(issues.get(i), "field").equals(field)
+            && text(issues.get(i), "code").equals("required")) issues.remove(i);
+      if (photos == 0 && fields.get(field).path("fill_rule").path("required").asBoolean(false))
+        issues.add(
+            object(
+                "field",
+                field,
+                "source",
+                "photos",
+                "code",
+                "photos_required",
+                "message",
+                "Добавьте фотографии квартиры: площадка не публикует объявление без фото."));
+    }
   }
 }

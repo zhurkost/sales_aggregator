@@ -54,10 +54,10 @@ class RentalPublicationTest {
   @Test
   void missingRequiredFieldsDoNotBlockAnySelectedPlatformAndAddressesAreQueriesNotCodes() {
     var draft = partial();
-    var check = catalog.prepare(draft);
+    var check = catalog.prepare(draft, 0);
     assertTrue(
         list(check.path("platforms")).stream().anyMatch(p -> !p.path("checksPassed").asBoolean()));
-    var launch = catalog.browser(draft);
+    var launch = catalog.browser(draft, 0);
     assertEquals(4, launch.path("jobs").size());
     for (var job : launch.path("jobs")) {
       var prepared =
@@ -87,7 +87,7 @@ class RentalPublicationTest {
         .put("region", "Минская обл")
         .put("district", "Минский р-н");
     var job =
-        list(catalog.browser(draft).path("jobs")).stream()
+        list(catalog.browser(draft, 0).path("jobs")).stream()
             .filter(j -> text(j, "platform").equals("realt"))
             .findFirst()
             .orElseThrow();
@@ -143,7 +143,7 @@ class RentalPublicationTest {
               "53.908548"));
       var addressBefore = draft.path("address").deepCopy();
       var job =
-          list(catalog.browser(draft).path("jobs")).stream()
+          list(catalog.browser(draft, 0).path("jobs")).stream()
               .filter(j -> text(j, "platform").equals("realt"))
               .findFirst()
               .orElseThrow();
@@ -223,6 +223,89 @@ class RentalPublicationTest {
         text(photos.get(0), "dataUrl"));
   }
 
+  static JsonNode platform(JsonNode prepared, String id) {
+    return list(prepared.path("platforms")).stream()
+        .filter(p -> text(p, "platform").equals(id))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  static List<String> codes(JsonNode platform, String field) {
+    return list(platform.path("issues")).stream()
+        .filter(i -> text(i, "field").equals(field))
+        .map(i -> text(i, "code"))
+        .toList();
+  }
+
+  @Test
+  void aPlatformThatRequiresPhotosGetsARemarkWhenTheCardHasNone() {
+    var draft = partial();
+    // Links in the card never reach a file input: only stored photos count.
+    ((ObjectNode) draft.path("values"))
+        .set("media.images", array().add("https://example.com/room.jpg"));
+    // The source schemas of Onliner, Realt and Domovita require photos; Kufar's says null.
+    Map<String, String> photoField =
+        Map.of(
+            "kufar", "kufar.photos",
+            "onliner", "onliner.images",
+            "realt", "realt.photos",
+            "domovita", "domovita.images");
+    var none = catalog.prepare(draft, 0);
+    for (var entry : photoField.entrySet()) {
+      var result = platform(none, entry.getKey());
+      var codes = codes(result, entry.getValue());
+      assertFalse(codes.contains("required"), entry.getKey());
+      assertEquals(
+          !entry.getKey().equals("kufar"), codes.contains("photos_required"), entry.getKey());
+      assertTrue(
+          list(result.path("form")).stream()
+              .noneMatch(v -> text(v, "field").equals(entry.getValue())),
+          entry.getKey());
+    }
+    var remark =
+        list(platform(none, "realt").path("issues")).stream()
+            .filter(i -> text(i, "code").equals("photos_required"))
+            .findFirst()
+            .orElseThrow();
+    assertEquals("photos", text(remark, "source"));
+    assertEquals(
+        "Добавьте фотографии квартиры: площадка не публикует объявление без фото.",
+        text(remark, "message"));
+    assertFalse(platform(none, "realt").path("checksPassed").asBoolean());
+    for (var job : catalog.browser(draft, 0).path("jobs"))
+      if (!text(job, "platform").equals("kufar"))
+        assertFalse(job.path("checksPassed").asBoolean(), text(job, "platform"));
+    var three = catalog.prepare(draft, 3);
+    for (var entry : photoField.entrySet()) {
+      var result = platform(three, entry.getKey());
+      assertFalse(codes(result, entry.getValue()).contains("photos_required"), entry.getKey());
+      var photos =
+          list(result.path("form")).stream()
+              .filter(v -> text(v, "field").equals(entry.getValue()))
+              .toList();
+      assertEquals(1, photos.size(), entry.getKey());
+      assertEquals("3 фото", text(photos.get(0), "value"));
+    }
+  }
+
+  @Test
+  void aCardWithStoredPhotosPassesThePhotoCheckOfTheLaunch() {
+    var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
+    var draft = partial();
+    draft.set("platforms", array().add("onliner"));
+    String id = UUID.randomUUID().toString();
+    storage.draftService().save("owner", id, object("revision", 0, "draft", draft));
+    var service = storage.publicationService(catalog);
+    var request = object("id", id, "draft", draft);
+    var before = service.configuration("owner", request).path("jobs").get(0);
+    assertFalse(before.path("checksPassed").asBoolean());
+    storage.photoService().add("owner", id, 1, List.of(RentalPhotoTest.jpeg("room.jpg")));
+    var check = catalog.prepare(draft, 1).path("platforms").get(0);
+    var after = service.configuration("owner", request).path("jobs").get(0);
+    assertEquals(check.path("checksPassed"), after.path("checksPassed"));
+    assertTrue(codes(check, "onliner.images").isEmpty(), check.toString());
+  }
+
   @Test
   void savedCardOfAnOldModelIsNeverPublished() {
     var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
@@ -238,7 +321,7 @@ class RentalPublicationTest {
             () -> service.configuration("owner", object("id", id, "draft", old)));
     assertEquals(409, error.status);
     assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
-    assertThrows(ApiException.class, () -> catalog.browser(old));
+    assertThrows(ApiException.class, () -> catalog.browser(old, 0));
   }
 
   @Test
@@ -294,7 +377,7 @@ class RentalPublicationTest {
         .put("rental.kitchen_area", "9")
         .put("location.metro_1_station", "Немига");
     draft.set("platforms", array().add("realt"));
-    var realt = catalog.prepare(draft).path("platforms").get(0);
+    var realt = catalog.prepare(draft, 0).path("platforms").get(0);
     var form = list(realt.path("form"));
     var title =
         form.stream().filter(v -> text(v, "field").equals("realt.title")).findFirst().orElseThrow();
@@ -323,7 +406,7 @@ class RentalPublicationTest {
     assertTrue(text(kitchen, "reason").contains("«Все параметры»"), kitchen.toString());
     assertTrue(form.stream().noneMatch(v -> text(v, "field").equals("realt.kitchen_area")));
     // The extension lists exactly the manual fields as not transferred.
-    var job = catalog.browser(draft).path("jobs").get(0);
+    var job = catalog.browser(draft, 0).path("jobs").get(0);
     assertEquals(
         manual.stream().map(v -> text(v, "name")).toList(),
         list(job.path("unbound")).stream().map(JsonNode::asText).toList());
@@ -336,7 +419,7 @@ class RentalPublicationTest {
         .put("listing.title", "Двухкомнатная у метро")
         .put("listing.description", "Светлая квартира & балкон.\nВторая строка");
     draft.set("platforms", array().add("realt"));
-    var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+    var controls = list(catalog.browser(draft, 0).path("jobs").get(0).path("controls"));
     var title = controls.stream().filter(c -> text(c, "field").equals("realt.title")).findFirst();
     assertEquals("[id=\"description.title\"]", text(title.orElseThrow(), "selector"));
     assertEquals("text", text(title.orElseThrow(), "action"));

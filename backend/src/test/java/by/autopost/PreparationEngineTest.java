@@ -87,7 +87,8 @@ class PreparationEngineTest {
                         object(),
                         Map.of("kufar", schema()),
                         Map.of("kufar", plan),
-                        Map.of(),
+                        // Every platform has a browser recipe.
+                        Map.of("kufar", object("controls", array())),
                         Map.of("kufar", new PlatformCoverage("kufar", List.of(), Set.of())),
                         "card-model",
                         integration));
@@ -104,10 +105,10 @@ class PreparationEngineTest {
     // New plans or recipes under the same card model: the open card is still prepared.
     for (String integration : List.of("selectors-before", "selectors-after"))
       assertEquals(
-          1, release.apply(integration).prepare(card).path("platforms").size(), integration);
+          1, release.apply(integration).prepare(card, 0).path("platforms").size(), integration);
     card.put("cardVersion", "previous-card-model");
     var error =
-        assertThrows(ApiException.class, () -> release.apply("selectors-after").prepare(card));
+        assertThrows(ApiException.class, () -> release.apply("selectors-after").prepare(card, 0));
     assertEquals(409, error.status);
   }
 

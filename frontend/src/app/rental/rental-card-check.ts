@@ -49,10 +49,11 @@ export class RentalCardCheck {
       );
     };
     try {
+      // The server adds the photos stored with this card.
       const result = await rentalApi<{ platforms: Prepared[] }>(
         before.workspace,
         "prepare",
-        structuredClone(before.draft),
+        { id: before.id, draft: structuredClone(before.draft) },
       );
       if (current()) {
         this.results = result.platforms;
