@@ -227,6 +227,54 @@ class RentalCoverageTest {
     assertTrue(currencyUse().path("transferred").asBoolean());
   }
 
+  @Test
+  void aFilledManualFieldTurnsOffTheAutomaticSubmission() throws Exception {
+    fixture();
+    withoutControl("currency");
+    var schema = read("example.schema.json");
+    ((ObjectNode) schema.get(0).path("options").get(1).path("fill_rule")).put("required", false);
+    write("example.schema.json", schema);
+    var plan = (ObjectNode) read("example.plan.json");
+    ((ObjectNode) plan.path("fields").get(1))
+        .put("transfer", "manual")
+        .put("manual_reason", "Валюту выбирают на площадке.");
+    write("example.plan.json", plan);
+    var catalog = new by.autopost.rental.application.RentalCatalog(load());
+    java.util.function.Function<ObjectNode, ObjectNode> card =
+        values ->
+            object(
+                "cardVersion",
+                catalog.cardVersion(),
+                "modelVersion",
+                2,
+                "values",
+                values,
+                "platforms",
+                List.of("example"));
+    // The manual field is empty: nothing would be lost, the checks pass.
+    var empty = card.apply(object("rental.price", "1500"));
+    var passed = catalog.prepare(empty).path("platforms").get(0);
+    assertTrue(passed.path("issues").isEmpty(), passed.toString());
+    assertTrue(passed.path("checksPassed").asBoolean());
+    assertTrue(catalog.browser(empty).path("jobs").get(0).path("checksPassed").asBoolean());
+    // A filled manual field would be missing from an automatically submitted ad.
+    var filled = card.apply(object("rental.price", "1500", "rental.currency", "BYN"));
+    var blocked = catalog.prepare(filled).path("platforms").get(0);
+    assertFalse(blocked.path("checksPassed").asBoolean());
+    assertEquals(1, blocked.path("issues").size(), blocked.toString());
+    var issue = blocked.path("issues").get(0);
+    assertEquals("manual_fields", text(issue, "code"));
+    assertEquals(
+        "Часть заполненных полей нужно ввести на площадке вручную — автоматическая подача"
+            + " выключена.",
+        text(issue, "message"));
+    assertEquals(1, blocked.path("manual").size());
+    // The extension sees only checksPassed; the assisted launch still fills the form.
+    var job = catalog.browser(filled).path("jobs").get(0);
+    assertFalse(job.path("checksPassed").asBoolean());
+    assertEquals("rent", text(job.path("controls").get(0), "field"));
+  }
+
   JsonNode currencyUse() {
     var editor = new by.autopost.rental.application.RentalCatalog(load()).editor();
     for (var group : editor.path("category").path("options"))

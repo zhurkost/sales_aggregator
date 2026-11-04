@@ -92,6 +92,22 @@ public class RentalCatalog {
           snapshot.coverage(platform).transfer(prepared.path("values"), input.path("address"));
       prepared.set("form", MAPPER.valueToTree(transfer.form()));
       prepared.set("manual", MAPPER.valueToTree(transfer.manual()));
+      // An automatic submission would publish the ad without the values entered by hand.
+      if (!transfer.manual().isEmpty()) {
+        ((ArrayNode) prepared.get("issues"))
+            .add(
+                object(
+                    "field",
+                    "",
+                    "source",
+                    "",
+                    "code",
+                    "manual_fields",
+                    "message",
+                    "Часть заполненных полей нужно ввести на площадке вручную — автоматическая"
+                        + " подача выключена."));
+        prepared.put("checksPassed", false);
+      }
       output.add(prepared);
     }
     return object("platforms", output);
