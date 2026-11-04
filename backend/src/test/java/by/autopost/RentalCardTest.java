@@ -54,9 +54,16 @@ class RentalCardTest {
                                     List.of())))))));
     write("integration/apartments_long_term_rent_common.json", common);
     write("integration/integration-audit.json", object("field_evidence", List.of()));
-    ObjectNode registry = object();
+    ObjectNode registry = object(), manifestPlatforms = object();
     for (String p : List.of("one", "two", "three", "four", "fifth")) {
       registry.set(p, object("name", "Marketplace " + p));
+      manifestPlatforms.set(
+          p,
+          object(
+              "schema",
+              p + "/apartments_long_term_rent_" + p + ".json",
+              "plan",
+              "runtime/preparation_" + p + ".json"));
       JsonNode schema =
           array(
               List.of(
@@ -132,7 +139,32 @@ class RentalCardTest {
             object("rental.rooms", List.of("two")),
             "addressProjection",
             object("location.street", "street")));
+    write(
+        "manifest.json",
+        object(
+            "format_version",
+            1,
+            "source_schema_version",
+            "1.2",
+            "category_id",
+            "apartments_long_term_rent",
+            "common",
+            "integration/apartments_long_term_rent_common.json",
+            "card",
+            "runtime/card.json",
+            "platforms",
+            manifestPlatforms));
     return new RentalCatalog(new FileReferenceRepository(dir.toString()));
+  }
+
+  @Test
+  void bundleWithoutManifestIsNotLoadedFromDefaultPaths() throws Exception {
+    fixture();
+    Files.delete(dir.resolve("manifest.json"));
+    var error =
+        assertThrows(
+            ApiException.class, () -> new FileReferenceRepository(dir.toString()).snapshot());
+    assertEquals(503, error.status);
   }
 
   @Test

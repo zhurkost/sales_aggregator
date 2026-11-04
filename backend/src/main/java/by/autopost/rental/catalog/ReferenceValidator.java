@@ -197,6 +197,13 @@ public final class ReferenceValidator {
     done.add(id);
   }
 
+  /** Every reference object lists its keys: a misspelt or unread key is an error, not a no-op. */
+  static void keys(JsonNode value, String where, Set<String> allowed) {
+    check(value.isObject(), where + " должен быть объектом");
+    for (String key : iterable(value.fieldNames()))
+      check(allowed.contains(key), where + ": неизвестный ключ " + key);
+  }
+
   static void check(boolean valid, String message) {
     if (!valid) throw new ApiException(409, "Ошибка комплекта справочников: " + message + ".");
   }

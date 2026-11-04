@@ -7,6 +7,7 @@ import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class FileReferenceRepository implements ReferenceRepository {
-  private static final String LEGACY_CATEGORY = "apartments_long_term_rent";
+  private static final Set<String> MANIFEST =
+      Set.of("format_version", "source_schema_version", "category_id", "common", "card", "platforms");
+  private static final Set<String> PLATFORM = Set.of("schema", "plan", "browser");
   private final ReferenceFiles files;
   private ReferenceSnapshot cached;
   private Map<String, String> stamps = Map.of();
@@ -29,20 +32,18 @@ public class FileReferenceRepository implements ReferenceRepository {
         && stamps.entrySet().stream().allMatch(e -> e.getValue().equals(files.stamp(e.getKey()))))
       return cached;
     var paths = new LinkedHashMap<String, String>();
-    paths.put("manifest.json", files.stamp("manifest.json"));
-    var manifest = files.exists("manifest.json") ? read("manifest.json", paths) : object();
-    boolean modern = !manifest.isEmpty();
-    if (modern && manifest.path("format_version").asInt() != 1)
+    JsonNode manifest = read("manifest.json", paths);
+    ReferenceValidator.keys(manifest, "manifest", MANIFEST);
+    if (manifest.path("format_version").asInt() != 1)
       throw new ApiException(409, "Неподдерживаемый manifest справочников.");
-    String category = manifest.path("category_id").asText(LEGACY_CATEGORY);
+    String category = text(manifest, "category_id");
     if (!category.matches("[a-z][a-z0-9_]{0,79}"))
       throw new ApiException(409, "Некорректная категория справочника.");
-    if (!manifest.path("source_schema_version").asText("1.2").equals("1.2"))
+    if (!text(manifest, "source_schema_version").equals("1.2"))
       throw new ApiException(409, "Неподдерживаемая версия формата справочника.");
-    JsonNode card = read(manifest.path("card").asText("runtime/card.json"), paths);
-    JsonNode common =
-        read(manifest.path("common").asText("integration/" + category + "_common.json"), paths);
-    var registry = modern ? manifest.path("platforms") : card.path("platforms");
+    JsonNode card = read(path(manifest, "card"), paths);
+    JsonNode common = read(path(manifest, "common"), paths);
+    var registry = manifest.path("platforms");
     if (!registry.isObject() || registry.isEmpty())
       throw new ApiException(409, "В справочнике отсутствует реестр площадок.");
     JsonNode audit = object();
@@ -56,9 +57,9 @@ public class FileReferenceRepository implements ReferenceRepository {
       if (!id.matches("[a-z][a-z0-9_]{0,39}"))
         throw new ApiException(409, "Некорректный идентификатор площадки.");
       var entry = registry.path(id);
-      JsonNode schema =
-          read(entry.path("schema").asText(id + "/" + category + "_" + id + ".json"), paths);
-      JsonNode plan = read(entry.path("plan").asText("runtime/preparation_" + id + ".json"), paths);
+      ReferenceValidator.keys(entry, "manifest: площадка " + id, PLATFORM);
+      JsonNode schema = read(path(entry, "schema"), paths);
+      JsonNode plan = read(path(entry, "plan"), paths);
       if (!text(plan, "schema_hash").equals(Hashing.sha256(schema.toString()))
           || !text(plan, "common_hash").equals(Hashing.sha256(common.toString())))
         throw new ApiException(409, "Обновите схему и маппинг площадки единым комплектом.");
@@ -66,7 +67,7 @@ public class FileReferenceRepository implements ReferenceRepository {
       schemas.put(id, schema);
       plans.put(id, plan);
       if (entry.has("browser")) {
-        var browser = read(entry.path("browser").asText(), paths);
+        var browser = read(path(entry, "browser"), paths);
         new BrowserRecipeValidator().validate(id, schemas.get(id), browser);
         browsers.put(id, browser);
       }
@@ -74,15 +75,22 @@ public class FileReferenceRepository implements ReferenceRepository {
     new ReferenceValidator().validate(category, common, card, schemas, plans);
     if (paths.entrySet().stream().anyMatch(e -> !e.getValue().equals(files.stamp(e.getKey()))))
       throw new ApiException(409, "Справочники изменились при чтении. Повторите запрос.");
-    String version = ReferenceSnapshot.fingerprint(common, card, plans);
-    if (modern)
-      version =
-          Hashing.sha256(version + manifest + object("browsers", browsers));
+    String version =
+        Hashing.sha256(
+            ReferenceSnapshot.fingerprint(common, card, plans)
+                + manifest
+                + object("browsers", browsers));
     ReferenceSnapshot next =
         new ReferenceSnapshot(category, common, card, audit, schemas, plans, browsers, version);
     cached = next;
     stamps = Map.copyOf(paths);
     return next;
+  }
+
+  private static String path(JsonNode entry, String key) {
+    String path = text(entry, key);
+    if (path.isBlank()) throw new ApiException(409, "В manifest не указан путь " + key + ".");
+    return path;
   }
 
   private JsonNode read(String path, Map<String, String> paths) {

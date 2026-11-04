@@ -255,6 +255,18 @@ class ReferenceBundleTest {
   }
 
   @Test
+  void manifestRejectsKeysItDoesNotRead() throws Exception {
+    var repo = fixture();
+    var manifest = (ObjectNode) read("manifest.json");
+    ((ObjectNode) manifest.path("platforms").path("example"))
+        .put("binding", "example.binding.json");
+    write("manifest.json", manifest);
+    var error = assertThrows(ApiException.class, repo::snapshot);
+    assertEquals(409, error.status);
+    assertTrue(error.getMessage().contains("неизвестный ключ binding"), error.getMessage());
+  }
+
+  @Test
   void pathsCannotEscapePrivateBundle() throws Exception {
     var repo = fixture();
     var manifest = (ObjectNode) read("manifest.json");
