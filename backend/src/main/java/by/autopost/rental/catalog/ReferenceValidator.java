@@ -35,9 +35,7 @@ public final class ReferenceValidator {
       JsonNode common,
       JsonNode card,
       Map<String, JsonNode> schemas,
-      Map<String, JsonNode> plans,
-      Map<String, JsonNode> bindings,
-      String format) {
+      Map<String, JsonNode> plans) {
     check(common.isArray() && common.size() == 1, "common должен содержать одну категорию");
     var canonical = fields(common);
     check(!canonical.isEmpty(), "нет полей общей карточки");
@@ -119,8 +117,6 @@ public final class ReferenceValidator {
       for (var dep : plan.path("address_bound_fields"))
         check(nativeFields.containsKey(dep.asText()), "неизвестное адресное поле " + dep.asText());
       acyclic(graph);
-      if (bindings.containsKey(platform))
-        new BindingValidator().validate(category, platform, schema, bindings.get(platform));
     }
   }
 

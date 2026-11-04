@@ -14,8 +14,7 @@ import java.util.TreeMap;
 public final class ReferenceSnapshot {
   private final String categoryId, version;
   private final JsonNode common, card, audit;
-  private final Map<String, JsonNode> schemas, plans, bindings;
-  private final Map<String, JsonNode> browsers;
+  private final Map<String, JsonNode> schemas, plans, browsers;
 
   public JsonNode browser(String platform) {
     return get(browsers, platform);
@@ -28,19 +27,6 @@ public final class ReferenceSnapshot {
       JsonNode audit,
       Map<String, JsonNode> schemas,
       Map<String, JsonNode> plans,
-      Map<String, JsonNode> bindings,
-      String version) {
-    this(categoryId, common, card, audit, schemas, plans, bindings, Map.of(), version);
-  }
-
-  public ReferenceSnapshot(
-      String categoryId,
-      JsonNode common,
-      JsonNode card,
-      JsonNode audit,
-      Map<String, JsonNode> schemas,
-      Map<String, JsonNode> plans,
-      Map<String, JsonNode> bindings,
       Map<String, JsonNode> browsers,
       String version) {
     this.browsers = copy(browsers);
@@ -50,7 +36,6 @@ public final class ReferenceSnapshot {
     this.audit = audit.deepCopy();
     this.schemas = copy(schemas);
     this.plans = copy(plans);
-    this.bindings = copy(bindings);
     this.version = version;
   }
 
@@ -90,10 +75,6 @@ public final class ReferenceSnapshot {
 
   public JsonNode plan(String platform) {
     return get(plans, platform);
-  }
-
-  public JsonNode binding(String platform) {
-    return bindings.getOrDefault(platform, object()).deepCopy();
   }
 
   private JsonNode get(Map<String, JsonNode> source, String key) {

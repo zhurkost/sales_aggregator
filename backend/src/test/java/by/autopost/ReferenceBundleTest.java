@@ -104,10 +104,8 @@ class ReferenceBundleTest {
   }
 
   @Test
-  void flatFactsAreAdaptedWithoutChangingSourcesOrLosingCodeTypes() throws Exception {
-    var repo = fixture();
-    String original = Files.readString(dir.resolve("example.schema.json"));
-    var catalog = new RentalCatalog(repo);
+  void optionCodesKeepTheirJsonTypes() throws Exception {
+    var catalog = new RentalCatalog(fixture());
     for (String code : List.of("BYN", "USD")) {
       var result =
           catalog
@@ -129,16 +127,6 @@ class ReferenceBundleTest {
           result.path("values").path("currency"));
       assertFalse(result.path("publicationReady").asBoolean());
     }
-    assertEquals(original, Files.readString(dir.resolve("example.schema.json")));
-    assertTrue(
-        repo.snapshot()
-            .schema("example")
-            .get(0)
-            .path("options")
-            .get(0)
-            .path("fill_rule")
-            .path("required")
-            .asBoolean());
   }
 
   @Test
@@ -236,46 +224,34 @@ class ReferenceBundleTest {
     var source = read("example.schema.json");
     var rent = (ObjectNode) source.get(0).path("options").get(0);
     var currency = (ObjectNode) source.get(0).path("options").get(1);
-    rent.set("when", object("option_id", "missing", "operator", "exists"));
+    var rentRule = (ObjectNode) rent.path("fill_rule");
+    rentRule.set("when", object("option_id", "missing", "operator", "exists"));
     schema(source);
     assertThrows(ApiException.class, repo::snapshot);
-    rent.set("when", object("option_id", "currency", "operator", "exists"));
-    currency.set("when", object("option_id", "rent", "operator", "exists"));
+    rentRule.set("when", object("option_id", "currency", "operator", "exists"));
+    ((ObjectNode) currency.path("fill_rule"))
+        .set("when", object("option_id", "rent", "operator", "exists"));
     schema(source);
     assertThrows(ApiException.class, repo::snapshot);
   }
 
   @Test
-  void newSchemaRequiresExplicitCompletenessAndSeparateBinding() throws Exception {
+  void onlyFormat12SourceSchemasAreAccepted() throws Exception {
     var repo = fixture();
-    var source = read("example.schema.json");
-    var currency = (ObjectNode) source.get(0).path("options").get(1);
-    currency.remove("options_complete");
-    schema(source);
-    assertThrows(ApiException.class, repo::snapshot);
-    currency.put("options_complete", false);
-    schema(source);
-    assertDoesNotThrow(repo::snapshot);
-    var manifest = read("manifest.json");
-    ((ObjectNode) manifest.path("platforms").path("example")).remove("binding");
+    var manifest = (ObjectNode) read("manifest.json");
+    manifest.put("source_schema_version", "2.1");
     write("manifest.json", manifest);
-    assertThrows(ApiException.class, repo::snapshot);
-  }
-
-  @Test
-  void incompleteBindingsAreNotMistakenForReadyAdapters() throws Exception {
-    var repo = fixture();
-    var binding = read("example.binding.json");
-    var row = (ObjectNode) binding.path("fields").get(0);
-    row.put("status", "ready");
-    write("example.binding.json", binding);
-    assertThrows(ApiException.class, repo::snapshot);
-    row.put("status", "needs_review");
-    write("example.binding.json", binding);
+    assertEquals(409, assertThrows(ApiException.class, repo::snapshot).status);
+    manifest.put("source_schema_version", "1.2");
+    write("manifest.json", manifest);
     assertDoesNotThrow(repo::snapshot);
-    ((ArrayNode) binding.path("fields")).remove(1);
-    write("example.binding.json", binding);
-    assertThrows(ApiException.class, repo::snapshot);
+    // A 2.1-style flat fact would be ignored by the 1.2 engine, so it is rejected.
+    var source = read("example.schema.json");
+    ((ObjectNode) source.get(0).path("options").get(1)).put("required", true);
+    schema(source);
+    var error = assertThrows(ApiException.class, repo::snapshot);
+    assertEquals(409, error.status);
+    assertTrue(error.getMessage().contains("fill_rule"), error.getMessage());
   }
 
   @Test

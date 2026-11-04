@@ -11,9 +11,11 @@
         "description": "Synthetic example, not marketplace data",
         "type": "number",
         "options": [],
-        "required": true,
-        "validation": {
-          "min": 0
+        "fill_rule": {
+          "required": true,
+          "validation": {
+            "min": 0
+          }
         }
       },
       {
@@ -28,7 +30,9 @@
             "description": "Synthetic example, not marketplace data",
             "type": "choice",
             "options": [],
-            "value": "01"
+            "fill_rule": {
+              "value": "01"
+            }
           },
           {
             "id": "currency.usd",
@@ -36,11 +40,14 @@
             "description": "Synthetic example, not marketplace data",
             "type": "choice",
             "options": [],
-            "value": 2
+            "fill_rule": {
+              "value": 2
+            }
           }
         ],
-        "required": true,
-        "options_complete": true
+        "fill_rule": {
+          "required": true
+        }
       }
     ]
   }

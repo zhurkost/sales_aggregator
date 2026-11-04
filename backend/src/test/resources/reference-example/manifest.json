@@ -1,14 +1,13 @@
 {
   "format_version": 1,
   "category_id": "apartments_long_term_rent",
-  "source_schema_version": "2.1",
+  "source_schema_version": "1.2",
   "common": "common.json",
   "card": "card.json",
   "platforms": {
     "example": {
       "schema": "example.schema.json",
-      "plan": "example.plan.json",
-      "binding": "example.binding.json"
+      "plan": "example.plan.json"
     }
   }
 }
