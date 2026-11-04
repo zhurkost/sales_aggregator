@@ -192,6 +192,29 @@ class RentalDraftMigrationTest {
   }
 
   @Test
+  void browserPhotoIdsLeaveStoredCardsOnce() {
+    var drafts = repository();
+    var before = (ObjectNode) CURRENT.deepCopy();
+    before.set("localPhotoIds", array().add("photo-1").add("photo-2"));
+    store(drafts, "ws", "with-photos", 3, before.toString());
+    var old = (ObjectNode) oldCard(object("floor", "3"), object());
+    old.set("localPhotoIds", array().add("photo-3"));
+    store(drafts, "ws", "old", 1, old.toString());
+    var stored = rows(drafts);
+
+    var report = new RentalDraftMigration(drafts, catalog).run();
+
+    assertEquals(2, report.migrated());
+    var row = drafts.find("ws", "with-photos").orElseThrow();
+    assertEquals(4, row.revision());
+    assertEquals(stored.get("ws/with-photos").updated(), row.updated());
+    // Nothing else changes, not even a card version of an earlier card model.
+    assertEquals(CURRENT, parse(row.data()));
+    assertFalse(parse(drafts.find("ws", "old").orElseThrow().data()).has("localPhotoIds"));
+    assertEquals(0, new RentalDraftMigration(drafts, catalog).run().migrated());
+  }
+
+  @Test
   void commandMigratesTheGivenDatabaseWithTheGivenBundle() throws Exception {
     var drafts = repository();
     store(drafts, "ws", "old", 1, oldCard(object("currency", 2), object()).toString());

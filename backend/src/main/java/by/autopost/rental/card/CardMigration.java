@@ -32,10 +32,12 @@ public final class CardMigration {
 
   /**
    * A stored card the one-time migration rewrites: an older card model, or a card of the current
-   * model that still keeps the former {@code schemaVersion}, the hash of every rule and selector.
+   * model that still keeps the former {@code schemaVersion}, the hash of every rule and selector,
+   * or {@code localPhotoIds}, the IDs of photos kept in one browser before photos were stored on
+   * the server.
    */
   public static boolean migrationNeeded(JsonNode draft) {
-    return outdated(draft) || draft.has("schemaVersion");
+    return outdated(draft) || draft.has("schemaVersion") || draft.has("localPhotoIds");
   }
 
   /** Reading, checking and publishing accept only cards of the current model. */
@@ -49,13 +51,18 @@ public final class CardMigration {
   }
 
   /**
-   * A card of the current model saved before cardVersion existed. Its values already follow the
-   * card model of this release, so it takes this release's card version and nothing else changes.
+   * A card of the current model with keys of earlier releases. Saved before cardVersion existed,
+   * its values already follow the card model of this release, so it takes this release's card
+   * version; a cardVersion it has stays. The photos are stored on the server, so the IDs of the
+   * browser's copies go. Nothing else changes.
    */
-  public ObjectNode renameVersion(JsonNode original) {
+  public ObjectNode tidy(JsonNode original) {
     ObjectNode draft = original.deepCopy();
-    draft.remove("schemaVersion");
-    draft.put("cardVersion", catalog.cardVersion());
+    if (draft.has("schemaVersion")) {
+      draft.remove("schemaVersion");
+      draft.put("cardVersion", catalog.cardVersion());
+    }
+    draft.remove("localPhotoIds");
     return draft;
   }
 
@@ -238,6 +245,7 @@ public final class CardMigration {
               });
     // Model 2 keeps every fact in values; platform extras are not part of it.
     draft.remove("extras");
+    draft.remove("localPhotoIds");
     draft.put("modelVersion", ReferenceContract.CARD_MODEL_VERSION);
     // The card keeps only the version of the card model it was converted to.
     draft.remove("schemaVersion");

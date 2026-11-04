@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * One-time conversion of stored cards older than the current card model, for the command
  * --migrate-rental-drafts; cards of the current model only move from {@code schemaVersion} to
- * {@code cardVersion}. Each card is written with the expected revision, so a save made at the same
- * moment is never overwritten; current cards are not touched.
+ * {@code cardVersion} and lose {@code localPhotoIds}. Each card is written with the expected
+ * revision, so a save made at the same moment is never overwritten; current cards are not touched.
  */
 public final class RentalDraftMigration {
   /**
@@ -81,7 +81,7 @@ public final class RentalDraftMigration {
       if (!data.isObject()) return new Result(Outcome.UNREADABLE, 0);
       if (!CardMigration.migrationNeeded(data)) return new Result(Outcome.CURRENT, 0);
       boolean outdated = CardMigration.outdated(data);
-      var next = outdated ? migration.normalize(data) : migration.renameVersion(data);
+      var next = outdated ? migration.normalize(data) : migration.tidy(data);
       // The list order follows the owner's saves, so the migration keeps the saved time.
       var stored =
           RentalDraftRepository.StoredDraft.of(id, row.revision() + 1, next, row.updated());
