@@ -528,4 +528,58 @@ describe("rental revision conflicts", () => {
       fixture.destroy();
     }
   });
+  it("asks to check old values only for a migrated card that kept them, and does not open an unmigrated one", async () => {
+    const card = (legacy: unknown[]) => ({
+      modelVersion: 2,
+      schemaVersion: "test",
+      values: { "contact.name": "Анна" },
+      platforms: ["kufar"],
+      address: null,
+      legacy,
+    });
+    const drafts: Record<string, unknown> = {
+      clean: card([]),
+      migrated: card([
+        { platform: "kufar", field: "kufar.rooms", source: "", value: "5+", candidate: null, message: "Нужно сверить прежнее значение." },
+      ]),
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string, init?: RequestInit) => {
+        const id = url.match(/\/drafts\/([^/]+)$/)?.[1];
+        if (url.endsWith("/editor")) return response(schema);
+        if (url.endsWith("/drafts")) return response({ drafts: [] });
+        if (id === "old" && !init?.body)
+          return response({ error: "Карточку нужно перенести командой миграции." }, 409);
+        if (id && !init?.body) return response({ id, revision: 1, draft: drafts[id] });
+        return response({ revision: 2 });
+      }),
+    );
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    const c = fixture.componentInstance,
+      el = fixture.nativeElement as HTMLElement;
+    try {
+      await vi.waitFor(() => expect(c.store.schema).not.toBeNull());
+      await c.store.open("clean");
+      fixture.detectChanges();
+      expect(el.querySelector(".legacy-section")).toBeNull();
+      await c.store.open("migrated");
+      fixture.detectChanges();
+      expect(el.querySelector(".legacy-section h2")?.textContent).toContain("Сверьте прежние сведения · 1");
+      Array.from(el.querySelectorAll<HTMLButtonElement>(".legacy-item button"))
+        .find((b) => b.textContent?.includes("Оставить в истории"))!
+        .click();
+      fixture.detectChanges();
+      expect(el.querySelector(".legacy-section")).toBeNull();
+      expect(c.store.draft.resolvedLegacy).toHaveLength(1);
+      await c.store.open("old");
+      fixture.detectChanges();
+      expect(c.store.id).not.toBe("old");
+      expect(el.querySelector(".error-banner")?.textContent).toContain("Карточку нужно перенести командой миграции.");
+    } finally {
+      fixture.destroy();
+    }
+  });
 });
