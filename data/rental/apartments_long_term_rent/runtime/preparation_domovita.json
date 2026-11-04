@@ -2,8 +2,6 @@
   "runtime_version": "1.0",
   "category_id": "apartments_long_term_rent",
   "platform": "domovita",
-  "schema_hash": "206b67f4a85d58682c6830b751a0efd7a39b20b891e9cda277c4442db04b6163",
-  "common_hash": "1cea552d409fe9cb3b653314980c9d37d706e855de32275bcba3c03c7157ae25",
   "fields": [
     {
       "common_option_id": "rental.room_configuration",

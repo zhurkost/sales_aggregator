@@ -59,9 +59,6 @@ public class FileReferenceRepository implements ReferenceRepository {
       ReferenceValidator.keys(entry, "manifest: площадка " + id, PLATFORM);
       JsonNode schema = read(path(entry, "schema"), paths);
       JsonNode plan = read(path(entry, "plan"), paths);
-      if (!text(plan, "schema_hash").equals(Hashing.sha256(schema.toString()))
-          || !text(plan, "common_hash").equals(Hashing.sha256(common.toString())))
-        throw new ApiException(409, "Обновите схему и маппинг площадки единым комплектом.");
       SourceSchemaValidator.validate(schema);
       schemas.put(id, schema);
       plans.put(id, plan);

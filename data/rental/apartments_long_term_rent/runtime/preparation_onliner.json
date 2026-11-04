@@ -2,8 +2,6 @@
   "runtime_version": "1.0",
   "category_id": "apartments_long_term_rent",
   "platform": "onliner",
-  "schema_hash": "77754eb52674c70468b0fb02d030835885b65e3f716006bfb49f3b30f27f7f22",
-  "common_hash": "1cea552d409fe9cb3b653314980c9d37d706e855de32275bcba3c03c7157ae25",
   "fields": [
     {
       "common_option_id": "listing.description",

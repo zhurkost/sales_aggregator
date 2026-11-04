@@ -2,8 +2,6 @@
   "category_id": "apartments_long_term_rent",
   "runtime_version": "1.0",
   "platform": "example",
-  "common_hash": "6462e96ae227701c5f265526284fa3adc294c82e169bf503524d374b673de00a",
-  "schema_hash": "3a2ead5996224a52174b7039aed0fb9d7474fd057102fb7eda9d8525e54fb3fd",
   "fields": [
     {
       "common_option_id": "rental.price",

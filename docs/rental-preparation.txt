@@ -92,7 +92,7 @@ values — словарь common Option.id → строка либо files-ма�
 Ошибки не включают тела ответов провайдера, ключ или данные чужого профиля.
 
 Runtime-план (отдельный от статического parsing_format_rule v1.2)
-runtime_version="1.0", category_id, platform, schema_hash, common_hash,
+runtime_version="1.0", category_id, platform (без хешей схем: согласованность проверяет валидатор),
 constants — подтверждённые значения маршрута; fields — по одной записи на target.
 Базовые identity/lookup/files сохраняют значение/точный код/порядок вложений.
 Новые conversion.kind:

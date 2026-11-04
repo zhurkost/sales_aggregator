@@ -43,8 +43,6 @@ public final class ReferenceValidator {
           "runtime_version",
           "category_id",
           "platform",
-          "schema_hash",
-          "common_hash",
           "fields",
           "constants",
           "addresses",

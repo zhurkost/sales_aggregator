@@ -17,7 +17,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 class ReferenceBundleTest {
   @Test
-  void committedMarketplaceBundleIsCompleteAndMatchesItsRuntimeHashes() {
+  void committedMarketplaceBundleIsComplete() {
     var repository = new FileReferenceRepository("../data/rental/apartments_long_term_rent");
     var snapshot = repository.snapshot();
     assertEquals(Set.of("kufar", "onliner", "realt", "domovita"), snapshot.platforms());
@@ -151,9 +151,6 @@ class ReferenceBundleTest {
 
   void schema(JsonNode data) throws Exception {
     write("example.schema.json", data);
-    var plan = (ObjectNode) read("example.plan.json");
-    plan.put("schema_hash", Hashing.sha256(data.toString()));
-    write("example.plan.json", plan);
   }
 
   @Test
@@ -248,13 +245,38 @@ class ReferenceBundleTest {
   }
 
   @Test
-  void staleHashesCannotActivatePartiallyUpdatedMappings() throws Exception {
+  void planThatMapsARemovedNativeFieldIsRejectedByName() throws Exception {
     var repo = fixture();
-    repo.snapshot();
     var source = read("example.schema.json");
-    ((ObjectNode) source.get(0).path("options").get(0)).put("name", "changed");
-    write("example.schema.json", source);
-    assertEquals(409, assertThrows(ApiException.class, repo::snapshot).status);
+    // A label edit leaves every reference valid: the bundle stays usable.
+    ((ObjectNode) source.get(0).path("options").get(0)).put("name", "Арендная плата");
+    schema(source);
+    assertDoesNotThrow(repo::snapshot);
+    ((ArrayNode) source.get(0).path("options")).remove(0);
+    schema(source);
+    var error = assertThrows(ApiException.class, repo::snapshot);
+    assertEquals(409, error.status);
+    assertTrue(error.getMessage().contains("неизвестное целевое поле rent"), error.getMessage());
+  }
+
+  @Test
+  void plansCarryNoHashesOfTheirSchemas() throws Exception {
+    var committed = Path.of("../data/rental/apartments_long_term_rent/runtime");
+    try (var files = Files.list(committed)) {
+      var plans = files.filter(p -> p.getFileName().toString().startsWith("preparation_")).toList();
+      assertEquals(4, plans.size());
+      for (Path plan : plans)
+        for (String key : List.of("schema_hash", "common_hash"))
+          assertFalse(MAPPER.readTree(plan.toFile()).has(key), plan + " " + key);
+    }
+    var repo = fixture();
+    var plan = (ObjectNode) read("example.plan.json");
+    assertFalse(plan.has("schema_hash") || plan.has("common_hash"));
+    for (String key : List.of("schema_hash", "common_hash")) {
+      var stamped = plan.deepCopy().put(key, Hashing.sha256(read("common.json").toString()));
+      write("example.plan.json", stamped);
+      unknownKey(repo, key);
+    }
   }
 
   @Test
