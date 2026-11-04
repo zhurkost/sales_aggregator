@@ -168,6 +168,68 @@ class RentalCoverageTest {
     }
   }
 
+  @Test
+  void coverageCommandPrintsTheTotalsAndEveryRowAsMarkdown() throws Exception {
+    fixture();
+    withoutControl("currency");
+    var plan = (ObjectNode) read("example.plan.json");
+    ((ObjectNode) plan.path("fields").get(1))
+        .put("transfer", "manual")
+        .put("manual_reason", "Валюта | на площадке\nвыбирается отдельно.");
+    write("example.plan.json", plan);
+    String report = command("--rental-coverage=" + dir);
+    assertTrue(report.startsWith("# Покрытие форм: apartments_long_term_rent\n"), report);
+    assertTrue(
+        report.contains(
+            "| Площадка | transferred | manual | deferred | constant | prepared_only |"),
+        report);
+    assertTrue(report.contains("| Example (example) | 1 | 1 | 0 | 0 | 0 |"), report);
+    assertTrue(
+        report.contains(
+            "| rental.price | rent — rent | `text input[name=rent]` | transferred |  |"),
+        report);
+    // A pipe or a line break in a reason does not break the table.
+    assertTrue(
+        report.contains(
+            "| rental.currency | currency — currency |  | manual |"
+                + " Валюта \\| на площадке выбирается отдельно. |"),
+        report);
+  }
+
+  @Test
+  void coverageCommandShowsEveryPlatformOfTheCommittedBundle() throws Exception {
+    var snapshot = new FileReferenceRepository(COMMITTED).snapshot();
+    String report = command("--rental-coverage=" + COMMITTED);
+    long rows =
+        report
+            .lines()
+            .filter(line -> !line.startsWith("| Площадка "))
+            .filter(
+                line ->
+                    line.matches(
+                        "\\| .* \\| (transferred|manual|deferred|constant|prepared_only) \\| .*"))
+            .count();
+    long expected = 0;
+    for (String platform : snapshot.platforms()) {
+      expected += snapshot.coverage(platform).rows().size();
+      assertTrue(report.contains("\n## "), report);
+      assertTrue(report.contains("(" + platform + ")"), platform);
+    }
+    assertEquals(expected, rows);
+  }
+
+  static String command(String argument) throws Exception {
+    var out = new java.io.ByteArrayOutputStream();
+    var previous = System.out;
+    System.setOut(new java.io.PrintStream(out, true, java.nio.charset.StandardCharsets.UTF_8));
+    try {
+      AutopostApplication.main(new String[] {argument});
+    } finally {
+      System.setOut(previous);
+    }
+    return out.toString(java.nio.charset.StandardCharsets.UTF_8);
+  }
+
   ObjectNode field(String id) {
     return object(
         "id",
