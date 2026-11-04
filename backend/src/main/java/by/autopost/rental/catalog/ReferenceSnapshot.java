@@ -3,12 +3,15 @@ package by.autopost.rental.catalog;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * Defensive copies prevent a migration or editor from modifying the shared catalog.
+ * One operation's view of the reference bundle. Each part is copied once, at its first use in the
+ * operation, and the same copy is returned afterwards: what an editor or a migration changes in
+ * it never reaches the loaded bundle or another operation. A view is used by one thread.
  *
  * <p>Two versions: {@code cardVersion} covers what a card sees and stores (common and card.json)
  * and is compared by the editor, preparation and AI; {@code integrationVersion} covers how cards
@@ -17,12 +20,10 @@ import java.util.TreeMap;
  */
 public final class ReferenceSnapshot {
   private final String categoryId, cardVersion, integrationVersion;
+  // The loaded parts: shared by every view and never changed or handed out.
   private final JsonNode common, card;
   private final Map<String, JsonNode> schemas, plans, browsers;
-
-  public JsonNode browser(String platform) {
-    return get(browsers, platform);
-  }
+  private final Map<String, JsonNode> copies = new HashMap<>();
 
   public ReferenceSnapshot(
       String categoryId,
@@ -33,14 +34,30 @@ public final class ReferenceSnapshot {
       Map<String, JsonNode> browsers,
       String cardVersion,
       String integrationVersion) {
-    this.browsers = copy(browsers);
     this.categoryId = categoryId;
     this.common = common.deepCopy();
     this.card = card.deepCopy();
     this.schemas = copy(schemas);
     this.plans = copy(plans);
+    this.browsers = copy(browsers);
     this.cardVersion = cardVersion;
     this.integrationVersion = integrationVersion;
+  }
+
+  private ReferenceSnapshot(ReferenceSnapshot loaded) {
+    categoryId = loaded.categoryId;
+    common = loaded.common;
+    card = loaded.card;
+    schemas = loaded.schemas;
+    plans = loaded.plans;
+    browsers = loaded.browsers;
+    cardVersion = loaded.cardVersion;
+    integrationVersion = loaded.integrationVersion;
+  }
+
+  /** A fresh view of the same bundle for the next operation, with copies of its own. */
+  public ReferenceSnapshot view() {
+    return new ReferenceSnapshot(this);
   }
 
   private static Map<String, JsonNode> copy(Map<String, JsonNode> source) {
@@ -66,23 +83,31 @@ public final class ReferenceSnapshot {
   }
 
   public JsonNode common() {
-    return common.deepCopy();
+    return copy("common", common);
   }
 
   public JsonNode card() {
-    return card.deepCopy();
+    return copy("card", card);
   }
 
   public JsonNode schema(String platform) {
-    return get(schemas, platform);
+    return copy("schema:" + platform, get(schemas, platform));
   }
 
   public JsonNode plan(String platform) {
-    return get(plans, platform);
+    return copy("plan:" + platform, get(plans, platform));
   }
 
-  private JsonNode get(Map<String, JsonNode> source, String key) {
+  public JsonNode browser(String platform) {
+    return copy("browser:" + platform, get(browsers, platform));
+  }
+
+  private JsonNode copy(String part, JsonNode loaded) {
+    return copies.computeIfAbsent(part, key -> loaded.deepCopy());
+  }
+
+  private static JsonNode get(Map<String, JsonNode> source, String key) {
     if (!source.containsKey(key)) throw new ApiException(400, "Неизвестная площадка.");
-    return source.get(key).deepCopy();
+    return source.get(key);
   }
 }

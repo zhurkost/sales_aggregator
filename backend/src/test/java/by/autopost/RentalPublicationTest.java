@@ -229,7 +229,7 @@ class RentalPublicationTest {
             "script",
             r -> ((ObjectNode) r.path("ready").get(0)).put("script", "alert(1)"));
     for (var edit : unknown.entrySet()) {
-      var recipe = (ObjectNode) snapshot.browser("kufar");
+      var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
       edit.getValue().accept(recipe);
       var error =
           assertThrows(
@@ -249,7 +249,7 @@ class RentalPublicationTest {
             r -> control(r, 23).put("displaySelector", ""),
             r -> ((ObjectNode) r.path("setup").get(0)).put("matchText", "false"));
     for (var edit : mistyped) {
-      var recipe = (ObjectNode) snapshot.browser("kufar");
+      var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
       edit.accept(recipe);
       assertThrows(
           ApiException.class,
@@ -265,17 +265,17 @@ class RentalPublicationTest {
   void browserContractRejectsUnknownFieldsAndExecutableActions() {
     var snapshot =
         new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
-    var recipe = (ObjectNode) snapshot.browser("kufar");
+    var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
     ((ObjectNode) recipe.path("controls").get(0)).put("action", "eval");
     assertThrows(
         ApiException.class,
         () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe));
-    var other = (ObjectNode) snapshot.browser("kufar");
+    var other = (ObjectNode) snapshot.browser("kufar").deepCopy();
     ((ObjectNode) other.path("controls").get(0)).put("field", "unknown");
     assertThrows(
         ApiException.class,
         () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), other));
-    var invalidAddress = (ObjectNode) snapshot.browser("realt");
+    var invalidAddress = (ObjectNode) snapshot.browser("realt").deepCopy();
     ((ObjectNode) invalidAddress.path("controls").get(0).path("autocomplete"))
         .put("optionSelector", "");
     assertThrows(

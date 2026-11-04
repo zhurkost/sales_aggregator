@@ -8,7 +8,6 @@ import by.autopost.rental.application.RentalDraftService;
 import by.autopost.rental.application.RentalPublicationService;
 import by.autopost.rental.catalog.*;
 import by.autopost.rental.persistence.JdbcRentalDraftRepository;
-import by.autopost.shared.ApiException;
 import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
@@ -32,40 +31,49 @@ class ReferenceBundleTest {
   }
 
   @Test
+  void buildingTheEditorLeavesTheOperationsCopyAsLoaded() {
+    var snapshot =
+        new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
+    var common = snapshot.common().deepCopy();
+    var editor = new EditorSchemaBuilder().build(snapshot);
+    assertFalse(editor.toString().contains("group.address_projection"));
+    assertEquals(common, snapshot.common());
+  }
+
+  @Test
   void profileDefaultsRejectUnknownSourcesAndFields() throws Exception {
-    var repo = fixture();
+    fixture();
     var card = (ObjectNode) read("card.json");
     card.set("profileDefaults", array().add(object("setting", "phone", "field", "missing")));
     write("card.json", card);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
     card.set(
         "profileDefaults", array().add(object("setting", "password", "field", "rental.currency")));
     write("card.json", card);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
   }
 
   @Test
   void cardModelOtherThanVersion2IsRejected() throws Exception {
-    var repo = fixture();
+    fixture();
     var card = (ObjectNode) read("card.json");
     card.put("version", 1);
     write("card.json", card);
-    var error = assertThrows(ApiException.class, repo::snapshot);
-    assertEquals(409, error.status);
+    var error = broken();
     assertTrue(error.getMessage().contains("версии 2"), error.getMessage());
   }
 
   @Test
   void ambiguousLookupIsRejectedButExplicitPartialCoverageCannotInventCodes() throws Exception {
-    var repo = fixture();
+    fixture();
     var plan = read("example.plan.json");
     var conversion = (ObjectNode) plan.path("fields").get(1).path("conversion");
     ((ArrayNode) conversion.path("values")).add(object("from", "BYN", "to", "different"));
     write("example.plan.json", plan);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
     conversion.set("values", array());
     write("example.plan.json", plan);
-    var catalog = new RentalCatalog(repo);
+    var catalog = new RentalCatalog(load());
     var result =
         catalog
             .prepare(
@@ -104,35 +112,34 @@ class ReferenceBundleTest {
             plan ->
                 plan.set(
                     "review", array().add(object("field", "", "message", "x", "severity", "low"))));
-    var repo = fixture();
+    fixture();
     var original = (ObjectNode) read("example.plan.json");
     for (var edit : edits.entrySet()) {
       var plan = original.deepCopy();
       edit.getValue().accept(plan);
       write("example.plan.json", plan);
-      unknownKey(repo, edit.getKey());
+      unknownKey(edit.getKey());
     }
     write("example.plan.json", original);
-    assertDoesNotThrow(repo::snapshot);
+    assertDoesNotThrow(this::load);
     var card = (ObjectNode) read("card.json");
     card.put("expandedGroups", "group.main");
     write("card.json", card);
-    unknownKey(repo, "expandedGroups");
+    unknownKey("expandedGroups");
   }
 
-  void unknownKey(FileReferenceRepository repo, String key) {
-    var error = assertThrows(ApiException.class, repo::snapshot, key);
-    assertEquals(409, error.status);
+  void unknownKey(String key) {
+    var error = broken();
     assertTrue(error.getMessage().contains("неизвестный ключ " + key), error.getMessage());
   }
 
   @Test
   void malformedNumericTargetsDoNotSilentlyBecomeDecimalNumbers() throws Exception {
-    var repo = fixture();
+    fixture();
     var plan = read("example.plan.json");
     ((ObjectNode) plan.path("fields").get(0).path("conversion")).put("target", "invented");
     write("example.plan.json", plan);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
   }
 
   @TempDir Path dir;
@@ -142,7 +149,17 @@ class ReferenceBundleTest {
     try (var paths = Files.list(Path.of("src/test/resources/reference-example"))) {
       for (Path p : paths.toList()) Files.copy(p, dir.resolve(p.getFileName()));
     }
+    return load();
+  }
+
+  /** Loads the fixture files as the start of a release does. */
+  FileReferenceRepository load() {
     return new FileReferenceRepository(dir.toString());
+  }
+
+  /** The edited fixture is rejected as a whole, as at the start of a release. */
+  ReferenceBundleException broken() {
+    return assertThrows(ReferenceBundleException.class, this::load);
   }
 
   JsonNode read(String file) throws Exception {
@@ -333,9 +350,9 @@ class ReferenceBundleTest {
 
   @Test
   void browserJobCarriesDataReadyOfItsOwnPreparation() throws Exception {
-    var repo = fixture();
+    fixture();
     withBrowserRecipe();
-    var catalog = new RentalCatalog(repo);
+    var catalog = new RentalCatalog(load());
     for (var values :
         List.of(
             object("rental.price", "1500", "rental.currency", "BYN"),
@@ -359,31 +376,39 @@ class ReferenceBundleTest {
   }
 
   @Test
-  void snapshotsAreDefensiveAndCachedUntilFilesChange() throws Exception {
+  void filesAreReadOnceAndEachOperationCopiesThemOnce() throws Exception {
     var repo = fixture();
     var first = repo.snapshot();
-    assertSame(first, repo.snapshot());
+    // One copy per operation, not one per call.
+    assertSame(first.plan("example"), first.plan("example"));
+    assertSame(first.card(), first.card());
     ((ObjectNode) first.plan("example")).put("platform", "corrupt");
-    assertEquals("example", repo.snapshot().plan("example").path("platform").asText());
-    var card = (ObjectNode) read("card.json");
-    card.set("valueLabels", object("BYN", "Белорусский рубль"));
-    write("card.json", card);
-    assertNotEquals(first.cardVersion(), repo.snapshot().cardVersion());
-    assertFalse(first.card().has("valueLabels"));
+    var second = repo.snapshot();
+    assertNotSame(first.plan("example"), second.plan("example"));
+    assertEquals("example", text(second.plan("example"), "platform"));
+    // The running release never reads the files again: a new bundle is a new release.
+    write("card.json", object("version", 1));
+    Files.delete(dir.resolve("manifest.json"));
+    var later = repo.snapshot();
+    assertEquals(first.cardVersion(), later.cardVersion());
+    assertEquals(2, later.card().path("version").asInt());
+    assertEquals(Set.of("example"), later.platforms());
   }
 
   @Test
   void planThatMapsARemovedNativeFieldIsRejectedByName() throws Exception {
-    var repo = fixture();
+    fixture();
     var source = read("example.schema.json");
     // A label edit leaves every reference valid: the bundle stays usable.
     ((ObjectNode) source.get(0).path("options").get(0)).put("name", "Арендная плата");
     schema(source);
-    assertDoesNotThrow(repo::snapshot);
+    assertDoesNotThrow(this::load);
     ((ArrayNode) source.get(0).path("options")).remove(0);
     schema(source);
-    var error = assertThrows(ApiException.class, repo::snapshot);
-    assertEquals(409, error.status);
+    var error = broken();
+    // The error names the file to fix and the field it still maps.
+    assertTrue(
+        error.getMessage().startsWith(dir.resolve("example.plan.json") + ": "), error.getMessage());
     assertTrue(error.getMessage().contains("неизвестное целевое поле rent"), error.getMessage());
   }
 
@@ -397,85 +422,83 @@ class ReferenceBundleTest {
         for (String key : List.of("schema_hash", "common_hash"))
           assertFalse(MAPPER.readTree(plan.toFile()).has(key), plan + " " + key);
     }
-    var repo = fixture();
+    fixture();
     var plan = (ObjectNode) read("example.plan.json");
     assertFalse(plan.has("schema_hash") || plan.has("common_hash"));
     for (String key : List.of("schema_hash", "common_hash")) {
       var stamped = plan.deepCopy().put(key, Hashing.sha256(read("common.json").toString()));
       write("example.plan.json", stamped);
-      unknownKey(repo, key);
+      unknownKey(key);
     }
   }
 
   @Test
   void unknownSourcesAndUnsupportedHandlersFailBeforeEditor() throws Exception {
-    var repo = fixture();
+    fixture();
     var plan = read("example.plan.json");
     var row = (ObjectNode) plan.path("fields").get(0);
     row.put("common_option_id", "invented.field");
     write("example.plan.json", plan);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
     row.put("common_option_id", "rental.price");
     ((ObjectNode) row.path("conversion")).put("kind", "javascript");
     write("example.plan.json", plan);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
   }
 
   @Test
   void detectsDependencyCyclesAndDanglingConditions() throws Exception {
-    var repo = fixture();
+    fixture();
     var source = read("example.schema.json");
     var rent = (ObjectNode) source.get(0).path("options").get(0);
     var currency = (ObjectNode) source.get(0).path("options").get(1);
     var rentRule = (ObjectNode) rent.path("fill_rule");
     rentRule.set("when", object("option_id", "missing", "operator", "exists"));
     schema(source);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
     rentRule.set("when", object("option_id", "currency", "operator", "exists"));
     ((ObjectNode) currency.path("fill_rule"))
         .set("when", object("option_id", "rent", "operator", "exists"));
     schema(source);
-    assertThrows(ApiException.class, repo::snapshot);
+    broken();
   }
 
   @Test
   void onlyFormat12SourceSchemasAreAccepted() throws Exception {
-    var repo = fixture();
+    fixture();
     var manifest = (ObjectNode) read("manifest.json");
     manifest.put("source_schema_version", "2.1");
     write("manifest.json", manifest);
-    assertEquals(409, assertThrows(ApiException.class, repo::snapshot).status);
+    broken();
     manifest.put("source_schema_version", "1.2");
     write("manifest.json", manifest);
-    assertDoesNotThrow(repo::snapshot);
+    assertDoesNotThrow(this::load);
     // A 2.1-style flat fact would be ignored by the 1.2 engine, so it is rejected.
     var source = read("example.schema.json");
     ((ObjectNode) source.get(0).path("options").get(1)).put("required", true);
     schema(source);
-    var error = assertThrows(ApiException.class, repo::snapshot);
-    assertEquals(409, error.status);
+    var error = broken();
     assertTrue(error.getMessage().contains("fill_rule"), error.getMessage());
   }
 
   @Test
   void manifestRejectsKeysItDoesNotRead() throws Exception {
-    var repo = fixture();
+    fixture();
     var manifest = (ObjectNode) read("manifest.json");
     ((ObjectNode) manifest.path("platforms").path("example"))
         .put("binding", "example.binding.json");
     write("manifest.json", manifest);
-    var error = assertThrows(ApiException.class, repo::snapshot);
-    assertEquals(409, error.status);
+    var error = broken();
     assertTrue(error.getMessage().contains("неизвестный ключ binding"), error.getMessage());
   }
 
   @Test
   void pathsCannotEscapePrivateBundle() throws Exception {
-    var repo = fixture();
+    fixture();
     var manifest = (ObjectNode) read("manifest.json");
     manifest.put("common", "../outside.json");
     write("manifest.json", manifest);
-    assertThrows(ApiException.class, repo::snapshot);
+    assertTrue(broken().getMessage().contains("путь выходит за каталог комплекта"));
   }
 
   @Test

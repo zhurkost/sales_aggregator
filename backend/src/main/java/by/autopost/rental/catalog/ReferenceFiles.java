@@ -3,21 +3,70 @@ package by.autopost.rental.catalog;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.shared.ApiException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.function.Supplier;
 
-/** Disk boundary: no source URLs, symlink escape or customer-supplied paths. */
+/**
+ * Disk boundary of the bundle: no source URLs, symlink escape or customer-supplied paths. Every
+ * error names the file it is about.
+ */
 final class ReferenceFiles {
+  private static final long LIMIT = 5 * 1024 * 1024;
   private final Path root;
 
   ReferenceFiles(String directory) {
-    root = directory.isBlank() ? null : Path.of(directory).toAbsolutePath().normalize();
+    if (directory == null || directory.isBlank())
+      throw new ReferenceBundleException(
+          "autopost.rental-reference-dir", "каталог справочников аренды не задан", null);
+    root = Path.of(directory).toAbsolutePath().normalize();
   }
 
-  Path resolve(String relative) {
-    if (root == null)
-      throw new ApiException(503, "Справочники аренды ещё не подключены на сервере.");
+  JsonNode read(String relative) {
+    Path file = resolve(relative);
+    if (!Files.isRegularFile(file)) throw fail(relative, "файл не найден", null);
+    try {
+      if (Files.size(file) > LIMIT) throw fail(relative, "файл больше 5 МиБ", null);
+      JsonNode data = MAPPER.readTree(Files.readAllBytes(file));
+      if (data == null || data.isMissingNode()) throw fail(relative, "файл пуст", null);
+      return data;
+    } catch (JsonProcessingException e) {
+      var at = e.getLocation();
+      throw fail(
+          relative,
+          "не JSON (строка "
+              + at.getLineNr()
+              + ", столбец "
+              + at.getColumnNr()
+              + "): "
+              + e.getOriginalMessage(),
+          e);
+    } catch (IOException e) {
+      throw fail(relative, "файл не читается: " + e.getMessage(), e);
+    }
+  }
+
+  /** Runs the checks of one file: their error names that file. */
+  void check(String relative, Runnable check) {
+    checked(
+        relative,
+        () -> {
+          check.run();
+          return null;
+        });
+  }
+
+  <T> T checked(String relative, Supplier<T> check) {
+    try {
+      return check.get();
+    } catch (ApiException e) {
+      throw fail(relative, e.getMessage(), null);
+    }
+  }
+
+  private Path resolve(String relative) {
     try {
       Path path = root.resolve(relative).normalize();
       if (!path.startsWith(root) || Path.of(relative).isAbsolute()) throw new IOException();
@@ -25,36 +74,17 @@ final class ReferenceFiles {
         throw new IOException();
       return path;
     } catch (Exception e) {
-      throw new ApiException(409, "Некорректный путь в комплекте справочников.");
+      throw fail(relative, "путь выходит за каталог комплекта " + root, null);
     }
   }
 
-  boolean exists(String relative) {
-    return Files.isRegularFile(resolve(relative));
-  }
-
-  JsonNode read(String relative) {
+  private ReferenceBundleException fail(String relative, String reason, Throwable cause) {
+    String file;
     try {
-      Path file = resolve(relative);
-      if (Files.size(file) > 5 * 1024 * 1024) throw new IOException();
-      JsonNode data = MAPPER.readTree(Files.readAllBytes(file));
-      if (data == null) throw new IOException();
-      return data;
-    } catch (ApiException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new ApiException(503, "Комплект справочников отсутствует или повреждён.");
+      file = root.resolve(relative).normalize().toString();
+    } catch (InvalidPathException e) {
+      file = root + "/" + relative;
     }
-  }
-
-  String stamp(String relative) {
-    try {
-      Path file = resolve(relative);
-      return Files.exists(file)
-          ? Files.getLastModifiedTime(file).toString() + ":" + Files.size(file)
-          : "missing";
-    } catch (Exception e) {
-      return "unavailable";
-    }
+    return new ReferenceBundleException(file, reason, cause);
   }
 }

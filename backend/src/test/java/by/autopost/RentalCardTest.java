@@ -167,8 +167,9 @@ class RentalCardTest {
     write("runtime/card.json", card);
     var error =
         assertThrows(
-            ApiException.class, () -> new FileReferenceRepository(dir.toString()).snapshot());
-    assertEquals(409, error.status);
+            ReferenceBundleException.class, () -> new FileReferenceRepository(dir.toString()));
+    assertTrue(error.getMessage().startsWith(dir.resolve("runtime/card.json") + ": "));
+    assertTrue(error.getMessage().contains("canonicalValues"), error.getMessage());
   }
 
   @Test
@@ -177,8 +178,8 @@ class RentalCardTest {
     Files.delete(dir.resolve("manifest.json"));
     var error =
         assertThrows(
-            ApiException.class, () -> new FileReferenceRepository(dir.toString()).snapshot());
-    assertEquals(503, error.status);
+            ReferenceBundleException.class, () -> new FileReferenceRepository(dir.toString()));
+    assertEquals(dir.resolve("manifest.json") + ": файл не найден", error.getMessage());
   }
 
   @Test

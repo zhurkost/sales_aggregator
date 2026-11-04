@@ -1,11 +1,10 @@
 package by.autopost.rental.catalog;
 
+import static by.autopost.rental.catalog.ReferenceValidator.check;
 import static by.autopost.shared.Json.*;
 
-import by.autopost.shared.ApiException;
 import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -13,64 +12,67 @@ import java.util.TreeSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
+/**
+ * The reference bundle of this release, read and validated once when the application starts. A
+ * broken bundle throws {@link ReferenceBundleException} with the file and the reason, so the
+ * application does not start. Files are never re-read: a new bundle is a new release.
+ */
 @Repository
 public class FileReferenceRepository implements ReferenceRepository {
+  private static final String MANIFEST_FILE = "manifest.json";
   private static final Set<String> MANIFEST =
       Set.of(
           "format_version", "source_schema_version", "category_id", "common", "card", "platforms");
   private static final Set<String> PLATFORM = Set.of("schema", "plan", "browser");
-  private final ReferenceFiles files;
-  private ReferenceSnapshot cached;
-  private Map<String, String> stamps = Map.of();
+  private final ReferenceSnapshot loaded;
 
   public FileReferenceRepository(@Value("${autopost.rental-reference-dir:}") String directory) {
-    files = new ReferenceFiles(directory);
+    loaded = load(new ReferenceFiles(directory));
   }
 
+  /** A view of its own for one operation; the loaded bundle itself is never handed out. */
   @Override
-  public synchronized ReferenceSnapshot snapshot() {
-    if (cached != null
-        && stamps.entrySet().stream().allMatch(e -> e.getValue().equals(files.stamp(e.getKey()))))
-      return cached;
-    var paths = new LinkedHashMap<String, String>();
-    JsonNode manifest = read("manifest.json", paths);
-    ReferenceValidator.keys(manifest, "manifest", MANIFEST);
-    if (manifest.path("format_version").asInt() != 1)
-      throw new ApiException(409, "Неподдерживаемый manifest справочников.");
+  public ReferenceSnapshot snapshot() {
+    return loaded.view();
+  }
+
+  private static ReferenceSnapshot load(ReferenceFiles files) {
+    JsonNode manifest = files.read(MANIFEST_FILE);
+    files.check(MANIFEST_FILE, () -> manifest(manifest));
     String category = text(manifest, "category_id");
-    if (!category.matches("[a-z][a-z0-9_]{0,79}"))
-      throw new ApiException(409, "Некорректная категория справочника.");
-    if (!text(manifest, "source_schema_version").equals("1.2"))
-      throw new ApiException(409, "Неподдерживаемая версия формата справочника.");
-    JsonNode card = read(path(manifest, "card"), paths);
-    JsonNode common = read(path(manifest, "common"), paths);
-    var registry = manifest.path("platforms");
-    if (!registry.isObject() || registry.isEmpty())
-      throw new ApiException(409, "В справочнике отсутствует реестр площадок.");
+    String commonFile = text(manifest, "common"), cardFile = text(manifest, "card");
+    JsonNode common = files.read(commonFile);
+    var canonical = files.checked(commonFile, () -> ReferenceValidator.common(common));
+    var ids = new TreeSet<String>();
+    manifest.path("platforms").fieldNames().forEachRemaining(ids::add);
+    JsonNode card = files.read(cardFile);
+    files.check(cardFile, () -> ReferenceValidator.card(card, canonical, ids));
     Map<String, JsonNode> schemas = new TreeMap<>(),
         plans = new TreeMap<>(),
         browsers = new TreeMap<>();
-    var ids = new TreeSet<String>();
-    registry.fieldNames().forEachRemaining(ids::add);
     for (String id : ids) {
-      if (!id.matches("[a-z][a-z0-9_]{0,39}"))
-        throw new ApiException(409, "Некорректный идентификатор площадки.");
-      var entry = registry.path(id);
-      ReferenceValidator.keys(entry, "manifest: площадка " + id, PLATFORM);
-      JsonNode schema = read(path(entry, "schema"), paths);
-      JsonNode plan = read(path(entry, "plan"), paths);
-      SourceSchemaValidator.validate(schema);
+      var entry = manifest.path("platforms").path(id);
+      String schemaFile = text(entry, "schema"), planFile = text(entry, "plan");
+      JsonNode schema = files.read(schemaFile);
+      var graph =
+          files.checked(
+              schemaFile,
+              () -> {
+                SourceSchemaValidator.validate(schema);
+                return ReferenceValidator.schema(id, schema);
+              });
+      JsonNode plan = files.read(planFile);
+      files.check(
+          planFile, () -> ReferenceValidator.plan(category, canonical, id, schema, graph, plan));
       schemas.put(id, schema);
       plans.put(id, plan);
       if (entry.has("browser")) {
-        var browser = read(path(entry, "browser"), paths);
-        new BrowserRecipeValidator().validate(id, schemas.get(id), browser);
+        String browserFile = text(entry, "browser");
+        JsonNode browser = files.read(browserFile);
+        files.check(browserFile, () -> new BrowserRecipeValidator().validate(id, schema, browser));
         browsers.put(id, browser);
       }
     }
-    new ReferenceValidator().validate(category, common, card, schemas, plans);
-    if (paths.entrySet().stream().anyMatch(e -> !e.getValue().equals(files.stamp(e.getKey()))))
-      throw new ApiException(409, "Справочники изменились при чтении. Повторите запрос.");
     String cardVersion = Hashing.sha256(object("common", common, "card", card).toString());
     String integrationVersion =
         Hashing.sha256(
@@ -80,22 +82,36 @@ public class FileReferenceRepository implements ReferenceRepository {
                     "plans", plans,
                     "browsers", browsers)
                 .toString());
-    ReferenceSnapshot next =
-        new ReferenceSnapshot(
-            category, common, card, schemas, plans, browsers, cardVersion, integrationVersion);
-    cached = next;
-    stamps = Map.copyOf(paths);
-    return next;
+    return new ReferenceSnapshot(
+        category, common, card, schemas, plans, browsers, cardVersion, integrationVersion);
   }
 
-  private static String path(JsonNode entry, String key) {
-    String path = text(entry, key);
-    if (path.isBlank()) throw new ApiException(409, "В manifest не указан путь " + key + ".");
-    return path;
-  }
-
-  private JsonNode read(String path, Map<String, String> paths) {
-    paths.put(path, files.stamp(path));
-    return files.read(path);
+  /** manifest.json: its format, the category and the files of every platform. */
+  private static void manifest(JsonNode manifest) {
+    ReferenceValidator.keys(manifest, "manifest", MANIFEST);
+    check(manifest.path("format_version").asInt() == 1, "неподдерживаемый format_version");
+    check(
+        text(manifest, "category_id").matches("[a-z][a-z0-9_]{0,79}"),
+        "некорректная категория " + text(manifest, "category_id"));
+    check(
+        text(manifest, "source_schema_version").equals("1.2"),
+        "неподдерживаемая версия формата схем " + text(manifest, "source_schema_version"));
+    for (String key : Set.of("common", "card"))
+      check(!text(manifest, key).isBlank(), "в manifest не указан путь " + key);
+    var registry = manifest.path("platforms");
+    check(registry.isObject() && !registry.isEmpty(), "в manifest нет реестра площадок");
+    registry
+        .fields()
+        .forEachRemaining(
+            platform -> {
+              String id = platform.getKey();
+              check(id.matches("[a-z][a-z0-9_]{0,39}"), "некорректный идентификатор площадки " + id);
+              ReferenceValidator.keys(platform.getValue(), "manifest: площадка " + id, PLATFORM);
+              for (String key : PLATFORM)
+                check(
+                    !text(platform.getValue(), key).isBlank()
+                        || key.equals("browser") && !platform.getValue().has(key),
+                    "в manifest не указан путь " + key + " площадки " + id);
+            });
   }
 }

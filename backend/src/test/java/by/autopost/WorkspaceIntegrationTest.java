@@ -20,7 +20,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.*;
 
-@SpringBootTest(properties = "autopost.rental-reference-dir=")
+@SpringBootTest(
+    properties = "autopost.rental-reference-dir=../data/rental/apartments_long_term_rent")
 @AutoConfigureMockMvc
 class WorkspaceIntegrationTest {
   @Test
@@ -66,7 +67,7 @@ class WorkspaceIntegrationTest {
     postJson("rental/analyze", "", object("text", "Сдам квартиру"), 401);
     var account = register();
     assertFalse(
-        getJson("rental/editor", account.cookie(), 503).toString().contains("DADATA_API_KEY"));
+        getJson("rental/editor", account.cookie(), 200).toString().contains("DADATA_API_KEY"));
     postJson("rental/address/suggest", account.cookie(), object("query", "М"), 400);
     postJson("rental/analyze", account.cookie(), object("text", "М"), 400);
   }

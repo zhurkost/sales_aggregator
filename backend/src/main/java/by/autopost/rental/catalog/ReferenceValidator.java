@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Reject broken bundles before any card can use them. Does not infer missing mappings. */
+/**
+ * Reject broken bundles before any card can use them. Does not infer missing mappings. Each check
+ * covers one file (common, card.json, a schema, a plan), so the loader names the file to fix.
+ */
 public final class ReferenceValidator {
   /** Keys of each conversion kind; the kinds are the executable handlers. */
   private static final Map<String, Set<String>> CONVERSIONS =
@@ -67,16 +70,20 @@ public final class ReferenceValidator {
   private static final Set<String> OPERATORS =
       Set.of("equals", "not_equals", "in", "not_in", "exists", "gt", "gte", "lt", "lte");
 
-  public void validate(
-      String category,
-      JsonNode common,
-      JsonNode card,
-      Map<String, JsonNode> schemas,
-      Map<String, JsonNode> plans) {
+  private ReferenceValidator() {}
+
+  /** common: one category of uniquely named fields. Returns the card fields by id. */
+  static Map<String, JsonNode> common(JsonNode common) {
     check(common.isArray() && common.size() == 1, "common должен содержать одну категорию");
     var canonical = fields(common);
     check(!canonical.isEmpty(), "нет полей общей карточки");
-    card(card);
+    uniqueOptions(common);
+    return canonical;
+  }
+
+  /** card.json against the card fields and the platforms registered in the manifest. */
+  static void card(JsonNode card, Map<String, JsonNode> canonical, Set<String> platforms) {
+    cardKeys(card);
     if (card.has("profileDefaults")) {
       check(card.path("profileDefaults").isArray(), "profileDefaults должен быть массивом");
       Set<String> defaults = new HashSet<>();
@@ -101,90 +108,105 @@ public final class ReferenceValidator {
     check(card.path("canonicalValues").isObject(), "нет вариантов общей карточки canonicalValues");
     Set<String> registered = new HashSet<>();
     card.path("platforms").fieldNames().forEachRemaining(registered::add);
-    check(registered.equals(schemas.keySet()), "реестр площадок не совпадает с комплектом");
-    uniqueOptions(common);
-    for (String platform : schemas.keySet()) {
-      JsonNode schema = schemas.get(platform), plan = plans.get(platform);
-      var nativeFields = fields(schema);
-      check(schema.isArray() && !schema.isEmpty(), platform + ": пустая схема");
-      uniqueOptions(schema);
-      check(
-          ReferenceContract.PREPARATION_VERSION.equals(text(plan, "runtime_version")),
-          platform + ": неподдерживаемая версия плана");
-      check(platform.equals(text(plan, "platform")), platform + ": неверная площадка в плане");
-      String where = platform + ": план";
-      keys(plan, where, PLAN);
-      if (plan.has("category_id"))
+    check(registered.equals(platforms), "реестр площадок не совпадает с комплектом");
+  }
+
+  /**
+   * A source schema: unique ids, conditions and dependencies on its own fields, no cycles. Returns
+   * what each field depends on, for the check of its plan.
+   */
+  static Map<String, Set<String>> schema(String platform, JsonNode schema) {
+    check(schema.isArray() && !schema.isEmpty(), platform + ": пустая схема");
+    uniqueOptions(schema);
+    var nativeFields = fields(schema);
+    Map<String, Set<String>> graph = new LinkedHashMap<>();
+    for (var field : nativeFields.values()) {
+      String id = text(field, "id");
+      var deps = new LinkedHashSet<String>();
+      condition(field.path("fill_rule").get("when"), nativeFields, deps);
+      for (var choice : field.path("options"))
+        if (text(choice, "type").equals("choice"))
+          condition(choice.path("fill_rule").get("when"), nativeFields, deps);
+      for (var dep : field.path("fill_rule").path("depends_on")) {
         check(
-            category.equals(text(plan, "category_id")), platform + ": неверная категория в плане");
-      Map<String, Set<String>> graph = new LinkedHashMap<>();
-      for (var field : nativeFields.values()) {
-        String id = text(field, "id");
-        var deps = new LinkedHashSet<String>();
-        condition(field.path("fill_rule").get("when"), nativeFields, deps);
-        for (var choice : field.path("options"))
-          if (text(choice, "type").equals("choice"))
-            condition(choice.path("fill_rule").get("when"), nativeFields, deps);
-        for (var dep : field.path("fill_rule").path("depends_on")) {
-          check(
-              nativeFields.containsKey(dep.asText()),
-              "зависимость от отсутствующего поля " + dep.asText());
-          deps.add(dep.asText());
-        }
-        graph.put(id, deps);
+            nativeFields.containsKey(dep.asText()),
+            "зависимость от отсутствующего поля " + dep.asText());
+        deps.add(dep.asText());
       }
-      Set<String> targets = new HashSet<>();
-      for (var row : plan.path("fields")) {
-        String target = text(row, "platform_option_id"),
-            kind = text(row.path("conversion"), "kind");
-        check(
-            nativeFields.containsKey(target)
-                && !text(nativeFields.get(target), "type").equals("group"),
-            "неизвестное целевое поле " + target);
-        check(targets.add(target), "несколько маппингов целевого поля " + target);
-        keys(row, where + ", поле " + target, ROW);
-        check(KINDS.contains(kind), "неподдерживаемое преобразование " + kind);
-        keys(
-            row.path("conversion"),
-            where + ", поле " + target + ", преобразование " + kind,
-            CONVERSIONS.get(kind));
-        new ConversionValidator().validate(row.path("conversion"));
-        check(!sources(row).isEmpty(), "у маппинга нет источника " + target);
-        for (String source : sources(row))
-          check(canonical.containsKey(source), "неизвестное поле карточки " + source);
-        for (var dependency : row.path("conversion").path("requires")) {
-          check(
-              nativeFields.containsKey(dependency.asText()),
-              "неизвестная зависимость преобразования " + dependency.asText());
-          graph.get(target).add(dependency.asText());
-        }
-      }
-      for (var list : PLAN_LISTS.entrySet()) {
-        var items = plan.path(list.getKey());
-        check(items.isMissingNode() || items.isArray(), where + ": " + list.getKey() + " — список");
-        for (var item : items) keys(item, where + ": " + list.getKey(), list.getValue());
-      }
-      for (String key : List.of("constants", "deferred_fields"))
-        check(
-            plan.path(key).isMissingNode() || plan.path(key).isObject(),
-            where + ": " + key + " — объект");
-      for (var message : plan.path("deferred_fields"))
-        check(message.isTextual(), where + ": deferred_fields содержит текст причины");
-      for (String target : iterable(plan.path("constants").fieldNames()))
-        check(nativeFields.containsKey(target), "неизвестная константа " + target);
-      for (String key : List.of("addresses", "coordinates"))
-        for (var item : plan.path(key))
-          check(
-              nativeFields.containsKey(text(item, "platform_option_id")),
-              "неизвестное поле адресного плана");
-      for (var dep : plan.path("address_bound_fields"))
-        check(nativeFields.containsKey(dep.asText()), "неизвестное адресное поле " + dep.asText());
-      acyclic(graph);
+      graph.put(id, deps);
     }
+    acyclic(graph);
+    return graph;
+  }
+
+  /** A plan against its schema and the card fields; its conversions join the schema graph. */
+  static void plan(
+      String category,
+      Map<String, JsonNode> canonical,
+      String platform,
+      JsonNode schema,
+      Map<String, Set<String>> graph,
+      JsonNode plan) {
+    var nativeFields = fields(schema);
+    check(
+        ReferenceContract.PREPARATION_VERSION.equals(text(plan, "runtime_version")),
+        platform + ": неподдерживаемая версия плана");
+    check(platform.equals(text(plan, "platform")), platform + ": неверная площадка в плане");
+    String where = platform + ": план";
+    keys(plan, where, PLAN);
+    if (plan.has("category_id"))
+      check(category.equals(text(plan, "category_id")), platform + ": неверная категория в плане");
+    Set<String> targets = new HashSet<>();
+    for (var row : plan.path("fields")) {
+      String target = text(row, "platform_option_id"),
+          kind = text(row.path("conversion"), "kind");
+      check(
+          nativeFields.containsKey(target)
+              && !text(nativeFields.get(target), "type").equals("group"),
+          "неизвестное целевое поле " + target);
+      check(targets.add(target), "несколько маппингов целевого поля " + target);
+      keys(row, where + ", поле " + target, ROW);
+      check(KINDS.contains(kind), "неподдерживаемое преобразование " + kind);
+      keys(
+          row.path("conversion"),
+          where + ", поле " + target + ", преобразование " + kind,
+          CONVERSIONS.get(kind));
+      new ConversionValidator().validate(row.path("conversion"));
+      check(!sources(row).isEmpty(), "у маппинга нет источника " + target);
+      for (String source : sources(row))
+        check(canonical.containsKey(source), "неизвестное поле карточки " + source);
+      for (var dependency : row.path("conversion").path("requires")) {
+        check(
+            nativeFields.containsKey(dependency.asText()),
+            "неизвестная зависимость преобразования " + dependency.asText());
+        graph.get(target).add(dependency.asText());
+      }
+    }
+    for (var list : PLAN_LISTS.entrySet()) {
+      var items = plan.path(list.getKey());
+      check(items.isMissingNode() || items.isArray(), where + ": " + list.getKey() + " — список");
+      for (var item : items) keys(item, where + ": " + list.getKey(), list.getValue());
+    }
+    for (String key : List.of("constants", "deferred_fields"))
+      check(
+          plan.path(key).isMissingNode() || plan.path(key).isObject(),
+          where + ": " + key + " — объект");
+    for (var message : plan.path("deferred_fields"))
+      check(message.isTextual(), where + ": deferred_fields содержит текст причины");
+    for (String target : iterable(plan.path("constants").fieldNames()))
+      check(nativeFields.containsKey(target), "неизвестная константа " + target);
+    for (String key : List.of("addresses", "coordinates"))
+      for (var item : plan.path(key))
+        check(
+            nativeFields.containsKey(text(item, "platform_option_id")),
+            "неизвестное поле адресного плана");
+    for (var dep : plan.path("address_bound_fields"))
+      check(nativeFields.containsKey(dep.asText()), "неизвестное адресное поле " + dep.asText());
+    acyclic(graph);
   }
 
   /** card.json: only what the editor and preparation read, each with its JSON type. */
-  private static void card(JsonNode card) {
+  private static void cardKeys(JsonNode card) {
     keys(card, "card.json", CARD);
     for (var entry : iterable(card.path("platforms").fields())) {
       keys(entry.getValue(), "card.json: площадка " + entry.getKey(), Set.of("name"));
