@@ -11,7 +11,6 @@ const schema: EditorSchema = {
   canonicalValues: {},
   card: {
     version: 2,
-    expandedGroups: [],
     addressDependentFacts: [],
     profileDefaults: [
       { setting: "phone", field: "contact.phone" },

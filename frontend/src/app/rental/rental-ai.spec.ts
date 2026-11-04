@@ -53,7 +53,7 @@ describe("compact rental editor with AI",()=>{
   it("preserves a confirmed address and clears stale dependencies only when replacement is accepted",async()=>{
     const address={provider:"dadata",countryIso:"BY",label:"Новый адрес",settlement:"Минск",street:"Новая",house:"2",confirmed:true};
     const {c}=setup({...result,address});
-    c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
+    c.schema!.card={version:2,addressDependentFacts:["metro"]};
     c.draft.address={...address,label:"Старый адрес",street:"Старая",house:"1",latitude:"53.9"}; c.draft.values.metro="old";
     await c.fillFromDescription();expect(c.draft.address.label).toBe("Старый адрес");expect(c.aiAddress?.label).toBe("Новый адрес");expect(c.draft.values.metro).toBe("old");
     c.acceptAiAddress();expect(c.draft.address.label).toBe("Новый адрес");expect(c.draft.values.metro).toBeUndefined();
@@ -62,7 +62,7 @@ describe("compact rental editor with AI",()=>{
   it("accepting an unconfirmed AI address follows the typing rule and keeps nearby facts",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Новый адрес",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address});
-    c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
+    c.schema!.card={version:2,addressDependentFacts:["metro"]};
     c.draft.address={...address,label:"Старый адрес",confirmed:true,latitude:"53.9"}; c.draft.values.metro="old";
     await c.fillFromDescription();c.acceptAiAddress();
     expect(c.draft.address.label).toBe("Новый адрес");expect(c.draft.address.confirmed).toBe(false);
@@ -101,7 +101,7 @@ describe("compact rental editor with AI",()=>{
   it("keeps address-dependent suggestions together and discards them after a manual address change",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Адрес B",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address,suggestions:[{field:"metro",value:"Метро B",quote:"Метро B"}]});
-    c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
+    c.schema!.card={version:2,addressDependentFacts:["metro"]};
     c.schema!.category.options[1].options.push(field("metro"));
     c.draft.address={...address,label:"Адрес A"};
     await c.fillFromDescription();expect(c.draft.values.metro).toBeUndefined();

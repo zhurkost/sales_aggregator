@@ -568,10 +568,6 @@
     "location.latitude": "latitude",
     "location.longitude": "longitude"
   },
-  "expandedGroups": [
-    "group.main",
-    "group.listing"
-  ],
   "addressDependentFacts": [
     "location.microdistrict",
     "location.residential_complex",
@@ -585,6 +581,5 @@
     "location.metro_3_station",
     "location.metro_3_mode",
     "location.metro_3_minutes"
-  ],
-  "modelNote": "Union canonical card v2; source schemas unchanged; semantic mapping reviewed separately."
+  ]
 }

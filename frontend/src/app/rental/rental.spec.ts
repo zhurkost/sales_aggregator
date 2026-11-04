@@ -59,7 +59,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.schema = {card:{version:2,expandedGroups:[],addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
+    c.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
       platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress","coordinates"]}}};
     c.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
     c.draft.values["location.metro"] = "Old metro";
@@ -90,7 +90,7 @@ describe("rental preparation editor", () => {
     const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area"}]};
     const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,extras:[],labels:{},choiceLabels:{},constants:{},bindings:[]}]));
     vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
-      version:"2",card:{version:2,expandedGroups:["group.main"],addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
+      version:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
     } : {drafts:[]})));
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
@@ -468,7 +468,7 @@ describe("rental preparation editor", () => {
     const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
     function editor() {
       const c = new RentalEditorComponent();
-      c.schema = {card:{version:2,expandedGroups:[],addressDependentFacts:facts}, canonicalValues:{}, version:"2", addressSuggestions:true,
+      c.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, version:"2", addressSuggestions:true,
         category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
           {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
           {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},
