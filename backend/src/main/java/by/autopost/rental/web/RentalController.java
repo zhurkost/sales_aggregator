@@ -9,6 +9,9 @@ import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,19 +25,30 @@ class RentalController {
   private final AddressService addresses;
   private final RentalDraftService drafts;
   private final RentalPublicationService publication;
+  private final RentalPhotoService photos;
 
   RentalController(
       Access access,
       RentalCatalog catalog,
       AddressService addresses,
       RentalDraftService drafts,
-      RentalPublicationService publication) {
+      RentalPublicationService publication,
+      RentalPhotoService photos) {
     this.access = access;
     this.catalog = catalog;
     this.addresses = addresses;
     this.drafts = drafts;
     this.publication = publication;
+    this.photos = photos;
   }
+
+  /** Photos the editor adds to the end of the card, compressed, with the revision it saw. */
+  record PhotoUpload(Integer revision, List<RentalPhotoService.NewPhoto> photos) {}
+
+  record PhotoRemoval(Integer revision, String photo) {}
+
+  /** The new order of all photos of the card. */
+  record PhotoOrder(Integer revision, List<String> order) {}
 
   @GetMapping("/editor")
   ObjectNode editor(HttpServletRequest req) {
@@ -96,6 +110,31 @@ class RentalController {
     if (card.toString().length() > CARD_CHARACTERS)
       throw new ApiException(413, "Карточка слишком большая.");
     return card;
+  }
+
+  @GetMapping("/drafts/{id}/photos/{photo}")
+  ResponseEntity<byte[]> photo(
+      HttpServletRequest req, @PathVariable String id, @PathVariable String photo) {
+    var file = photos.file(access.require(req).workspace(), id, photo);
+    return ResponseEntity.ok().contentType(MediaType.parseMediaType(file.type())).body(file.data());
+  }
+
+  @PostMapping("/drafts/{id}/photos")
+  RentalPhotoService.Photos addPhotos(
+      HttpServletRequest req, @PathVariable String id, @RequestBody PhotoUpload input) {
+    return photos.add(access.require(req).workspace(), id, input.revision(), input.photos());
+  }
+
+  @PostMapping("/drafts/{id}/photos/delete")
+  RentalPhotoService.Photos removePhoto(
+      HttpServletRequest req, @PathVariable String id, @RequestBody PhotoRemoval input) {
+    return photos.remove(access.require(req).workspace(), id, input.revision(), input.photo());
+  }
+
+  @PostMapping("/drafts/{id}/photos/order")
+  RentalPhotoService.Photos orderPhotos(
+      HttpServletRequest req, @PathVariable String id, @RequestBody PhotoOrder input) {
+    return photos.reorder(access.require(req).workspace(), id, input.revision(), input.order());
   }
 
   @PostMapping("/drafts/{id}/delete")

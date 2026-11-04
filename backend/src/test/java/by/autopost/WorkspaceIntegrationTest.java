@@ -137,6 +137,51 @@ class WorkspaceIntegrationTest {
     getJson(path, owner.cookie(), 404);
   }
 
+  @Test
+  void rentalPhotosAreServedOnlyToTheirCabinetAndReviseTheCard() throws Exception {
+    var owner = register();
+    var other = register();
+    String id = UUID.randomUUID().toString(), path = "rental/drafts/" + id;
+    var draft = object("modelVersion", 2, "values", object("listing.title", "Photos"));
+    postJson(path, owner.cookie(), object("revision", 0, "draft", draft), 200);
+    byte[] jpeg = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 1, 2};
+    var photo =
+        object(
+            "name",
+            "kitchen.jpg",
+            "dataUrl",
+            "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(jpeg));
+    var upload = object("revision", 1, "photos", List.of(photo, photo));
+    postJson(path + "/photos", other.cookie(), upload, 404);
+    var added =
+        parse(
+            postJson(path + "/photos", owner.cookie(), upload, 200)
+                .getResponse()
+                .getContentAsString());
+    assertEquals(2, added.path("revision").asInt());
+    var first = text(added.path("photos").get(0), "id");
+    assertEquals("kitchen.jpg", text(added.path("photos").get(0), "name"));
+    assertEquals("image/jpeg", text(added.path("photos").get(0), "type"));
+    assertEquals(2, getJson(path, owner.cookie(), 200).path("photos").size());
+    String url = "/api/workspace/" + path + "/photos/" + first;
+    var image = mvc.perform(get(url).header("Cookie", owner.cookie())).andReturn().getResponse();
+    assertEquals(200, image.getStatus());
+    assertEquals("image/jpeg", image.getContentType());
+    assertArrayEquals(jpeg, image.getContentAsByteArray());
+    assertEquals(
+        404,
+        mvc.perform(get(url).header("Cookie", other.cookie())).andReturn().getResponse().getStatus());
+    var second = text(added.path("photos").get(1), "id");
+    var order = object("revision", 2, "order", List.of(second, first));
+    postJson(path + "/photos/order", owner.cookie(), order, 200);
+    postJson(path + "/photos/delete", owner.cookie(), object("revision", 3, "photo", first), 200);
+    postJson(path + "/photos/delete", owner.cookie(), object("revision", 3, "photo", second), 409);
+    postJson(path + "/photos", owner.cookie(), object("revision", "x"), 400);
+    var saved = getJson(path, owner.cookie(), 200);
+    assertEquals(4, saved.path("revision").asInt());
+    assertEquals(second, text(saved.path("photos").get(0), "id"));
+  }
+
   static final Path DATA;
 
   static {

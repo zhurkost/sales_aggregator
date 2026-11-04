@@ -4,10 +4,8 @@ import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import by.autopost.rental.application.RentalCatalog;
-import by.autopost.rental.application.RentalDraftService;
 import by.autopost.rental.application.RentalPublicationService;
 import by.autopost.rental.catalog.*;
-import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
@@ -16,8 +14,6 @@ import java.nio.file.attribute.FileTime;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 class ReferenceBundleTest {
   @Test
@@ -243,10 +239,7 @@ class ReferenceBundleTest {
   void openCardKeepsSavingCheckingAndLaunchingAfterASelectorFix() throws Exception {
     fixture();
     var drafts =
-        new RentalDraftService(
-            new JdbcRentalDraftRepository(
-                new JdbcTemplate(
-                    new DriverManagerDataSource("jdbc:sqlite:" + dir.resolve("drafts.sqlite")))));
+        RentalStorage.at(dir.resolve("drafts.sqlite")).draftService();
     var before = new RentalCatalog(new FileReferenceRepository(dir.toString()));
     // The editor stamps the card with the version of the card model it shows.
     var card =

@@ -15,9 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RentalDraftService {
   private final RentalDraftRepository drafts;
+  private final RentalPhotoRepository photos;
 
-  public RentalDraftService(RentalDraftRepository drafts) {
+  public RentalDraftService(RentalDraftRepository drafts, RentalPhotoRepository photos) {
     this.drafts = drafts;
+    this.photos = photos;
   }
 
   public ObjectNode list(String workspace) {
@@ -47,7 +49,8 @@ public class RentalDraftService {
     JsonNode draft = parse(row.data());
     if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
     CardMigration.requireCurrent(draft);
-    return object("id", id, "revision", row.revision(), "draft", draft);
+    return object(
+        "id", id, "revision", row.revision(), "draft", draft, "photos", photos.list(workspace, id));
   }
 
   @Transactional
@@ -87,6 +90,8 @@ public class RentalDraftService {
           409,
           "Квартира изменена в другой вкладке. Откройте её заново и проверьте перед удалением.");
     }
+    // What is stored with the card goes with it.
+    photos.removeAll(workspace, id);
     return object("deleted", true, "id", id);
   }
 }

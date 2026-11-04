@@ -138,6 +138,17 @@ public class JdbcRentalDraftRepository implements RentalDraftRepository {
         == 1;
   }
 
+  public boolean touch(String workspace, String id, int revision, String updated) {
+    return jdbc.update(
+            "UPDATE rental_drafts SET revision=revision+1,updated=? WHERE workspace_id=? AND id=?"
+                + " AND revision=?",
+            updated,
+            workspace,
+            id,
+            revision)
+        == 1;
+  }
+
   public boolean delete(String workspace, String id, int revision) {
     return jdbc.update(
             "DELETE FROM rental_drafts WHERE workspace_id=? AND id=? AND revision=?",

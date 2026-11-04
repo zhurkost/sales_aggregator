@@ -274,6 +274,10 @@ class RentalDraftMigrationTest {
       return target.update(workspace, draft, revision);
     }
 
+    public boolean touch(String workspace, String id, int revision, String updated) {
+      return target.touch(workspace, id, revision, updated);
+    }
+
     public boolean delete(String workspace, String id, int revision) {
       return target.delete(workspace, id, revision);
     }

@@ -41,5 +41,11 @@ public interface RentalDraftRepository {
 
   boolean update(String workspace, StoredDraft draft, int expectedRevision);
 
+  /**
+   * A change stored next to the card (its photos) is a new revision of the card: the revision goes
+   * up by one if it is still {@code expectedRevision}; the card data stays as it is.
+   */
+  boolean touch(String workspace, String id, int expectedRevision, String updated);
+
   boolean delete(String workspace, String id, int expectedRevision);
 }

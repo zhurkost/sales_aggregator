@@ -3,7 +3,6 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import by.autopost.rental.application.RentalDraftService;
 import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,7 +31,7 @@ class RentalDraftListTest {
   void listReadsStoredColumnsAndNeverParsesCardData() {
     var jdbc = database();
     var service =
-        new RentalDraftService(new JdbcRentalDraftRepository(jdbc));
+        new RentalStorage(jdbc).draftService();
     var draft =
         object(
             "values",
@@ -52,7 +51,7 @@ class RentalDraftListTest {
 
   @Test
   void openingReturnsTheSavedCardUnchanged() {
-    var service = new RentalDraftService(new JdbcRentalDraftRepository(database()));
+    var service = new RentalStorage(database()).draftService();
     var draft =
         object(
             "modelVersion",
@@ -73,7 +72,7 @@ class RentalDraftListTest {
 
   @Test
   void oldCardModelIsNotOpenedUntilMigrated() {
-    var service = new RentalDraftService(new JdbcRentalDraftRepository(database()));
+    var service = new RentalStorage(database()).draftService();
     service.save(
         "ws", "flat", object("revision", 0, "draft", object("values", object("rooms", "2"))));
     var error = assertThrows(ApiException.class, () -> service.get("ws", "flat"));
@@ -84,7 +83,7 @@ class RentalDraftListTest {
   @Test
   void saveRewritesTitleAndAddressOfTheList() {
     var service =
-        new RentalDraftService(new JdbcRentalDraftRepository(database()));
+        new RentalStorage(database()).draftService();
     service.save(
         "ws",
         "flat",
