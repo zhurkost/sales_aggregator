@@ -90,11 +90,15 @@ export class RentalViewModel {
   display(value: JsonValue) {
     return typeof value === "string" ? value : JSON.stringify(value);
   }
-  /** The platform's state in the check: never «Подготовлено» while fields stay manual. */
+  /**
+   * The platform's state in the check: never «Подготовлено» while fields stay manual. The server's
+   * manual_fields remark only says so; any other remark asks to check the card.
+   */
   checkStatus(result: Prepared) {
     if (this.store.check.stale) return "Ожидает проверки";
-    if (!result.checksPassed) return "Нужна проверка";
-    return result.manual.length ? "Часть вручную" : "Подготовлено";
+    if (result.issues.some((issue) => issue.code !== "manual_fields")) return "Нужна проверка";
+    if (result.manual.length) return "Часть вручную";
+    return result.checksPassed ? "Подготовлено" : "Нужна проверка";
   }
   transferLine(result: Prepared) {
     const n = result.form.length, tens = n % 100, ones = n % 10;

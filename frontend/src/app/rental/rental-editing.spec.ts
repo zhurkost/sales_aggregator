@@ -109,9 +109,10 @@ describe("rental editing and validation", () => {
         {
           platform: "kufar",
           values: {},
-          checksPassed: true,
+          // The server turns automatic submission off while values are entered by hand.
+          checksPassed: false,
           publicationReady: false,
-          issues: [],
+          issues: [{ field: "", source: "", code: "manual_fields", message: "Часть заполненных полей нужно ввести на площадке вручную — автоматическая подача выключена." }],
           form: [
             { field: "kufar.title", name: "Название объявления", value: "Квартира у парка" },
             { field: "kufar.price", name: "Цена", value: 900 },
@@ -136,6 +137,12 @@ describe("rental editing and validation", () => {
         "Kufar · Часть вручную Уйдёт в форму: 2 поля · Вручную на площадке: 1",
         "Onliner · Подготовлено Уйдёт в форму: 1 поле · Вручную на площадке: 0",
       ]);
+      expect(el.querySelector(".issues")!.textContent).toContain("автоматическая подача выключена");
+      // Any other remark still asks to check the card.
+      c.store.results[0].issues.push({ field: "kufar.price", source: "rental.monthly_price", code: "required", message: "Цена" });
+      fixture.detectChanges();
+      expect(el.querySelector(".result-platforms button strong")!.textContent!.trim()).toBe("Kufar · Нужна проверка");
+      c.store.results[0].issues.pop();
       c.openPanel("result");
       fixture.detectChanges();
       const kufar = el.querySelector(".prepared-platform")!;
