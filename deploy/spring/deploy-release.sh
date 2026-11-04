@@ -14,6 +14,14 @@ test -f "$release/dist-angular/browser/index.html"
   "--validate-rental-reference=$release/data/rental/apartments_long_term_rent"
 python3 "$release/deploy/spring/backup-workspace.py"
 chmod -R u=rwX,go=rX "$release"
+# Rental cards of an older card model are converted once, with this release's bundle,
+# before it goes live. The service user keeps the SQLite files' owner; every card is
+# written with its expected revision, so saves of the running release are not lost.
+if [ -f /var/lib/autopost/workspace.sqlite ]; then
+  runuser -u autopost -- /usr/bin/java -jar "$release/backend/target/autopost-api.jar" \
+    --migrate-rental-drafts --database=/var/lib/autopost/workspace.sqlite \
+    "--rental-reference=$release/data/rental/apartments_long_term_rent"
+fi
 previous=$(readlink -f /opt/autopost/current || true)
 backup=$(mktemp -d /root/autopost-config-backup.XXXXXX)
 cp -a /etc/systemd/system/autopost.service "$backup/autopost.service"
