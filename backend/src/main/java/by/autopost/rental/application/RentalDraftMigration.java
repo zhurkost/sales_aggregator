@@ -11,8 +11,9 @@ import java.util.List;
 
 /**
  * One-time conversion of stored cards older than the current card model, for the command
- * --migrate-rental-drafts. Each card is written with the expected revision, so a save made at the
- * same moment is never overwritten; current cards are not touched.
+ * --migrate-rental-drafts; cards of the current model only move from {@code schemaVersion} to
+ * {@code cardVersion}. Each card is written with the expected revision, so a save made at the same
+ * moment is never overwritten; current cards are not touched.
  */
 public final class RentalDraftMigration {
   /**
@@ -78,13 +79,15 @@ public final class RentalDraftMigration {
         return new Result(Outcome.UNREADABLE, 0);
       }
       if (!data.isObject()) return new Result(Outcome.UNREADABLE, 0);
-      if (!CardMigration.outdated(data)) return new Result(Outcome.CURRENT, 0);
-      var next = migration.normalize(data);
+      if (!CardMigration.migrationNeeded(data)) return new Result(Outcome.CURRENT, 0);
+      boolean outdated = CardMigration.outdated(data);
+      var next = outdated ? migration.normalize(data) : migration.renameVersion(data);
       // The list order follows the owner's saves, so the migration keeps the saved time.
       var stored =
           RentalDraftRepository.StoredDraft.of(id, row.revision() + 1, next, row.updated());
+      // Only a model conversion leaves new ambiguous values in legacy.
       if (drafts.update(workspace, stored, row.revision()))
-        return new Result(Outcome.MIGRATED, next.path("legacy").size());
+        return new Result(Outcome.MIGRATED, outdated ? next.path("legacy").size() : 0);
     }
     return new Result(Outcome.CONFLICT, 0);
   }

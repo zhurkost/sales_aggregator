@@ -48,7 +48,7 @@ class RentalDraftMigrationTest {
       object(
           "modelVersion",
           2,
-          "schemaVersion",
+          "cardVersion",
           "stale-but-current-model",
           "values",
           object("listing.title", "Новая"),
@@ -131,8 +131,11 @@ class RentalDraftMigrationTest {
   void aSaveDuringTheMigrationIsNeverOverwritten() {
     var drafts = repository();
     store(drafts, "ws", "old", 1, oldCard(object("floor", "3"), object()).toString());
+    // The running release still writes the version under its old name.
     var saved = (ObjectNode) CURRENT.deepCopy();
+    saved.remove("cardVersion");
     saved.put("schemaVersion", "saved-by-the-owner");
+    ((ObjectNode) saved.path("values")).put("listing.title", "Правка владельца");
     var racing =
         new Delegating(drafts) {
           boolean raced;
@@ -150,11 +153,42 @@ class RentalDraftMigrationTest {
           }
         };
     var report = new RentalDraftMigration(racing, catalog).run();
-    assertEquals(0, report.migrated());
+    assertEquals(1, report.migrated());
     assertTrue(report.conflicts().isEmpty());
     var row = drafts.find("ws", "old").orElseThrow();
-    assertEquals(2, row.revision());
-    assertEquals(saved, parse(row.data()));
+    // The owner's save is kept; only its version moves to the new name.
+    assertEquals(3, row.revision());
+    var expected = saved.deepCopy();
+    expected.remove("schemaVersion");
+    expected.put("cardVersion", catalog.cardVersion());
+    assertEquals(expected, parse(row.data()));
+  }
+
+  @Test
+  void cardsOfTheCurrentModelMoveFromSchemaVersionToCardVersionOnce() {
+    var drafts = repository();
+    var before = (ObjectNode) CURRENT.deepCopy();
+    before.remove("cardVersion");
+    before.put("schemaVersion", "hash-of-every-rule-and-selector");
+    before.set("legacy", array().add(object("platform", "example", "field", "floor", "value", 3)));
+    store(drafts, "ws", "saved-before", 4, before.toString());
+    store(drafts, "ws", "current", 2, CURRENT.toString());
+    var stored = rows(drafts);
+
+    var report = new RentalDraftMigration(drafts, catalog).run();
+
+    // Renamed cards add nothing to legacy: their old values were resolved before.
+    assertEquals(new RentalDraftMigration.Report(2, 1, 0, 0, List.of(), List.of()), report);
+    var row = drafts.find("ws", "saved-before").orElseThrow();
+    assertEquals(5, row.revision());
+    assertEquals(stored.get("ws/saved-before").updated(), row.updated());
+    var expected = before.deepCopy();
+    expected.remove("schemaVersion");
+    expected.put("cardVersion", catalog.cardVersion());
+    assertEquals(expected, parse(row.data()));
+    // A stale cardVersion is a card of the current model: «Обновить поля карточки» handles it.
+    assertEquals(stored.get("ws/current"), drafts.find("ws", "current").orElseThrow());
+    assertEquals(0, new RentalDraftMigration(drafts, catalog).run().migrated());
   }
 
   @Test

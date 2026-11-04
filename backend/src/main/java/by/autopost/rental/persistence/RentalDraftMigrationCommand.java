@@ -14,7 +14,8 @@ import org.sqlite.SQLiteDataSource;
 /**
  * {@code java -jar autopost-api.jar --migrate-rental-drafts --database=<workspace.sqlite>
  * --rental-reference=<bundle>}: converts stored cards of an older card model once, with the
- * reference bundle of the release, and prints the report. No web server or provider keys.
+ * reference bundle of the release, moves cards of the current model from schemaVersion to
+ * cardVersion, and prints the report. No web server or provider keys.
  */
 public final class RentalDraftMigrationCommand {
   public static final String FLAG = "--migrate-rental-drafts";

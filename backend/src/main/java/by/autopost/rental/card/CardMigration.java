@@ -30,6 +30,14 @@ public final class CardMigration {
     return draft.path("modelVersion").asInt() < ReferenceContract.CARD_MODEL_VERSION;
   }
 
+  /**
+   * A stored card the one-time migration rewrites: an older card model, or a card of the current
+   * model that still keeps the former {@code schemaVersion}, the hash of every rule and selector.
+   */
+  public static boolean migrationNeeded(JsonNode draft) {
+    return outdated(draft) || draft.has("schemaVersion");
+  }
+
   /** Reading, checking and publishing accept only cards of the current model. */
   public static void requireCurrent(JsonNode draft) {
     if (outdated(draft))
@@ -38,6 +46,17 @@ public final class CardMigration {
 
   public CardMigration(ReferenceSnapshot catalog) {
     this.catalog = catalog;
+  }
+
+  /**
+   * A card of the current model saved before cardVersion existed. Its values already follow the
+   * card model of this release, so it takes this release's card version and nothing else changes.
+   */
+  public ObjectNode renameVersion(JsonNode original) {
+    ObjectNode draft = original.deepCopy();
+    draft.remove("schemaVersion");
+    draft.put("cardVersion", catalog.cardVersion());
+    return draft;
   }
 
   public ObjectNode normalize(JsonNode original) {

@@ -15,7 +15,8 @@ test -f "$release/dist-angular/browser/index.html"
 python3 "$release/deploy/spring/backup-workspace.py"
 chmod -R u=rwX,go=rX "$release"
 # Rental cards of an older card model are converted once, with this release's bundle,
-# before it goes live. The service user keeps the SQLite files' owner; every card is
+# before it goes live; cards saved with schemaVersion get the bundle's cardVersion.
+# The service user keeps the SQLite files' owner; every card is
 # written with its expected revision, so saves of the running release are not lost.
 if [ -f /var/lib/autopost/workspace.sqlite ]; then
   runuser -u autopost -- /usr/bin/java -jar "$release/backend/target/autopost-api.jar" \
