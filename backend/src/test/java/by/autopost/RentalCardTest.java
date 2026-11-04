@@ -362,6 +362,7 @@ class RentalCardTest {
                 schemas,
                 plans,
                 Map.of(),
+                Map.of(),
                 snapshot.cardVersion(),
                 snapshot.integrationVersion()));
 

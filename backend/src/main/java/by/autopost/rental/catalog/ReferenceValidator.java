@@ -60,7 +60,9 @@ public final class ReferenceValidator {
           "platform_option_id",
           "conversion",
           "editor_group",
-          "editor_group_name");
+          "editor_group_name",
+          "transfer",
+          "manual_reason");
   private static final Map<String, Set<String>> PLAN_LISTS =
       Map.of(
           "addresses", Set.of("platform_option_id", "part", "scalar_verified"),
@@ -166,6 +168,17 @@ public final class ReferenceValidator {
           "неизвестное целевое поле " + target);
       check(targets.add(target), "несколько маппингов целевого поля " + target);
       keys(row, where + ", поле " + target, ROW);
+      // The only alternative to a form control: the user enters the field on the platform.
+      if (row.has("transfer") || row.has("manual_reason")) {
+        check(
+            text(row, "transfer").equals("manual"),
+            where + ", поле " + target + ": transfer может быть только manual");
+        check(
+            row.path("manual_reason").isTextual()
+                && !text(row, "manual_reason").isBlank()
+                && text(row, "manual_reason").length() <= 400,
+            where + ", поле " + target + ": transfer: manual требует причину manual_reason");
+      }
       check(KINDS.contains(kind), "неподдерживаемое преобразование " + kind);
       keys(
           row.path("conversion"),

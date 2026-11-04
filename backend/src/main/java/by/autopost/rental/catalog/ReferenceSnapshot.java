@@ -23,6 +23,8 @@ public final class ReferenceSnapshot {
   // The loaded parts: shared by every view and never changed or handed out.
   private final JsonNode common, card;
   private final Map<String, JsonNode> schemas, plans, browsers;
+  // Immutable records: shared by every view as they are.
+  private final Map<String, PlatformCoverage> coverage;
   private final Map<String, JsonNode> copies = new HashMap<>();
 
   public ReferenceSnapshot(
@@ -32,6 +34,7 @@ public final class ReferenceSnapshot {
       Map<String, JsonNode> schemas,
       Map<String, JsonNode> plans,
       Map<String, JsonNode> browsers,
+      Map<String, PlatformCoverage> coverage,
       String cardVersion,
       String integrationVersion) {
     this.categoryId = categoryId;
@@ -40,6 +43,7 @@ public final class ReferenceSnapshot {
     this.schemas = copy(schemas);
     this.plans = copy(plans);
     this.browsers = copy(browsers);
+    this.coverage = Map.copyOf(coverage);
     this.cardVersion = cardVersion;
     this.integrationVersion = integrationVersion;
   }
@@ -51,6 +55,7 @@ public final class ReferenceSnapshot {
     schemas = loaded.schemas;
     plans = loaded.plans;
     browsers = loaded.browsers;
+    coverage = loaded.coverage;
     cardVersion = loaded.cardVersion;
     integrationVersion = loaded.integrationVersion;
   }
@@ -100,6 +105,12 @@ public final class ReferenceSnapshot {
 
   public JsonNode browser(String platform) {
     return copy("browser:" + platform, get(browsers, platform));
+  }
+
+  /** How the plan of a platform reaches its form, computed when the bundle was loaded. */
+  public PlatformCoverage coverage(String platform) {
+    if (!coverage.containsKey(platform)) throw new ApiException(400, "Неизвестная площадка.");
+    return coverage.get(platform);
   }
 
   private JsonNode copy(String part, JsonNode loaded) {

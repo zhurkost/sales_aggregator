@@ -50,6 +50,7 @@ public class FileReferenceRepository implements ReferenceRepository {
     Map<String, JsonNode> schemas = new TreeMap<>(),
         plans = new TreeMap<>(),
         browsers = new TreeMap<>();
+    Map<String, PlatformCoverage> coverage = new TreeMap<>();
     for (String id : ids) {
       var entry = manifest.path("platforms").path(id);
       String schemaFile = text(entry, "schema"), planFile = text(entry, "plan");
@@ -70,6 +71,9 @@ public class FileReferenceRepository implements ReferenceRepository {
       JsonNode browser = files.read(browserFile);
       files.check(browserFile, () -> new BrowserRecipeValidator().validate(id, schema, browser));
       browsers.put(id, browser);
+      // Named after the plan: it marks what the recipe does not fill.
+      coverage.put(
+          id, files.checked(planFile, () -> PlatformCoverage.of(id, schema, plan, browser, graph)));
     }
     String cardVersion = Hashing.sha256(object("common", common, "card", card).toString());
     String integrationVersion =
@@ -81,7 +85,15 @@ public class FileReferenceRepository implements ReferenceRepository {
                     "browsers", browsers)
                 .toString());
     return new ReferenceSnapshot(
-        category, common, card, schemas, plans, browsers, cardVersion, integrationVersion);
+        category,
+        common,
+        card,
+        schemas,
+        plans,
+        browsers,
+        coverage,
+        cardVersion,
+        integrationVersion);
   }
 
   /** manifest.json: its format, the category and the files of every platform. */
