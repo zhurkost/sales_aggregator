@@ -73,9 +73,12 @@ class RentalCoverageTest {
   void aRowWithoutAControlIsManualOnlyWithAReason() throws Exception {
     fixture();
     withoutControl("currency");
-    assertEquals(
-        Transfer.PREPARED_ONLY,
-        load().snapshot().coverage("example").row("currency").orElseThrow().transfer());
+    // Prepared, but neither filled nor marked: the bundle does not load, the plan is to fix.
+    var error = assertThrows(ReferenceBundleException.class, this::load);
+    assertTrue(
+        error.getMessage().startsWith(dir.resolve("example.plan.json") + ": "), error.getMessage());
+    assertTrue(error.getMessage().contains("не попадают в форму: currency"), error.getMessage());
+    assertTrue(error.getMessage().contains("transfer: manual"), error.getMessage());
     var plan = (ObjectNode) read("example.plan.json");
     var currency = (ObjectNode) plan.path("fields").get(1);
     currency.put("transfer", "manual").put("manual_reason", "Валюту выбирают на площадке.");

@@ -121,6 +121,19 @@ public record PlatformCoverage(String platform, List<CoverageRow> rows, Set<Stri
                   control != null ? "" : reason));
         });
     var list = new ArrayList<>(rows.values());
+    // Nothing is prepared from the card without saying how it reaches the form.
+    var unmarked =
+        list.stream()
+            .filter(row -> row.transfer() == Transfer.PREPARED_ONLY)
+            .map(CoverageRow::field)
+            .toList();
+    check(
+        unmarked.isEmpty(),
+        platform
+            + ": поля подготовлены, но не попадают в форму: "
+            + String.join(", ", unmarked)
+            + ". Привяжите их в рецепте или пометьте в плане transfer: manual с причиной"
+            + " manual_reason");
     return new PlatformCoverage(platform, list, needed(list, graph));
   }
 
