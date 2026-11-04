@@ -209,6 +209,7 @@ async function appRequest(message, sender) {
         "rental-integration-version",
         "rental-iframe-richtext",
         "rental-server-photos",
+        "rental-publication-history",
         "all-platforms",
         "category-routing",
         "queue",

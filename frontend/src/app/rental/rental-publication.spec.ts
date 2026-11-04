@@ -15,6 +15,7 @@ const extension = vi.fn(async () => ({
     "rental-integration-version",
     "rental-iframe-richtext",
     "rental-server-photos",
+    "rental-publication-history",
   ],
   jobs: [],
 }));
@@ -195,6 +196,30 @@ describe("publication of incomplete rental cards", () => {
         "rental-checks-passed",
         "rental-integration-version",
         "rental-iframe-richtext",
+      ],
+      jobs: [],
+    });
+    await c.ngOnChanges();
+    expect(c.ready).toBe(false);
+    await c.publish();
+    expect(c.error).toContain(REQUIRED_EXTENSION_VERSION);
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    c.ngOnDestroy(); c.store.destroy();
+  });
+  it("does not launch with an extension that keeps publications only in the browser", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    c.store.draft.platforms = ["kufar"];
+    extension.mockResolvedValueOnce({
+      capabilities: [
+        "rental-publishing",
+        "rental-address-suggestions",
+        "rental-checks-passed",
+        "rental-integration-version",
+        "rental-iframe-richtext",
+        "rental-server-photos",
       ],
       jobs: [],
     });

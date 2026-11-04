@@ -76,12 +76,17 @@
       let payload=event.data.payload;
       if (type.startsWith('RENTAL_')) {
         if (mutation) { consumedGestureId=gestureId; running=true; }
+        let config;
         if (type==='RENTAL_RUN') {
           // The photos are the ones stored with the card on the server, never from the page.
-          const config=await rentalConfig(payload,true);
-          payload={...config,profileId:payload.profileId,draft:payload.draft,mode:payload.mode};
+          config=await rentalConfig(payload);
+          payload={...config,profileId:payload.profileId,mode:payload.mode};
         }
         const result=await requireRuntime().sendMessage({kind:'RENTAL_REQUEST',type,payload,userGesture});
+        // A launch the browser did not take is stopped in the history, not left «opened».
+        if (config && (!result || result.error))
+          for (const job of config.jobs || [])
+            await report({profileId:payload.profileId,publication:job.publication,status:'stopped',message:'Не запущено: '+(result?.error||'расширение не ответило.')}).catch(()=>{});
         respond(requestId,result||{error:'Расширение не ответило.'});return;
       }
       if (['SET_MODE','CANCEL_RECORD'].includes(type)) consumedGestureId=gestureId;
@@ -126,7 +131,8 @@
       });
     } finally { if (type === 'RUN'||type==='RUN_QUEUE'||type.startsWith('RENTAL_')) running = false; }
   });
-  async function rentalConfig(payload, wait=false) {
+  // The launch: waits for the page's save of this card, then gets its jobs and photos.
+  async function rentalConfig(payload) {
     const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),16000);
     try {
       for(let attempt=0;attempt<30;attempt++) {
@@ -137,17 +143,35 @@
         });
         const data=await response.json();
         if(response.ok)return data;
-        if(wait&&[404,409].includes(response.status)&&attempt<29){await new Promise(resolve=>setTimeout(resolve,300));continue;}
+        if([404,409].includes(response.status)&&attempt<29){await new Promise(resolve=>setTimeout(resolve,300));continue;}
         throw new Error(data.error||'Не удалось получить правила аренды.');
       }
+    } finally {clearTimeout(timer);}
+  }
+  // The extension reports the publications of its jobs here; the server keeps them and decides
+  // which status may follow. «submitted» comes before the final click and is its permission.
+  const publicationStatuses=['opened','filled','submitted','needs_action','stopped'];
+  async function report({profileId,publication,status,message}) {
+    if(!/^[a-zA-Z0-9_.:-]{1,120}$/u.test(profileId||'')||!/^[a-zA-Z0-9_-]{1,80}$/u.test(publication||'')||!publicationStatuses.includes(status))
+      return {error:'Неверный отчёт о публикации.'};
+    const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),10000);
+    try {
+      const response=await fetch('/api/workspace/rental/publications/'+publication,{
+        method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
+        headers:{'Content-Type':'application/json','X-Autopost-Workspace':profileId},
+        body:JSON.stringify({status,message:String(message||'').slice(0,500)}),
+      });
+      const data=await response.json().catch(()=>({}));
+      if(response.ok)return {ok:true};
+      // Refused by the server: final. Unavailable: the extension tries again later.
+      return {error:data.error||'Не удалось сохранить статус публикации.',retry:response.status>=500};
     } finally {clearTimeout(timer);}
   }
   function fromExtension(message, sender, reply) {
     const api = runtime();
     if (!api || sender.id !== api.id) return;
-    if(message?.kind==='RENTAL_VERIFY' && message.origin===origin) {
-      // The final click needs the launched card revision and the rules it was filled with.
-      rentalConfig(message).then(data=>reply(data.revision!==message.revision?{error:'Карточка изменена. Остановите старый запуск и передайте новую версию.'}:data.integrationVersion!==message.integrationVersion?{error:'Правила площадок обновились. Остановите старый запуск и передайте карточку заново.'}:{ok:true}),e=>reply({error:e.message}));return true;
+    if(message?.kind==='RENTAL_REPORT' && message.origin===origin) {
+      report(message).then(reply,e=>reply({error:e.message||'Сервер недоступен.',retry:true}));return true;
     }
     if(message?.kind==='VERIFY_SNAPSHOT'  && message.origin===origin) {
       recipes([message.item],message.profileId,false,true).then(()=>reply({ok:true}),e=>reply({error:e.message||'Не удалось сверить карточку с кабинетом.'}));

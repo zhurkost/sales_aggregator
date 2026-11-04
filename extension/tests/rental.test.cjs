@@ -18,14 +18,15 @@ const recipe = (p) =>
     ),
   );
 const RULES = "a".repeat(64);
+// A job as extension-config compiles it: the recipe and the server's publication record.
+const job = (p, publication = "publication-" + p) => ({ ...recipe(p), publication });
 const payload = () => ({
   id: "card",
   profileId: "owner",
   revision: 1,
   integrationVersion: RULES,
   mode: "automatic",
-  draft: { values: {} },
-  jobs: Object.keys(core.starts).map(recipe),
+  jobs: Object.keys(core.starts).map((p) => job(p)),
   photos: [],
 });
 test("rental launch accepts partial cards for all four sites, independent of advisory readiness", () => {
@@ -33,7 +34,7 @@ test("rental launch accepts partial cards for all four sites, independent of adv
   p.jobs.forEach((j) => (j.controls = []));
   const result = core.validate(p);
   assert.equal(result.jobs.length, 4);
-  assert.deepEqual(result.draft.values, {});
+  assert.equal(result.jobs[0].publication, "publication-kufar");
   for (const wrong of [
     "https://www.kufar.by.evil.test/ain/create",
     "javascript:alert(1)",
@@ -58,6 +59,13 @@ test("rental jobs accept only a boolean checksPassed from the server", () => {
     assert.throws(() => core.validate(p), /Обновите правила площадки/);
   }
 });
+test("every rental job carries the server's record of its publication", () => {
+  for (const publication of [undefined, "", 7, "../drafts", "x".repeat(121)]) {
+    const p = payload();
+    p.jobs[1].publication = publication;
+    assert.throws(() => core.validate(p), /Обновите правила площадки/, String(publication));
+  }
+});
 test("rental launch carries the integration version the server compiled its jobs with", () => {
   assert.equal(core.validate(payload()).integrationVersion, RULES);
   for (const integrationVersion of [undefined, "", 7, "<script>", "x".repeat(121)]) {
@@ -71,7 +79,7 @@ function worker() {
     created = [],
     photos = new Map(),
     sent = [];
-  const state = { verify: { ok: true } };
+  const state = { verify: { ok: true }, report: { ok: true } };
   const chrome = {
     storage: {
       session: {
@@ -97,7 +105,10 @@ function worker() {
       },
       async sendMessage(tabId, message) {
         sent.push({ tabId, message });
-        return state.verify;
+        if (state.unreachable?.has(tabId)) throw new Error("Receiving end does not exist.");
+        return message.kind === "RENTAL_REPORT" && message.status !== "submitted"
+          ? state.report
+          : state.verify;
       },
     },
   };
@@ -579,7 +590,7 @@ test("final submission requires automatic mode and a server check without issues
     const { handle, created, sent, app } = worker();
     const p = payload();
     p.mode = mode;
-    p.jobs = [{ ...recipe("kufar"), ...checks }];
+    p.jobs = [{ ...job("kufar"), ...checks }];
     const label = `${mode} / ${JSON.stringify(checks)}`;
     await handle(
       { kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true },
@@ -595,19 +606,18 @@ test("final submission requires automatic mode and a server check without issues
     );
     assert.equal(before.ok, submit, label);
     assert.equal(
-      sent.some((s) => s.message.kind === "RENTAL_VERIFY"),
+      sent.some((s) => s.message.status === "submitted"),
       submit,
-      "the app is asked to verify only an allowed submission",
+      "the server is asked only for an allowed submission",
     );
   }
 });
-test("the final click is verified against the launched revision and integration version", async () => {
+test("the final click is allowed by the server's record of the launched publication", async () => {
   const { handle, created, sent, app } = worker();
-  const launch = (integrationVersion) => {
+  const launch = (integrationVersion, publication) => {
     const p = payload();
     p.integrationVersion = integrationVersion;
-    p.jobs = [recipe("kufar")];
-    p.jobs[0].checksPassed = true;
+    p.jobs = [{ ...job("kufar", publication), checksPassed: true }];
     return handle(
       { kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true },
       app,
@@ -617,29 +627,122 @@ test("the final click is verified against the launched revision and integration 
     const sender = { url: core.starts.kufar, tab: { id: created.at(-1).id } };
     await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender);
     assert.equal((await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok, true);
-    return sent.filter((s) => s.message.kind === "RENTAL_VERIFY").at(-1).message;
+    return sent.filter((s) => s.message.status === "submitted").at(-1);
   };
-  await launch(RULES);
+  await launch(RULES, "first-launch");
   assert.equal(created.length, 1);
   const first = await verified();
-  assert.equal(first.revision, 1);
-  assert.equal(first.integrationVersion, RULES);
+  // The server compares the revision and the rules of the launch it recorded.
+  assert.equal(first.tabId, app.tab.id);
+  assert.deepEqual({ ...first.message }, {
+    kind: "RENTAL_REPORT",
+    origin: new URL(app.url).origin,
+    profileId: "owner",
+    publication: "first-launch",
+    status: "submitted",
+    message: "Выполнена попытка подачи. Проверьте результат и сообщения площадки.",
+  });
+  // The worker keeps no copy of the card for this check.
+  assert.equal(sent.some((s) => "draft" in s.message), false);
   // Same card revision under new rules: a new launch, never a resume of jobs filled by old ones.
-  await assert.rejects(() => launch("b".repeat(64)), /Остановите предыдущий запуск/);
+  await assert.rejects(() => launch("b".repeat(64), "second-launch"), /Остановите предыдущий запуск/);
   await handle(
     { kind: "RENTAL_REQUEST", type: "RENTAL_STOP", payload: { profileId: "owner", id: "card" }, userGesture: true },
     app,
   );
-  await launch("b".repeat(64));
+  // The submitted publication is not reported stopped: a submission is never undone.
+  assert.equal(sent.some((s) => s.message.publication === "first-launch" && s.message.status === "stopped"), false);
+  await launch("b".repeat(64), "second-launch");
   assert.equal(created.length, 2);
-  assert.equal((await verified()).integrationVersion, "b".repeat(64));
+  assert.equal((await verified()).message.publication, "second-launch");
 });
-async function page(task, wake) {
+test("a refused submission is not clicked and an unreachable Autopost tab is not a permission", async () => {
+  const { handle, created, state, app } = worker();
+  const p = payload();
+  p.jobs = [{ ...job("kufar"), checksPassed: true }];
+  await handle({ kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true }, app);
+  const sender = { url: core.starts.kufar, tab: { id: created[0].id } };
+  await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender);
+  state.verify = { error: "Карточка изменена. Остановите старый запуск и передайте новую версию." };
+  await assert.rejects(
+    () => handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender),
+    /Карточка изменена/,
+  );
+  state.verify = { ok: true };
+  state.unreachable = new Set([app.tab.id]);
+  await assert.rejects(
+    () => handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender),
+    /Откройте Автопост для сверки карточки/,
+  );
+  state.unreachable = new Set();
+  assert.equal((await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok, true);
+});
+test("the worker reports each job's publication to the server through the Autopost tab", async () => {
+  const { handle, created, sent, state, app } = worker();
+  const reports = () =>
+    sent
+      .filter((s) => s.message.kind === "RENTAL_REPORT")
+      .map((s) => [s.message.publication, s.message.status, s.message.message]);
+  const p = payload();
+  p.jobs = [job("kufar"), job("realt")];
+  await handle({ kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true }, app);
+  assert.deepEqual(reports(), [
+    ["publication-kufar", "opened", "Заполняем карточку"],
+    ["publication-realt", "opened", "Заполняем карточку"],
+  ]);
+  const kufar = { url: core.starts.kufar, tab: { id: created[0].id } };
+  await handle({ kind: "RENTAL_PAGE", type: "GET" }, kufar);
+  const report = (status, message) =>
+    handle({ kind: "RENTAL_PAGE", type: "REPORT", payload: { status, message, filled: 3 } }, kufar);
+  // Filling progress stays in the browser; the server keeps where the publication stands.
+  await report("running", "Перенесено полей: 3");
+  await report("filled", "Заполненные данные перенесены. Завершите шаг площадки.");
+  await report("filled", "Заполненные данные перенесены. Завершите шаг площадки.");
+  await report("needs_action", "Пройдите вход или проверку площадки, затем продолжим.");
+  assert.deepEqual(reports().slice(2), [
+    ["publication-kufar", "filled", "Заполненные данные перенесены. Завершите шаг площадки."],
+    ["publication-kufar", "needs_action", "Пройдите вход или проверку площадки, затем продолжим."],
+  ]);
+  // The Autopost tab of the launch is gone: the report waits for the card's next status request.
+  state.unreachable = new Set([app.tab.id]);
+  await report("filled", "Заполненные данные перенесены. Завершите шаг площадки.");
+  const other = { url: app.url, tab: { id: 2 } };
+  const status = () =>
+    handle({ kind: "RENTAL_REQUEST", type: "RENTAL_STATUS", payload: { profileId: "owner", id: "card" } }, other);
+  await status();
+  assert.deepEqual(sent.at(-1).tabId, 2);
+  assert.deepEqual(reports().at(-1), ["publication-kufar", "filled", "Заполненные данные перенесены. Завершите шаг площадки."]);
+  const delivered = sent.length;
+  await status();
+  assert.equal(sent.length, delivered, "a delivered report is not sent again");
+  // A report the server refuses (e.g. after a submission) is not retried.
+  state.report = { error: "Подача на эту площадку уже выполнена." };
+  await report("needs_action", "Форма изменилась.");
+  state.report = { ok: true };
+  await status();
+  assert.equal(sent.length, delivered + 1);
+  await handle(
+    { kind: "RENTAL_REQUEST", type: "RENTAL_STOP", payload: { profileId: "owner", id: "card" }, userGesture: true },
+    other,
+  );
+  assert.deepEqual(reports().slice(-2), [
+    ["publication-kufar", "stopped", "Остановлено в Автопосте"],
+    ["publication-realt", "stopped", "Остановлено в Автопосте"],
+  ]);
+  // Resuming the stopped launch opens its publications again.
+  await handle({ kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true }, other);
+  assert.deepEqual(reports().slice(-2), [
+    ["publication-kufar", "opened", "Возобновляем заполнение"],
+    ["publication-realt", "opened", "Возобновляем заполнение"],
+  ]);
+});
+async function page(task, wake, count = 6) {
   const { Window } = await import("happy-dom");
   const window = layout(new Window({ url: "https://www.kufar.by/ain/create" }));
   window.document.body.innerHTML =
     '<input id="title"><button type="submit">Подать объявление</button>';
   const requests = [],
+    reports = [],
     intervals = [];
   let listener;
   let submitted = 0;
@@ -652,6 +755,7 @@ async function page(task, wake) {
       id: "extension",
       async sendMessage({ type, payload }) {
         requests.push(type);
+        if (type === "REPORT") reports.push(payload.status);
         if (type === "GET")
           return payload?.metadataOnly
             ? { task: { jobId: task.jobId, submitted: false } }
@@ -671,7 +775,7 @@ async function page(task, wake) {
     }
   };
   await settle();
-  await ticks(6);
+  await ticks(count);
   if (wake) {
     listener({ kind: "RENTAL_WAKE", jobId: task.jobId, ...wake }, { id: "extension" }, () => {});
     await settle();
@@ -681,6 +785,7 @@ async function page(task, wake) {
     filled: window.document.querySelector("#title").value,
     beforeSubmit: requests.filter((type) => type === "BEFORE_SUBMIT").length,
     submitted,
+    reports,
   };
   window.happyDOM.abort();
   return result;
@@ -715,6 +820,32 @@ test("rental page clicks the final button only for an allowed automatic submissi
   assert.deepEqual([woken.beforeSubmit, woken.submitted], [1, 1]);
   const legacyWake = await page({ ...task, autoSubmit: false }, { mode: "automatic" });
   assert.deepEqual([legacyWake.beforeSubmit, legacyWake.submitted], [0, 0]);
+});
+test("a form the extension filled is reported as filled, one it could not fill as needing action", async () => {
+  const task = {
+    jobId: "job",
+    photos: [],
+    submitted: false,
+    photoSent: false,
+    autoSubmit: false,
+    recipe: {
+      platform: "kufar",
+      ready: [],
+      setup: [],
+      next: [],
+      submit: [],
+      controls: [{ field: "title", selector: "#title", action: "text", value: "Квартира" }],
+    },
+  };
+  const filled = await page(task, undefined, 12);
+  assert.equal(filled.filled, "Квартира");
+  assert.equal(filled.reports.at(-1), "filled");
+  const missing = await page(
+    { ...task, recipe: { ...task.recipe, controls: [{ ...task.recipe.controls[0], selector: "#absent" }] } },
+    undefined,
+    12,
+  );
+  assert.equal(missing.reports.at(-1), "needs_action");
 });
 test("hidden form controls are skipped exactly as a browser without layout reports them", async () => {
   const f = await fixture(

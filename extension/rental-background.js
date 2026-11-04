@@ -13,6 +13,31 @@
     return live;
   }
   const save = (rows) => chrome.storage.session.set({ [key]: rows });
+  // The server keeps the history of each job's publication. Reports go through the Autopost tab
+  // of the launch; one it could not take waits for that card's next status request.
+  async function relay(b, j, status, message) {
+    if (j.last?.status === status && j.last?.message === message) return;
+    j.last = { status, message };
+    j.report = { status, message };
+    await deliver(b, j);
+  }
+  async function deliver(b, j) {
+    if (!j.report) return;
+    let reply;
+    try {
+      reply = await chrome.tabs.sendMessage(b.sourceTabId, {
+        kind: "RENTAL_REPORT",
+        origin: b.origin,
+        profileId: b.profileId,
+        publication: j.recipe.publication,
+        ...j.report,
+      });
+    } catch {
+      return;
+    }
+    // Taken, or refused by the server for good (e.g. after a submission): nothing to resend.
+    if (reply?.ok || (reply?.error && !reply.retry)) j.report = null;
+  }
   const summary = (b) => ({
     id: b.id,
     revision: b.revision,
@@ -44,11 +69,25 @@
           b.profileId === payload.profileId &&
           b.id === payload.id,
       );
-      if (message.type === "RENTAL_STATUS")
+      if (message.type === "RENTAL_STATUS") {
+        let changed = false;
+        for (const b of own) {
+          if (b.sourceTabId !== sender.tab.id) {
+            b.sourceTabId = sender.tab.id;
+            changed = true;
+          }
+          for (const j of b.jobs)
+            if (j.report) {
+              await deliver(b, j);
+              changed = true;
+            }
+        }
+        if (changed) await save(rows);
         return {
           jobs: own.length ? summary(own.at(-1)).jobs : [],
           revision: own.at(-1)?.revision,
         };
+      }
       if (!message.userGesture) throw new Error("Нажмите кнопку в Автопосте.");
       if (message.type === "RENTAL_OPEN") {
         const b = own.find((b) => b.jobs.some((j) => j.id === payload.jobId)),
@@ -64,7 +103,10 @@
           });
           j.tabId = tab.id;
           root.AutopostCore.armFill(j);
-          if (j.status !== "stopped") j.status = "running";
+          if (j.status !== "stopped") {
+            j.status = "running";
+            if (!j.submitted) await relay(b, j, "opened", "Заполняем карточку");
+          }
           await save(rows);
         }
         return { ok: true };
@@ -74,6 +116,7 @@
           for (const j of b.jobs) {
             j.status = "stopped";
             j.message = "Остановлено в Автопосте";
+            if (!j.submitted) await relay(b, j, "stopped", j.message);
           }
         await save(rows);
         return { ok: true };
@@ -96,6 +139,7 @@
           for (const j of old.jobs) {
             j.status = "running";
             j.message = "Возобновляем заполнение";
+            if (!j.submitted) await relay(old, j, "opened", j.message);
           }
           await save(rows);
           for (const j of old.jobs) {
@@ -122,6 +166,7 @@
               j.status = "needs_action";
               j.fillBlocked = true;
               j.message = "Нажмите «Открыть» в Автопосте для продолжения.";
+              if (!j.submitted) await relay(old, j, "needs_action", j.message);
             }
           }
           await save(rows);
@@ -145,7 +190,6 @@
         sourceTabId: sender.tab.id,
         created: Date.now(),
         mode: data.mode,
-        draft: data.draft,
         photoKey: "rental:" + crypto.randomUUID(),
         jobs: data.jobs.map((recipe) => ({
           id: crypto.randomUUID(),
@@ -168,9 +212,11 @@
           root.AutopostCore.armFill(j);
           j.status = "running";
           j.message = "Заполняем карточку";
+          await relay(batch, j, "opened", j.message);
         } catch {
           j.status = "needs_action";
           j.message = "Не удалось открыть вкладку. Нажмите «Открыть».";
+          await relay(batch, j, "needs_action", j.message);
         }
         await save(rows);
       }
@@ -210,9 +256,7 @@
       return { ok: true };
     }
     if (message.type === "REPORT") {
-      j.status = ["running", "needs_action", "submitted"].includes(
-        payload.status,
-      )
+      j.status = ["running", "filled", "needs_action"].includes(payload.status)
         ? payload.status
         : "needs_action";
       j.message = String(payload.message || "").slice(0, 500);
@@ -220,26 +264,36 @@
       j.remaining = Array.isArray(payload.remaining)
         ? payload.remaining.slice(0, 150).map((x) => String(x).slice(0, 120))
         : [];
+      // Filling progress stays here; the server keeps where the publication stands.
+      if (j.status !== "running" && !j.submitted)
+        await relay(b, j, j.status, j.message);
       await save(rows);
       return { ok: true };
     }
     if (message.type === "BEFORE_SUBMIT") {
       if (!core.autoSubmit(b.mode, j.recipe) || j.submitted) return { ok: false };
-      const verified = await chrome.tabs.sendMessage(b.sourceTabId, {
-        kind: "RENTAL_VERIFY",
-        origin: b.origin,
-        profileId: b.profileId,
-        id: b.id,
-        draft: b.draft,
-        revision: b.revision,
-        integrationVersion: b.integrationVersion,
-      });
+      // The server records the submission and allows it only once, for the launched revision
+      // under the launched rules.
+      const status = "submitted",
+        text = "Выполнена попытка подачи. Проверьте результат и сообщения площадки.";
+      const verified = await chrome.tabs
+        .sendMessage(b.sourceTabId, {
+          kind: "RENTAL_REPORT",
+          origin: b.origin,
+          profileId: b.profileId,
+          publication: j.recipe.publication,
+          status,
+          message: text,
+        })
+        .catch(() => null);
       if (!verified?.ok)
         throw new Error(
           verified?.error || "Откройте Автопост для сверки карточки.",
         );
       // Persist before clicking: no duplicate submissions after navigation or worker restart.
       j.submitted = true;
+      j.last = { status, message: text };
+      j.report = null;
       await save(rows);
       return { ok: true };
     }

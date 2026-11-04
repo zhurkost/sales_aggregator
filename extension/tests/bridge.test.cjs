@@ -65,15 +65,48 @@ test('rental launch obtains a server recipe after a trusted click and never send
  // The photos are the ones stored with the card; the page cannot substitute its own.
  assert.deepEqual(bridge.forwarded[0].payload.photos,photos);
 });
-test('before the final click the app confirms the launched revision and integration version',async()=>{
- const current={format:1,id:'rental',revision:3,integrationVersion:'b'.repeat(64),jobs:[]};
- const bridge=createBridge({fetchCatalog:async()=>Response.json(current)});
- const verify=(revision,integrationVersion)=>new Promise(resolve=>bridge.fromExtension({kind:'RENTAL_VERIFY',origin:bridge.origin,profileId:'owner',id:'rental',draft:{values:{}},revision,integrationVersion},{id:'test-id'},resolve));
- assert.equal((await verify(3,'b'.repeat(64))).ok,true);
- assert.match((await verify(2,'b'.repeat(64))).error,/Карточка изменена/);
- assert.match((await verify(3,'a'.repeat(64))).error,/Правила площадок обновились/);
- const body=JSON.parse(bridge.catalogRequests[0].options.body);
- assert.equal(Object.keys(body).sort().join(),'draft,id');
+test('the extension reports a publication to the server through the Autopost tab',async()=>{
+ let answer=()=>Response.json({id:'pub-1',status:'filled'});
+ const bridge=createBridge({fetchCatalog:async(url,options)=>answer(url,options)});
+ // The reply crosses from the bridge's realm: compare it as data.
+ const report=(fields)=>new Promise(resolve=>{const handled=bridge.fromExtension({kind:'RENTAL_REPORT',origin:bridge.origin,profileId:'owner',publication:'pub-1',status:'filled',message:'Заполнено',...fields},{id:'test-id'},reply=>resolve(reply&&{...reply}));if(handled!==true)resolve(undefined);});
+ assert.deepEqual(await report({}),{ok:true});
+ const request=bridge.catalogRequests[0];
+ assert.equal(request.url,'/api/workspace/rental/publications/pub-1');
+ assert.equal(request.options.method,'POST');
+ assert.equal(request.options.headers['X-Autopost-Workspace'],'owner');
+ assert.deepEqual(JSON.parse(request.options.body),{status:'filled',message:'Заполнено'});
+ // Refused by the server: final; unavailable: the worker sends it again later.
+ answer=()=>Response.json({error:'Подача на эту площадку уже выполнена.'},{status:409});
+ assert.deepEqual(await report({status:'submitted'}),{error:'Подача на эту площадку уже выполнена.',retry:false});
+ answer=()=>new Response('<html>502</html>',{status:502});
+ assert.equal((await report({})).retry,true);
+ answer=()=>{throw new TypeError('Failed to fetch');};
+ assert.equal((await report({})).retry,true);
+ const sent=bridge.catalogRequests.length;
+ for(const wrong of [{publication:'../drafts/x'},{status:'published'},{profileId:'a b'}])
+   assert.match((await report(wrong)).error,/Неверный отчёт/);
+ assert.equal(bridge.catalogRequests.length,sent,'an invalid report never reaches the server');
+ // Another origin, another extension, and the former card check get no answer.
+ assert.equal(await report({origin:'https://evil.invalid'}),undefined);
+ assert.equal(bridge.fromExtension({kind:'RENTAL_REPORT',origin:bridge.origin,publication:'pub-1',status:'filled'},{id:'other'},()=>{}),undefined);
+ assert.equal(bridge.fromExtension({kind:'RENTAL_VERIFY',origin:bridge.origin,id:'rental',revision:1},{id:'test-id'},()=>{}),undefined);
+ assert.equal(bridge.catalogRequests.length,sent);
+});
+test('a launch the browser does not take is stopped in the history',async()=>{
+ const recipe={format:1,id:'rental',revision:2,jobs:[{platform:'kufar',publication:'pub-k'},{platform:'realt',publication:'pub-r'}],photos:[]};
+ const bridge=createBridge({
+   fetchCatalog:async(url)=>Response.json(url.endsWith('/extension-config')?recipe:{}),
+   sendMessage:()=>({error:'У этой карточки уже есть задания. Остановите предыдущий запуск перед передачей новой версии.'}),
+ });
+ await bridge.event('click',{isTrusted:true});
+ await bridge.request('RENTAL_RUN','rental-run',{data:{source:'autopost-app',type:'RENTAL_RUN',requestId:'rental-run',payload:{profileId:'owner',id:'rental',draft:{values:{}},mode:'assist'}}});
+ assert.match(bridge.responses.at(-1).message.payload.error,/Остановите предыдущий запуск/);
+ const reports=bridge.catalogRequests.filter(r=>r.url.includes('/publications/'));
+ assert.deepEqual(reports.map(r=>r.url),['/api/workspace/rental/publications/pub-k','/api/workspace/rental/publications/pub-r']);
+ assert.deepEqual(JSON.parse(reports[0].options.body),{status:'stopped',message:'Не запущено: У этой карточки уже есть задания. Остановите предыдущий запуск перед передачей новой версии.'});
+ // The card itself is not copied into the extension.
+ assert.equal('draft' in bridge.forwarded.at(-1).payload,false);
 });
 test('catalog failures prevent launch; no stale dictionary or executable response is used',async()=>{
   const bridge=createBridge({fetchCatalog:async()=>Response.json({error:'Catalog unavailable'},{status:503})});

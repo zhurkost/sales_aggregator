@@ -46,6 +46,8 @@
         !Object.hasOwn(starts, job.platform) ||
         starts[job.platform] !== job.startUrl ||
         job.format !== 1 ||
+        // The server's record of this launch on this platform; reports go to it.
+        !id(job.publication) ||
         (job.checksPassed !== undefined && typeof job.checksPassed !== "boolean") ||
         !Array.isArray(job.controls) ||
         job.controls.length > 150 ||

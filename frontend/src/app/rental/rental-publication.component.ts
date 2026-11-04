@@ -66,8 +66,10 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-integration-version") &&
         // ...and older ones reject the Realt description editor (TinyMCE in an iframe)
         ping["capabilities"].includes("rental-iframe-richtext") &&
-        // ...or upload the photos the page sends instead of those stored with the card.
-        ping["capabilities"].includes("rental-server-photos");
+        // ...or upload the photos the page sends instead of those stored with the card
+        ping["capabilities"].includes("rental-server-photos") &&
+        // ...or keep the publication only in the browser, checking the final click without it.
+        ping["capabilities"].includes("rental-publication-history");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)
