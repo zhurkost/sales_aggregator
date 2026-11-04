@@ -16,21 +16,41 @@
     /></label>
     <span>{{
       photosBusy
-        ? "Обрабатываем…"
+        ? "Сохраняем фото…"
         : photos.length
-          ? photos.length + " фото · в этом браузере"
+          ? photos.length + " из " + photoLimit + " фото"
           : "Или вставьте из буфера"
     }}</span>
-    @for (photo of photos; track photo.id) {
+    @for (photo of photos; track photo.id; let first = $first, last = $last) {
       <div class="photo">
-        <img [src]="photo.dataUrl" [alt]="photo.name" /><button
+        <img [src]="photoUrl(photo)" [alt]="photo.name" /><button
           type="button"
+          class="remove-photo"
           [disabled]="photosBusy"
           [attr.aria-label]="'Удалить фото ' + photo.name"
           (click)="remove(photo)"
         >
           ×
         </button>
+        <div class="order">
+          <button
+            type="button"
+            class="earlier"
+            [disabled]="photosBusy || first"
+            [attr.aria-label]="'Фото ' + photo.name + ' раньше'"
+            (click)="move(photo, -1)"
+          >
+            ‹</button
+          ><button
+            type="button"
+            class="later"
+            [disabled]="photosBusy || last"
+            [attr.aria-label]="'Фото ' + photo.name + ' позже'"
+            (click)="move(photo, 1)"
+          >
+            ›
+          </button>
+        </div>
       </div>
     }
   </div>

@@ -40,7 +40,6 @@ export interface Address {
   confirmedAt?: string;
 }
 export interface RentalDraft {
-  localPhotoIds?: string[];
   modelVersion?: number;
   aiEvidence?: Record<string, string>;
   legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];
@@ -83,6 +82,20 @@ export interface EditorSchema {
   /** Version of the card model (common and card.json); selectors and plans do not change it. */
   cardVersion: string;
   addressSuggestions: boolean;
+  /** How many photos a card may have; the server enforces it. */
+  photoLimit: number;
+}
+/** A photo stored with the card on the server. */
+export interface RentalPhoto {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+}
+/** The photos after a change and the revision of the card the change produced. */
+export interface RentalPhotos {
+  revision: number;
+  photos: RentalPhoto[];
 }
 /** A value the extension fills in the platform's form. */
 export interface FormValue {

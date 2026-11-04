@@ -23,7 +23,7 @@ describe("rental preparation editor", () => {
     expect(c.store.draft.values[field.id]).toBeUndefined();
     c.store.draft.values[field.id] = "Unexpected asynchronous edit";
     c.store.changed();
-    resolve(response({id:"another", revision:1, draft:{cardVersion:"1",values:{},platforms:[],address:null}}));
+    resolve(response({id:"another", revision:1, draft:{cardVersion:"1",values:{},platforms:[],address:null}, photos:[]}));
     await opening;
     expect(c.store.id).not.toBe("another");
     expect(c.store.draft.values[field.id]).toBe("Unexpected asynchronous edit");
@@ -59,7 +59,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},cardVersion:"2",addressSuggestions:false,
+    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},cardVersion:"2",addressSuggestions:false,photoLimit:12,
       platforms:{example:{labels:{},choiceLabels:{},constants:{},bindings:[]}}};
     c.store.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
     c.store.draft.values["location.metro"] = "Old metro";
@@ -135,7 +135,7 @@ describe("rental preparation editor", () => {
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
-    c.store.schema = {cardVersion:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
+    c.store.schema = {cardVersion:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,photoLimit:12,platforms:{}};
     c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},checksPassed:false,form:[],manual:[],publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
     expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
@@ -442,7 +442,7 @@ describe("rental preparation editor", () => {
     const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
     function editor() {
       const c = new RentalEditorComponent();
-      c.store.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, cardVersion:"2", addressSuggestions:true,
+      c.store.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, cardVersion:"2", addressSuggestions:true,photoLimit:12,
         category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
           {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
           {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},

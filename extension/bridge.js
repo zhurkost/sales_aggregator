@@ -77,8 +77,9 @@
       if (type.startsWith('RENTAL_')) {
         if (mutation) { consumedGestureId=gestureId; running=true; }
         if (type==='RENTAL_RUN') {
+          // The photos are the ones stored with the card on the server, never from the page.
           const config=await rentalConfig(payload,true);
-          payload={...config,profileId:payload.profileId,draft:payload.draft,mode:payload.mode,photos:payload.photos||[]};
+          payload={...config,profileId:payload.profileId,draft:payload.draft,mode:payload.mode};
         }
         const result=await requireRuntime().sendMessage({kind:'RENTAL_REQUEST',type,payload,userGesture});
         respond(requestId,result||{error:'Расширение не ответило.'});return;

@@ -1,11 +1,17 @@
-import type { EditorSchema, Prepared, RentalDraft } from "./rental-models";
+import type {
+  EditorSchema,
+  Prepared,
+  RentalDraft,
+  RentalPhoto,
+  RentalPhotos,
+} from "./rental-models";
 import { RentalApiError, rentalApi } from "./rental-api";
 import { RentalCardCheck } from "./rental-card-check";
 import {
   applyProfileDefaults,
   type RentalProfile,
 } from "./rental-profile-defaults";
-import { rentalPhotos } from "./rental-photos";
+import { forgetLocalRentalPhotos } from "./rental-local-photos";
 const CONFLICT =
   "Карточка изменена в другой вкладке. Сохраните копию или загрузите сохранённую версию.";
 /** Per-editor session: persistence, revision checks and serialized writes. No DOM. */
@@ -24,6 +30,8 @@ export class RentalDraftStore {
   };
   id: string = crypto.randomUUID();
   revision = 0;
+  /** Photos stored with the card on the server, in their order. */
+  photos: RentalPhoto[] = [];
   dirty = false;
   /** The server has a newer revision: autosave stops until a copy is saved or it is loaded. */
   conflict = false;
@@ -144,6 +152,8 @@ export class RentalDraftStore {
       await this.queue.catch(() => {});
       this.id = crypto.randomUUID();
       this.revision = 0;
+      // The photos stay with the card they were added to.
+      this.photos = [];
       this.dirty = true;
       this.conflict = false;
       await this.save();
@@ -156,34 +166,86 @@ export class RentalDraftStore {
   }
   save(): Promise<void> {
     clearTimeout(this.timer);
-    const save = this.queue
-      .catch(() => {})
-      .then(async () => {
-        if (!this.dirty || this.deletingId === this.id || this.conflict) return;
-        const version = this.editVersion,
-          id = this.id,
-          snapshot = structuredClone(this.draft);
-        this.status = "Сохраняем…";
-        const result = await rentalApi<{ revision: number }>(
-          this.workspaceId(),
-          "drafts/" + id,
-          { revision: this.revision, draft: snapshot },
-        ).catch((e: unknown) => {
-          if (e instanceof RentalApiError && e.status === 409 && this.id === id) {
-            this.conflict = true;
-            this.status = "Не сохранено";
-          }
-          throw e;
-        });
-        if (this.id === id) {
-          this.revision = result.revision;
-          this.dirty = this.editVersion !== version;
-          this.status = this.dirty ? "Есть новые изменения" : "Сохранено";
-        }
-        this.listed(id, result.revision, snapshot);
-      });
+    const save = this.queue.catch(() => {}).then(() => this.write());
     this.queue = save;
     return save;
+  }
+  /** One write of the card; callers run it in the queue. */
+  private async write() {
+    if (!this.dirty || this.deletingId === this.id || this.conflict) return;
+    const version = this.editVersion,
+      id = this.id,
+      snapshot = structuredClone(this.draft);
+    this.status = "Сохраняем…";
+    const result = await rentalApi<{ revision: number }>(
+      this.workspaceId(),
+      "drafts/" + id,
+      { revision: this.revision, draft: snapshot },
+    ).catch((e: unknown) => this.conflicted(e, id));
+    if (this.id === id) {
+      this.revision = result.revision;
+      this.dirty = this.editVersion !== version;
+      this.status = this.dirty ? "Есть новые изменения" : "Сохранено";
+    }
+    this.listed(id, result.revision, snapshot);
+  }
+  private conflicted(e: unknown, id: string): never {
+    if (e instanceof RentalApiError && e.status === 409 && this.id === id) {
+      this.conflict = true;
+      this.status = "Не сохранено";
+    }
+    throw e;
+  }
+  /** Adds compressed photos (data URLs) to the end of the card. */
+  addPhotos(photos: { name: string; dataUrl: string }[]) {
+    return this.photoChange("photos", (revision) => ({ revision, photos }));
+  }
+  removePhoto(photo: string) {
+    return this.photoChange("photos/delete", (revision) => ({ revision, photo }));
+  }
+  /** Moves a photo one place earlier (-1) or later (+1). */
+  movePhoto(photo: string, offset: -1 | 1) {
+    return this.photoChange("photos/order", (revision) => {
+      const order = this.photos.map((p) => p.id),
+        from = order.indexOf(photo),
+        to = from + offset;
+      if (from >= 0 && to >= 0 && to < order.length)
+        [order[from], order[to]] = [order[to], order[from]];
+      return { revision, order };
+    });
+  }
+  /**
+   * A photo change is a new revision of the saved card, so it queues with the saves: it uses the
+   * revision the last save produced and the next save uses the one it produced.
+   */
+  private photoChange(path: string, body: (revision: number) => object) {
+    const change = this.queue
+      .catch(() => {})
+      .then(async () => {
+        if (this.conflict) throw new Error(CONFLICT);
+        const id = this.id;
+        if (!this.revision) {
+          // A photo belongs to a card the server has.
+          this.dirty = true;
+          await this.write();
+        }
+        if (this.id !== id) return;
+        const result = await rentalApi<RentalPhotos>(
+          this.workspaceId(),
+          "drafts/" + id + "/" + path,
+          body(this.revision),
+        ).catch((e: unknown) => this.conflicted(e, id));
+        if (this.id !== id) return;
+        this.revision = result.revision;
+        this.photos = result.photos;
+        this.drafts = this.drafts.map((d) =>
+          d.id === id ? { ...d, revision: result.revision } : d,
+        );
+        // Whether a platform gets photos is part of the check.
+        this.check.invalidate();
+      });
+    this.queue = change;
+    return change;
   }
   async flush() {
     // Leaving the editor must also save changes typed while a prior request was running.
@@ -228,6 +290,7 @@ export class RentalDraftStore {
       id: string;
       revision: number;
       draft: RentalDraft;
+      photos: RentalPhoto[];
     }>(this.workspaceId(), "drafts/" + id);
     if (beforeLoad !== this.editVersion)
       throw new Error(
@@ -236,6 +299,7 @@ export class RentalDraftStore {
     this.id = result.id;
     this.revision = result.revision;
     this.draft = result.draft;
+    this.photos = result.photos;
     this.onTransition();
     this.check.clear();
     this.dirty = false;
@@ -267,6 +331,7 @@ export class RentalDraftStore {
     this.editVersion++;
     this.id = crypto.randomUUID();
     this.revision = 0;
+    this.photos = [];
     this.check.clear();
     this.draft = {
       modelVersion: this.schema?.card?.version,
@@ -297,7 +362,8 @@ export class RentalDraftStore {
         await rentalApi(this.workspaceId(), "drafts/" + id + "/delete", {
           revision,
         });
-        await rentalPhotos(this.workspaceId(), id, []).catch(() => {});
+        // Copies an older release kept in this browser go with the card.
+        await forgetLocalRentalPhotos(this.workspaceId(), id).catch(() => {});
         this.drafts = this.drafts.filter((draft) => draft.id !== id);
         if (this.id === id) this.resetDraft();
         this.pendingDelete = null;

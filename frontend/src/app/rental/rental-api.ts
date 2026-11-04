@@ -44,3 +44,8 @@ export async function rentalApi<T>(
     );
   return body as T;
 }
+
+/** Address of a stored photo for an image element; the session cookie selects the cabinet. */
+export function rentalPhotoUrl(draft: string, photo: string) {
+  return `/api/workspace/rental/drafts/${encodeURIComponent(draft)}/photos/${encodeURIComponent(photo)}`;
+}

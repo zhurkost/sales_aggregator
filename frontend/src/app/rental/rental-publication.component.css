@@ -41,13 +41,28 @@
   border-radius: 6px;
 }
 .photo button {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+}
+.photo .remove-photo {
   position: absolute;
   right: 0;
   top: 0;
-  background: #fff;
-  border: 1px solid #cbd5e1;
   border-radius: 50%;
-  cursor: pointer;
+}
+.photo .order {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.photo .order button {
+  border-radius: 6px;
+  padding: 0 8px;
+}
+.photo button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 .launch {
   justify-content: space-between;

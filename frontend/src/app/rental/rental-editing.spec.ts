@@ -8,6 +8,7 @@ import type { EditorSchema, Prepared } from "./rental-models";
 const schema: EditorSchema = {
   cardVersion: "test",
   addressSuggestions: false,
+  photoLimit: 12,
   canonicalValues: {},
   card: {
     version: 2,
@@ -419,6 +420,7 @@ describe("rental contacts from the active profile", () => {
             platforms: [],
             address: null,
           },
+          photos: [],
         }),
       ),
     );
@@ -549,7 +551,7 @@ describe("rental revision conflicts", () => {
         if (url.endsWith("/editor")) return response(schema);
         if (url.endsWith("/drafts")) return response({ drafts: [] });
         if (url.endsWith("/drafts/" + id) && init?.method === "GET")
-          return response({ id, revision: 5, draft: saved });
+          return response({ id, revision: 5, draft: saved, photos: [] });
         return body?.revision === 4
           ? response(conflictBody, 409)
           : response({ revision: body.revision + 1 });
@@ -620,7 +622,7 @@ describe("rental revision conflicts", () => {
           analyze.push(JSON.parse(String(init?.body)));
           return response({ cardVersion: "test", model: "test", suggestions: [], address: null, questions: [], ignored: 0 });
         }
-        if (id && !init?.body) return response({ id, revision: 1, draft: drafts[id] });
+        if (id && !init?.body) return response({ id, revision: 1, draft: drafts[id], photos: [] });
         return response({ revision: 2 });
       }),
     );
@@ -674,7 +676,7 @@ describe("rental revision conflicts", () => {
         if (url.endsWith("/drafts")) return response({ drafts: [] });
         if (id === "old" && !init?.body)
           return response({ error: "Карточку нужно перенести командой миграции." }, 409);
-        if (id && !init?.body) return response({ id, revision: 1, draft: drafts[id] });
+        if (id && !init?.body) return response({ id, revision: 1, draft: drafts[id], photos: [] });
         return response({ revision: 2 });
       }),
     );

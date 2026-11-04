@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { type Photo } from "../../../../lib/workspace";
+import { rentalPhotoUrl } from "./rental-api";
 import { RentalDraftStore } from "./rental-draft.store";
+import type { RentalPhoto } from "./rental-models";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 
 /** Версия расширения, которую требует аренда; её же предлагает ссылка на ZIP. */
-export const REQUIRED_EXTENSION_VERSION = "0.9.5";
+export const REQUIRED_EXTENSION_VERSION = "0.9.6";
 
 type Job = {
   id: string;
@@ -36,7 +37,6 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   photosBusy = false;
   error = "";
   ready = false;
-  photos: Photo[] = [];
   jobs: Job[] = [];
   private generation = 0;
   private timer?: ReturnType<typeof setInterval>;
@@ -45,17 +45,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     const generation = ++this.generation;
     clearInterval(this.timer);
     this.jobs = [];
-    this.photos = [];
     this.error = "";
     if (!this.workspaceId || !this.draftId) return;
-    const workspace = this.workspaceId,
-      id = this.draftId;
-    try {
-      const photos = await this.gateway.photos(workspace, id);
-      if (generation === this.generation) this.photos = photos;
-    } catch (e) {
-      if (generation === this.generation) this.error = (e as Error).message;
-    }
     try {
       const ping = await this.gateway.request("PING", undefined, 4000);
       if (generation !== this.generation) return;
@@ -68,8 +59,10 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-checks-passed") &&
         // ...or after a release replaced the rules the form was filled with.
         ping["capabilities"].includes("rental-integration-version") &&
-        // ...and older ones reject the Realt description editor (TinyMCE in an iframe).
-        ping["capabilities"].includes("rental-iframe-richtext");
+        // ...and older ones reject the Realt description editor (TinyMCE in an iframe)
+        ping["capabilities"].includes("rental-iframe-richtext") &&
+        // ...or upload the photos the page sends instead of those stored with the card.
+        ping["capabilities"].includes("rental-server-photos");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)
@@ -122,7 +115,6 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
       profileId: this.workspaceId,
       draft: structuredClone(this.store.draft),
       mode: this.mode,
-      photos: this.photos,
     };
     try {
       const [, result] = await Promise.all([
@@ -162,21 +154,24 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   name(platform: string) {
     return this.store.schema?.platforms[platform]?.name || platform;
   }
+  get photos() {
+    return this.store.photos;
+  }
+  get photoLimit() {
+    return this.store.schema?.photoLimit ?? 0;
+  }
+  photoUrl(photo: RentalPhoto) {
+    return rentalPhotoUrl(this.store.id, photo.id);
+  }
   async add(files: File[]) {
-    if (this.photosBusy) return;
+    if (this.photosBusy || !files.length) return;
     this.photosBusy = true;
     this.error = "";
-    const generation = this.generation,
-      workspace = this.workspaceId,
-      id = this.draftId;
     try {
-      const photos = await this.gateway.add(this.photos, files);
-      await this.gateway.photos(workspace, id, photos);
-      if (generation === this.generation) {
-        this.photos = photos;
-        this.store.draft.localPhotoIds = photos.map((photo) => photo.id);
-        this.store.changed();
-      }
+      // The server's limit, checked before compressing a batch the server would refuse.
+      if (this.photoLimit && this.photos.length + files.length > this.photoLimit)
+        throw new Error(`У квартиры может быть до ${this.photoLimit} фотографий.`);
+      await this.store.addPhotos(await this.gateway.compress(files));
     } catch (e) {
       this.error = (e as Error).message;
     } finally {
@@ -197,18 +192,22 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     void this.add(Array.from(input.files || []));
     input.value = "";
   }
-  async remove(photo: Photo) {
-    const generation = this.generation;
-    const photos = this.photos.filter((p) => p.id !== photo.id);
+  async remove(photo: RentalPhoto) {
+    await this.photoChange(() => this.store.removePhoto(photo.id));
+  }
+  async move(photo: RentalPhoto, offset: -1 | 1) {
+    await this.photoChange(() => this.store.movePhoto(photo.id, offset));
+  }
+  private async photoChange(change: () => Promise<void>) {
+    if (this.photosBusy) return;
+    this.photosBusy = true;
+    this.error = "";
     try {
-      await this.gateway.photos(this.workspaceId, this.draftId, photos);
-      if (generation === this.generation) {
-        this.photos = photos;
-        this.store.draft.localPhotoIds = photos.map((photo) => photo.id);
-        this.store.changed();
-      }
+      await change();
     } catch (e) {
       this.error = (e as Error).message;
+    } finally {
+      this.photosBusy = false;
     }
   }
   ngOnDestroy() {

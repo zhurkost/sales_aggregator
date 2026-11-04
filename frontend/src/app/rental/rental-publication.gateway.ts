@@ -1,17 +1,19 @@
 import { Injectable } from "@angular/core";
-import { extension, type Photo } from "../../../../lib/workspace";
-import { addRentalPhotos, rentalPhotos } from "./rental-photos";
+import { extension, optimizePhoto } from "../../../../lib/workspace";
 
-/** Boundary to the browser extension and local binary storage. */
+/** Boundary to the browser extension and image compression. */
 @Injectable({ providedIn: "root" })
 export class RentalPublicationGateway {
   request(type: string, payload?: unknown, timeout?: number) {
     return extension(type, payload, timeout);
   }
-  photos(workspace: string, id: string, value?: Photo[]) {
-    return rentalPhotos(workspace, id, value);
-  }
-  add(current: Photo[], files: File[]) {
-    return addRentalPhotos(current, files);
+  /** JPEG of at most 1600 px, as a data URL the server accepts. */
+  async compress(files: File[]) {
+    const photos = [];
+    for (const file of files) {
+      const { name, dataUrl } = await optimizePhoto(file);
+      photos.push({ name, dataUrl });
+    }
+    return photos;
   }
 }

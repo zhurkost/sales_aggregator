@@ -52,7 +52,8 @@ test('RUN requires a trusted event and allows only one request per gesture', asy
 });
 
 test('rental launch obtains a server recipe after a trusted click and never sends photos to the server',async()=>{
- const recipe={format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]};
+ const photos=[{id:'room',name:'room.jpg',dataUrl:'data:image/jpeg;base64,/9j/4A=='}];
+ const recipe={format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}],photos};
  const bridge=createBridge({fetchCatalog:async()=>Response.json(recipe)});
  const input={profileId:'owner',id:'rental',draft:{values:{description:'Apartment'}},photos:[{id:'image'}],mode:'assist',jobs:[{startUrl:'https://evil.invalid'}]};
  const overrides={data:{source:'autopost-app',type:'RENTAL_RUN',requestId:'rental-1',payload:input}};
@@ -61,6 +62,8 @@ test('rental launch obtains a server recipe after a trusted click and never send
  assert.equal(bridge.catalogRequests[0].url,'/api/workspace/rental/extension-config');
  const request=bridge.catalogRequests[0].options;assert.equal(request.headers['X-Autopost-Workspace'],'owner');assert.equal('photos' in JSON.parse(request.body),false);
  assert.equal(bridge.forwarded[0].kind,'RENTAL_REQUEST');assert.deepEqual(bridge.forwarded[0].payload.jobs,recipe.jobs);assert.equal(bridge.forwarded[0].payload.mode,'assist');
+ // The photos are the ones stored with the card; the page cannot substitute its own.
+ assert.deepEqual(bridge.forwarded[0].payload.photos,photos);
 });
 test('before the final click the app confirms the launched revision and integration version',async()=>{
  const current={format:1,id:'rental',revision:3,integrationVersion:'b'.repeat(64),jobs:[]};
