@@ -189,6 +189,56 @@ class RentalCoverageTest {
     }
   }
 
+  @Test
+  void editorTellsForEachUseOfACardFieldWhetherTheFormNeedsIt() {
+    var editor =
+        new by.autopost.rental.application.RentalCatalog(new FileReferenceRepository(COMMITTED))
+            .editor();
+    Map<String, Map<String, Boolean>> uses = new HashMap<>();
+    for (var group : editor.path("category").path("options"))
+      for (var field : group.path("options"))
+        for (var use : field.path("uses"))
+          uses.computeIfAbsent(text(field, "id"), id -> new TreeMap<>())
+              .merge(
+                  text(use, "platform"), use.path("transferred").asBoolean(), Boolean::logicalOr);
+    assertEquals(Map.of("kufar", true, "realt", true), uses.get("listing.title"));
+    assertEquals(
+        Map.of("kufar", true, "realt", false, "domovita", true), uses.get("rental.kitchen_area"));
+    // Metro reaches no form: Kufar and Realt choose stations from the address themselves.
+    assertEquals(Map.of("kufar", false, "realt", false), uses.get("location.metro_1_station"));
+    for (var platform : iterable(editor.path("platforms").fields()))
+      assertFalse(platform.getValue().has("coverage"), platform.getKey());
+  }
+
+  @Test
+  void aFieldNeededByAFilledOneIsTransferredInTheEditor() throws Exception {
+    fixture();
+    withoutControl("currency");
+    var plan = (ObjectNode) read("example.plan.json");
+    ((ObjectNode) plan.path("fields").get(1))
+        .put("transfer", "manual")
+        .put("manual_reason", "Валюту выбирают на площадке.");
+    write("example.plan.json", plan);
+    assertFalse(currencyUse().path("transferred").asBoolean());
+    ((ObjectNode) plan.path("fields").get(0).path("conversion"))
+        .set("requires", array().add("currency"));
+    write("example.plan.json", plan);
+    // The rent the form receives is prepared with the currency of the card.
+    assertTrue(currencyUse().path("transferred").asBoolean());
+  }
+
+  JsonNode currencyUse() {
+    var editor = new by.autopost.rental.application.RentalCatalog(load()).editor();
+    for (var group : editor.path("category").path("options"))
+      for (var field : group.path("options"))
+        if (text(field, "id").equals("rental.currency")) return field.path("uses").get(0);
+    throw new AssertionError("rental.currency");
+  }
+
+  static <T> Iterable<T> iterable(Iterator<T> iterator) {
+    return () -> iterator;
+  }
+
   /** Selectors and input methods taken from the research reports of the platforms. */
   @Test
   void evidencedFieldsAreBoundToTheirFormElements() {

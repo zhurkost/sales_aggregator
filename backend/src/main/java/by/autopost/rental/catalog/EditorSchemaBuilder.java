@@ -64,9 +64,7 @@ public final class EditorSchemaBuilder {
               "constants",
               plan.path("constants"),
               "bindings",
-              bindings,
-              "coverage",
-              "partial"));
+              bindings));
     }
     ObjectNode result =
         object(
@@ -80,7 +78,7 @@ public final class EditorSchemaBuilder {
             snapshot.cardVersion(),
             "runtimeVersion",
             ReferenceContract.PREPARATION_VERSION);
-    EditorCardDecorator.decorate(result, snapshot.card());
+    EditorCardDecorator.decorate(result, snapshot);
     return result;
   }
 
