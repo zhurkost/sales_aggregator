@@ -55,6 +55,8 @@ class RentalController {
     access.require(req);
     ObjectNode result = catalog.editor();
     result.put("addressSuggestions", addresses.configured());
+    // The editor shows the server's limit; the server enforces it.
+    result.put("photoLimit", RentalPhotoService.LIMIT);
     return result;
   }
 

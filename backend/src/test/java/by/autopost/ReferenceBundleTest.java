@@ -4,7 +4,6 @@ import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import by.autopost.rental.application.RentalCatalog;
-import by.autopost.rental.application.RentalPublicationService;
 import by.autopost.rental.catalog.*;
 import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -238,8 +237,8 @@ class ReferenceBundleTest {
   @Test
   void openCardKeepsSavingCheckingAndLaunchingAfterASelectorFix() throws Exception {
     fixture();
-    var drafts =
-        RentalStorage.at(dir.resolve("drafts.sqlite")).draftService();
+    var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
+    var drafts = storage.draftService();
     var before = new RentalCatalog(new FileReferenceRepository(dir.toString()));
     // The editor stamps the card with the version of the card model it shows.
     var card =
@@ -255,7 +254,7 @@ class ReferenceBundleTest {
     String id = UUID.randomUUID().toString();
     drafts.save("owner", id, object("revision", 0, "draft", card));
     var launched =
-        new RentalPublicationService(drafts, before)
+        storage.publicationService(before)
             .configuration("owner", object("id", id, "draft", card));
     // The next release fixes a selector; the editor opened before it stays usable.
     var recipe = (ObjectNode) read("example.browser.json");
@@ -269,7 +268,7 @@ class ReferenceBundleTest {
     assertTrue(check.path("issues").isEmpty(), check.toString());
     assertEquals(1600, check.path("values").path("rent").asInt());
     var relaunched =
-        new RentalPublicationService(drafts, after)
+        storage.publicationService(after)
             .configuration("owner", object("id", id, "draft", card));
     var rent = relaunched.path("jobs").get(0).path("controls").get(0);
     assertEquals("input[name=price]", text(rent, "selector"));

@@ -1,6 +1,9 @@
 package by.autopost;
 
+import by.autopost.rental.application.RentalCatalog;
 import by.autopost.rental.application.RentalDraftService;
+import by.autopost.rental.application.RentalPhotoService;
+import by.autopost.rental.application.RentalPublicationService;
 import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.rental.persistence.JdbcRentalPhotoRepository;
 import java.nio.file.Path;
@@ -25,5 +28,13 @@ final class RentalStorage {
 
   RentalDraftService draftService() {
     return new RentalDraftService(drafts, photos);
+  }
+
+  RentalPhotoService photoService() {
+    return new RentalPhotoService(drafts, photos);
+  }
+
+  RentalPublicationService publicationService(RentalCatalog catalog) {
+    return new RentalPublicationService(draftService(), catalog, photoService());
   }
 }

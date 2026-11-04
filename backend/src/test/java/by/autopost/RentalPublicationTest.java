@@ -2,7 +2,6 @@ package by.autopost;
 
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import by.autopost.rental.application.*;
 import by.autopost.rental.catalog.*;
@@ -174,30 +173,65 @@ class RentalPublicationTest {
 
   @Test
   void onlySavedSnapshotInOwnWorkspaceCanBeLaunched() {
-    var drafts = mock(RentalDraftService.class);
-    var service = new RentalPublicationService(drafts, catalog);
+    var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
+    var service = storage.publicationService(catalog);
     var draft = partial();
     String id = UUID.randomUUID().toString();
-    when(drafts.get("owner", id))
-        .thenReturn(object("id", id, "revision", 3, "draft", draft.deepCopy()));
-    when(drafts.get("other", id)).thenThrow(new ApiException(404, "Не найдено"));
-    var request = object("id", id, "draft", draft);
+    for (int revision = 0; revision < 3; revision++)
+      storage.draftService().save("owner", id, object("revision", revision, "draft", draft));
+    var request = object("id", id, "draft", draft.deepCopy());
     assertEquals(3, service.configuration("owner", request).path("revision").asInt());
-    assertThrows(ApiException.class, () -> service.configuration("other", request));
+    assertEquals(
+        404,
+        assertThrows(ApiException.class, () -> service.configuration("other", request)).status);
     ((ObjectNode) request.path("draft").path("values"))
         .put("listing.description", "Изменено после сохранения");
-    assertThrows(ApiException.class, () -> service.configuration("owner", request));
+    assertEquals(
+        409,
+        assertThrows(ApiException.class, () -> service.configuration("owner", request)).status);
+  }
+
+  @Test
+  void theLaunchCarriesThePhotosStoredWithTheCardInTheirOrder() {
+    var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
+    var draft = partial();
+    String id = UUID.randomUUID().toString();
+    storage.draftService().save("owner", id, object("revision", 0, "draft", draft));
+    var request = object("id", id, "draft", draft);
+    var service = storage.publicationService(catalog);
+    assertTrue(service.configuration("owner", request).path("photos").isEmpty());
+    var added =
+        storage
+            .photoService()
+            .add(
+                "owner",
+                id,
+                1,
+                List.of(RentalPhotoTest.jpeg("room.jpg"), RentalPhotoTest.jpeg("kitchen.jpg")));
+    var ids = added.photos().stream().map(p -> p.id()).toList();
+    storage.photoService().reorder("owner", id, 2, List.of(ids.get(1), ids.get(0)));
+    var launch = service.configuration("owner", request);
+    // Photo changes are revisions of the card: the launch is of the revision that has them.
+    assertEquals(3, launch.path("revision").asInt());
+    var photos = list(launch.path("photos"));
+    assertEquals(
+        List.of(ids.get(1), ids.get(0)), photos.stream().map(p -> text(p, "id")).toList());
+    assertEquals(
+        List.of("kitchen.jpg", "room.jpg"), photos.stream().map(p -> text(p, "name")).toList());
+    assertEquals(
+        "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(RentalPhotoTest.JPEG),
+        text(photos.get(0), "dataUrl"));
   }
 
   @Test
   void savedCardOfAnOldModelIsNeverPublished() {
-    var drafts =
-        RentalStorage.at(dir.resolve("drafts.sqlite")).draftService();
+    var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
+    var drafts = storage.draftService();
     var old = partial();
     old.remove("modelVersion");
     String id = UUID.randomUUID().toString();
     drafts.save("owner", id, object("revision", 0, "draft", old));
-    var service = new RentalPublicationService(drafts, catalog);
+    var service = storage.publicationService(catalog);
     var error =
         assertThrows(
             ApiException.class,

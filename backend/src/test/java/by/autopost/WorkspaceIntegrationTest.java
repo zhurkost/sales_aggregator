@@ -144,6 +144,7 @@ class WorkspaceIntegrationTest {
     String id = UUID.randomUUID().toString(), path = "rental/drafts/" + id;
     var draft = object("modelVersion", 2, "values", object("listing.title", "Photos"));
     postJson(path, owner.cookie(), object("revision", 0, "draft", draft), 200);
+    assertEquals(12, getJson("rental/editor", owner.cookie(), 200).path("photoLimit").asInt());
     byte[] jpeg = {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0, 1, 2};
     var photo =
         object(
