@@ -16,10 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class RentalDraftService {
   private final RentalDraftRepository drafts;
   private final RentalPhotoRepository photos;
+  private final RentalPublicationRepository publications;
 
-  public RentalDraftService(RentalDraftRepository drafts, RentalPhotoRepository photos) {
+  public RentalDraftService(
+      RentalDraftRepository drafts,
+      RentalPhotoRepository photos,
+      RentalPublicationRepository publications) {
     this.drafts = drafts;
     this.photos = photos;
+    this.publications = publications;
   }
 
   public ObjectNode list(String workspace) {
@@ -51,6 +56,14 @@ public class RentalDraftService {
     CardMigration.requireCurrent(draft);
     return object(
         "id", id, "revision", row.revision(), "draft", draft, "photos", photos.list(workspace, id));
+  }
+
+  /** The current revision of a card, without reading it. */
+  public int revision(String workspace, String id) {
+    return drafts
+        .find(workspace, id)
+        .orElseThrow(() -> new ApiException(404, "Карточка аренды не найдена."))
+        .revision();
   }
 
   @Transactional
@@ -92,6 +105,7 @@ public class RentalDraftService {
     }
     // What is stored with the card goes with it.
     photos.removeAll(workspace, id);
+    publications.removeAll(workspace, id);
     return object("deleted", true, "id", id);
   }
 }

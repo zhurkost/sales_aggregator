@@ -35,6 +35,16 @@ public class RentalCatalog {
     return references.snapshot().cardVersion();
   }
 
+  /** Version of the plans and recipes; a launch keeps the one it was compiled with. */
+  public String integrationVersion() {
+    return references.snapshot().integrationVersion();
+  }
+
+  /** The address of the platform's form, from its recipe. */
+  public String formUrl(String platform) {
+    return text(references.snapshot().browser(platform), "startUrl");
+  }
+
   public JsonNode card() {
     return references.snapshot().card();
   }

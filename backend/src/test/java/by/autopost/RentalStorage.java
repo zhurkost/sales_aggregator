@@ -6,6 +6,7 @@ import by.autopost.rental.application.RentalPhotoService;
 import by.autopost.rental.application.RentalPublicationService;
 import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.rental.persistence.JdbcRentalPhotoRepository;
+import by.autopost.rental.persistence.JdbcRentalPublicationRepository;
 import java.nio.file.Path;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -15,11 +16,13 @@ final class RentalStorage {
   final JdbcTemplate jdbc;
   final JdbcRentalDraftRepository drafts;
   final JdbcRentalPhotoRepository photos;
+  final JdbcRentalPublicationRepository publications;
 
   RentalStorage(JdbcTemplate jdbc) {
     this.jdbc = jdbc;
     this.drafts = new JdbcRentalDraftRepository(jdbc);
     this.photos = new JdbcRentalPhotoRepository(jdbc);
+    this.publications = new JdbcRentalPublicationRepository(jdbc);
   }
 
   static RentalStorage at(Path file) {
@@ -27,7 +30,7 @@ final class RentalStorage {
   }
 
   RentalDraftService draftService() {
-    return new RentalDraftService(drafts, photos);
+    return new RentalDraftService(drafts, photos, publications);
   }
 
   RentalPhotoService photoService() {
@@ -35,6 +38,6 @@ final class RentalStorage {
   }
 
   RentalPublicationService publicationService(RentalCatalog catalog) {
-    return new RentalPublicationService(draftService(), catalog, photoService());
+    return new RentalPublicationService(draftService(), catalog, photoService(), publications);
   }
 }

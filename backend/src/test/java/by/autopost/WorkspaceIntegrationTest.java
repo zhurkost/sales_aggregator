@@ -199,6 +199,56 @@ class WorkspaceIntegrationTest {
     assertTrue(foreign.getContentAsString().contains("photos_required"));
   }
 
+  @Test
+  void rentalPublicationsAreReportedAndLinkedOnlyInTheirCabinet() throws Exception {
+    var owner = register();
+    var other = register();
+    String id = UUID.randomUUID().toString();
+    var draft =
+        object(
+            "modelVersion",
+            2,
+            "cardVersion",
+            text(getJson("rental/editor", owner.cookie(), 200), "cardVersion"),
+            "values",
+            object(),
+            "platforms",
+            List.of("kufar"));
+    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 0, "draft", draft), 200);
+    var request = object("id", id, "draft", draft);
+    var launch =
+        parse(
+            postJson("rental/extension-config", owner.cookie(), request, 200)
+                .getResponse()
+                .getContentAsString());
+    String publication = text(launch.path("jobs").get(0), "publication");
+    var again =
+        parse(
+            postJson("rental/extension-config", owner.cookie(), request, 200)
+                .getResponse()
+                .getContentAsString());
+    assertEquals(publication, text(again.path("jobs").get(0), "publication"));
+    String path = "rental/publications/" + publication;
+    var filled = object("status", "filled", "message", "Заполнено");
+    postJson(path, other.cookie(), filled, 404);
+    postJson(path, "", filled, 401);
+    var reported =
+        parse(postJson(path, owner.cookie(), filled, 200).getResponse().getContentAsString());
+    assertEquals("filled", text(reported, "status"));
+    assertEquals("kufar", text(reported, "platform"));
+    postJson(path, owner.cookie(), object("status", "published"), 400);
+    postJson(path, owner.cookie(), object("status", "submitted"), 200);
+    postJson(path, owner.cookie(), object("status", "submitted"), 409);
+    var link = object("url", "https://re.kufar.by/vi/123");
+    postJson(path + "/link", other.cookie(), link, 404);
+    postJson(path + "/link", owner.cookie(), object("url", "https://evil.example/vi/1"), 400);
+    var linked =
+        parse(
+            postJson(path + "/link", owner.cookie(), link, 200).getResponse().getContentAsString());
+    assertEquals("https://re.kufar.by/vi/123", text(linked, "url"));
+    assertEquals("submitted", text(linked, "status"));
+  }
+
   static final Path DATA;
 
   static {

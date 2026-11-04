@@ -50,6 +50,11 @@ class RentalController {
   /** The new order of all photos of the card. */
   record PhotoOrder(Integer revision, List<String> order) {}
 
+  /** What the extension reports through the Autopost tab. */
+  record PublicationReport(String status, String message) {}
+
+  record PublicationLink(String url) {}
+
   @GetMapping("/editor")
   ObjectNode editor(HttpServletRequest req) {
     access.require(req);
@@ -139,6 +144,19 @@ class RentalController {
   RentalPhotoService.Photos orderPhotos(
       HttpServletRequest req, @PathVariable String id, @RequestBody PhotoOrder input) {
     return photos.reorder(access.require(req).workspace(), id, input.revision(), input.order());
+  }
+
+  @PostMapping("/publications/{id}")
+  RentalPublicationRepository.Publication report(
+      HttpServletRequest req, @PathVariable String id, @RequestBody PublicationReport input) {
+    return publication.report(
+        access.require(req).workspace(), id, input.status(), input.message());
+  }
+
+  @PostMapping("/publications/{id}/link")
+  RentalPublicationRepository.Publication link(
+      HttpServletRequest req, @PathVariable String id, @RequestBody PublicationLink input) {
+    return publication.link(access.require(req).workspace(), id, input.url());
   }
 
   @PostMapping("/drafts/{id}/delete")
