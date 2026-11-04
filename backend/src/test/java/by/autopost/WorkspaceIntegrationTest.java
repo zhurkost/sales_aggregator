@@ -197,6 +197,8 @@ class WorkspaceIntegrationTest {
     var foreign = postJson("rental/prepare", other.cookie(), check, 200).getResponse();
     assertFalse(own.getContentAsString().contains("photos_required"));
     assertTrue(foreign.getContentAsString().contains("photos_required"));
+    // The card alone, as the editor sent it before, is not a check request.
+    postJson("rental/prepare", owner.cookie(), card, 400);
   }
 
   @Test

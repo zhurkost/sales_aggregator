@@ -88,6 +88,7 @@ class RentalController {
   ObjectNode prepare(HttpServletRequest req, @RequestBody JsonNode input) {
     String workspace = access.require(req).workspace();
     var draft = card(input.path("draft"));
+    if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
     return catalog.prepare(draft, photos.count(workspace, clean(input, "id", 100)));
   }
 
