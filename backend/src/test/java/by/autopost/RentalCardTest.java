@@ -195,8 +195,8 @@ class RentalCardTest {
             object(
                 "modelVersion",
                 2,
-                "schemaVersion",
-                catalog.version(),
+                "cardVersion",
+                catalog.cardVersion(),
                 "values",
                 object("rental.rooms", "two"),
                 "extras",
@@ -212,7 +212,7 @@ class RentalCardTest {
     var c = fixture();
     var old =
         object(
-            "schemaVersion",
+            "cardVersion",
             "old",
             "values",
             object("rental.rooms", "one", "location.street", "Old street"),
@@ -340,7 +340,8 @@ class RentalCardTest {
                 schemas,
                 plans,
                 Map.of(),
-                snapshot.version()));
+                snapshot.cardVersion(),
+                snapshot.integrationVersion()));
 
     for (JsonNode oldList : List.of(array(List.of("a")), MAPPER.readTree("[null]"))) {
       var migrated =
@@ -357,8 +358,8 @@ class RentalCardTest {
     var c = fixture();
     var old =
         object(
-            "schemaVersion",
-            c.version(),
+            "cardVersion",
+            c.cardVersion(),
             "values",
             object("rental.rooms", "two"),
             "extras",
@@ -379,7 +380,7 @@ class RentalCardTest {
         object(
             "modelVersion",
             2,
-            "schemaVersion",
+            "cardVersion",
             "previous",
             "values",
             object("rental.rooms", "two"),
@@ -390,8 +391,8 @@ class RentalCardTest {
             "platforms",
             List.of("one"));
     var accepted = c.acceptRules(card);
-    assertEquals(c.version(), text(accepted, "schemaVersion"));
-    accepted.put("schemaVersion", "previous");
+    assertEquals(c.cardVersion(), text(accepted, "cardVersion"));
+    accepted.put("cardVersion", "previous");
     assertEquals(card, accepted);
   }
 
@@ -411,7 +412,7 @@ class RentalCardTest {
         ApiException.class,
         () ->
             c.prepare(
-                object("schemaVersion", "old", "values", object(), "platforms", List.of("fifth"))));
+                object("cardVersion", "old", "values", object(), "platforms", List.of("fifth"))));
   }
 
   @Test

@@ -108,7 +108,7 @@ class RentalAiAddressTest {
     when(ai.serverJson(eq("person"), anyString(), eq(source))).thenReturn(parsed);
     var service = new RentalAiService(catalog, ai, new RentalAiAddressResolver(provider));
     return service.analyze(
-        "person", "workspace", object("text", source, "schemaVersion", catalog.version()));
+        "person", "workspace", object("text", source, "cardVersion", catalog.cardVersion()));
   }
 
   @Test
@@ -128,8 +128,8 @@ class RentalAiAddressTest {
     assertEquals(1, result.path("suggestions").size());
     var draft =
         object(
-            "schemaVersion",
-            catalog.version(),
+            "cardVersion",
+            catalog.cardVersion(),
             "modelVersion",
             2,
             "values",

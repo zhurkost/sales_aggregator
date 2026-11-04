@@ -99,7 +99,8 @@ class RentalDraftMigrationTest {
     var old = parse(after.get("ws/old").data());
     assertEquals(4, after.get("ws/old").revision());
     assertEquals(2, old.path("modelVersion").asInt());
-    assertEquals(catalog.version(), text(old, "schemaVersion"));
+    assertEquals(catalog.cardVersion(), text(old, "cardVersion"));
+    assertFalse(old.has("schemaVersion"));
     assertEquals("USD", text(old.path("values"), "rental.currency"));
     assertEquals("1500", text(old.path("values"), "rental.price"));
     assertTrue(old.path("extras").isEmpty());

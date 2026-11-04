@@ -22,7 +22,7 @@
   }
   @if (!store.schema && !store.error) { <p role="status">Загружаем карточку…</p> }
   @if (store.schema) {
-    @if (store.draft.schemaVersion !== store.schema.version || store.error.includes('Правила обновились')) {
+    @if (store.draft.cardVersion !== store.schema.cardVersion || store.error.includes('Правила обновились')) {
       <button type="button" class="quiet-button" [disabled]="store.busy" (click)="store.updateFields()">Обновить поля карточки</button>
     }
     <fieldset class="card" [disabled]="store.busy" [attr.aria-busy]="ai.busy">

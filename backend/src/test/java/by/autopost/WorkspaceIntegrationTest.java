@@ -32,7 +32,7 @@ class WorkspaceIntegrationTest {
         object(
             "modelVersion",
             2,
-            "schemaVersion",
+            "cardVersion",
             "example",
             "values",
             object("listing.title", "My apartment"),
@@ -77,7 +77,7 @@ class WorkspaceIntegrationTest {
     String id = UUID.randomUUID().toString();
     var oversized =
         object(
-            "schemaVersion",
+            "cardVersion",
             "example",
             "values",
             object("listing.description", "x".repeat(250_001)),

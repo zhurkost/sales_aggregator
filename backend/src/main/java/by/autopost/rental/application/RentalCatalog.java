@@ -26,8 +26,9 @@ public class RentalCatalog {
     return new EditorSchemaBuilder().build(references.snapshot());
   }
 
-  public String version() {
-    return references.snapshot().version();
+  /** Version of the card model the editor shows; a card stores the one it was edited under. */
+  public String cardVersion() {
+    return references.snapshot().cardVersion();
   }
 
   public JsonNode card() {
@@ -46,7 +47,7 @@ public class RentalCatalog {
     if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
     CardMigration.requireCurrent(draft);
     ObjectNode accepted = draft.deepCopy();
-    accepted.put("schemaVersion", references.snapshot().version());
+    accepted.put("cardVersion", references.snapshot().cardVersion());
     return accepted;
   }
 
@@ -60,8 +61,12 @@ public class RentalCatalog {
     return new RentalBrowserPreparation().compile(snapshot, prepare(snapshot, input), input);
   }
 
+  /**
+   * Only the card model is compared: plans, schemas and browser recipes may change under an open
+   * card, the card's values keep their meaning and are prepared with the current rules.
+   */
   private ObjectNode prepare(ReferenceSnapshot snapshot, JsonNode input) {
-    if (!text(input, "schemaVersion").equals(snapshot.version()))
+    if (!text(input, "cardVersion").equals(snapshot.cardVersion()))
       throw new ApiException(409, "Правила обновились. Обновите поля карточки.");
     if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
     CardMigration.requireCurrent(input);
@@ -84,6 +89,6 @@ public class RentalCatalog {
       CardProjection.annotate(prepared, plan, input);
       output.add(prepared);
     }
-    return object("platforms", output, "schemaVersion", snapshot.version());
+    return object("platforms", output);
   }
 }

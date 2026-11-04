@@ -6,7 +6,7 @@ import { rentalApi } from "./rental-api";
 import type { EditorSchema, Prepared } from "./rental-models";
 
 const schema: EditorSchema = {
-  version: "test",
+  cardVersion: "test",
   addressSuggestions: false,
   canonicalValues: {},
   card: {
@@ -342,7 +342,7 @@ describe("rental contacts from the active profile", () => {
           id: "saved",
           revision: 1,
           draft: {
-            schemaVersion: "test",
+            cardVersion: "test",
             values: { "contact.phone": "", "contact.name": "Другой контакт" },
             platforms: [],
             address: null,
@@ -463,7 +463,7 @@ describe("rental revision conflicts", () => {
   it("loads the saved version after confirmation and continues from its revision", async () => {
     let id = "";
     const saved = {
-      schemaVersion: "test",
+      cardVersion: "test",
       values: { "listing.description": "Сохранённая версия" },
       platforms: ["kufar"],
       address: null,
@@ -528,10 +528,61 @@ describe("rental revision conflicts", () => {
       fixture.destroy();
     }
   });
+  it("asks to update the card fields only when the card model changed, and analyzes with the card version", async () => {
+    const card = (cardVersion: string) => ({
+      modelVersion: 2,
+      cardVersion,
+      values: { "listing.description": "Сдам квартиру в Минске, 1500 BYN" },
+      platforms: ["kufar"],
+      address: null,
+    });
+    const drafts: Record<string, unknown> = { same: card("test"), older: card("before-test") };
+    const analyze: unknown[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string, init?: RequestInit) => {
+        const id = url.match(/\/drafts\/([^/]+)$/)?.[1];
+        if (url.endsWith("/editor")) return response(schema);
+        if (url.endsWith("/drafts")) return response({ drafts: [] });
+        if (url.endsWith("/analyze")) {
+          analyze.push(JSON.parse(String(init?.body)));
+          return response({ cardVersion: "test", model: "test", suggestions: [], address: null, questions: [], ignored: 0 });
+        }
+        if (id && !init?.body) return response({ id, revision: 1, draft: drafts[id] });
+        return response({ revision: 2 });
+      }),
+    );
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    const c = fixture.componentInstance,
+      el = fixture.nativeElement as HTMLElement,
+      update = () =>
+        Array.from(el.querySelectorAll<HTMLButtonElement>("button")).find(
+          (b) => b.textContent?.trim() === "Обновить поля карточки",
+        );
+    try {
+      await vi.waitFor(() => expect(c.store.schema).not.toBeNull());
+      expect(c.store.draft.cardVersion).toBe("test");
+      await c.store.open("same");
+      fixture.detectChanges();
+      expect(c.store.error).toBe("");
+      expect(update()).toBeUndefined();
+      await c.ai.fillFromDescription();
+      expect(analyze).toEqual([{ text: "Сдам квартиру в Минске, 1500 BYN", cardVersion: "test" }]);
+      expect(c.ai.message).toBe("Новых сведений не найдено.");
+      await c.store.open("older");
+      fixture.detectChanges();
+      expect(c.store.error).toContain("Правила обновились");
+      expect(update()).toBeDefined();
+    } finally {
+      fixture.destroy();
+    }
+  });
   it("asks to check old values only for a migrated card that kept them, and does not open an unmigrated one", async () => {
     const card = (legacy: unknown[]) => ({
       modelVersion: 2,
-      schemaVersion: "test",
+      cardVersion: "test",
       values: { "contact.name": "Анна" },
       platforms: ["kufar"],
       address: null,

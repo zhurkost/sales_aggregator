@@ -220,7 +220,9 @@ public final class CardMigration {
     // Model 2 keeps every fact in values; platform extras are not part of it.
     draft.remove("extras");
     draft.put("modelVersion", ReferenceContract.CARD_MODEL_VERSION);
-    draft.put("schemaVersion", catalog.version());
+    // The card keeps only the version of the card model it was converted to.
+    draft.remove("schemaVersion");
+    draft.put("cardVersion", catalog.cardVersion());
     return draft;
   }
 

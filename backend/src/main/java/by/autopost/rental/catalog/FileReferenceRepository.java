@@ -71,13 +71,18 @@ public class FileReferenceRepository implements ReferenceRepository {
     new ReferenceValidator().validate(category, common, card, schemas, plans);
     if (paths.entrySet().stream().anyMatch(e -> !e.getValue().equals(files.stamp(e.getKey()))))
       throw new ApiException(409, "Справочники изменились при чтении. Повторите запрос.");
-    String version =
+    String cardVersion = Hashing.sha256(object("common", common, "card", card).toString());
+    String integrationVersion =
         Hashing.sha256(
-            ReferenceSnapshot.fingerprint(common, card, plans)
-                + manifest
-                + object("browsers", browsers));
+            object(
+                    "manifest", manifest,
+                    "schemas", schemas,
+                    "plans", plans,
+                    "browsers", browsers)
+                .toString());
     ReferenceSnapshot next =
-        new ReferenceSnapshot(category, common, card, schemas, plans, browsers, version);
+        new ReferenceSnapshot(
+            category, common, card, schemas, plans, browsers, cardVersion, integrationVersion);
     cached = next;
     stamps = Map.copyOf(paths);
     return next;

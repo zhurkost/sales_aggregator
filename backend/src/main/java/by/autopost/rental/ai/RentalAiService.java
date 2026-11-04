@@ -28,13 +28,13 @@ public class RentalAiService {
     if (source.length() < 10 || source.length() > 8000)
       throw new ApiException(400, "Описание должно содержать от 10 до 8000 символов.");
     ObjectNode editor = catalog.editor();
-    if (!text(input, "schemaVersion").equals(text(editor, "version")))
+    if (!text(input, "cardVersion").equals(text(editor, "cardVersion")))
       throw new ApiException(
           409, "Правила обновились. Обновите поля карточки и повторите заполнение.");
     var parsed = ai.serverJson(identity, RentalAiPolicy.prompt(editor), source);
     ObjectNode result = RentalAiPolicy.sanitize(editor, source, parsed);
     addresses.resolve(workspace, result);
-    result.put("schemaVersion", text(editor, "version"));
+    result.put("cardVersion", text(editor, "cardVersion"));
     result.put("model", ai.model());
     return result;
   }

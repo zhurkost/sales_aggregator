@@ -75,27 +75,39 @@ class PreparationEngineTest {
   }
 
   @Test
-  void changingANativePlanInvalidatesPreviouslyPreparedDrafts() {
-    ObjectNode nativePlan = object("schema_hash", "original", "fields", List.of());
-    RentalCatalog catalog =
-        new RentalCatalog(
-            () ->
-                new ReferenceSnapshot(
-                    "apartments_long_term_rent",
-                    array(),
-                    object(),
-                    Map.of(),
-                    Map.of("kufar", nativePlan),
-                    Map.of(),
-                    ReferenceSnapshot.fingerprint(array(), object(), Map.of("kufar", nativePlan))));
-    String previous = catalog.version();
-    nativePlan.put("schema_hash", "changed-codes");
-    assertThrows(
-        ApiException.class,
-        () ->
-            catalog.prepare(
-                object(
-                    "schemaVersion", previous, "modelVersion", 2, "platforms", List.of("kufar"))));
+  void onlyTheCardVersionDecidesWhetherACardIsPrepared() {
+    ObjectNode plan = object("runtime_version", "1.0", "platform", "kufar", "fields", List.of());
+    java.util.function.Function<String, RentalCatalog> release =
+        integration ->
+            new RentalCatalog(
+                () ->
+                    new ReferenceSnapshot(
+                        "apartments_long_term_rent",
+                        array(),
+                        object(),
+                        Map.of("kufar", schema()),
+                        Map.of("kufar", plan),
+                        Map.of(),
+                        "card-model",
+                        integration));
+    var card =
+        object(
+            "cardVersion",
+            "card-model",
+            "modelVersion",
+            2,
+            "values",
+            object(),
+            "platforms",
+            List.of("kufar"));
+    // New plans or recipes under the same card model: the open card is still prepared.
+    for (String integration : List.of("selectors-before", "selectors-after"))
+      assertEquals(
+          1, release.apply(integration).prepare(card).path("platforms").size(), integration);
+    card.put("cardVersion", "previous-card-model");
+    var error =
+        assertThrows(ApiException.class, () -> release.apply("selectors-after").prepare(card));
+    assertEquals(409, error.status);
   }
 
   JsonNode option(String id, String type, JsonNode rule, JsonNode... choices) {

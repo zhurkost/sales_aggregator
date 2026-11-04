@@ -68,7 +68,8 @@ final class RentalBrowserPreparation {
       recipe.put("dataReady", result.path("dataReady").asBoolean());
       jobs.add(recipe);
     }
-    return object("format", 1, "schemaVersion", snapshot.version(), "jobs", jobs);
+    return object(
+        "format", 1, "integrationVersion", snapshot.integrationVersion(), "jobs", jobs);
   }
 
   private String placeName(String value) {

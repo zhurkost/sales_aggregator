@@ -76,8 +76,8 @@ public final class EditorSchemaBuilder {
             canonical,
             "platforms",
             platforms,
-            "version",
-            snapshot.version(),
+            "cardVersion",
+            snapshot.cardVersion(),
             "runtimeVersion",
             ReferenceContract.PREPARATION_VERSION);
     EditorCardDecorator.decorate(result, snapshot.card());

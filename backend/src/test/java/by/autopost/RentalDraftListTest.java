@@ -57,7 +57,7 @@ class RentalDraftListTest {
         object(
             "modelVersion",
             2,
-            "schemaVersion",
+            "cardVersion",
             "rules-of-an-older-release",
             "values",
             object("listing.title", "Двушка", "location.street", "Old street"),

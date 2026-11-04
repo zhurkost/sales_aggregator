@@ -17,7 +17,7 @@ export class RentalDraftStore {
   ) {}
   schema: EditorSchema | null = null;
   draft: RentalDraft = {
-    schemaVersion: "",
+    cardVersion: "",
     values: {},
     platforms: [],
     address: null,
@@ -54,7 +54,7 @@ export class RentalDraftStore {
   async load() {
     try {
       this.schema = await rentalApi<EditorSchema>(this.workspaceId(), "editor");
-      this.draft.schemaVersion = this.schema.version;
+      this.draft.cardVersion = this.schema.cardVersion;
       this.draft.modelVersion = this.schema.card?.version;
       this.draft.platforms = this.platforms;
       applyProfileDefaults(this.draft, this.schema, this.profile());
@@ -243,7 +243,7 @@ export class RentalDraftStore {
     this.status = status;
     if (applyProfileDefaults(this.draft, this.schema, this.profile()))
       this.changed();
-    if (this.schema && this.draft.schemaVersion !== this.schema.version)
+    if (this.schema && this.draft.cardVersion !== this.schema.cardVersion)
       this.error =
         "Правила обновились. Нажмите «Обновить поля карточки» — введённые сведения сохранятся.";
   }
@@ -270,7 +270,7 @@ export class RentalDraftStore {
     this.check.clear();
     this.draft = {
       modelVersion: this.schema?.card?.version,
-      schemaVersion: this.schema?.version || "",
+      cardVersion: this.schema?.cardVersion || "",
       values: {},
         platforms: this.platforms,
       address: null,

@@ -4,7 +4,10 @@ import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import by.autopost.rental.application.RentalCatalog;
+import by.autopost.rental.application.RentalDraftService;
+import by.autopost.rental.application.RentalPublicationService;
 import by.autopost.rental.catalog.*;
+import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.shared.ApiException;
 import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,6 +17,8 @@ import java.nio.file.attribute.FileTime;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 class ReferenceBundleTest {
   @Test
@@ -67,8 +72,8 @@ class ReferenceBundleTest {
                 object(
                     "modelVersion",
                     2,
-                    "schemaVersion",
-                    catalog.version(),
+                    "cardVersion",
+                    catalog.cardVersion(),
                     "values",
                     object("rental.currency", "BYN"),
                     "platforms",
@@ -161,8 +166,8 @@ class ReferenceBundleTest {
           catalog
               .prepare(
                   object(
-                      "schemaVersion",
-                      catalog.version(),
+                      "cardVersion",
+                      catalog.cardVersion(),
                       "modelVersion",
                       2,
                       "values",
@@ -179,9 +184,8 @@ class ReferenceBundleTest {
     }
   }
 
-  @Test
-  void browserJobCarriesDataReadyOfItsOwnPreparation() throws Exception {
-    var repo = fixture();
+  /** Adds a browser recipe for the example platform to the fixture bundle. */
+  void withBrowserRecipe() throws Exception {
     var manifest = (ObjectNode) read("manifest.json");
     ((ObjectNode) manifest.path("platforms").path("example"))
         .put("browser", "example.browser.json");
@@ -207,6 +211,130 @@ class ReferenceBundleTest {
             List.of(),
             "submit",
             List.of()));
+  }
+
+  @Test
+  void recipePlanAndSchemaEditsChangeOnlyTheIntegrationVersion() throws Exception {
+    fixture();
+    withBrowserRecipe();
+    var before = new FileReferenceRepository(dir.toString()).snapshot();
+    Map<String, java.util.function.Consumer<Map<String, JsonNode>>> integration =
+        Map.of(
+            "selector",
+            files ->
+                control((ObjectNode) files.get("example.browser.json"), 0)
+                    .put("selector", "input[name=price]"),
+            "plan",
+            files ->
+                ((ObjectNode) files.get("example.plan.json"))
+                    .set("review", array().add(object("field", "rent", "message", "Проверьте"))),
+            "schema label",
+            files -> firstField(files.get("example.schema.json")).put("name", "Арендная плата"));
+    Map<String, java.util.function.Consumer<Map<String, JsonNode>>> cardModel =
+        Map.of(
+            "card.json",
+            files ->
+                ((ObjectNode) files.get("card.json"))
+                    .set("valueLabels", object("BYN", "Белорусский рубль")),
+            "common",
+            files -> firstField(files.get("common.json")).put("name", "Главное"));
+    for (var edits : List.of(integration, cardModel))
+      for (var edit : edits.entrySet()) {
+        var after = edited(edit.getValue());
+        assertEquals(
+            edits == integration,
+            before.cardVersion().equals(after.cardVersion()),
+            edit.getKey() + ": card version");
+        assertEquals(
+            edits == cardModel,
+            before.integrationVersion().equals(after.integrationVersion()),
+            edit.getKey() + ": integration version");
+      }
+  }
+
+  @Test
+  void openCardKeepsSavingCheckingAndLaunchingAfterASelectorFix() throws Exception {
+    fixture();
+    withBrowserRecipe();
+    var drafts =
+        new RentalDraftService(
+            new JdbcRentalDraftRepository(
+                new JdbcTemplate(
+                    new DriverManagerDataSource("jdbc:sqlite:" + dir.resolve("drafts.sqlite")))));
+    var before = new RentalCatalog(new FileReferenceRepository(dir.toString()));
+    // The editor stamps the card with the version of the card model it shows.
+    var card =
+        object(
+            "cardVersion",
+            text(before.editor(), "cardVersion"),
+            "modelVersion",
+            2,
+            "values",
+            object("rental.price", "1500", "rental.currency", "BYN"),
+            "platforms",
+            List.of("example"));
+    String id = UUID.randomUUID().toString();
+    drafts.save("owner", id, object("revision", 0, "draft", card));
+    var launched =
+        new RentalPublicationService(drafts, before)
+            .configuration("owner", object("id", id, "draft", card));
+    // The next release fixes a selector; the editor opened before it stays usable.
+    var recipe = (ObjectNode) read("example.browser.json");
+    control(recipe, 0).put("selector", "input[name=price]");
+    write("example.browser.json", recipe);
+    var after = new RentalCatalog(new FileReferenceRepository(dir.toString()));
+    ((ObjectNode) card.path("values")).put("rental.price", "1600");
+    var saved = drafts.save("owner", id, object("revision", 1, "draft", card));
+    assertEquals(2, saved.path("revision").asInt());
+    var check = after.prepare(card).path("platforms").get(0);
+    assertTrue(check.path("issues").isEmpty(), check.toString());
+    assertEquals(1600, check.path("values").path("rent").asInt());
+    var relaunched =
+        new RentalPublicationService(drafts, after)
+            .configuration("owner", object("id", id, "draft", card));
+    var rent = relaunched.path("jobs").get(0).path("controls").get(0);
+    assertEquals("input[name=price]", text(rent, "selector"));
+    assertNotEquals(text(launched, "integrationVersion"), text(relaunched, "integrationVersion"));
+    assertFalse(relaunched.has("schemaVersion"));
+    assertEquals(text(before.editor(), "cardVersion"), text(after.editor(), "cardVersion"));
+  }
+
+  /** The bundle as one edit leaves it; the fixture files are restored afterwards. */
+  ReferenceSnapshot edited(java.util.function.Consumer<Map<String, JsonNode>> edit)
+      throws Exception {
+    Map<String, JsonNode> files = new HashMap<>(), originals = new HashMap<>();
+    for (String name :
+        List.of(
+            "example.browser.json",
+            "example.plan.json",
+            "example.schema.json",
+            "card.json",
+            "common.json")) {
+      files.put(name, read(name));
+      originals.put(name, read(name));
+    }
+    edit.accept(files);
+    for (var file : files.entrySet()) write(file.getKey(), file.getValue());
+    try {
+      return new FileReferenceRepository(dir.toString()).snapshot();
+    } finally {
+      for (var file : originals.entrySet()) write(file.getKey(), file.getValue());
+    }
+  }
+
+  static ObjectNode control(ObjectNode recipe, int index) {
+    return (ObjectNode) recipe.path("controls").get(index);
+  }
+
+  /** The first field of a schema or common file: one category with its options. */
+  static ObjectNode firstField(JsonNode schema) {
+    return (ObjectNode) schema.get(0).path("options").get(0);
+  }
+
+  @Test
+  void browserJobCarriesDataReadyOfItsOwnPreparation() throws Exception {
+    var repo = fixture();
+    withBrowserRecipe();
     var catalog = new RentalCatalog(repo);
     for (var values :
         List.of(
@@ -214,8 +342,8 @@ class ReferenceBundleTest {
             object("rental.currency", "BYN"))) {
       var draft =
           object(
-              "schemaVersion",
-              catalog.version(),
+              "cardVersion",
+              catalog.cardVersion(),
               "modelVersion",
               2,
               "values",
@@ -240,7 +368,7 @@ class ReferenceBundleTest {
     var card = (ObjectNode) read("card.json");
     card.set("valueLabels", object("BYN", "Белорусский рубль"));
     write("card.json", card);
-    assertNotEquals(first.version(), repo.snapshot().version());
+    assertNotEquals(first.cardVersion(), repo.snapshot().cardVersion());
     assertFalse(first.card().has("valueLabels"));
   }
 
@@ -364,8 +492,8 @@ class ReferenceBundleTest {
         () ->
             catalog.prepare(
                 object(
-                    "schemaVersion",
-                    first.version(),
+                    "cardVersion",
+                    first.cardVersion(),
                     "modelVersion",
                     2,
                     "values",

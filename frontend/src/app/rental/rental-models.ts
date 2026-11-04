@@ -44,13 +44,14 @@ export interface RentalDraft {
   aiEvidence?: Record<string, string>;
   legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];
   resolvedLegacy?: RentalDraft["legacy"];
-  schemaVersion: string;
+  /** Version of the card model the card was last edited under; the server compares it. */
+  cardVersion: string;
   values: Record<string, JsonValue>;
   platforms: string[];
   address: Address | null;
 }
 export interface RentalAiResult {
-  schemaVersion: string;
+  cardVersion: string;
   model: string;
   suggestions: {field: string; value: JsonValue; quote: string}[];
   address: Address | null;
@@ -78,7 +79,8 @@ export interface EditorSchema {
       }[];
     }
   >;
-  version: string;
+  /** Version of the card model (common and card.json); selectors and plans do not change it. */
+  cardVersion: string;
   addressSuggestions: boolean;
 }
 export interface Prepared {

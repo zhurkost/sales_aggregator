@@ -1,18 +1,22 @@
 package by.autopost.rental.catalog;
 
-import static by.autopost.shared.Json.*;
-
 import by.autopost.shared.ApiException;
-import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-/** Defensive copies prevent a migration or editor from modifying the shared catalog. */
+/**
+ * Defensive copies prevent a migration or editor from modifying the shared catalog.
+ *
+ * <p>Two versions: {@code cardVersion} covers what a card sees and stores (common and card.json)
+ * and is compared by the editor, preparation and AI; {@code integrationVersion} covers how cards
+ * reach the forms (manifest, source schemas, plans, browser recipes) and goes to the extension
+ * only, so a selector fix never stops an open editor.
+ */
 public final class ReferenceSnapshot {
-  private final String categoryId, version;
+  private final String categoryId, cardVersion, integrationVersion;
   private final JsonNode common, card;
   private final Map<String, JsonNode> schemas, plans, browsers;
 
@@ -27,14 +31,16 @@ public final class ReferenceSnapshot {
       Map<String, JsonNode> schemas,
       Map<String, JsonNode> plans,
       Map<String, JsonNode> browsers,
-      String version) {
+      String cardVersion,
+      String integrationVersion) {
     this.browsers = copy(browsers);
     this.categoryId = categoryId;
     this.common = common.deepCopy();
     this.card = card.deepCopy();
     this.schemas = copy(schemas);
     this.plans = copy(plans);
-    this.version = version;
+    this.cardVersion = cardVersion;
+    this.integrationVersion = integrationVersion;
   }
 
   private static Map<String, JsonNode> copy(Map<String, JsonNode> source) {
@@ -47,8 +53,12 @@ public final class ReferenceSnapshot {
     return categoryId;
   }
 
-  public String version() {
-    return version;
+  public String cardVersion() {
+    return cardVersion;
+  }
+
+  public String integrationVersion() {
+    return integrationVersion;
   }
 
   public Set<String> platforms() {
@@ -74,11 +84,5 @@ public final class ReferenceSnapshot {
   private JsonNode get(Map<String, JsonNode> source, String key) {
     if (!source.containsKey(key)) throw new ApiException(400, "Неизвестная площадка.");
     return source.get(key).deepCopy();
-  }
-
-  public static String fingerprint(JsonNode common, JsonNode card, Map<String, JsonNode> plans) {
-    var snapshot = object("common", common, "card", card);
-    new TreeMap<>(plans).forEach(snapshot::set);
-    return Hashing.sha256(snapshot.toString());
   }
 }

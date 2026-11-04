@@ -4,16 +4,16 @@ import { RentalEditorComponent } from "./rental-editor.component";
 import { EditorSchema, Field, RentalAiResult } from "./rental-api";
 
 const field = (id:string,type="text"):Field => ({id,name:id,description:"",type,options:[],fill_rule:{}});
-const schema:EditorSchema = {version:"2",category:{options:[
+const schema:EditorSchema = {cardVersion:"2",category:{options:[
   { ...field("group.main","group"),options:[field("price"),field("rooms","enum")] },
   { ...field("group.amenities","group"),name:"Удобства", options:[field("wifi","boolean"),field("washing","boolean")] },
 ]},canonicalValues:{rooms:["1","2"]},platforms:{one:{name:"Площадка",labels:{},choiceLabels:{},constants:{},bindings:[]}},addressSuggestions:false};
-const result:RentalAiResult = {schemaVersion:"2",model:"test",questions:[],address:null,ignored:0,suggestions:[
+const result:RentalAiResult = {cardVersion:"2",model:"test",questions:[],address:null,ignored:0,suggestions:[
   {field:"price",value:"1500",quote:"1500 BYN"},{field:"wifi",value:false,quote:"без Wi-Fi"},{field:"washing",value:true,quote:"стиральная машина"},
 ]};
 const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status});
 function setup(data:RentalAiResult=result) {
-  const c = new RentalEditorComponent(); c.store.schema=structuredClone(schema); c.store.draft.schemaVersion="2"; c.store.draft.platforms=["one"];
+  const c = new RentalEditorComponent(); c.store.schema=structuredClone(schema); c.store.draft.cardVersion="2"; c.store.draft.platforms=["one"];
   c.store.draft.values["listing.description"]="Сдам квартиру, 1500 BYN, без Wi-Fi, есть стиральная машина.";
   const fetch=vi.fn(async (url:string)=>response(url.endsWith("/analyze")?data:url.endsWith("/drafts")?{drafts:[]}:{revision:1}));
   vi.stubGlobal("fetch",fetch); return {c,fetch};

@@ -24,8 +24,8 @@ class RentalPublicationTest {
 
   ObjectNode partial() {
     return object(
-        "schemaVersion",
-        catalog.version(),
+        "cardVersion",
+        catalog.cardVersion(),
         "modelVersion",
         2,
         "values",

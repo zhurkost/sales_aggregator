@@ -23,7 +23,7 @@ describe("rental preparation editor", () => {
     expect(c.store.draft.values[field.id]).toBeUndefined();
     c.store.draft.values[field.id] = "Unexpected asynchronous edit";
     c.store.changed();
-    resolve(response({id:"another", revision:1, draft:{schemaVersion:"1",values:{},platforms:[],address:null}}));
+    resolve(response({id:"another", revision:1, draft:{cardVersion:"1",values:{},platforms:[],address:null}}));
     await opening;
     expect(c.store.id).not.toBe("another");
     expect(c.store.draft.values[field.id]).toBe("Unexpected asynchronous edit");
@@ -59,7 +59,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
+    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},cardVersion:"2",addressSuggestions:false,
       platforms:{example:{labels:{},choiceLabels:{},constants:{},bindings:[]}}};
     c.store.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
     c.store.draft.values["location.metro"] = "Old metro";
@@ -92,7 +92,7 @@ describe("rental preparation editor", () => {
     const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area"}]};
     const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{},choiceLabels:{},constants:{},bindings:[]}]));
     vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
-      version:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
+      cardVersion:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
     } : {drafts:[]})));
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
@@ -107,7 +107,7 @@ describe("rental preparation editor", () => {
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
-    c.store.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
+    c.store.schema = {cardVersion:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
     c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
     expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
@@ -115,7 +115,7 @@ describe("rental preparation editor", () => {
   it("renders delete confirmation, supports cancellation and updates the saved list", async () => {
     const fetch = vi.fn(async (url: string) => {
       if (url.endsWith("/editor")) return response({
-        version: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
+        cardVersion: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
         platforms: Object.fromEntries(["kufar", "onliner", "realt", "domovita"].map((name) => [name, {
           labels: {}, choiceLabels: {}, constants: {}, bindings: [],
         }])),
@@ -414,7 +414,7 @@ describe("rental preparation editor", () => {
     const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
     function editor() {
       const c = new RentalEditorComponent();
-      c.store.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, version:"2", addressSuggestions:true,
+      c.store.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, cardVersion:"2", addressSuggestions:true,
         category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
           {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
           {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},
@@ -483,7 +483,7 @@ describe("rental preparation editor", () => {
       fixture.componentRef.setInput("workspaceId", "owner");
       fixture.detectChanges();
       const c = fixture.componentInstance;
-      await vi.waitFor(() => expect(c.store.schema?.version).toBe("2"));
+      await vi.waitFor(() => expect(c.store.schema?.cardVersion).toBe("2"));
       c.store.draft.address = prepared.store.draft.address;
       Object.assign(c.store.draft.values, prepared.store.draft.values);
       c.addressChanged(house(20));
