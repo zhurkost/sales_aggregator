@@ -17,16 +17,55 @@ import java.util.Set;
 
 /** Reject broken bundles before any card can use them. Does not infer missing mappings. */
 public final class ReferenceValidator {
-  private static final Set<String> KINDS =
+  /** Keys of each conversion kind; the kinds are the executable handlers. */
+  private static final Map<String, Set<String>> CONVERSIONS =
+      Map.of(
+          "identity", Set.of("kind", "requires"),
+          "lookup", Set.of("kind", "values", "requires"),
+          "list_lookup", Set.of("kind", "values", "requires"),
+          "multi_lookup", Set.of("kind", "members", "requires"),
+          "decimal", Set.of("kind", "target", "requires", "currency_field", "integer_currencies"),
+          "phone", Set.of("kind", "format", "requires"),
+          "plain_text_html", Set.of("kind", "requires"),
+          "files", Set.of("kind", "requires"));
+  private static final Set<String> KINDS = CONVERSIONS.keySet();
+  private static final Set<String> CARD =
       Set.of(
-          "identity",
-          "lookup",
-          "list_lookup",
-          "multi_lookup",
-          "decimal",
-          "phone",
-          "plain_text_html",
-          "files");
+          "version",
+          "profileDefaults",
+          "valueLabels",
+          "platforms",
+          "canonicalValues",
+          "addressProjection",
+          "addressDependentFacts");
+  private static final Set<String> PLAN =
+      Set.of(
+          "runtime_version",
+          "category_id",
+          "platform",
+          "schema_hash",
+          "common_hash",
+          "fields",
+          "constants",
+          "addresses",
+          "coordinates",
+          "checks",
+          "review",
+          "address_bound_fields",
+          "deferred_fields");
+  private static final Set<String> ROW =
+      Set.of(
+          "common_option_id",
+          "platform_option_id",
+          "conversion",
+          "editor_group",
+          "editor_group_name");
+  private static final Map<String, Set<String>> PLAN_LISTS =
+      Map.of(
+          "addresses", Set.of("platform_option_id", "part", "scalar_verified"),
+          "coordinates", Set.of("platform_option_id", "axis"),
+          "checks", Set.of("left", "right", "message"),
+          "review", Set.of("field", "message"));
   private static final Set<String> OPERATORS =
       Set.of("equals", "not_equals", "in", "not_in", "exists", "gt", "gte", "lt", "lte");
 
@@ -39,10 +78,12 @@ public final class ReferenceValidator {
     check(common.isArray() && common.size() == 1, "common должен содержать одну категорию");
     var canonical = fields(common);
     check(!canonical.isEmpty(), "нет полей общей карточки");
+    card(card);
     if (card.has("profileDefaults")) {
       check(card.path("profileDefaults").isArray(), "profileDefaults должен быть массивом");
       Set<String> defaults = new HashSet<>();
       for (var rule : card.path("profileDefaults")) {
+        keys(rule, "card.json: profileDefaults", Set.of("setting", "field"));
         String field = text(rule, "field");
         check(
             Set.of("phone", "contactPerson", "company").contains(text(rule, "setting")),
@@ -73,6 +114,8 @@ public final class ReferenceValidator {
           ReferenceContract.PREPARATION_VERSION.equals(text(plan, "runtime_version")),
           platform + ": неподдерживаемая версия плана");
       check(platform.equals(text(plan, "platform")), platform + ": неверная площадка в плане");
+      String where = platform + ": план";
+      keys(plan, where, PLAN);
       if (plan.has("category_id"))
         check(
             category.equals(text(plan, "category_id")), platform + ": неверная категория в плане");
@@ -101,7 +144,12 @@ public final class ReferenceValidator {
                 && !text(nativeFields.get(target), "type").equals("group"),
             "неизвестное целевое поле " + target);
         check(targets.add(target), "несколько маппингов целевого поля " + target);
+        keys(row, where + ", поле " + target, ROW);
         check(KINDS.contains(kind), "неподдерживаемое преобразование " + kind);
+        keys(
+            row.path("conversion"),
+            where + ", поле " + target + ", преобразование " + kind,
+            CONVERSIONS.get(kind));
         new ConversionValidator().validate(row.path("conversion"));
         check(!sources(row).isEmpty(), "у маппинга нет источника " + target);
         for (String source : sources(row))
@@ -113,6 +161,17 @@ public final class ReferenceValidator {
           graph.get(target).add(dependency.asText());
         }
       }
+      for (var list : PLAN_LISTS.entrySet()) {
+        var items = plan.path(list.getKey());
+        check(items.isMissingNode() || items.isArray(), where + ": " + list.getKey() + " — список");
+        for (var item : items) keys(item, where + ": " + list.getKey(), list.getValue());
+      }
+      for (String key : List.of("constants", "deferred_fields"))
+        check(
+            plan.path(key).isMissingNode() || plan.path(key).isObject(),
+            where + ": " + key + " — объект");
+      for (var message : plan.path("deferred_fields"))
+        check(message.isTextual(), where + ": deferred_fields содержит текст причины");
       for (String target : iterable(plan.path("constants").fieldNames()))
         check(nativeFields.containsKey(target), "неизвестная константа " + target);
       for (String key : List.of("addresses", "coordinates"))
@@ -126,7 +185,29 @@ public final class ReferenceValidator {
     }
   }
 
-  private static Iterable<String> iterable(Iterator<String> iterator) {
+  /** card.json: only what the editor and preparation read, each with its JSON type. */
+  private static void card(JsonNode card) {
+    keys(card, "card.json", CARD);
+    for (var entry : iterable(card.path("platforms").fields())) {
+      keys(entry.getValue(), "card.json: площадка " + entry.getKey(), Set.of("name"));
+      check(entry.getValue().path("name").isTextual(), "card.json: название " + entry.getKey());
+    }
+    for (String key : List.of("valueLabels", "addressProjection"))
+      for (var value : card.path(key))
+        check(value.isTextual(), "card.json: " + key + " содержит только строки");
+    for (var values : card.path("canonicalValues")) {
+      check(values.isArray(), "card.json: canonicalValues содержит списки");
+      for (var value : values) check(value.isTextual(), "card.json: варианты — строки");
+    }
+    check(
+        card.path("addressDependentFacts").isMissingNode()
+            || card.path("addressDependentFacts").isArray(),
+        "card.json: addressDependentFacts — список");
+    for (var fact : card.path("addressDependentFacts"))
+      check(fact.isTextual(), "card.json: addressDependentFacts содержит id полей");
+  }
+
+  private static <T> Iterable<T> iterable(Iterator<T> iterator) {
     return () -> iterator;
   }
 

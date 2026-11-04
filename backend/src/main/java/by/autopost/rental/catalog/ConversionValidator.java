@@ -20,6 +20,8 @@ final class ConversionValidator {
             "пустой состав multi_lookup");
         Set<String> members = new HashSet<>();
         for (var member : conversion.path("members")) {
+          ReferenceValidator.keys(
+              member, "состав multi_lookup", Set.of("common_option_id", "values"));
           check(members.add(text(member, "common_option_id")), "повторный источник multi_lookup");
           pairs(member.path("values"));
         }
@@ -44,6 +46,7 @@ final class ConversionValidator {
     check(pairs.isArray(), "нет таблицы соответствий значений");
     Set<JsonNode> sources = new HashSet<>();
     for (var pair : pairs) {
+      ReferenceValidator.keys(pair, "пара значений", Set.of("from", "to"));
       check(pair.has("from") && pair.has("to"), "пара значений должна содержать from и to");
       check(
           !pair.path("from").isContainerNode() && !pair.path("to").isContainerNode(),

@@ -80,6 +80,48 @@ class ReferenceBundleTest {
   }
 
   @Test
+  void planAndCardRejectKeysTheServerDoesNotRead() throws Exception {
+    var edits =
+        Map.<String, java.util.function.Consumer<ObjectNode>>of(
+            "on_unmapped",
+            plan ->
+                ((ObjectNode) plan.path("fields").get(1).path("conversion"))
+                    .put("on_unmapped", "needs_review"),
+            "comment",
+            plan -> ((ObjectNode) plan.path("fields").get(0)).put("comment", "draft"),
+            "note",
+            plan -> plan.put("note", "checked by hand"),
+            "label",
+            plan ->
+                ((ObjectNode) plan.path("fields").get(1).path("conversion").path("values").get(0))
+                    .put("label", "рубли"),
+            "severity",
+            plan ->
+                plan.set(
+                    "review", array().add(object("field", "", "message", "x", "severity", "low"))));
+    var repo = fixture();
+    var original = (ObjectNode) read("example.plan.json");
+    for (var edit : edits.entrySet()) {
+      var plan = original.deepCopy();
+      edit.getValue().accept(plan);
+      write("example.plan.json", plan);
+      unknownKey(repo, edit.getKey());
+    }
+    write("example.plan.json", original);
+    assertDoesNotThrow(repo::snapshot);
+    var card = (ObjectNode) read("card.json");
+    card.put("expandedGroups", "group.main");
+    write("card.json", card);
+    unknownKey(repo, "expandedGroups");
+  }
+
+  void unknownKey(FileReferenceRepository repo, String key) {
+    var error = assertThrows(ApiException.class, repo::snapshot, key);
+    assertEquals(409, error.status);
+    assertTrue(error.getMessage().contains("неизвестный ключ " + key), error.getMessage());
+  }
+
+  @Test
   void malformedNumericTargetsDoNotSilentlyBecomeDecimalNumbers() throws Exception {
     var repo = fixture();
     var plan = read("example.plan.json");
@@ -199,10 +241,10 @@ class ReferenceBundleTest {
     ((ObjectNode) first.plan("example")).put("platform", "corrupt");
     assertEquals("example", repo.snapshot().plan("example").path("platform").asText());
     var card = (ObjectNode) read("card.json");
-    card.put("editorLabel", "new label");
+    card.set("valueLabels", object("BYN", "Белорусский рубль"));
     write("card.json", card);
     assertNotEquals(first.version(), repo.snapshot().version());
-    assertFalse(first.card().has("editorLabel"));
+    assertFalse(first.card().has("valueLabels"));
   }
 
   @Test
