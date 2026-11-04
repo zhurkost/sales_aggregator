@@ -239,6 +239,21 @@ class RentalCoverageTest {
     return () -> iterator;
   }
 
+  @Test
+  void domovitaExtraPhonesAreEnteredByHand() {
+    var snapshot = new FileReferenceRepository(COMMITTED).snapshot();
+    // phones.1 and phones.2 appear only after «Добавить другой номер» (live check: 0 matches).
+    for (String field : List.of("domovita.additional_phone_1", "domovita.additional_phone_2")) {
+      var row = snapshot.coverage("domovita").row(field).orElseThrow();
+      assertEquals(Transfer.MANUAL, row.transfer(), field);
+      assertTrue(row.reason().contains("«Добавить другой номер»"), row.reason());
+      assertTrue(
+          list(snapshot.browser("domovita").path("controls")).stream()
+              .noneMatch(c -> text(c, "field").equals(field)),
+          field);
+    }
+  }
+
   /** Selectors and input methods taken from the research reports of the platforms. */
   @Test
   void evidencedFieldsAreBoundToTheirFormElements() {

@@ -24,16 +24,6 @@
       "selector": "input[name=\"phones.0.contact_phone\"]"
     },
     {
-      "field": "domovita.additional_phone_1",
-      "action": "text",
-      "selector": "input[name=\"phones.1.contact_phone\"]"
-    },
-    {
-      "field": "domovita.additional_phone_2",
-      "action": "text",
-      "selector": "input[name=\"phones.2.contact_phone\"]"
-    },
-    {
       "field": "domovita.email",
       "action": "text",
       "selector": "input[name=\"email\"]"

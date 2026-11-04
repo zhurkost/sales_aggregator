@@ -185,7 +185,9 @@
       "conversion": {
         "kind": "phone",
         "format": "BY_NATIONAL"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "На Domovita нажмите «Добавить другой номер» и введите номер: строка для него появляется только после этой кнопки."
     },
     {
       "common_option_id": "contact.additional_phone_2",
@@ -193,7 +195,9 @@
       "conversion": {
         "kind": "phone",
         "format": "BY_NATIONAL"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "На Domovita нажмите «Добавить другой номер» и введите номер: строка для него появляется только после этой кнопки."
     },
     {
       "common_option_id": "contact.additional_phone_3",
