@@ -19,7 +19,6 @@ export class RentalDraftStore {
   draft: RentalDraft = {
     schemaVersion: "",
     values: {},
-    extras: {},
     platforms: [],
     address: null,
   };
@@ -273,8 +272,7 @@ export class RentalDraftStore {
       modelVersion: this.schema?.card?.version,
       schemaVersion: this.schema?.version || "",
       values: {},
-      extras: {},
-      platforms: this.platforms,
+        platforms: this.platforms,
       address: null,
     };
     applyProfileDefaults(this.draft, this.schema, this.profile());

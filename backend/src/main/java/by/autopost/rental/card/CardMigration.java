@@ -118,7 +118,6 @@ public final class CardMigration {
     }
     // Address object is the only editable source.
     projection.fieldNames().forEachRemaining(values::remove);
-    ObjectNode extras = object();
     if (draft.path("extras").isObject())
       draft
           .path("extras")
@@ -218,7 +217,8 @@ public final class CardMigration {
                           }
                         });
               });
-    draft.set("extras", extras);
+    // Model 2 keeps every fact in values; platform extras are not part of it.
+    draft.remove("extras");
     draft.put("modelVersion", ReferenceContract.CARD_MODEL_VERSION);
     draft.put("schemaVersion", catalog.version());
     return draft;

@@ -42,7 +42,7 @@ address_bound_fields (все устаревающие native address/coordinate 
 
 modelVersion: 2; schemaVersion: хеш common, card и всех preparation-планов;
 values: канонические факты; address: единый объект; platforms: выбранные площадки.
-extras не являются вторым пользовательским источником истины.
+В карточке модели 2 нет extras: все факты лежат в values.
 legacy содержит неразрешённые расхождения старых данных; resolvedLegacy — их
 сохранённую историю после осознанного решения пользователя.
 

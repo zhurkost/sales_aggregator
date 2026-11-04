@@ -44,7 +44,6 @@ const schema: EditorSchema = {
   platforms: {
     kufar: {
       name: "Kufar",
-      extras: [],
       labels: {},
       choiceLabels: {},
       constants: {},
@@ -345,7 +344,6 @@ describe("rental contacts from the active profile", () => {
           draft: {
             schemaVersion: "test",
             values: { "contact.phone": "", "contact.name": "Другой контакт" },
-            extras: {},
             platforms: [],
             address: null,
           },
@@ -467,7 +465,6 @@ describe("rental revision conflicts", () => {
     const saved = {
       schemaVersion: "test",
       values: { "listing.description": "Сохранённая версия" },
-      extras: {},
       platforms: ["kufar"],
       address: null,
     };

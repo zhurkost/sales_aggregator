@@ -7,7 +7,7 @@ const field = (id:string,type="text"):Field => ({id,name:id,description:"",type,
 const schema:EditorSchema = {version:"2",category:{options:[
   { ...field("group.main","group"),options:[field("price"),field("rooms","enum")] },
   { ...field("group.amenities","group"),name:"Удобства", options:[field("wifi","boolean"),field("washing","boolean")] },
-]},canonicalValues:{rooms:["1","2"]},platforms:{one:{name:"Площадка",extras:[],labels:{},choiceLabels:{},constants:{},bindings:[]}},addressSuggestions:false};
+]},canonicalValues:{rooms:["1","2"]},platforms:{one:{name:"Площадка",labels:{},choiceLabels:{},constants:{},bindings:[]}},addressSuggestions:false};
 const result:RentalAiResult = {schemaVersion:"2",model:"test",questions:[],address:null,ignored:0,suggestions:[
   {field:"price",value:"1500",quote:"1500 BYN"},{field:"wifi",value:false,quote:"без Wi-Fi"},{field:"washing",value:true,quote:"стиральная машина"},
 ]};

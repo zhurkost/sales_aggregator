@@ -23,7 +23,7 @@ describe("rental preparation editor", () => {
     expect(c.store.draft.values[field.id]).toBeUndefined();
     c.store.draft.values[field.id] = "Unexpected asynchronous edit";
     c.store.changed();
-    resolve(response({id:"another", revision:1, draft:{schemaVersion:"1",values:{},extras:{},platforms:[],address:null}}));
+    resolve(response({id:"another", revision:1, draft:{schemaVersion:"1",values:{},platforms:[],address:null}}));
     await opening;
     expect(c.store.id).not.toBe("another");
     expect(c.store.draft.values[field.id]).toBe("Unexpected asynchronous edit");
@@ -60,13 +60,15 @@ describe("rental preparation editor", () => {
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
     c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
-      platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress","coordinates"]}}};
+      platforms:{example:{labels:{},choiceLabels:{},constants:{},bindings:[]}}};
     c.store.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
     c.store.draft.values["location.metro"] = "Old metro";
-    c.store.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
+    c.store.draft.values["location.latitude"] = "53.9";
+    c.store.draft.values["rental.rooms"] = "2";
     c.addressChanged({provider:"dadata",label:"New",countryIso:"BY",settlement:"New",street:"New",house:"2",confirmed:true});
-    expect(c.store.draft.extras.example).toEqual({other:"Keep"});
+    expect(c.store.draft.values["location.latitude"]).toBeUndefined();
     expect(c.store.draft.values["location.metro"]).toBeUndefined();
+    expect(c.store.draft.values["rental.rooms"]).toBe("2");
     c.ngOnDestroy();
   });
   it("recovers revision conflicts by saving a separate card without overwriting the original", async () => {
@@ -88,7 +90,7 @@ describe("rental preparation editor", () => {
 
   it("renders a fifth marketplace with the same one-field form and preserves data when toggled", async () => {
     const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area"}]};
-    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,extras:[],labels:{},choiceLabels:{},constants:{},bindings:[]}]));
+    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{},choiceLabels:{},constants:{},bindings:[]}]));
     vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
       version:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
     } : {drafts:[]})));
@@ -115,7 +117,7 @@ describe("rental preparation editor", () => {
       if (url.endsWith("/editor")) return response({
         version: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
         platforms: Object.fromEntries(["kufar", "onliner", "realt", "domovita"].map((name) => [name, {
-          extras: [], labels: {}, choiceLabels: {}, constants: {}, bindings: [],
+          labels: {}, choiceLabels: {}, constants: {}, bindings: [],
         }])),
       });
       if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1 }] });
@@ -416,11 +418,10 @@ describe("rental preparation editor", () => {
         category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
           {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
           {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},
-        platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress"]}}};
+        platforms:{example:{labels:{},choiceLabels:{},constants:{},bindings:[]}}};
       c.store.draft.address = house(18);
       c.store.draft.values = {[facts[0]]:"Немига", [facts[1]]:"Новая Боровая", "location.latitude":"53.9"};
       c.store.draft.aiEvidence = {[facts[0]]:"рядом метро Немига"};
-      c.store.draft.extras.example = {nativeAddress:"Брикета 18"};
       return c;
     }
     it("typing in the search and editing parts keep nearby facts but drop coordinates", () => {
@@ -431,7 +432,6 @@ describe("rental preparation editor", () => {
       expect(c.store.draft.values[facts[1]]).toBe("Новая Боровая");
       expect(c.store.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
       expect(c.store.draft.values["location.latitude"]).toBeUndefined();
-      expect(c.store.draft.extras.example).toEqual({});
       expect(c.resetFacts).toBeNull();
       c.addressChanged(house(18));
       expect(c.store.draft.values[facts[0]]).toBe("Немига");

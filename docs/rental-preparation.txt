@@ -85,10 +85,10 @@ API внутри кабинета, с обычной сессией/Origin и X-
   GET  /api/workspace/rental/drafts/{id} — сохранённая карточка;
   POST /api/workspace/rental/drafts/{id} — {revision,draft};
   POST /api/workspace/rental/drafts/{id}/delete — {revision}, удаление с проверкой версии;
-  POST /api/workspace/rental/prepare — {schemaVersion,values,extras,platforms,address}.
-values — словарь common Option.id → строка либо files-массив.
-extras — словарь platform → source Option.id → типизированный код/значение;
-числовые строки уточнений разбираются на сервере через BigDecimal.
+  POST /api/workspace/rental/prepare — {schemaVersion,modelVersion,values,platforms,address}.
+values — словарь common Option.id → строка либо files-массив; числовые строки
+разбираются на сервере через BigDecimal. Уточнений площадок (extras) в карточке
+модели 2 нет: прежние переносит только команда --migrate-rental-drafts.
 Ошибки не включают тела ответов провайдера, ключ или данные чужого профиля.
 
 Runtime-план (отдельный от статического parsing_format_rule v1.2)

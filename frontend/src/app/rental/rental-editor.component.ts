@@ -80,8 +80,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     // Coordinates and native address parts belong to any address text.
     for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
       delete this.store.draft.values[key];
-    for (const p of this.store.platforms)
-      for (const key of this.store.schema?.platforms[p].addressBoundFields || []) delete this.store.draft.extras[p]?.[key];
     // Nearby facts belong to a confirmed house: typing and manual parts keep them.
     if (cleared || (address?.confirmed && previous && houseKey(previous) !== houseKey(address))) this.dropFacts();
     this.house.address = cleared ? null : address?.confirmed ? address : previous;

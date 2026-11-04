@@ -61,7 +61,7 @@ export class RentalViewModel {
   }
   context(p: string) {
     const schema = this.store.schema?.platforms[p];
-    const values = { ...this.store.draft.extras[p], ...schema?.constants };
+    const values: Record<string, JsonValue> = { ...schema?.constants };
     for (const binding of schema?.bindings || []) {
       const pair = binding.pairs.find(
         (pair) => pair.from === this.store.draft.values[binding.source],

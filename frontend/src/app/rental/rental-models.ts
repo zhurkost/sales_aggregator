@@ -46,7 +46,6 @@ export interface RentalDraft {
   resolvedLegacy?: RentalDraft["legacy"];
   schemaVersion: string;
   values: Record<string, JsonValue>;
-  extras: Record<string, Record<string, JsonValue>>;
   platforms: string[];
   address: Address | null;
 }
@@ -68,9 +67,7 @@ export interface EditorSchema {
     {
       name?: string;
       rules?: any[];
-      addressBoundFields?: string[];
       deferred?: Record<string, string>;
-      extras: Field[];
       labels: Record<string, string>;
       choiceLabels: Record<string, Record<string, string>>;
       constants: Record<string, JsonValue>;

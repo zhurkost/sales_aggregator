@@ -9,11 +9,9 @@ import by.autopost.rental.model.SchemaFields;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 public final class EditorSchemaBuilder {
@@ -24,14 +22,6 @@ public final class EditorSchemaBuilder {
     for (String p : new TreeSet<>(snapshot.platforms())) {
       var schema = snapshot.schema(p);
       var plan = snapshot.plan(p);
-      Set<String> mapped = new HashSet<>();
-      for (var row : plan.path("fields")) mapped.add(text(row, "platform_option_id"));
-      ArrayNode extra = array();
-      for (var f : editorFields(schema).values()) {
-        String id = text(f, "id"), type = text(f, "type");
-        if (type.equals("group") || plan.path("constants").has(id)) continue;
-        if (!mapped.contains(id) || type.equals("multi_enum")) extra.add(f.deepCopy());
-      }
       ObjectNode labels = object(), choiceLabels = object();
       for (var f : SchemaFields.fields(schema).values()) {
         String id = text(f, "id");
@@ -65,12 +55,8 @@ public final class EditorSchemaBuilder {
               plan.path("fields"),
               "conditions",
               conditions,
-              "addressBoundFields",
-              plan.path("address_bound_fields"),
               "deferred",
               plan.path("deferred_fields"),
-              "extras",
-              extra,
               "labels",
               labels,
               "choiceLabels",
