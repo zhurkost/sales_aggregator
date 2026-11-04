@@ -5,6 +5,7 @@ import static by.autopost.shared.Json.*;
 
 import by.autopost.rental.model.MappingSources;
 import by.autopost.rental.model.SchemaFields;
+import by.autopost.rental.model.Values;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -35,6 +36,26 @@ public record PlatformCoverage(String platform, List<CoverageRow> rows, Set<Stri
 
   public Optional<CoverageRow> row(String field) {
     return rows.stream().filter(row -> row.field().equals(field)).findFirst();
+  }
+
+  /**
+   * What one prepared card sends to the form and what its user enters on the platform: the prepared
+   * native values, and the address parts the address controls take from the card.
+   */
+  public CardTransfer transfer(JsonNode values, JsonNode address) {
+    List<CardTransfer.FormValue> form = new ArrayList<>();
+    List<CardTransfer.ManualValue> manual = new ArrayList<>();
+    for (var row : rows) {
+      JsonNode value =
+          row.addressPart().isEmpty() ? values.get(row.field()) : address.get(row.addressPart());
+      if (Values.missing(value)) continue;
+      if (row.inForm())
+        form.add(new CardTransfer.FormValue(row.field(), row.name(), value.deepCopy()));
+      else if (row.transfer() == Transfer.MANUAL)
+        manual.add(
+            new CardTransfer.ManualValue(row.field(), row.name(), value.deepCopy(), row.reason()));
+    }
+    return new CardTransfer(form, manual);
   }
 
   /**

@@ -87,6 +87,11 @@ public class RentalCatalog {
       var prepared =
           new PreparationEngine().prepare(schema, plan, values, object(), input.path("address"));
       CardProjection.annotate(prepared, plan, input);
+      // What the form receives and what the user enters there: the check shows both.
+      var transfer =
+          snapshot.coverage(platform).transfer(prepared.path("values"), input.path("address"));
+      prepared.set("form", MAPPER.valueToTree(transfer.form()));
+      prepared.set("manual", MAPPER.valueToTree(transfer.manual()));
       output.add(prepared);
     }
     return object("platforms", output);

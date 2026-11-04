@@ -19,11 +19,8 @@ final class RentalBrowserPreparation {
       ObjectNode recipe = (ObjectNode) snapshot.browser(platform);
       var fields = SchemaFields.fields(snapshot.schema(platform));
       var controls = array();
-      var unsupported = array();
-      var supported = new java.util.HashSet<String>();
       for (var source : recipe.path("controls")) {
         String id = text(source, "field");
-        supported.add(id);
         JsonNode value = result.path("values").get(id);
         if (source.has("addressPart"))
           value = draft.path("address").get(text(source, "addressPart"));
@@ -55,16 +52,11 @@ final class RentalBrowserPreparation {
         control.set("labels", labels);
         controls.add(control);
       }
-      result
-          .path("values")
-          .fieldNames()
-          .forEachRemaining(
-              id -> {
-                if (!supported.contains(id) && !snapshot.plan(platform).path("constants").has(id))
-                  unsupported.add(fields.containsKey(id) ? text(fields.get(id), "name") : id);
-              });
+      // The fields the user enters on the platform, as the check of the card lists them.
+      var unbound = array();
+      for (var manual : result.path("manual")) unbound.add(text(manual, "name"));
       recipe.set("controls", controls);
-      recipe.set("unbound", unsupported);
+      recipe.set("unbound", unbound);
       recipe.put("checksPassed", result.path("checksPassed").asBoolean());
       jobs.add(recipe);
     }

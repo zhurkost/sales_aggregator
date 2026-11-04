@@ -88,7 +88,7 @@ class PreparationEngineTest {
                         Map.of("kufar", schema()),
                         Map.of("kufar", plan),
                         Map.of(),
-                        Map.of(),
+                        Map.of("kufar", new PlatformCoverage("kufar", List.of(), Set.of())),
                         "card-model",
                         integration));
     var card =

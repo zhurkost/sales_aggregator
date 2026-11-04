@@ -8,6 +8,7 @@ import by.autopost.rental.application.*;
 import by.autopost.rental.catalog.*;
 import by.autopost.rental.persistence.JdbcRentalDraftRepository;
 import by.autopost.shared.ApiException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.nio.file.Path;
 import java.util.*;
@@ -255,6 +256,49 @@ class RentalPublicationTest {
           ApiException.class,
           () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe));
     }
+  }
+
+  @Test
+  void checkSaysWhatGoesToTheFormAndWhatIsEnteredByHand() {
+    var draft = partial();
+    ((ObjectNode) draft.path("values"))
+        .put("listing.title", "Двухкомнатная у метро")
+        .put("rental.kitchen_area", "9")
+        .put("location.metro_1_station", "Немига");
+    draft.set("platforms", array().add("realt"));
+    var realt = catalog.prepare(draft).path("platforms").get(0);
+    var form = list(realt.path("form"));
+    var title =
+        form.stream().filter(v -> text(v, "field").equals("realt.title")).findFirst().orElseThrow();
+    assertEquals("Заголовок", text(title, "name"));
+    assertEquals("Двухкомнатная у метро", text(title, "value"));
+    // The address goes to the form through its own controls, from the confirmed address.
+    var settlement =
+        form.stream()
+            .filter(v -> text(v, "field").equals("realt.settlement"))
+            .findFirst()
+            .orElseThrow();
+    assertEquals("Минск", text(settlement, "value"));
+    // Constants chosen by the setup steps are not values of the card.
+    assertTrue(form.stream().noneMatch(v -> text(v, "field").equals("realt.deal_type")));
+    var manual = list(realt.path("manual"));
+    assertEquals(
+        List.of("realt.kitchen_area"),
+        manual.stream().map(v -> text(v, "field")).filter(f -> f.contains("kitchen")).toList());
+    var kitchen =
+        manual.stream()
+            .filter(v -> text(v, "field").equals("realt.kitchen_area"))
+            .findFirst()
+            .orElseThrow();
+    assertEquals("Площадь кухни, м²", text(kitchen, "name"));
+    assertEquals("9", kitchen.path("value").asText());
+    assertTrue(text(kitchen, "reason").contains("«Все параметры»"), kitchen.toString());
+    assertTrue(form.stream().noneMatch(v -> text(v, "field").equals("realt.kitchen_area")));
+    // The extension lists exactly the manual fields as not transferred.
+    var job = catalog.browser(draft).path("jobs").get(0);
+    assertEquals(
+        manual.stream().map(v -> text(v, "name")).toList(),
+        list(job.path("unbound")).stream().map(JsonNode::asText).toList());
   }
 
   @Test
