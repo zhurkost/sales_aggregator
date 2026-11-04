@@ -534,6 +534,24 @@ test("iframe rich text keeps the user's own text and skips frames it cannot edit
     f.window.happyDOM.abort();
   }
 });
+test("Realt recipe fills the title and the TinyMCE description seen on the live form", async () => {
+  const controls = recipe("realt").controls.filter((c) =>
+    ["realt.title", "realt.description"].includes(c.field),
+  );
+  assert.deepEqual(controls.map((c) => c.action), ["text", "iframe_richtext"]);
+  const values = { "realt.title": "Двухкомнатная у метро", "realt.description": serverHtml(description) };
+  const f = await fixture(
+    '<input type="text" id="description.title" maxlength="255">' + tinymce(),
+    controls.map((c) => ({ ...c, value: values[c.field] })),
+  );
+  await f.window.happyDOM.waitUntilComplete();
+  const pasted = tinymcePaste(f.document.querySelector("iframe").contentDocument.body);
+  await f.form.tick();
+  assert.equal(f.document.getElementById("description.title").value, "Двухкомнатная у метро");
+  assert.deepEqual(pasted, [description]);
+  assert.deepEqual([...f.form.done].sort(), ["realt.description", "realt.title"]);
+  f.window.happyDOM.abort();
+});
 test("rental recipes may use the iframe rich text action", () => {
   const p = payload();
   p.jobs[2].controls = iframeRichtext("<p>Текст</p>");

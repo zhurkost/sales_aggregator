@@ -258,6 +258,34 @@ class RentalPublicationTest {
   }
 
   @Test
+  void realtTitleAndDescriptionGoToTheirFormElements() {
+    var draft = partial();
+    ((ObjectNode) draft.path("values"))
+        .put("listing.title", "Двухкомнатная у метро")
+        .put("listing.description", "Светлая квартира & балкон.\nВторая строка");
+    draft.set("platforms", array().add("realt"));
+    var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+    var title = controls.stream().filter(c -> text(c, "field").equals("realt.title")).findFirst();
+    assertEquals("[id=\"description.title\"]", text(title.orElseThrow(), "selector"));
+    assertEquals("text", text(title.orElseThrow(), "action"));
+    assertEquals("Двухкомнатная у метро", text(title.orElseThrow(), "value"));
+    var description =
+        controls.stream().filter(c -> text(c, "field").equals("realt.description")).findFirst();
+    assertEquals("iframe_richtext", text(description.orElseThrow(), "action"));
+    assertEquals(
+        "[id=\"description.description_ifr\"]", text(description.orElseThrow(), "selector"));
+    assertEquals(
+        "<p>Светлая квартира &amp; балкон.<br>Вторая строка</p>",
+        text(description.orElseThrow(), "value"));
+    var coverage =
+        new FileReferenceRepository("../data/rental/apartments_long_term_rent")
+            .snapshot()
+            .coverage("realt");
+    for (String field : List.of("realt.title", "realt.description"))
+      assertEquals(Transfer.TRANSFERRED, coverage.row(field).orElseThrow().transfer(), field);
+  }
+
+  @Test
   void richTextInAnIframeIsAKnownActionWithoutExtraKeys() {
     var snapshot =
         new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();

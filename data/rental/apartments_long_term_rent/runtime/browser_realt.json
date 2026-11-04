@@ -96,9 +96,19 @@
       "selector": "[id=\"termsOfDeal.price\"]"
     },
     {
+      "field": "realt.title",
+      "action": "text",
+      "selector": "[id=\"description.title\"]"
+    },
+    {
       "field": "realt.short_description",
       "action": "text",
       "selector": "[id=\"description.shortDescription\"]"
+    },
+    {
+      "field": "realt.description",
+      "action": "iframe_richtext",
+      "selector": "[id=\"description.description_ifr\"]"
     },
     {
       "field": "realt.contact_phone_1",
