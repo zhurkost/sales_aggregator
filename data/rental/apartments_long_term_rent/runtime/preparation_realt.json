@@ -74,7 +74,9 @@
             "to": 3
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Поле открывается кнопкой «Все параметры» в разделе «Дом»; расширение пока не раскрывает разделы формы."
     },
     {
       "common_option_id": "rental.bathroom",
@@ -95,7 +97,9 @@
             "to": 2
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Поле открывается кнопкой «Все параметры» в разделе «Квартира»; расширение пока не раскрывает разделы формы."
     },
     {
       "common_option_id": "rental.balcony",
@@ -234,7 +238,9 @@
             "to": 3
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Раздел контактов Realt виден только после входа; выбор способа связи не проверен."
     },
     {
       "common_option_id": "amenity.furniture",
@@ -286,7 +292,9 @@
       "platform_option_id": "realt.youtube_video",
       "conversion": {
         "kind": "files"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Ссылка на YouTube — платная возможность «Спецпредложение»; перенос ссылки не настроен."
     },
     {
       "common_option_id": "listing.description",
@@ -317,7 +325,9 @@
       "conversion": {
         "kind": "decimal",
         "target": "number"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Поле открывается кнопкой «Все параметры» в разделе «Площадь»; расширение пока не раскрывает разделы формы."
     },
     {
       "common_option_id": "rental.floor",
@@ -369,7 +379,9 @@
       "conversion": {
         "kind": "phone",
         "format": "E164"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Строка появляется после «Добавить телефон» в контактах (после входа); расширение эту кнопку не нажимает."
     },
     {
       "common_option_id": "contact.additional_phone_2",
@@ -377,7 +389,9 @@
       "conversion": {
         "kind": "phone",
         "format": "E164"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Строка появляется после «Добавить телефон» в контактах (после входа); расширение эту кнопку не нажимает."
     },
     {
       "common_option_id": "contact.additional_phone_3",
@@ -385,7 +399,9 @@
       "conversion": {
         "kind": "phone",
         "format": "E164"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Строка появляется после «Добавить телефон» в контактах (после входа); расширение эту кнопку не нажимает."
     },
     {
       "platform_option_id": "realt.appliances",
@@ -512,7 +528,9 @@
         ]
       },
       "editor_group": "group.amenities",
-      "editor_group_name": "Мебель и удобства"
+      "editor_group_name": "Мебель и удобства",
+      "transfer": "manual",
+      "manual_reason": "Список с флажками и кнопкой «Применить»; выбор в таком списке расширение пока не выполняет."
     },
     {
       "platform_option_id": "realt.amenities",
@@ -600,7 +618,9 @@
         ]
       },
       "editor_group": "group.amenities",
-      "editor_group_name": "Мебель и удобства"
+      "editor_group_name": "Мебель и удобства",
+      "transfer": "manual",
+      "manual_reason": "Список с флажками и кнопкой «Применить»; выбор в таком списке расширение пока не выполняет."
     },
     {
       "common_option_id": "tenant.preferred",
@@ -633,7 +653,9 @@
       "conversion": {
         "kind": "decimal",
         "target": "number"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подставляет расстояние после выбора населённого пункта; правка этого поля не проверена."
     },
     {
       "common_option_id": "rental.separate_rooms",
@@ -690,7 +712,9 @@
             "to": 9
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Поле открывается кнопкой «Все параметры» в разделе «Квартира»; расширение пока не раскрывает разделы формы."
     },
     {
       "common_option_id": "building.major_repair_year",
@@ -698,7 +722,9 @@
       "conversion": {
         "kind": "decimal",
         "target": "integer"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Поле открывается кнопкой «Все параметры» в разделе «Дом»; расширение пока не раскрывает разделы формы."
     },
     {
       "common_option_id": "building.infrastructure",
@@ -715,7 +741,9 @@
             "to": 746
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Переключатели «Сигнализация» и «Парковка»: вид элемента в форме не подтверждён."
     },
     {
       "common_option_id": "amenity.telephone_lines",
@@ -779,14 +807,18 @@
       "platform_option_id": "realt.floor_plan",
       "conversion": {
         "kind": "files"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Фото планировки загружается отдельно; расширение передаёт только фотографии квартиры."
     },
     {
       "common_option_id": "media.tour_3d",
       "platform_option_id": "realt.tour_3d",
       "conversion": {
         "kind": "files"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Ссылка на 3D-тур — платная возможность «Спецпредложение»; перенос ссылки не настроен."
     },
     {
       "common_option_id": "listing.short_description",
@@ -801,7 +833,9 @@
       "conversion": {
         "kind": "lookup",
         "values": []
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Жилой комплекс выбирается поиском; коды ЖК Realt неизвестны."
     },
     {
       "common_option_id": "location.metro_1_station",
@@ -954,7 +988,9 @@
             "to": "c27127ef-a674-11eb-963d-0cc47adabd66"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_1_mode",
@@ -971,7 +1007,9 @@
             "to": 2
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_1_minutes",
@@ -979,7 +1017,9 @@
       "conversion": {
         "kind": "decimal",
         "target": "integer"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_2_station",
@@ -1132,7 +1172,9 @@
             "to": "c27127ef-a674-11eb-963d-0cc47adabd66"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_2_mode",
@@ -1149,7 +1191,9 @@
             "to": 2
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_2_minutes",
@@ -1157,7 +1201,9 @@
       "conversion": {
         "kind": "decimal",
         "target": "integer"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_3_station",
@@ -1310,7 +1356,9 @@
             "to": "c27127ef-a674-11eb-963d-0cc47adabd66"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_3_mode",
@@ -1327,7 +1375,9 @@
             "to": 2
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     },
     {
       "common_option_id": "location.metro_3_minutes",
@@ -1335,7 +1385,9 @@
       "conversion": {
         "kind": "decimal",
         "target": "integer"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Realt сам подбирает до трёх станций метро по адресу; совпадение строк формы со станциями карточки не проверено."
     }
   ],
   "constants": {

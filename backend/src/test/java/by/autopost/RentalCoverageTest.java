@@ -168,6 +168,24 @@ class RentalCoverageTest {
     }
   }
 
+  @Test
+  void committedBundlePromisesNothingItDoesNotTransfer() {
+    var snapshot = new FileReferenceRepository(COMMITTED).snapshot();
+    for (String platform : snapshot.platforms()) {
+      var coverage = snapshot.coverage(platform);
+      assertEquals(
+          List.of(),
+          coverage.rows().stream()
+              .filter(row -> row.transfer() == Transfer.PREPARED_ONLY)
+              .map(CoverageRow::field)
+              .toList(),
+          platform);
+      for (var row : coverage.rows())
+        if (row.transfer() == Transfer.MANUAL || row.transfer() == Transfer.DEFERRED)
+          assertFalse(row.reason().isBlank(), row.field());
+    }
+  }
+
   /** Selectors and input methods taken from the research reports of the platforms. */
   @Test
   void evidencedFieldsAreBoundToTheirFormElements() {

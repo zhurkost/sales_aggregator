@@ -836,7 +836,9 @@
       "platform_option_id": "kufar.video",
       "conversion": {
         "kind": "files"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Ссылка на YouTube на Kufar доступна партнёрам площадки; перенос ссылки не настроен."
     },
     {
       "common_option_id": "rental.total_area",
@@ -1524,7 +1526,9 @@
         "requires": [
           "kufar.company_ad"
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Реквизиты организации зависят от профиля Kufar; форма для организаций не исследована."
     },
     {
       "common_option_id": "contact.organization_unp",
@@ -1534,7 +1538,9 @@
         "requires": [
           "kufar.company_ad"
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Реквизиты организации зависят от профиля Kufar; форма для организаций не исследована."
     },
     {
       "common_option_id": "location.residential_complex",
@@ -2315,7 +2321,9 @@
             "to": "920"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Выбор жилого комплекса в форме Kufar не исследован (список с поиском); выберите ЖК на площадке."
     },
     {
       "common_option_id": "",
@@ -2737,7 +2745,9 @@
         ]
       },
       "editor_group": "group.location",
-      "editor_group_name": "Рядом с домом"
+      "editor_group_name": "Рядом с домом",
+      "transfer": "manual",
+      "manual_reason": "Kufar сам подбирает метро по выбранному адресу; отдельного поля в форме нет. Проверьте станции в объявлении."
     },
     {
       "common_option_id": "location.microdistrict",
@@ -2994,7 +3004,9 @@
             "to": "320"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Kufar сам определяет микрорайон по выбранному адресу; отдельного поля в форме нет."
     }
   ],
   "constants": {

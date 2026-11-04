@@ -108,7 +108,9 @@
       "platform_option_id": "domovita.video",
       "conversion": {
         "kind": "files"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Ссылка на YouTube — одно поле, а в карточке список ссылок; перенос одной ссылки не настроен."
     },
     {
       "common_option_id": "listing.description",
@@ -199,7 +201,9 @@
       "conversion": {
         "kind": "phone",
         "format": "BY_NATIONAL"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Четвёртый номер в форме Domovita не наблюдался: подтверждены три."
     },
     {
       "platform_option_id": "domovita.amenities",
@@ -340,7 +344,9 @@
             "to": 0
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "У пары флажков «Есть комиссия» / «Нет комиссии» нет имени и устойчивого id; отметьте на площадке."
     },
     {
       "common_option_id": "rental.sale_planned",
@@ -357,14 +363,18 @@
             "to": 0
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "У пары флажков «Да» / «Нет» нет имени и устойчивого id; отметьте на площадке."
     },
     {
       "common_option_id": "listing.promotion_text",
       "platform_option_id": "domovita.promotion_text",
       "conversion": {
         "kind": "identity"
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Рекламный текст показывается только с платным тарифом «Максимальный»; перенос не настроен."
     },
     {
       "common_option_id": "contact.messengers",
@@ -381,7 +391,9 @@
             "to": "whatsapp"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Отметки Viber и WhatsApp появляются только у подтверждённого номера; отметьте их на площадке."
     },
     {
       "common_option_id": "contact.additional_phone_1_messengers",
@@ -398,7 +410,9 @@
             "to": "whatsapp"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Отметки Viber и WhatsApp появляются только у подтверждённого номера; отметьте их на площадке."
     },
     {
       "common_option_id": "contact.additional_phone_2_messengers",
@@ -415,7 +429,9 @@
             "to": "whatsapp"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Отметки Viber и WhatsApp появляются только у подтверждённого номера; отметьте их на площадке."
     },
     {
       "common_option_id": "contact.additional_phone_3_messengers",
@@ -432,7 +448,9 @@
             "to": "whatsapp"
           }
         ]
-      }
+      },
+      "transfer": "manual",
+      "manual_reason": "Отметки Viber и WhatsApp появляются только у подтверждённого номера; отметьте их на площадке."
     }
   ],
   "constants": {
