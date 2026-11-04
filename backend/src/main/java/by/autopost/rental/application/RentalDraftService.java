@@ -70,24 +70,13 @@ public class RentalDraftService {
     if (revision == 0 && drafts.count(workspace) >= 500)
       throw new ApiException(400, "Достигнут лимит карточек аренды.");
     var next =
-        new RentalDraftRepository.StoredDraft(
-            id,
-            revision + 1,
-            draft.toString(),
-            textual(draft.path("values").path("listing.title")),
-            textual(draft.path("address").path("label")),
-            Instant.now().toString());
+        RentalDraftRepository.StoredDraft.of(id, revision + 1, draft, Instant.now().toString());
     boolean saved =
         revision == 0 ? drafts.insert(workspace, next) : drafts.update(workspace, next, revision);
     if (!saved)
       throw new ApiException(
           409, "Карточка изменена в другой вкладке. Сохраните свои правки перед обновлением.");
     return object("id", id, "revision", revision + 1);
-  }
-
-  /** The list shows only text; any other JSON value is not a title or an address. */
-  private static String textual(JsonNode value) {
-    return value.isTextual() ? value.asText() : "";
   }
 
   @Transactional

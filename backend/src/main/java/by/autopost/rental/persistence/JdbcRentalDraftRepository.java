@@ -79,6 +79,11 @@ public class JdbcRentalDraftRepository implements RentalDraftRepository {
             });
   }
 
+  public List<String> workspaces() {
+    return jdbc.queryForList(
+        "SELECT DISTINCT workspace_id FROM rental_drafts ORDER BY workspace_id", String.class);
+  }
+
   public List<ListedDraft> list(String workspace) {
     return jdbc.query(
         "SELECT id,revision,title,address_label,updated FROM rental_drafts WHERE workspace_id=?"

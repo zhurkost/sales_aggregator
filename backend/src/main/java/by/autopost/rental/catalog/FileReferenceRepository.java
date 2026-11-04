@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class FileReferenceRepository implements ReferenceRepository {
   private static final Set<String> MANIFEST =
-      Set.of("format_version", "source_schema_version", "category_id", "common", "card", "platforms");
+      Set.of(
+          "format_version", "source_schema_version", "category_id", "common", "card", "platforms");
   private static final Set<String> PLATFORM = Set.of("schema", "plan", "browser");
   private final ReferenceFiles files;
   private ReferenceSnapshot cached;

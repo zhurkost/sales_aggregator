@@ -56,7 +56,8 @@ public final class ReferenceValidator {
     check(
         card.path("version").isInt()
             && card.path("version").asInt() == ReferenceContract.CARD_MODEL_VERSION,
-        "card.json должен описывать модель карточки версии " + ReferenceContract.CARD_MODEL_VERSION);
+        "card.json должен описывать модель карточки версии "
+            + ReferenceContract.CARD_MODEL_VERSION);
     check(card.path("platforms").isObject(), "нет названий площадок");
     check(card.path("canonicalValues").isObject(), "нет вариантов общей карточки canonicalValues");
     Set<String> registered = new HashSet<>();

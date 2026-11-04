@@ -17,8 +17,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Converts a card older than the current card model. It runs once per stored card, from
+ * --migrate-rental-drafts; reading, checking and publishing a card never call it.
+ */
 public final class CardMigration {
   private final ReferenceSnapshot catalog;
+
+  /** A card saved before the current card model; it has to be migrated before use. */
+  public static boolean outdated(JsonNode draft) {
+    return draft.path("modelVersion").asInt() < ReferenceContract.CARD_MODEL_VERSION;
+  }
 
   public CardMigration(ReferenceSnapshot catalog) {
     this.catalog = catalog;
