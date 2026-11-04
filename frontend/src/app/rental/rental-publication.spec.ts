@@ -6,6 +6,7 @@ import {
 } from "./rental-publication.component";
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
+import type { Photo } from "../../../../lib/workspace";
 const extension = vi.fn(async () => ({
   capabilities: [
     "rental-publishing",
@@ -22,6 +23,8 @@ const gateway = {
   compress: vi.fn(async (files: File[]) =>
     files.map((f) => ({ name: f.name, dataUrl: "data:image/jpeg;base64,/9j/" })),
   ),
+  localPhotos: vi.fn(async (): Promise<Photo[]> => []),
+  forgetLocalPhotos: vi.fn(async () => undefined),
 };
 afterEach(() => {
   vi.clearAllMocks();
@@ -245,6 +248,65 @@ describe("publication of incomplete rental cards", () => {
       expect.objectContaining({ values: { "listing.title": "Квартира" } }),
     );
     expect("localPhotoIds" in (requests.at(-1)?.body["draft"] as object)).toBe(false);
+    c.ngOnDestroy();
+    c.store.destroy();
+  });
+  it("offers once to upload the photos an older release kept in this browser", async () => {
+    const requests = photoServer();
+    const local = [
+      { id: "l1", name: "old.jpg", type: "image/jpeg", dataUrl: "data:image/jpeg;base64,/9j/AA" },
+      { id: "l2", name: "older.jpg", type: "image/jpeg", dataUrl: "data:image/jpeg;base64,/9j/AB" },
+    ];
+    gateway.localPhotos.mockResolvedValue(local);
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store.revision = 3;
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    await c.ngOnChanges();
+    await vi.waitFor(() => expect(c.localPhotos).toEqual(local));
+    expect(gateway.localPhotos).toHaveBeenCalledWith("owner", c.store.id);
+    await c.uploadLocalPhotos();
+    expect(requests).toEqual([
+      {
+        path: "card/photos",
+        body: {
+          revision: 3,
+          photos: [
+            { name: "old.jpg", dataUrl: "data:image/jpeg;base64,/9j/AA" },
+            { name: "older.jpg", dataUrl: "data:image/jpeg;base64,/9j/AB" },
+          ],
+        },
+      },
+    ]);
+    expect(c.photos.map((p) => p.name)).toEqual(["old.jpg", "older.jpg"]);
+    expect(gateway.forgetLocalPhotos).toHaveBeenCalledWith("owner", c.store.id);
+    expect(c.localPhotos).toEqual([]);
+    // With photos on the server the browser copy is not offered again.
+    gateway.localPhotos.mockClear();
+    await c.ngOnChanges();
+    expect(gateway.localPhotos).not.toHaveBeenCalled();
+    expect(c.localPhotos).toEqual([]);
+    gateway.localPhotos.mockResolvedValue([]);
+    c.ngOnDestroy();
+    c.store.destroy();
+  });
+  it("can drop the browser copy instead of uploading it", async () => {
+    const requests = photoServer();
+    gateway.localPhotos.mockResolvedValue([
+      { id: "l1", name: "old.jpg", type: "image/jpeg", dataUrl: "data:image/jpeg;base64,/9j/AA" },
+    ]);
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    await c.ngOnChanges();
+    await vi.waitFor(() => expect(c.localPhotos.length).toBe(1));
+    await c.forgetLocalPhotos();
+    expect(gateway.forgetLocalPhotos).toHaveBeenCalledWith("owner", c.store.id);
+    expect(c.localPhotos).toEqual([]);
+    expect(requests).toEqual([]);
+    gateway.localPhotos.mockResolvedValue([]);
     c.ngOnDestroy();
     c.store.destroy();
   });

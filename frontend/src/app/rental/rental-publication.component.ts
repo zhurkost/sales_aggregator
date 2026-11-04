@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import type { Photo } from "../../../../lib/workspace";
 import { rentalPhotoUrl } from "./rental-api";
 import { RentalDraftStore } from "./rental-draft.store";
 import type { RentalPhoto } from "./rental-models";
@@ -38,6 +39,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   error = "";
   ready = false;
   jobs: Job[] = [];
+  /** Photos an older release kept in this browser for this card, while the server has none. */
+  localPhotos: Photo[] = [];
   private generation = 0;
   private timer?: ReturnType<typeof setInterval>;
   private destroyed = false;
@@ -45,8 +48,10 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     const generation = ++this.generation;
     clearInterval(this.timer);
     this.jobs = [];
+    this.localPhotos = [];
     this.error = "";
     if (!this.workspaceId || !this.draftId) return;
+    void this.findLocalPhotos(generation);
     try {
       const ping = await this.gateway.request("PING", undefined, 4000);
       if (generation !== this.generation) return;
@@ -197,6 +202,33 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   }
   async move(photo: RentalPhoto, offset: -1 | 1) {
     await this.photoChange(() => this.store.movePhoto(photo.id, offset));
+  }
+  private async findLocalPhotos(generation: number) {
+    if (this.store.photos.length) return;
+    try {
+      const local = await this.gateway.localPhotos(this.workspaceId, this.draftId);
+      if (generation === this.generation && !this.store.photos.length)
+        this.localPhotos = local;
+    } catch {
+      /* Nothing readable in this browser: nothing to transfer. */
+    }
+  }
+  /** One-time transfer: the photos of this browser go to the card on the server. */
+  async uploadLocalPhotos() {
+    const workspace = this.workspaceId,
+      id = this.draftId,
+      local = this.localPhotos;
+    await this.photoChange(async () => {
+      await this.store.addPhotos(local.map(({ name, dataUrl }) => ({ name, dataUrl })));
+      this.localPhotos = [];
+      await this.gateway.forgetLocalPhotos(workspace, id);
+    });
+  }
+  async forgetLocalPhotos() {
+    await this.photoChange(async () => {
+      await this.gateway.forgetLocalPhotos(this.workspaceId, this.draftId);
+      this.localPhotos = [];
+    });
   }
   private async photoChange(change: () => Promise<void>) {
     if (this.photosBusy) return;

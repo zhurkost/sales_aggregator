@@ -54,6 +54,30 @@
       </div>
     }
   </div>
+  @if (localPhotos.length) {
+    <div class="local-photos" role="group" aria-label="Фото в этом браузере">
+      <p>
+        В этом браузере сохранено фото этой квартиры: {{ localPhotos.length }}.
+        В карточке на сервере их нет, поэтому на площадки и на другом
+        устройстве они не попадут.
+      </p>
+      <button
+        type="button"
+        class="upload-local"
+        [disabled]="photosBusy"
+        (click)="uploadLocalPhotos()"
+      >
+        Загрузить в карточку</button
+      ><button
+        type="button"
+        class="forget-local"
+        [disabled]="photosBusy"
+        (click)="forgetLocalPhotos()"
+      >
+        Удалить из браузера
+      </button>
+    </div>
+  }
   <div class="launch">
     <label
       ><input

@@ -1,7 +1,11 @@
 import { Injectable } from "@angular/core";
 import { extension, optimizePhoto } from "../../../../lib/workspace";
+import {
+  forgetLocalRentalPhotos,
+  localRentalPhotos,
+} from "./rental-local-photos";
 
-/** Boundary to the browser extension and image compression. */
+/** Boundary to the browser extension, image compression and photos left in this browser. */
 @Injectable({ providedIn: "root" })
 export class RentalPublicationGateway {
   request(type: string, payload?: unknown, timeout?: number) {
@@ -15,5 +19,11 @@ export class RentalPublicationGateway {
       photos.push({ name, dataUrl });
     }
     return photos;
+  }
+  localPhotos(workspace: string, id: string) {
+    return localRentalPhotos(workspace, id);
+  }
+  forgetLocalPhotos(workspace: string, id: string) {
+    return forgetLocalRentalPhotos(workspace, id);
   }
 }

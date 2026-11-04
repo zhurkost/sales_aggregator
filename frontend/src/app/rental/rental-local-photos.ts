@@ -1,6 +1,9 @@
+import type { Photo } from "../../../../lib/workspace";
+
 /*
- * Before photos were stored on the server, the editor kept them in the IndexedDB of the browser it
- * ran in, by cabinet and card. Nothing writes them any more; a deleted card takes its copy along.
+ * One-time transfer. Before photos were stored on the server, the editor kept them in the
+ * IndexedDB of the browser it ran in, by cabinet and card. They are only read to offer the upload
+ * to the card on the server, and removed afterwards; nothing writes them any more.
  */
 const KEY = (workspace: string, id: string) => workspace + ":" + id;
 
@@ -29,6 +32,16 @@ async function cards<T>(
   } finally {
     db.close();
   }
+}
+/** Photos of the card kept in this browser by an older release. */
+export async function localRentalPhotos(
+  workspace: string,
+  id: string,
+): Promise<Photo[]> {
+  const photos = await cards<Photo[] | undefined>("readonly", (store) =>
+    store.get(KEY(workspace, id)),
+  );
+  return Array.isArray(photos) ? photos : [];
 }
 export function forgetLocalRentalPhotos(workspace: string, id: string) {
   return cards<undefined>("readwrite", (store) =>

@@ -67,6 +67,7 @@
 .launch {
   justify-content: space-between;
 }
+.local-photos,
 .confirm {
   margin-top: 12px;
   padding: 12px 14px;
@@ -74,9 +75,14 @@
   background: #fff7e6;
   font-size: 13px;
 }
+.local-photos {
+  margin: 0 0 20px;
+}
+.local-photos p,
 .confirm p {
   margin: 0 0 10px;
 }
+.local-photos button,
 .confirm button {
   margin-right: 8px;
   padding: 7px 12px;
