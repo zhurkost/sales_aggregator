@@ -407,13 +407,22 @@ class RentalCardTest {
   }
 
   @Test
-  void staleVersionsCannotSilentlyUseNewMappings() throws Exception {
+  void cardOfAnotherCardModelVersionIsNotPreparedUntilItsFieldsAreUpdated() throws Exception {
     var c = fixture();
-    assertThrows(
-        ApiException.class,
-        () ->
-            c.prepare(
-                object("cardVersion", "old", "values", object(), "platforms", List.of("fifth"))));
+    var card =
+        object(
+            "modelVersion",
+            2,
+            "cardVersion",
+            "old",
+            "values",
+            object(),
+            "platforms",
+            List.of("fifth"));
+    var error = assertThrows(ApiException.class, () -> c.prepare(card));
+    assertEquals(409, error.status);
+    assertEquals("Правила обновились. Обновите поля карточки.", error.getMessage());
+    assertDoesNotThrow(() -> c.prepare(c.acceptRules(card)));
   }
 
   @Test
