@@ -3,6 +3,7 @@
     <div class="field" [class.wide]="field.type === 'files' || field.type === 'multi_enum'" [class.price]="field.id === 'rental.monthly_price'">
       <label [attr.for]="'rental-' + field.id">{{ name(field) }}
         @if (evidence[field.id]) { <span class="ai-mark" [title]="'Из описания: ' + evidence[field.id]" aria-label="Заполнено из описания">✦</span> }
+        @if (untransferred.includes(field.id)) { <span class="not-transferred" title="Выбранные площадки пока не получают это поле автоматически: введите его на площадке">пока не переносится</span> }
       </label>
       @if (field.type === 'boolean') {
         <div class="toggle" [id]="'rental-' + field.id" tabindex="-1" role="group" [attr.aria-label]="name(field)">

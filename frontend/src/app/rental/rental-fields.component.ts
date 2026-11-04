@@ -15,6 +15,8 @@ export class RentalFieldsComponent {
   @Input() choices: Record<string, string[]> = {};
   @Input() labels: Record<string, string> = {};
   @Input() evidence: Record<string, string> = {};
+  /** Ids of fields no selected platform receives yet. */
+  @Input() untransferred: string[] = [];
   @Input() disabled = false;
   @Output() edit = new EventEmitter<{field: Field; value: JsonValue}>();
   name(field: Field) {

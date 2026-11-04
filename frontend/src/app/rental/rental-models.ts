@@ -16,7 +16,8 @@ export interface Field {
   options: Field[];
   fill_rule: Record<string, any>;
   uiWhen?: Condition;
-  uses?: { platform: string; target: string; when?: Condition }[];
+  /** Platform rows fed by this field; `transferred`: that platform's form needs the value. */
+  uses?: { platform: string; target: string; when?: Condition; transferred: boolean }[];
 }
 export interface Address {
   provider: string;

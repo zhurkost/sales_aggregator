@@ -89,7 +89,7 @@ describe("rental preparation editor", () => {
   });
 
   it("renders a fifth marketplace with the same one-field form and preserves data when toggled", async () => {
-    const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area"}]};
+    const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area",transferred:true}]};
     const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{},choiceLabels:{},constants:{},bindings:[]}]));
     vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
       cardVersion:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
@@ -104,6 +104,34 @@ describe("rental preparation editor", () => {
     c.togglePlatform("fifth",true); fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]')).toHaveLength(1);
     expect(c.store.draft.values[field.id]).toBe("42,5"); fixture.destroy();
+  });
+  it("marks a card field no selected platform receives as not transferred yet", async () => {
+    const field = (id: string, uses: {platform: string; target: string; transferred: boolean}[]) =>
+      ({id, name: id, type: "text", options: [], fill_rule: {}, description: "", uses});
+    const fields = [
+      field("listing.title", [{platform: "one", target: "title", transferred: true}, {platform: "two", target: "title", transferred: true}]),
+      field("rental.kitchen_area", [{platform: "one", target: "kitchen", transferred: true}, {platform: "two", target: "kitchen", transferred: false}]),
+      field("location.metro", [{platform: "one", target: "metro", transferred: false}, {platform: "two", target: "metro", transferred: false}]),
+    ];
+    const platforms = Object.fromEntries(["one", "two"].map(p => [p, {name: p, labels: {}, choiceLabels: {}, constants: {}, bindings: []}]));
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
+      cardVersion: "2", card: {version: 2, addressDependentFacts: []}, canonicalValues: {}, addressSuggestions: false, platforms,
+      category: {options: [{id: "group.main", name: "Главное", type: "group", options: fields, fill_rule: {}, description: ""}]},
+    } : {drafts: []})));
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "test"); fixture.detectChanges();
+    const c = fixture.componentInstance;
+    await vi.waitFor(() => { fixture.detectChanges(); expect(c.store.schema).not.toBeNull(); });
+    const marked = () => {
+      fixture.detectChanges();
+      return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll(".field"))
+        .filter(f => f.querySelector(".not-transferred")?.textContent?.includes("пока не переносится"))
+        .map(f => f.querySelector("input")!.id);
+    };
+    expect(marked()).toEqual(["rental-location.metro"]);
+    c.togglePlatform("one", false);
+    expect(marked()).toEqual(["rental-rental.kitchen_area", "rental-location.metro"]);
+    fixture.destroy();
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();

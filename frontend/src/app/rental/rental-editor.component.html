@@ -42,7 +42,7 @@
         }
       </section>
       <section class="main-section" aria-label="Основные характеристики">
-        <app-rental-fields class="main-fields" [fields]="view.mainFields" [values]="store.draft.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.draft.aiEvidence || {}" [disabled]="store.busy" (edit)="editField($event)" />
+        <app-rental-fields class="main-fields" [fields]="view.mainFields" [values]="store.draft.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.draft.aiEvidence || {}" [untransferred]="view.untransferred" [disabled]="store.busy" (edit)="editField($event)" />
       </section>
       <section class="extra-section">
         <div class="extra-heading"><h2>Дополнительно</h2><button type="button" class="text-button" (click)="openPanel('parameters')">Все параметры @if (view.additionalFilled.length) { · {{ view.additionalFilled.length }} }</button></div>
@@ -96,7 +96,7 @@
         <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="view.parameterSearch" (ngModelChange)="view.parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="view.filledOnly" />Заполненные</label></div>
         <div class="drawer-body">
           @for (group of view.additionalGroups; track group.id) {
-            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.options" [values]="store.draft.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.draft.aiEvidence || {}" [disabled]="store.busy" (edit)="editField($event)" /></section>
+            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.options" [values]="store.draft.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.draft.aiEvidence || {}" [untransferred]="view.untransferred" [disabled]="store.busy" (edit)="editField($event)" /></section>
           } @empty { <p class="empty-state">Параметры не найдены</p> }
         </div>
       } @else if (panel === 'saved') {

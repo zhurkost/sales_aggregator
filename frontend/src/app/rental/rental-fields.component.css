@@ -16,3 +16,4 @@ textarea { resize:vertical; }
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible { outline:3px solid #9ab4ff; outline-offset:2px; }
 @media(max-width:600px) { .fields-grid { grid-template-columns:1fr; gap:16px; } }
 @media(max-width:1100px) { :host(.main-fields) .fields-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.not-transferred { margin-left:6px; font-size:11px; font-weight:400; color:#8a6a1f; }

@@ -13,6 +13,13 @@ export class RentalViewModel {
   groupFields(group: Field) {
     return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.draft.platforms.includes(u.platform) && applicable(u.when, this.context(u.platform)) !== false));
   }
+  /** Card fields that no selected platform's form receives, as the server's uses say. */
+  get untransferred() {
+    const platforms = this.store.draft.platforms;
+    return (this.store.schema?.category.options || []).flatMap(g => g.options)
+      .filter(f => f.uses?.length && !f.uses.some(u => platforms.includes(u.platform) && u.transferred))
+      .map(f => f.id);
+  }
   get groupedIssues() {
     const groups = new Map<string, {source: string; message: string; platforms: string[]}>();
     const fields = this.store.schema?.category.options.flatMap(g => g.options) || [];
