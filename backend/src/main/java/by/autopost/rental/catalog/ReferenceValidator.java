@@ -54,6 +54,7 @@ public final class ReferenceValidator {
       }
     }
     check(card.path("platforms").isObject(), "нет названий площадок");
+    check(card.path("canonicalValues").isObject(), "нет вариантов общей карточки canonicalValues");
     Set<String> registered = new HashSet<>();
     card.path("platforms").fieldNames().forEachRemaining(registered::add);
     check(registered.equals(schemas.keySet()), "реестр площадок не совпадает с комплектом");

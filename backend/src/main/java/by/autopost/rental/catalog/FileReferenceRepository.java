@@ -46,8 +46,6 @@ public class FileReferenceRepository implements ReferenceRepository {
     var registry = manifest.path("platforms");
     if (!registry.isObject() || registry.isEmpty())
       throw new ApiException(409, "В справочнике отсутствует реестр площадок.");
-    JsonNode audit = object();
-    if (!card.has("canonicalValues")) audit = read("integration/integration-audit.json", paths);
     Map<String, JsonNode> schemas = new TreeMap<>(),
         plans = new TreeMap<>(),
         browsers = new TreeMap<>();
@@ -81,7 +79,7 @@ public class FileReferenceRepository implements ReferenceRepository {
                 + manifest
                 + object("browsers", browsers));
     ReferenceSnapshot next =
-        new ReferenceSnapshot(category, common, card, audit, schemas, plans, browsers, version);
+        new ReferenceSnapshot(category, common, card, schemas, plans, browsers, version);
     cached = next;
     stamps = Map.copyOf(paths);
     return next;

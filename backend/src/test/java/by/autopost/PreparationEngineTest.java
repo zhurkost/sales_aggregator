@@ -84,7 +84,6 @@ class PreparationEngineTest {
                     "apartments_long_term_rent",
                     array(),
                     object(),
-                    object(),
                     Map.of(),
                     Map.of("kufar", nativePlan),
                     Map.of(),

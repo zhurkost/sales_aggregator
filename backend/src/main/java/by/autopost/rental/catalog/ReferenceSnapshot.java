@@ -13,7 +13,7 @@ import java.util.TreeMap;
 /** Defensive copies prevent a migration or editor from modifying the shared catalog. */
 public final class ReferenceSnapshot {
   private final String categoryId, version;
-  private final JsonNode common, card, audit;
+  private final JsonNode common, card;
   private final Map<String, JsonNode> schemas, plans, browsers;
 
   public JsonNode browser(String platform) {
@@ -24,7 +24,6 @@ public final class ReferenceSnapshot {
       String categoryId,
       JsonNode common,
       JsonNode card,
-      JsonNode audit,
       Map<String, JsonNode> schemas,
       Map<String, JsonNode> plans,
       Map<String, JsonNode> browsers,
@@ -33,7 +32,6 @@ public final class ReferenceSnapshot {
     this.categoryId = categoryId;
     this.common = common.deepCopy();
     this.card = card.deepCopy();
-    this.audit = audit.deepCopy();
     this.schemas = copy(schemas);
     this.plans = copy(plans);
     this.version = version;
@@ -63,10 +61,6 @@ public final class ReferenceSnapshot {
 
   public JsonNode card() {
     return card.deepCopy();
-  }
-
-  public JsonNode audit() {
-    return audit.deepCopy();
   }
 
   public JsonNode schema(String platform) {

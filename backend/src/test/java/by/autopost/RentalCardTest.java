@@ -53,7 +53,6 @@ class RentalCardTest {
                                     "options",
                                     List.of())))))));
     write("integration/apartments_long_term_rent_common.json", common);
-    write("integration/integration-audit.json", object("field_evidence", List.of()));
     ObjectNode registry = object(), manifestPlatforms = object();
     for (String p : List.of("one", "two", "three", "four", "fifth")) {
       registry.set(p, object("name", "Marketplace " + p));
@@ -155,6 +154,20 @@ class RentalCardTest {
             "platforms",
             manifestPlatforms));
     return new RentalCatalog(new FileReferenceRepository(dir.toString()));
+  }
+
+  @Test
+  void canonicalValuesComeOnlyFromCardJson() throws Exception {
+    fixture();
+    // The former fallback read them from integration/integration-audit.json.
+    write("integration/integration-audit.json", object("field_evidence", List.of()));
+    ObjectNode card = (ObjectNode) MAPPER.readTree(dir.resolve("runtime/card.json").toFile());
+    card.remove("canonicalValues");
+    write("runtime/card.json", card);
+    var error =
+        assertThrows(
+            ApiException.class, () -> new FileReferenceRepository(dir.toString()).snapshot());
+    assertEquals(409, error.status);
   }
 
   @Test
@@ -321,7 +334,6 @@ class RentalCardTest {
                 snapshot.categoryId(),
                 snapshot.common(),
                 snapshot.card(),
-                snapshot.audit(),
                 schemas,
                 plans,
                 Map.of(),

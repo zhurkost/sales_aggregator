@@ -18,13 +18,8 @@ import java.util.TreeSet;
 
 public final class EditorSchemaBuilder {
   public ObjectNode build(ReferenceSnapshot snapshot) {
-    JsonNode common = snapshot.common(), audit = snapshot.audit();
-    ObjectNode canonical = object();
-    for (var e : audit.path("field_evidence"))
-      if (e.has("canonical_values"))
-        canonical.set(text(e, "common_option_id"), e.get("canonical_values"));
-    if (snapshot.card().has("canonicalValues"))
-      canonical = (ObjectNode) snapshot.card().get("canonicalValues").deepCopy();
+    JsonNode common = snapshot.common();
+    JsonNode canonical = snapshot.card().path("canonicalValues");
     ObjectNode platforms = object();
     for (String p : new TreeSet<>(snapshot.platforms())) {
       var schema = snapshot.schema(p);
