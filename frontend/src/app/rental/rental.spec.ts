@@ -293,48 +293,6 @@ describe("rental preparation editor", () => {
       ),
     ).toBe(true);
   });
-  it("shows only the address fields for the chosen region", () => {
-    const c = new RentalEditorComponent();
-    c.store.schema = {
-      category: { options: [] },
-      canonicalValues: {},
-      version: "1",
-      addressSuggestions: true,
-      platforms: {
-        example: {
-          labels: {},
-          choiceLabels: {},
-          constants: { route: "rent" },
-          bindings: [],
-          extras: [
-            {
-              id: "area-a",
-              name: "A",
-              description: "",
-              type: "enum",
-              options: [],
-              fill_rule: {},
-              uiWhen: { option_id: "region", operator: "equals", value: "a" },
-            },
-            {
-              id: "area-b",
-              name: "B",
-              description: "",
-              type: "enum",
-              options: [],
-              fill_rule: {},
-              uiWhen: { option_id: "region", operator: "equals", value: "b" },
-            },
-          ],
-        },
-      },
-    };
-    expect(c.view.availableExtras("example")).toHaveLength(0);
-    expect(c.view.waitingExtras("example")).toBe(true);
-    c.store.draft.extras["example"] = { region: "b" };
-    expect(c.view.availableExtras("example").map((f) => f.id)).toEqual(["area-b"]);
-    c.ngOnDestroy();
-  });
   it("ignores a stale address response after the query changes", async () => {
     const c = new AddressInputComponent();
     c.workspaceId = "owner";
@@ -401,20 +359,6 @@ describe("rental preparation editor", () => {
     c.addressChanged(null);
     expect(c.store.draft.values["location.latitude"]).toBeUndefined();
     expect(c.store.draft.address).toBeNull();
-    c.ngOnDestroy();
-  });
-  it("keeps typed numeric text exact until server conversion", () => {
-    const c = new RentalEditorComponent();
-    const field = {
-      id: "amount",
-      name: "Amount",
-      description: "",
-      type: "number",
-      fill_rule: {},
-      options: [],
-    };
-    c.setExtra("example", field, "1,123456789012345678");
-    expect(c.view.extra("example", "amount")).toBe("1,123456789012345678");
     c.ngOnDestroy();
   });
   it("does not lose edits made during a save and pins workspace", async () => {

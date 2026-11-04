@@ -315,13 +315,6 @@ export class RentalDraftStore {
       this.busy = false;
     }
   }
-  acceptSchema() {
-    if (this.schema) {
-      this.draft.schemaVersion = this.schema.version;
-      this.error = "";
-      this.changed();
-    }
-  }
   async prepare() {
     if (this.busy || this.check.checking) return;
     this.error = "";

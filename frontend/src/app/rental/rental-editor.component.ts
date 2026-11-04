@@ -114,11 +114,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.store.draft.values[field.id] = value;
     this.store.changed();
   }
-  toggleChoice(field: Field, choice: string, selected: boolean) {
-    const old = this.store.draft.values[field.id];
-    const values = Array.isArray(old) ? old : [];
-    this.setTyped(field, (selected ? [...new Set([...values, choice])] : values.filter(x => x !== choice)) as string[]);
-  }
   focusField(id: string) {
     const basic = id === "address" || id === "legacy" || this.view.mainFields.some(f => f.id === id) || id === "listing.description";
     if (!basic) { this.openPanel("parameters"); this.view.parameterSearch = ""; this.view.filledOnly = false; }
@@ -186,33 +181,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
       ? [...new Set([...this.store.draft.platforms, p])]
       : this.store.draft.platforms.filter((x) => x !== p);
     this.store.changed();
-  }
-  setExtra(p: string, f: Field, raw: JsonValue) {
-    // Keep typed decimal text intact until the server's exact BigDecimal conversion.
-    this.store.draft.extras[p] ||= {};
-    this.store.draft.extras[p][f.id] = raw;
-    this.store.changed();
-  }
-  extraFiles(p: string, field: Field, text: string) {
-    this.setExtra(
-      p,
-      field,
-      text
-        .split(/\r?\n/)
-        .map((s) => s.trim())
-        .filter(Boolean),
-    );
-  }
-  toggleExtra(p: string, f: Field, value: JsonValue, checked: boolean) {
-    const old = this.view.extra(p, f.id);
-    const values = Array.isArray(old) ? old : [];
-    this.setExtra(
-      p,
-      f,
-      (checked
-        ? [...values, value]
-        : values.filter((x) => x !== value)) as string[],
-    );
   }
   @HostListener("window:beforeunload", ["$event"])
   unload(event: BeforeUnloadEvent) {

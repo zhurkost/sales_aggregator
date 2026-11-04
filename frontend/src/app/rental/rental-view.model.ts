@@ -8,30 +8,10 @@ export class RentalViewModel {
   parameterSearch = "";
   filledOnly = false;
   constructor(private store: RentalDraftStore) {}
-  value(field: Field) {
-    const v = this.store.draft.values[field.id];
-    return Array.isArray(v) ? v.join("\n") : String(v ?? "");
-  }
-  choices(field: Field) {
-    return this.store.schema?.canonicalValues[field.id] || [];
-  }
   label(value: string) { return this.store.schema?.card?.valueLabels?.[value] || value; }
   platformName(p: string) { return this.store.schema?.platforms[p]?.name || p; }
   groupFields(group: Field) {
     return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.draft.platforms.includes(u.platform) && applicable(u.when, this.context(u.platform)) !== false));
-  }
-  usedBy(field: Field) {
-    return [...new Set(field.uses?.map(u => u.platform).filter(p => this.store.draft.platforms.includes(p)) || [])];
-  }
-  hasChoice(field: Field, choice: string) {
-    const value = this.store.draft.values[field.id];
-    return Array.isArray(value) && value.includes(choice);
-  }
-  filled(group: Field) {
-    return this.groupFields(group).filter(f => {
-      const value = this.store.draft.values[f.id];
-      return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
-    }).length;
   }
   get groupedIssues() {
     const groups = new Map<string, {source: string; message: string; platforms: string[]}>();
@@ -79,13 +59,6 @@ export class RentalViewModel {
     return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === item.source)?.name ||
       this.store.schema?.platforms[item.platform]?.labels[item.field] || "Сохранённое значение";
   }
-  extra(p: string, id: string) {
-    return this.store.draft.extras[p]?.[id] ?? "";
-  }
-  selected(p: string, f: Field, value: JsonValue) {
-    const xs = this.extra(p, f.id);
-    return Array.isArray(xs) && xs.some((x) => x === value);
-  }
   context(p: string) {
     const schema = this.store.schema?.platforms[p];
     const values = { ...this.store.draft.extras[p], ...schema?.constants };
@@ -106,33 +79,6 @@ export class RentalViewModel {
       if (cv.kind === "decimal" && typeof input === "string" && /^-?\d+([,.]\d+)?$/.test(input)) values[row.platform_option_id] = Number(input.replace(",", "."));
     }
     return values;
-  }
-  availableExtras(p: string) {
-    const values = this.context(p);
-    return (
-      this.store.schema?.platforms[p].extras.filter(
-        (f) => applicable(f.uiWhen, values) === true,
-      ) || []
-    );
-  }
-  waitingExtras(p: string) {
-    const values = this.context(p);
-    return this.store.schema?.platforms[p].extras.some(
-      (f) => applicable(f.uiWhen, values) === null,
-    );
-  }
-  nativeChoices(p: string, field: Field) {
-    const values = this.context(p);
-    return field.options.filter(
-      (option) => applicable(option.fill_rule["when"], values) === true,
-    );
-  }
-  extraFileText(p: string, field: Field) {
-    const value = this.extra(p, field.id);
-    return Array.isArray(value) ? value.join("\n") : String(value);
-  }
-  issueMessages(result: Prepared) {
-    return [...new Set(result.issues.map((issue) => issue.message))];
   }
   display(value: JsonValue) {
     return typeof value === "string" ? value : JSON.stringify(value);
