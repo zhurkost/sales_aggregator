@@ -42,8 +42,7 @@
             "from": "6",
             "to": "6_rooms"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -60,8 +59,7 @@
             "from": "BYN",
             "to": "BYN"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -78,8 +76,7 @@
             "from": "agency",
             "to": false
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -107,11 +104,7 @@
       "common_option_id": "media.images",
       "platform_option_id": "onliner.images",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {

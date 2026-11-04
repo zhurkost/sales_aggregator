@@ -38,8 +38,7 @@
             "from": "5+",
             "to": 5
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -76,8 +75,7 @@
             "from": "monolithic",
             "to": 3
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -98,8 +96,7 @@
             "from": "two_plus",
             "to": 2
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -128,8 +125,7 @@
             "from": "terrace",
             "to": 19
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -154,8 +150,7 @@
             "from": "poor",
             "to": 5
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -176,8 +171,7 @@
             "from": "EUR",
             "to": "978"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -206,8 +200,7 @@
             "from": "months_6",
             "to": 6
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -242,8 +235,7 @@
             "from": "messages_only",
             "to": 3
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -264,8 +256,7 @@
             "from": "partial",
             "to": 402
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -282,30 +273,21 @@
             "from": "electric",
             "to": 1
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
       "common_option_id": "media.images",
       "platform_option_id": "realt.photos",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {
       "common_option_id": "media.youtube_video",
       "platform_option_id": "realt.youtube_video",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {
@@ -644,8 +626,7 @@
             "from": "Не компаниям",
             "to": 3
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {

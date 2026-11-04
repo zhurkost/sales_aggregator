@@ -49,8 +49,7 @@
             "from": "5+",
             "to": "5"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -179,8 +178,7 @@
             "from": ">30",
             "to": "30"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -309,8 +307,7 @@
             "from": ">30",
             "to": "30"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -639,8 +636,7 @@
             "from": "<=1950",
             "to": "1950"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -673,8 +669,7 @@
             "from": "frame_block",
             "to": "10"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -699,8 +694,7 @@
             "from": "three",
             "to": "4"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -725,8 +719,7 @@
             "from": "two",
             "to": "4"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -763,8 +756,7 @@
             "from": "unsafe_condition",
             "to": "25"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -781,8 +773,7 @@
             "from": "EUR",
             "to": "EUR"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -815,8 +806,7 @@
             "from": "deposit_unspecified",
             "to": "25"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -833,30 +823,21 @@
             "from": "messages_only",
             "to": "1"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
       "common_option_id": "media.images",
       "platform_option_id": "kufar.photos",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {
       "common_option_id": "media.youtube_video",
       "platform_option_id": "kufar.video",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {
@@ -1392,8 +1373,7 @@
             "from": "present",
             "to": false
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {

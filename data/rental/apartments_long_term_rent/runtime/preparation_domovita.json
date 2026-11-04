@@ -39,8 +39,7 @@
             "from": "7",
             "to": 7
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -65,8 +64,7 @@
             "from": "RUB",
             "to": "RUB"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -83,8 +81,7 @@
             "from": "agency",
             "to": "usergrey"
           }
-        ],
-        "on_unmapped": "needs_review"
+        ]
       }
     },
     {
@@ -105,22 +102,14 @@
       "common_option_id": "media.images",
       "platform_option_id": "domovita.images",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {
       "common_option_id": "media.youtube_video",
       "platform_option_id": "domovita.video",
       "conversion": {
-        "kind": "files",
-        "preparation": {
-          "operations": []
-        },
-        "on_incompatible": "needs_review"
+        "kind": "files"
       }
     },
     {
