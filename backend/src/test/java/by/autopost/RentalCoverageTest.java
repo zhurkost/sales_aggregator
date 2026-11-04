@@ -168,6 +168,28 @@ class RentalCoverageTest {
     }
   }
 
+  /** Selectors and input methods taken from the research reports of the platforms. */
+  @Test
+  void evidencedFieldsAreBoundToTheirFormElements() {
+    var snapshot = new FileReferenceRepository(COMMITTED).snapshot();
+    Map<String, String> expected =
+        Map.of(
+            "kufar.contact_method", "choices input[type=\"radio\"][name=\"phone_hidden\"]",
+            "realt.furniture", "choices [id=\"additional\"] «Мебель»",
+            "realt.telephone_lines", "choices [id=\"additional\"] «Количество телефонов»",
+            "realt.stove", "choices [id=\"additional\"] «Плита»",
+            "realt.separate_rooms", "text [id=\"apartment.separateRooms\"]");
+    for (var entry : expected.entrySet()) {
+      var row =
+          snapshot
+              .coverage(entry.getKey().substring(0, entry.getKey().indexOf('.')))
+              .row(entry.getKey())
+              .orElseThrow();
+      assertEquals(Transfer.TRANSFERRED, row.transfer(), entry.getKey());
+      assertEquals(entry.getValue(), row.element(), entry.getKey());
+    }
+  }
+
   @Test
   void coverageCommandPrintsTheTotalsAndEveryRowAsMarkdown() throws Exception {
     fixture();

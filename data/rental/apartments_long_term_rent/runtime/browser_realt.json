@@ -138,6 +138,12 @@
       "selectedClass": "text-white"
     },
     {
+      "field": "realt.separate_rooms",
+      "action": "text",
+      "selector": "[id=\"apartment.separateRooms\"]",
+      "after": "realt.rooms"
+    },
+    {
       "field": "realt.repair",
       "action": "choices",
       "selector": "[id=\"apartment\"]",
@@ -149,6 +155,27 @@
       "action": "choices",
       "selector": "[id=\"apartment\"]",
       "label": "Балконов / лоджий",
+      "selectedClass": "text-white"
+    },
+    {
+      "field": "realt.furniture",
+      "action": "choices",
+      "selector": "[id=\"additional\"]",
+      "label": "Мебель",
+      "selectedClass": "text-white"
+    },
+    {
+      "field": "realt.telephone_lines",
+      "action": "choices",
+      "selector": "[id=\"additional\"]",
+      "label": "Количество телефонов",
+      "selectedClass": "text-white"
+    },
+    {
+      "field": "realt.stove",
+      "action": "choices",
+      "selector": "[id=\"additional\"]",
+      "label": "Плита",
       "selectedClass": "text-white"
     },
     {

@@ -219,11 +219,11 @@ class RentalPublicationTest {
     Map<String, java.util.function.Consumer<ObjectNode>> unknown =
         Map.of(
             "selectedClas",
-            r -> control(r, 9).put("selectedClas", "chip__filled-green"),
+            r -> control(r, "kufar.rooms").put("selectedClas", "chip__filled-green"),
             "observedAt",
             r -> r.put("observedAt", "2026-11-02"),
             "optionsSelector",
-            r -> control(r, 0).put("optionsSelector", "[role=option]"),
+            r -> control(r, "kufar.title").put("optionsSelector", "[role=option]"),
             "matchText",
             r -> ((ObjectNode) r.path("submit").get(0)).put("matchText", false),
             "script",
@@ -243,10 +243,10 @@ class RentalPublicationTest {
     List<java.util.function.Consumer<ObjectNode>> mistyped =
         List.of(
             r -> ((ObjectNode) r.path("ready").get(0)).put("absent", "yes"),
-            r -> control(r, 9).put("selectedClass", "chip filled"),
-            r -> control(r, 9).put("label", ""),
-            r -> control(r, 23).set("uiLabels", object("BYR", 1)),
-            r -> control(r, 23).put("displaySelector", ""),
+            r -> control(r, "kufar.rooms").put("selectedClass", "chip filled"),
+            r -> control(r, "kufar.rooms").put("label", ""),
+            r -> control(r, "kufar.floor").set("uiLabels", object("BYR", 1)),
+            r -> control(r, "kufar.floor").put("displaySelector", ""),
             r -> ((ObjectNode) r.path("setup").get(0)).put("matchText", "false"));
     for (var edit : mistyped) {
       var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
@@ -312,8 +312,12 @@ class RentalPublicationTest {
     assertTrue(error.getMessage().contains("неизвестный ключ frameSelector"), error.getMessage());
   }
 
-  static ObjectNode control(ObjectNode recipe, int index) {
-    return (ObjectNode) recipe.path("controls").get(index);
+  static ObjectNode control(ObjectNode recipe, String field) {
+    return (ObjectNode)
+        list(recipe.path("controls")).stream()
+            .filter(control -> text(control, "field").equals(field))
+            .findFirst()
+            .orElseThrow();
   }
 
   @Test

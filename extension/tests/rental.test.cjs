@@ -766,8 +766,13 @@ test("Kufar recipe marks its chips with the class proven by its ready guard", ()
   const kufar = recipe("kufar");
   const guard = kufar.ready.find((r) => r.selector.startsWith('[data-name="type"]'));
   assert.match(guard.selector, /\[class\*="chip__filled-green"\]/);
+  // Chips only: a radio group (contact method) is chosen by its checked input.
   for (const c of kufar.controls)
-    assert.equal(c.selectedClass, c.action === "choices" ? "chip__filled-green" : undefined, c.field);
+    assert.equal(
+      c.selectedClass,
+      c.action === "choices" && c.selector.startsWith("[data-name=") ? "chip__filled-green" : undefined,
+      c.field,
+    );
   assert.deepEqual(
     kufar.setup.filter((s) => s.selectedClass).map((s) => s.selector),
     ['[data-name="type"] [role="button"]'],
@@ -814,4 +819,63 @@ test("Realt recipe marks its chosen chips; shared code no longer knows the Realt
     assert.deepEqual(seen, clicks, value + " " + JSON.stringify(control.selectedClass));
     f.window.happyDOM.abort();
   }
+});
+test("Realt recipe fills the additional chips and separate rooms after rooms", async () => {
+  const realt = recipe("realt");
+  const fields = ["realt.rooms", "realt.separate_rooms", "realt.furniture", "realt.stove", "realt.telephone_lines"];
+  const values = {
+    "realt.rooms": 2,
+    "realt.separate_rooms": 2,
+    "realt.furniture": 402,
+    "realt.stove": 1,
+    "realt.telephone_lines": 0,
+  };
+  const labels = {
+    "realt.rooms": { 2: "2" },
+    "realt.furniture": { 1: "есть", 0: "нет", 402: "частично" },
+    "realt.stove": { 0: "газ", 1: "плита электрическая" },
+    "realt.telephone_lines": { 0: "нет", 1: "есть" },
+  };
+  const controls = realt.controls
+    .filter((c) => fields.includes(c.field))
+    .map((c) => ({ ...c, value: values[c.field], labels: labels[c.field] || {} }));
+  assert.equal(controls.length, fields.length);
+  const chips = (label, options) =>
+    `<div><p>${label}</p><div>${options.map((o) => `<div role="button" class="${realtOther}">${o}</div>`).join("")}</div></div>`;
+  const f = await fixture(
+    `<div id="apartment">${chips("Комнат", ["1", "2", "3"])}<input id="apartment.separateRooms" type="tel" hidden></div>` +
+      `<div id="additional">${chips("Мебель", ["Есть", "Нет", "Частично"])}${chips("Плита", ["Газ", "Плита электрическая"])}${chips("Количество телефонов", ["Нет", "Есть"])}</div>`,
+    controls,
+  );
+  const separate = f.document.getElementById("apartment.separateRooms");
+  f.document.querySelectorAll('[role="button"]').forEach((e) => {
+    e.onclick = () => {
+      e.className = realtChosen;
+      // Realt shows separate rooms once 2 or more rooms are chosen.
+      if (e.textContent === "2") separate.hidden = false;
+    };
+  });
+  await f.form.tick();
+  await f.form.tick();
+  assert.equal(separate.value, "2");
+  const chosen = [...f.document.querySelectorAll('[role="button"]')]
+    .filter((e) => e.className.includes("text-white"))
+    .map((e) => e.textContent);
+  assert.deepEqual(chosen, ["2", "Частично", "Плита электрическая", "Нет"]);
+  assert.deepEqual([...f.form.done].sort(), [...fields].sort());
+  f.window.happyDOM.abort();
+});
+test("Kufar recipe chooses the contact method radio from its research report", async () => {
+  const control = recipe("kufar").controls.find((c) => c.field === "kufar.contact_method");
+  const f = await fixture(
+    '<label><input type="radio" name="phone_hidden" value="0">Звонки и сообщения</label>' +
+      '<label><input type="radio" name="phone_hidden" value="1">Только сообщения</label>',
+    [{ ...control, value: "1", labels: { 0: "Звонки и сообщения", 1: "Только сообщения" } }],
+  );
+  await f.form.tick();
+  const [both, messages] = f.document.querySelectorAll("input");
+  assert.equal(both.checked, false);
+  assert.equal(messages.checked, true);
+  assert.equal(f.form.done.has("kufar.contact_method"), true);
+  f.window.happyDOM.abort();
 });

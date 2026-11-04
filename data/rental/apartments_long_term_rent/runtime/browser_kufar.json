@@ -62,6 +62,11 @@
       "selector": "input[name=\"phone_0\"]"
     },
     {
+      "field": "kufar.contact_method",
+      "action": "choices",
+      "selector": "input[type=\"radio\"][name=\"phone_hidden\"]"
+    },
+    {
       "field": "kufar.description",
       "action": "text",
       "selector": "textarea[name=\"body\"]"
