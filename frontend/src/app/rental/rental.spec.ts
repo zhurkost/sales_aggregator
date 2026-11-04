@@ -148,7 +148,7 @@ describe("rental preparation editor", () => {
           labels: {}, choiceLabels: {}, constants: {}, bindings: [],
         }])),
       });
-      if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1 }] });
+      if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1, publications: [] }] });
       return response({ deleted: true });
     });
     vi.stubGlobal("fetch", fetch);
@@ -198,13 +198,13 @@ describe("rental preparation editor", () => {
     c.workspaceId = "owner";
     const id = c.store.id;
     c.store.revision = 1;
-    c.store.drafts = [{ id, title: "Apartment", address: "", revision: 1 }];
+    c.store.drafts = [{ id, title: "Apartment", address: "", revision: 1, publications: [] }];
     let finish!: (response: Response) => void;
     const calls: { url: string; body: any }[] = [];
     vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
       calls.push({ url, body: init?.body ? JSON.parse(String(init.body)) : null });
       if (url.endsWith("/delete")) return response({ deleted: true });
-      if (url.endsWith("/drafts")) return response({ drafts: [{ id, title: "Apartment", address: "", revision: 2 }] });
+      if (url.endsWith("/drafts")) return response({ drafts: [{ id, title: "Apartment", address: "", revision: 2, publications: [] }] });
       return new Promise<Response>((resolve) => { finish = resolve; });
     }));
     c.store.changed();
@@ -234,7 +234,7 @@ describe("rental preparation editor", () => {
     const current = c.store.id;
     c.store.draft.values["listing.title"] = "Keep edits";
     c.store.dirty = true;
-    c.store.drafts = [{ id: "other", title: "Other", address: "", revision: 4 }];
+    c.store.drafts = [{ id: "other", title: "Other", address: "", revision: 4, publications: [] }];
     c.store.pendingDelete = "other";
     vi.stubGlobal("fetch", vi.fn(async () => response({ deleted: true })));
     await c.store.remove("other");
@@ -250,7 +250,7 @@ describe("rental preparation editor", () => {
     c.store.revision = 3;
     c.store.draft.values["listing.title"] = "Keep";
     c.store.dirty = true;
-    c.store.drafts = [{ id, title: "Keep", address: "", revision: 3 }];
+    c.store.drafts = [{ id, title: "Keep", address: "", revision: 3, publications: [] }];
     c.store.pendingDelete = id;
     vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: "Карточка изменена" }), { status: 409 })));
     await c.store.remove(id);

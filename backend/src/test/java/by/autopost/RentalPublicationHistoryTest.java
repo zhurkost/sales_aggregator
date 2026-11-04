@@ -167,6 +167,40 @@ class RentalPublicationHistoryTest {
   }
 
   @Test
+  void myApartmentsShowTheLastStatusAndLinkOnEachPlatform() {
+    var first = publications(launch("owner"));
+    service.report("owner", first.get("kufar"), "submitted", "Выполнена попытка подачи.");
+    service.link("owner", first.get("kufar"), "https://re.kufar.by/vi/1");
+    service.report("owner", first.get("realt"), "filled", "Заполнено");
+    // The next revision is launched and stopped: the last status is the stop, the link stays.
+    storage.draftService().save("owner", "flat", object("revision", 1, "draft", draft));
+    var second = publications(launch("owner"));
+    service.report("owner", second.get("kufar"), "stopped", "Остановлено в Автопосте");
+    storage.draftService().save("owner", "empty", object("revision", 0, "draft", draft));
+    var listed = new java.util.HashMap<String, JsonNode>();
+    for (var row : storage.draftService().list("owner").path("drafts"))
+      listed.put(text(row, "id"), row);
+    var flat = listed.get("flat").path("publications");
+    assertEquals(2, flat.size());
+    var kufar = flat.get(0);
+    assertEquals("kufar", text(kufar, "platform"));
+    assertEquals(second.get("kufar"), text(kufar, "id"));
+    assertEquals("stopped", text(kufar, "status"));
+    assertEquals("Остановлено в Автопосте", text(kufar, "message"));
+    assertEquals("https://re.kufar.by/vi/1", text(kufar, "url"));
+    assertFalse(text(kufar, "updated").isEmpty());
+    var realt = flat.get(1);
+    assertEquals(second.get("realt"), text(realt, "id"));
+    assertEquals("opened", text(realt, "status"));
+    assertEquals("", text(realt, "url"));
+    assertTrue(listed.get("empty").path("publications").isEmpty());
+    // Another cabinet with a card of the same id sees none of it.
+    storage.draftService().save("other", "flat", object("revision", 0, "draft", draft));
+    var foreign = storage.draftService().list("other").path("drafts").get(0);
+    assertTrue(foreign.path("publications").isEmpty());
+  }
+
+  @Test
   void deletingACardDeletesItsPublications() {
     launch("owner");
     storage.draftService().save("other", "flat", object("revision", 0, "draft", draft));

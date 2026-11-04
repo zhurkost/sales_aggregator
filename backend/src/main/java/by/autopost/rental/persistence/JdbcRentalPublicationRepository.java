@@ -2,6 +2,7 @@ package by.autopost.rental.persistence;
 
 import by.autopost.rental.application.PublicationStatus;
 import by.autopost.rental.application.RentalPublicationRepository;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.context.annotation.DependsOn;
@@ -39,6 +40,9 @@ public class JdbcRentalPublicationRepository implements RentalPublicationReposit
             + " TEXT NOT NULL,message TEXT NOT NULL,url TEXT NOT NULL,created TEXT NOT NULL,updated"
             + " TEXT NOT NULL,"
             + "UNIQUE(workspace_id,draft_id,revision,integration_version,platform))");
+    jdbc.execute(
+        "CREATE INDEX IF NOT EXISTS rental_publications_card ON"
+            + " rental_publications(workspace_id,draft_id,platform,seq)");
   }
 
   public Publication open(
@@ -84,6 +88,27 @@ public class JdbcRentalPublicationRepository implements RentalPublicationReposit
             id)
         .stream()
         .findFirst();
+  }
+
+  public List<LastPublication> latest(String workspace) {
+    return jdbc.query(
+        "SELECT p.id,p.draft_id,p.platform,p.status,p.message,p.updated,coalesce((SELECT u.url"
+            + " FROM rental_publications u WHERE u.workspace_id=p.workspace_id AND"
+            + " u.draft_id=p.draft_id AND u.platform=p.platform AND u.url<>'' ORDER BY u.seq DESC"
+            + " LIMIT 1),'') AS url FROM rental_publications p WHERE p.workspace_id=? AND p.seq IN"
+            + " (SELECT max(seq) FROM rental_publications WHERE workspace_id=? GROUP BY"
+            + " draft_id,platform) ORDER BY p.draft_id,p.platform",
+        (rs, n) ->
+            new LastPublication(
+                rs.getString("id"),
+                rs.getString("draft_id"),
+                rs.getString("platform"),
+                PublicationStatus.of(rs.getString("status")),
+                rs.getString("message"),
+                rs.getString("url"),
+                rs.getString("updated")),
+        workspace,
+        workspace);
   }
 
   public boolean report(

@@ -2,8 +2,10 @@ import type {
   EditorSchema,
   Prepared,
   RentalDraft,
+  RentalListedDraft,
   RentalPhoto,
   RentalPhotos,
+  RentalPublication,
 } from "./rental-models";
 import { RentalApiError, rentalApi } from "./rental-api";
 import { RentalCardCheck } from "./rental-card-check";
@@ -40,8 +42,7 @@ export class RentalDraftStore {
   busy = false;
   pendingDelete: string | null = null;
   deletingId: string | null = null;
-  drafts: { id: string; title: string; address: string; revision: number }[] =
-    [];
+  drafts: RentalListedDraft[] = [];
   readonly check = new RentalCardCheck(() => ({
     workspace: this.workspaceId(),
     id: this.id,
@@ -92,8 +93,28 @@ export class RentalDraftStore {
       revision,
       title: title === null || Array.isArray(title) ? "" : String(title ?? ""),
       address: draft.address?.label || "",
+      publications: this.drafts.find((d) => d.id === id)?.publications || [],
     };
     this.drafts = [item, ...this.drafts.filter((d) => d.id !== id)];
+  }
+  /** The link to the published ad on a platform, which the user copies from it. */
+  async setLink(publication: string, url: string) {
+    this.error = "";
+    try {
+      const saved = await rentalApi<RentalPublication>(
+        this.workspaceId(),
+        "publications/" + publication + "/link",
+        { url },
+      );
+      this.drafts = this.drafts.map((d) => ({
+        ...d,
+        publications: d.publications.map((p) =>
+          p.id === publication ? { ...p, url: saved.url } : p,
+        ),
+      }));
+    } catch (e) {
+      this.error = (e as Error).message;
+    }
   }
   changed() {
     this.editVersion++;

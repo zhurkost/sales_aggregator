@@ -101,7 +101,7 @@
         </div>
       } @else if (panel === 'saved') {
         <div class="drawer-body">
-          <app-rental-saved-list [drafts]="store.drafts" [busy]="store.busy" [pendingDelete]="store.pendingDelete" (openDraft)="store.open($event)" (confirmDelete)="store.pendingDelete = $event" (deleteDraft)="store.remove($event)" />
+          <app-rental-saved-list [drafts]="store.drafts" [platforms]="store.schema.platforms" [busy]="store.busy" [pendingDelete]="store.pendingDelete" (openDraft)="store.open($event)" (confirmDelete)="store.pendingDelete = $event" (deleteDraft)="store.remove($event)" (saveLink)="store.setLink($event.publication, $event.url)" />
         </div>
       } @else {
         @if (store.check.stale) { <p role="status">Данные изменены. Показан результат предыдущей проверки.</p> }

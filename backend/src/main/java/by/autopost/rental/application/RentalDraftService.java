@@ -9,6 +9,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +31,28 @@ public class RentalDraftService {
     this.publications = publications;
   }
 
+  /** Where a card stands on one platform, as «Мои квартиры» shows it. */
+  public record PlatformPublication(
+      String id,
+      String platform,
+      PublicationStatus status,
+      String message,
+      String url,
+      String updated) {}
+
   public ObjectNode list(String workspace) {
+    Map<String, List<PlatformPublication>> published = new HashMap<>();
+    for (var last : publications.latest(workspace))
+      published
+          .computeIfAbsent(last.draftId(), id -> new ArrayList<>())
+          .add(
+              new PlatformPublication(
+                  last.id(),
+                  last.platform(),
+                  last.status(),
+                  last.message(),
+                  last.url(),
+                  last.updated()));
     ArrayNode items = array();
     for (var row : drafts.list(workspace))
       items.add(
@@ -41,7 +66,9 @@ public class RentalDraftService {
               "address",
               row.addressLabel(),
               "updatedAt",
-              row.updated()));
+              row.updated(),
+              "publications",
+              published.getOrDefault(row.id(), List.of())));
     return object("drafts", items);
   }
 

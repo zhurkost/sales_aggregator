@@ -2,6 +2,21 @@
             <div class="rental-saved">
               @for (item of drafts; track item.id) {
                 <div class="saved-row"><button type="button" class="saved-item" [disabled]="busy" (click)="openDraft.emit(item.id)">{{ item.title || item.address || 'Квартира без названия' }}</button><button type="button" class="delete-item" [disabled]="busy" [attr.aria-label]="'Удалить квартиру: ' + (item.title || item.address || 'Квартира без названия')" (click)="confirmDelete.emit(item.id)">Удалить</button></div>
+                @if (item.publications.length) {
+                  <ul class="publications" [attr.aria-label]="'Публикации: ' + (item.title || item.address || 'Квартира без названия')">
+                    @for (publication of item.publications; track publication.id) {
+                      <li class="platform-publication">
+                        <span class="platform">{{ name(publication.platform) }}</span>
+                        <span class="status" [title]="publication.message">{{ status(publication) }} · {{ when(publication.updated) }}</span>
+                        @if (publication.url) {
+                          <a class="ad-link" [href]="publication.url" target="_blank" rel="noopener noreferrer">Объявление</a><button type="button" class="text-button forget-link" [disabled]="busy" [attr.aria-label]="'Убрать ссылку на объявление ' + name(publication.platform)" (click)="saveLink.emit({publication: publication.id, url: ''})">Убрать ссылку</button>
+                        } @else if (publication.status !== 'opened') {
+                          <form class="link-form" (submit)="$event.preventDefault(); saveLink.emit({publication: publication.id, url: link.value}); link.value = ''"><input #link type="url" required placeholder="Ссылка на объявление" [attr.aria-label]="'Ссылка на объявление ' + name(publication.platform)" /><button type="submit" class="text-button" [disabled]="busy">Сохранить</button></form>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
                 @if (pendingDelete === item.id) { <div class="delete-confirmation"><p>Удалить квартиру? Восстановить её не получится.</p><div class="delete-actions"><button type="button" class="secondary" [disabled]="busy" (click)="confirmDelete.emit(null)">Отмена</button><button type="button" class="delete-item" [disabled]="busy" (click)="deleteDraft.emit(item.id)">Да, удалить</button></div></div> }
               }
             </div>

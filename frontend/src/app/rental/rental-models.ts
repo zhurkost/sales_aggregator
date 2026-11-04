@@ -92,6 +92,23 @@ export interface RentalPhoto {
   type: string;
   size: number;
 }
+/** Where a card stands on a platform: its latest launch there, and the link to the ad if given. */
+export interface RentalPublication {
+  id: string;
+  platform: string;
+  status: "opened" | "filled" | "submitted" | "needs_action" | "stopped";
+  message: string;
+  url: string;
+  updated: string;
+}
+/** A row of «Мои квартиры». */
+export interface RentalListedDraft {
+  id: string;
+  title: string;
+  address: string;
+  revision: number;
+  publications: RentalPublication[];
+}
 /** The photos after a change and the revision of the card the change produced. */
 export interface RentalPhotos {
   revision: number;

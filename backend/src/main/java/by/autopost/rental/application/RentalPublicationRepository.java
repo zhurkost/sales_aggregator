@@ -1,5 +1,6 @@
 package by.autopost.rental.application;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,6 +34,21 @@ public interface RentalPublicationRepository {
       String now);
 
   Optional<Publication> find(String workspace, String id);
+
+  /**
+   * Where a card stands on a platform, for «Мои квартиры»: the status of its latest launch there,
+   * and the latest link to the ad any of its launches there has.
+   */
+  record LastPublication(
+      String id,
+      String draftId,
+      String platform,
+      PublicationStatus status,
+      String message,
+      String url,
+      String updated) {}
+
+  List<LastPublication> latest(String workspace);
 
   /** Sets the status and message if the status is still {@code expected}. */
   boolean report(

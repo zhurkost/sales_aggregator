@@ -227,9 +227,81 @@ describe("rental editing and validation", () => {
     }
   });
 
+  it("«Мои квартиры» show the last status and link on each platform, and save a link", async () => {
+    const published = {
+      id: "flat",
+      title: "Двушка",
+      address: "",
+      revision: 5,
+      publications: [
+        {
+          id: "pub-k",
+          platform: "kufar",
+          status: "submitted",
+          message: "Выполнена попытка подачи.",
+          url: "https://re.kufar.by/vi/1",
+          updated: "2026-11-04T11:20:00Z",
+        },
+        {
+          id: "pub-r",
+          platform: "realt",
+          status: "filled",
+          message: "Заполнено",
+          url: "",
+          updated: "2026-11-04T11:25:00Z",
+        },
+      ],
+    };
+    const fetch = vi.fn(async (url: string, init?: RequestInit) =>
+      response(
+        url.endsWith("/editor")
+          ? { ...schema, platforms: { ...schema.platforms, realt: { ...schema.platforms["kufar"], name: "Realt" } } }
+          : url.endsWith("/drafts")
+            ? { drafts: [published] }
+            : url.endsWith("/link")
+              ? { ...published.publications[1], url: JSON.parse(String(init?.body)).url }
+              : { revision: 1 },
+      ),
+    );
+    vi.stubGlobal("fetch", fetch);
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    const c = fixture.componentInstance,
+      el = fixture.nativeElement as HTMLElement;
+    try {
+      await vi.waitFor(() => expect(c.store.drafts).toEqual([published]));
+      c.openPanel("saved");
+      // Opening the panel reads the list again.
+      await vi.waitFor(() =>
+        expect(fetch.mock.calls.filter(([url]) => url.endsWith("/drafts"))).toHaveLength(2),
+      );
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(el.querySelectorAll(".platform-publication")).toHaveLength(2);
+      });
+      const [kufar, realt] = Array.from(el.querySelectorAll(".platform-publication"));
+      expect(kufar.textContent).toContain("Kufar");
+      expect(kufar.textContent).toContain("Отправлено на площадку");
+      expect(kufar.querySelector("a")?.getAttribute("href")).toBe("https://re.kufar.by/vi/1");
+      expect(realt.textContent).toContain("Realt");
+      expect(realt.textContent).toContain("Заполнено, завершите на площадке");
+      const input = realt.querySelector("input") as HTMLInputElement;
+      input.value = "https://realt.by/rent/object/42/";
+      realt.querySelector("form")!.dispatchEvent(new Event("submit"));
+      await vi.waitFor(() =>
+        expect(c.store.drafts[0].publications[1].url).toBe("https://realt.by/rent/object/42/"),
+      );
+      const call = fetch.mock.calls.find(([url]) => url.endsWith("/link"))!;
+      expect(call[0]).toBe("/api/workspace/rental/publications/pub-r/link");
+      expect(JSON.parse(String(call[1]?.body))).toEqual({ url: "https://realt.by/rent/object/42/" });
+    } finally {
+      fixture.destroy();
+    }
+  });
   it("updates «Мои квартиры» locally after autosaves and re-reads it only when the panel opens", async () => {
     let revision = 0;
-    const other = { id: "other", title: "Другая", address: "", revision: 3 };
+    const other = { id: "other", title: "Другая", address: "", revision: 3, publications: [] };
     const fetch = vi.fn(async (url: string, _init?: RequestInit) =>
       response(
         url.endsWith("/editor")
@@ -273,6 +345,7 @@ describe("rental editing and validation", () => {
           revision: 4,
           title: "Квартира у метро Немига",
           address: "Минск, Брикета 18",
+          publications: [],
         },
         other,
       ]);
