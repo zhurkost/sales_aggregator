@@ -106,7 +106,8 @@
   // Rich editors turn every pasted line into a paragraph, so blank lines are not compared.
   const lines = (text) =>
     String(text).split("\n").map(norm).filter(Boolean).join("\n");
-  // Insert like a user paste so TipTap/ProseMirror updates its own document state.
+  // Insert like a user paste so the editor (TipTap/ProseMirror, TinyMCE) updates its own
+  // document state; `e.ownerDocument` is the frame's document for an iframe editor.
   function pasteText(e, text) {
     const doc = e.ownerDocument,
       before = editorText(e);
@@ -126,6 +127,18 @@
       }),
     );
     if (editorText(e) === before) doc.execCommand?.("insertText", false, text);
+  }
+  // A rich text editor in a same-origin iframe (TinyMCE on Realt): the frame's body is
+  // its editable root. A frame of another origin, or not loaded yet, has no document
+  // here and is never touched; neither is a body that is not editable.
+  function frameEditor(frame) {
+    let body = null;
+    try {
+      body = frame.contentDocument?.body || null;
+    } catch {
+      body = null;
+    }
+    return body?.isContentEditable ? body : null;
   }
   // `rule.selectedClass` is the recipe's class fragment of a chosen chip on its platform.
   function selected(e, rule) {
@@ -239,9 +252,14 @@
       )
         return;
       if (
-        ["text", "richtext", "check", "select", "autocomplete"].includes(
-          c.action,
-        )
+        [
+          "text",
+          "richtext",
+          "iframe_richtext",
+          "check",
+          "select",
+          "autocomplete",
+        ].includes(c.action)
       ) {
         if (elements.length !== 1) return;
         const e = elements[0];
@@ -263,15 +281,17 @@
           }
           return;
         }
-        if (c.action === "richtext") {
+        if (c.action === "richtext" || c.action === "iframe_richtext") {
+          const editor = c.action === "richtext" ? e : frameEditor(e);
+          if (!editor) return;
           const text = htmlText(value),
-            current = lines(editorText(e));
+            current = lines(editorText(editor));
           if (current && current !== lines(text)) {
             this.protected.add(c.field);
             return;
           }
-          if (!current) pasteText(e, text);
-          if (lines(editorText(e)) === lines(text)) this.done.add(c.field);
+          if (!current) pasteText(editor, text);
+          if (lines(editorText(editor)) === lines(text)) this.done.add(c.field);
           return;
         }
         const current = e.value;

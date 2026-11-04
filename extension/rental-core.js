@@ -66,6 +66,7 @@
           ![
             "text",
             "richtext",
+            "iframe_richtext",
             "check",
             "choices",
             "select",

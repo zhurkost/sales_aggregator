@@ -12,6 +12,7 @@ const extension = vi.fn(async () => ({
     "rental-address-suggestions",
     "rental-checked-submit",
     "rental-integration-version",
+    "rental-iframe-richtext",
   ],
   jobs: [],
 }));
@@ -58,6 +59,28 @@ describe("publication of incomplete rental cards", () => {
     c.store.draft.platforms = ["kufar"];
     extension.mockResolvedValueOnce({
       capabilities: ["rental-publishing", "rental-address-suggestions", "rental-checked-submit"],
+      jobs: [],
+    });
+    await c.ngOnChanges();
+    expect(c.ready).toBe(false);
+    await c.publish();
+    expect(c.error).toContain(REQUIRED_EXTENSION_VERSION);
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    c.ngOnDestroy(); c.store.destroy();
+  });
+  it("does not launch with a 0.9.4 extension that rejects the Realt description editor", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    c.store.draft.platforms = ["realt"];
+    extension.mockResolvedValueOnce({
+      capabilities: [
+        "rental-publishing",
+        "rental-address-suggestions",
+        "rental-checked-submit",
+        "rental-integration-version",
+      ],
       jobs: [],
     });
     await c.ngOnChanges();

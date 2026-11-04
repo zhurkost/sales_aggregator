@@ -257,6 +257,33 @@ class RentalPublicationTest {
     }
   }
 
+  @Test
+  void richTextInAnIframeIsAKnownActionWithoutExtraKeys() {
+    var snapshot =
+        new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
+    var recipe = (ObjectNode) snapshot.browser("realt").deepCopy();
+    var description =
+        object(
+            "field",
+            "realt.description",
+            "action",
+            "iframe_richtext",
+            "selector",
+            "[id=\"description.description_ifr\"]");
+    var controls = (com.fasterxml.jackson.databind.node.ArrayNode) recipe.path("controls");
+    for (int i = controls.size() - 1; i >= 0; i--)
+      if (text(controls.get(i), "field").equals("realt.description")) controls.remove(i);
+    controls.add(description);
+    assertDoesNotThrow(
+        () -> new BrowserRecipeValidator().validate("realt", snapshot.schema("realt"), recipe));
+    description.put("frameSelector", "body#tinymce");
+    var error =
+        assertThrows(
+            ApiException.class,
+            () -> new BrowserRecipeValidator().validate("realt", snapshot.schema("realt"), recipe));
+    assertTrue(error.getMessage().contains("неизвестный ключ frameSelector"), error.getMessage());
+  }
+
   static ObjectNode control(ObjectNode recipe, int index) {
     return (ObjectNode) recipe.path("controls").get(index);
   }

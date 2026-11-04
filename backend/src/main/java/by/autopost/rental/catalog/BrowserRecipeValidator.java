@@ -25,6 +25,8 @@ public final class BrowserRecipeValidator {
           "text", Set.of("addressPart"),
           "autocomplete", Set.of("addressPart", "autocomplete"),
           "richtext", Set.of(),
+          // The selector finds a same-origin iframe; its body is the editor (TinyMCE).
+          "iframe_richtext", Set.of(),
           "check", Set.of(),
           "select", Set.of(),
           "files", Set.of(),

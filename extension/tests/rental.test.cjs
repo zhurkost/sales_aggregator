@@ -450,6 +450,97 @@ test("rich text never replaces a description the user already wrote or is editin
   assert.deepEqual(second.pasted, []);
   typing.window.happyDOM.abort();
 });
+// TinyMCE as observed on Realt (live check 2026-11-04): a hidden source textarea and a
+// same-origin iframe without src whose body is the editable root. happy-dom gives a
+// contentDocument only to srcdoc frames; the extension reads contentDocument either way.
+const tinymce = (body = '<p><br data-mce-bogus="1"></p>') =>
+  '<textarea id="description.description" style="display:none" aria-hidden="true"></textarea>' +
+  '<iframe id="description.description_ifr" class="tox-edit-area__iframe" srcdoc="' +
+  '<body id=&quot;tinymce&quot; class=&quot;mce-content-body&quot; contenteditable=&quot;true&quot;' +
+  ' data-id=&quot;description.description&quot;>' +
+  body.replace(/"/g, "&quot;") +
+  '</body>"></iframe>';
+const iframeRichtext = (value) => [
+  { field: "realt.description", selector: '[id="description.description_ifr"]', action: "iframe_richtext", value },
+];
+async function frameFixture(html, value) {
+  const f = await fixture(html, iframeRichtext(value));
+  await f.window.happyDOM.waitUntilComplete();
+  const frame = f.document.querySelector("iframe");
+  return { ...f, frame, body: frame.contentDocument?.body };
+}
+// TinyMCE's plain-text paste: one paragraph per line, the text is never parsed as HTML.
+function tinymcePaste(body, pasted = []) {
+  body.addEventListener("paste", (event) => {
+    const text = event.clipboardData.getData("text/plain");
+    pasted.push(text);
+    event.preventDefault();
+    body.replaceChildren(
+      ...text.split(/\n+/).map((line) => {
+        const p = body.ownerDocument.createElement("p");
+        p.textContent = line;
+        return p;
+      }),
+    );
+  });
+  return pasted;
+}
+test("iframe rich text is pasted into the editor body of a same-origin frame", async () => {
+  const f = await frameFixture(tinymce(), serverHtml(description));
+  assert.ok(f.body, "the synthetic frame has a document");
+  const pasted = tinymcePaste(f.body);
+  await f.form.tick();
+  assert.deepEqual(pasted, [description]);
+  assert.deepEqual(
+    [...f.body.querySelectorAll("p")].map((p) => p.textContent),
+    ['Сдам "уютную" квартиру & место для авто <script>alert(1)</script>', "Второй абзац", "с переносом"],
+  );
+  assert.equal(f.body.querySelector("script"), null);
+  assert.equal(f.form.done.has("realt.description"), true);
+  // The hidden source textarea belongs to TinyMCE and is never written.
+  assert.equal(f.document.querySelector("textarea").value, "");
+  f.window.happyDOM.abort();
+});
+test("iframe rich text falls back to insertText in the frame's own document", async () => {
+  const f = await frameFixture(tinymce(), "<p>Первый</p><p>Второй</p>");
+  const commands = [];
+  f.body.ownerDocument.execCommand = (command, ui, text) => {
+    commands.push([command, text]);
+    f.body.innerHTML = text.split("\n").filter(Boolean).map((line) => `<p>${line}</p>`).join("");
+    return true;
+  };
+  await f.form.tick();
+  assert.deepEqual(commands, [["insertText", "Первый\n\nВторой"]]);
+  assert.equal(f.form.done.has("realt.description"), true);
+  f.window.happyDOM.abort();
+});
+test("iframe rich text keeps the user's own text and skips frames it cannot edit", async () => {
+  const own = await frameFixture(tinymce("<p>Мой текст</p>"), serverHtml(description));
+  const pasted = tinymcePaste(own.body);
+  await own.form.tick();
+  assert.deepEqual(pasted, []);
+  assert.equal(own.body.textContent, "Мой текст");
+  assert.equal(own.form.done.has("realt.description"), false);
+  own.window.happyDOM.abort();
+  // No document (another origin, or not loaded yet) and a body that is not editable.
+  for (const html of [
+    '<iframe id="description.description_ifr"></iframe>',
+    '<iframe id="description.description_ifr" srcdoc="<body><p>Просмотр</p></body>"></iframe>',
+  ]) {
+    const f = await frameFixture(html, serverHtml(description));
+    await f.form.tick();
+    assert.equal(f.form.done.has("realt.description"), false, html);
+    if (f.body) assert.equal(f.body.textContent, "Просмотр");
+    f.window.happyDOM.abort();
+  }
+});
+test("rental recipes may use the iframe rich text action", () => {
+  const p = payload();
+  p.jobs[2].controls = iframeRichtext("<p>Текст</p>");
+  assert.equal(core.validate(p).jobs[2].controls[0].action, "iframe_richtext");
+  p.jobs[2].controls[0].action = "iframe_script";
+  assert.throws(() => core.validate(p), /Неизвестное правило заполнения/);
+});
 test("positive total prevents automated payment while zero does not", async () => {
   const f = await fixture("<p>К оплате: 9,9 р.</p>", []);
   assert.equal(f.window.AutopostRentalForm.paymentRequired(), true);

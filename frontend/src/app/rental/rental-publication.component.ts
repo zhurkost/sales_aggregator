@@ -5,7 +5,7 @@ import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 
 /** Версия расширения, которую требует аренда; её же предлагает ссылка на ZIP. */
-export const REQUIRED_EXTENSION_VERSION = "0.9.4";
+export const REQUIRED_EXTENSION_VERSION = "0.9.5";
 
 type Job = {
   id: string;
@@ -66,7 +66,9 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         // Older extensions would press the final button without the server check.
         ping["capabilities"].includes("rental-checked-submit") &&
         // ...or after a release replaced the rules the form was filled with.
-        ping["capabilities"].includes("rental-integration-version");
+        ping["capabilities"].includes("rental-integration-version") &&
+        // ...and older ones reject the Realt description editor (TinyMCE in an iframe).
+        ping["capabilities"].includes("rental-iframe-richtext");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)
