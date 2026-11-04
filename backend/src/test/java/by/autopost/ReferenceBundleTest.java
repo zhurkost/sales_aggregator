@@ -89,7 +89,7 @@ class ReferenceBundleTest {
             .path("platforms")
             .get(0);
     assertFalse(result.path("values").has("currency"));
-    assertFalse(result.path("dataReady").asBoolean());
+    assertFalse(result.path("checksPassed").asBoolean());
   }
 
   @Test
@@ -318,7 +318,7 @@ class ReferenceBundleTest {
   }
 
   @Test
-  void browserJobCarriesDataReadyOfItsOwnPreparation() throws Exception {
+  void browserJobCarriesChecksPassedOfItsOwnPreparation() throws Exception {
     fixture();
     var catalog = new RentalCatalog(load());
     for (var values :
@@ -337,8 +337,9 @@ class ReferenceBundleTest {
               List.of("example"));
       boolean clean = catalog.prepare(draft).path("platforms").get(0).path("issues").isEmpty();
       var job = catalog.browser(draft).path("jobs").get(0);
-      assertTrue(job.path("dataReady").isBoolean(), values.toString());
-      assertEquals(clean, job.path("dataReady").asBoolean(), values.toString());
+      assertTrue(job.path("checksPassed").isBoolean(), values.toString());
+      assertFalse(job.has("dataReady"), values.toString());
+      assertEquals(clean, job.path("checksPassed").asBoolean(), values.toString());
       assertEquals(values.has("rental.price"), clean, values.toString());
     }
   }

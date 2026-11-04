@@ -55,7 +55,7 @@ const report: Prepared[] = [
   {
     platform: "kufar",
     values: {},
-    dataReady: false,
+    checksPassed: false,
     publicationReady: false,
     issues: [
       {

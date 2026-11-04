@@ -59,7 +59,7 @@ class RentalPublicationTest {
     var draft = partial();
     var check = catalog.prepare(draft);
     assertTrue(
-        list(check.path("platforms")).stream().anyMatch(p -> !p.path("dataReady").asBoolean()));
+        list(check.path("platforms")).stream().anyMatch(p -> !p.path("checksPassed").asBoolean()));
     var launch = catalog.browser(draft);
     assertEquals(4, launch.path("jobs").size());
     for (var job : launch.path("jobs")) {
@@ -68,7 +68,7 @@ class RentalPublicationTest {
               .filter(p -> text(p, "platform").equals(text(job, "platform")))
               .findFirst()
               .orElseThrow();
-      assertEquals(prepared.path("dataReady"), job.path("dataReady"), text(job, "platform"));
+      assertEquals(prepared.path("checksPassed"), job.path("checksPassed"), text(job, "platform"));
       assertTrue(text(job, "startUrl").startsWith("https://"));
       var controls = list(job.path("controls"));
       assertTrue(controls.stream().anyMatch(c -> text(c, "action").equals("files")));

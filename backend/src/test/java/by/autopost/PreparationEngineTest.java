@@ -178,7 +178,7 @@ class PreparationEngineTest {
                 "room",
                 object("kind", "lookup", "values", List.of(object("from", "studio", "to", 0)))));
     var result = run(schema, plan, object("who", "agency", "room", "studio"), object());
-    assertTrue(result.path("dataReady").asBoolean());
+    assertTrue(result.path("checksPassed").asBoolean());
     assertTrue(result.path("values").get("role").isBoolean());
     assertEquals(0, result.path("values").path("room").asInt());
   }
@@ -200,9 +200,9 @@ class PreparationEngineTest {
             object("when", object("option_id", "role", "operator", "equals", "value", true)),
             option("registration", "text", object("required", true)));
     var schema = schema(option("role", "boolean", object()), group);
-    assertTrue(run(schema, plan(), object(), object("role", false)).path("dataReady").asBoolean());
-    assertFalse(run(schema, plan(), object(), object("role", true)).path("dataReady").asBoolean());
-    assertFalse(run(schema, plan(), object(), object()).path("dataReady").asBoolean());
+    assertTrue(run(schema, plan(), object(), object("role", false)).path("checksPassed").asBoolean());
+    assertFalse(run(schema, plan(), object(), object("role", true)).path("checksPassed").asBoolean());
+    assertFalse(run(schema, plan(), object(), object()).path("checksPassed").asBoolean());
   }
 
   @Test
@@ -239,7 +239,7 @@ class PreparationEngineTest {
         parse("[\"custom\",\"fridge\",\"washer\"]"), result.path("values").path("features"));
     assertTrue(result.path("issues").isEmpty());
     result = run(schema, plan, object("a", "forbidden"), object());
-    assertFalse(result.path("dataReady").asBoolean());
+    assertFalse(result.path("checksPassed").asBoolean());
   }
 
   @Test
@@ -274,7 +274,7 @@ class PreparationEngineTest {
             plan(row("name", "name", object("kind", "identity"))),
             object("name", "A"),
             object("name", "B"));
-    assertFalse(result.path("dataReady").asBoolean());
+    assertFalse(result.path("checksPassed").asBoolean());
     assertEquals("B", result.path("values").path("name").asText());
   }
 
@@ -301,7 +301,7 @@ class PreparationEngineTest {
             object("images", urls),
             object());
     assertEquals(array(urls), result.path("values").path("photos"));
-    assertFalse(result.path("dataReady").asBoolean());
+    assertFalse(result.path("checksPassed").asBoolean());
     assertFalse(result.path("publicationReady").asBoolean());
   }
 
@@ -402,13 +402,13 @@ class PreparationEngineTest {
         schema(option("street", "text", object()), option("house", "enum", object(), selected));
     assertFalse(
         run(schema, plan(), object(), object("street", "street-b", "house", "house-1"))
-            .path("dataReady")
+            .path("checksPassed")
             .asBoolean());
     assertFalse(
-        run(schema, plan(), object(), object("house", "house-1")).path("dataReady").asBoolean());
+        run(schema, plan(), object(), object("house", "house-1")).path("checksPassed").asBoolean());
     assertTrue(
         run(schema, plan(), object(), object("street", "street-a", "house", "house-1"))
-            .path("dataReady")
+            .path("checksPassed")
             .asBoolean());
   }
 

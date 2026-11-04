@@ -63,8 +63,9 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         Array.isArray(ping["capabilities"]) &&
         ping["capabilities"].includes("rental-publishing") &&
         ping["capabilities"].includes("rental-address-suggestions") &&
-        // Older extensions would press the final button without the server check.
-        ping["capabilities"].includes("rental-checked-submit") &&
+        // Older extensions would press the final button without the server check
+        // or wait for its former name, dataReady.
+        ping["capabilities"].includes("rental-checks-passed") &&
         // ...or after a release replaced the rules the form was filled with.
         ping["capabilities"].includes("rental-integration-version") &&
         // ...and older ones reject the Realt description editor (TinyMCE in an iframe).

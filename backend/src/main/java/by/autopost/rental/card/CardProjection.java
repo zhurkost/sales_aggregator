@@ -107,6 +107,6 @@ public final class CardProjection {
                 "legacy",
                 "message",
                 "Сверьте сохранённые сведения из прежней карточки."));
-    prepared.put("dataReady", issues.isEmpty());
+    prepared.put("checksPassed", issues.isEmpty());
   }
 }

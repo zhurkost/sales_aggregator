@@ -76,7 +76,7 @@
       <section class="results" [attr.aria-busy]="store.check.checking">
         <div class="extra-heading"><h2>Проверка карточки</h2><span role="status">{{ store.check.checking ? 'Обновляем проверку…' : store.check.stale ? 'Данные изменены — проверка неактуальна' : 'Ещё не опубликовано' }}</span></div>
         @if (store.check.error) { <p class="error-banner" role="alert">{{ store.check.error }} <button type="button" class="text-button" [disabled]="store.check.checking" (click)="store.prepare()">Повторить проверку</button></p> }
-        <div class="result-platforms">@for (result of store.results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')">{{ view.platformName(result.platform) }} · {{ store.check.stale ? 'Ожидает проверки' : result.dataReady ? 'Подготовлено' : 'Нужна проверка' }}</button> }</div>
+        <div class="result-platforms">@for (result of store.results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')">{{ view.platformName(result.platform) }} · {{ store.check.stale ? 'Ожидает проверки' : result.checksPassed ? 'Подготовлено' : 'Нужна проверка' }}</button> }</div>
         @if (view.groupedIssues.length) {
           <ul class="issues">@for (issue of view.groupedIssues; track $index) {
             <li><div><span>{{ issue.message }}</span><small>@for (p of issue.platforms; track p; let last = $last) { {{ view.platformName(p) }}{{ last ? '' : ', ' }} }</small></div>@if (view.canFocus(issue.source)) { <button type="button" class="text-button" (click)="focusField(issue.source)">Уточнить</button> }</li>

@@ -46,7 +46,7 @@
         !Object.hasOwn(starts, job.platform) ||
         starts[job.platform] !== job.startUrl ||
         job.format !== 1 ||
-        (job.dataReady !== undefined && typeof job.dataReady !== "boolean") ||
+        (job.checksPassed !== undefined && typeof job.checksPassed !== "boolean") ||
         !Array.isArray(job.controls) ||
         job.controls.length > 150 ||
         !Array.isArray(job.ready) ||
@@ -115,9 +115,9 @@
     return structuredClone(payload);
   }
   // The final click needs both the user's explicit automatic mode and a server
-  // check of this platform without issues. A missing dataReady means "not ready".
+  // check of this platform without issues. A missing checksPassed means "not passed".
   const autoSubmit = (mode, job) =>
-    mode === "automatic" && object(job) && job.dataReady === true;
+    mode === "automatic" && object(job) && job.checksPassed === true;
   root.AutopostRentalCore = Object.freeze({
     starts,
     origin,

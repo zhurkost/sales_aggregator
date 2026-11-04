@@ -46,15 +46,15 @@ test("rental launch accepts partial cards for all four sites, independent of adv
   q.jobs.push(q.jobs[0]);
   assert.throws(() => core.validate(q));
 });
-test("rental jobs accept only a boolean dataReady from the server", () => {
-  for (const dataReady of [true, false, undefined]) {
+test("rental jobs accept only a boolean checksPassed from the server", () => {
+  for (const checksPassed of [true, false, undefined]) {
     const p = payload();
-    p.jobs[0].dataReady = dataReady;
-    assert.equal(core.validate(p).jobs[0].dataReady, dataReady);
+    p.jobs[0].checksPassed = checksPassed;
+    assert.equal(core.validate(p).jobs[0].checksPassed, checksPassed);
   }
-  for (const dataReady of ["true", 1, null, {}]) {
+  for (const checksPassed of ["true", 1, null, {}]) {
     const p = payload();
-    p.jobs[0].dataReady = dataReady;
+    p.jobs[0].checksPassed = checksPassed;
     assert.throws(() => core.validate(p), /Обновите правила площадки/);
   }
 });
@@ -130,7 +130,7 @@ test("rental worker opens every selected site once and isolates profile, origin 
   const { handle, created, state, app } = worker(),
     ready = () => {
       const p = payload();
-      p.jobs.forEach((j) => (j.dataReady = true));
+      p.jobs.forEach((j) => (j.checksPassed = true));
       return p;
     };
   const run = () =>
@@ -568,30 +568,32 @@ test("positive total prevents automated payment while zero does not", async () =
 });
 test("final submission requires automatic mode and a server check without issues", async () => {
   const cases = [
-    { mode: "assist", dataReady: true, submit: false },
-    { mode: "automatic", dataReady: undefined, submit: false },
-    { mode: "automatic", dataReady: false, submit: false },
-    { mode: "automatic", dataReady: true, submit: true },
+    { mode: "assist", checks: { checksPassed: true }, submit: false },
+    { mode: "automatic", checks: {}, submit: false },
+    { mode: "automatic", checks: { checksPassed: false }, submit: false },
+    // The former name of the flag no longer allows anything.
+    { mode: "automatic", checks: { dataReady: true }, submit: false },
+    { mode: "automatic", checks: { checksPassed: true }, submit: true },
   ];
-  for (const { mode, dataReady, submit } of cases) {
+  for (const { mode, checks, submit } of cases) {
     const { handle, created, sent, app } = worker();
     const p = payload();
     p.mode = mode;
-    p.jobs = [recipe("kufar")];
-    if (dataReady !== undefined) p.jobs[0].dataReady = dataReady;
+    p.jobs = [{ ...recipe("kufar"), ...checks }];
+    const label = `${mode} / ${JSON.stringify(checks)}`;
     await handle(
       { kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true },
       app,
     );
     const sender = { url: core.starts.kufar, tab: { id: created[0].id } };
     const { task } = await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender);
-    assert.equal(task.autoSubmit, submit, `${mode} / ${dataReady}`);
+    assert.equal(task.autoSubmit, submit, label);
     assert.equal(Object.hasOwn(task, "mode"), false);
     const before = await handle(
       { kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" },
       sender,
     );
-    assert.equal(before.ok, submit, `${mode} / ${dataReady}`);
+    assert.equal(before.ok, submit, label);
     assert.equal(
       sent.some((s) => s.message.kind === "RENTAL_VERIFY"),
       submit,
@@ -605,7 +607,7 @@ test("the final click is verified against the launched revision and integration 
     const p = payload();
     p.integrationVersion = integrationVersion;
     p.jobs = [recipe("kufar")];
-    p.jobs[0].dataReady = true;
+    p.jobs[0].checksPassed = true;
     return handle(
       { kind: "RENTAL_REQUEST", type: "RENTAL_RUN", payload: p, userGesture: true },
       app,
@@ -701,7 +703,7 @@ test("rental page clicks the final button only for an allowed automatic submissi
   for (const blocked of [
     { autoSubmit: false },
     { mode: "automatic" },
-    { mode: "automatic", recipe: { ...task.recipe, dataReady: true } },
+    { mode: "automatic", recipe: { ...task.recipe, checksPassed: true } },
   ]) {
     const result = await page({ ...task, ...blocked });
     assert.equal(result.filled, "Квартира");

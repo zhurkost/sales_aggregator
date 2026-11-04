@@ -10,7 +10,7 @@ const extension = vi.fn(async () => ({
   capabilities: [
     "rental-publishing",
     "rental-address-suggestions",
-    "rental-checked-submit",
+    "rental-checks-passed",
     "rental-integration-version",
     "rental-iframe-richtext",
   ],
@@ -90,6 +90,29 @@ describe("publication of incomplete rental cards", () => {
     expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
     c.ngOnDestroy(); c.store.destroy();
   });
+  it("does not launch with an extension that still waits for dataReady before the final click", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.workspaceId = "owner";
+    c.draftId = c.store.id;
+    c.store.draft.platforms = ["kufar"];
+    extension.mockResolvedValueOnce({
+      capabilities: [
+        "rental-publishing",
+        "rental-address-suggestions",
+        "rental-checked-submit",
+        "rental-integration-version",
+        "rental-iframe-richtext",
+      ],
+      jobs: [],
+    });
+    await c.ngOnChanges();
+    expect(c.ready).toBe(false);
+    await c.publish();
+    expect(c.error).toContain(REQUIRED_EXTENSION_VERSION);
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    c.ngOnDestroy(); c.store.destroy();
+  });
   it("offers the download of the required extension version when it is missing", async () => {
     TestBed.configureTestingModule({
       providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
@@ -159,7 +182,7 @@ describe("publication of incomplete rental cards", () => {
       {
         platform: "kufar",
         values: {},
-        dataReady: false,
+        checksPassed: false,
         publicationReady: false,
         issues: [
           { code: "required", field: "phone", message: "Добавьте телефон" },

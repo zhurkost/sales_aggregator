@@ -91,7 +91,8 @@ public final class PreparationEngine {
         values,
         "issues",
         issues,
-        "dataReady",
+        // No issues on this platform: the only case the extension may press its final button.
+        "checksPassed",
         issues.isEmpty(),
         "publicationReady",
         false,

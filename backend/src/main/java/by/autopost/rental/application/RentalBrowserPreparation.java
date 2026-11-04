@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Compiles filled native values and verified selectors. Issues never block a launch; each job's
- * dataReady (no issues for that platform) only decides whether the extension may submit itself.
+ * checksPassed (no issues for that platform) only decides whether the extension may submit itself.
  */
 final class RentalBrowserPreparation {
   ObjectNode compile(ReferenceSnapshot snapshot, JsonNode prepared, JsonNode draft) {
@@ -65,7 +65,7 @@ final class RentalBrowserPreparation {
               });
       recipe.set("controls", controls);
       recipe.set("unbound", unsupported);
-      recipe.put("dataReady", result.path("dataReady").asBoolean());
+      recipe.put("checksPassed", result.path("checksPassed").asBoolean());
       jobs.add(recipe);
     }
     return object(

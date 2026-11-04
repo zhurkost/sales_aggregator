@@ -252,7 +252,7 @@ class RentalCardTest {
     assertEquals(migrated, migration().normalize(migrated));
     var output = c.prepare(migrated).path("platforms").get(0);
     assertFalse(output.path("values").has("address"));
-    assertFalse(output.path("dataReady").asBoolean());
+    assertFalse(output.path("checksPassed").asBoolean());
     assertEquals("Old native address", old.path("extras").path("one").path("address").asText());
   }
 
@@ -449,12 +449,12 @@ class RentalCardTest {
 
   @Test
   void canonicalFloorCheckDoesNotDependOnSelectedMarketplace() {
-    ObjectNode prepared = object("issues", array(), "dataReady", true);
+    ObjectNode prepared = object("issues", array(), "checksPassed", true);
     CardProjection.annotate(
         prepared,
         object("platform", "example"),
         object("values", object("rental.floor", "9", "building.total_floors", "5")));
-    assertFalse(prepared.path("dataReady").asBoolean());
+    assertFalse(prepared.path("checksPassed").asBoolean());
     assertEquals("rental.floor", prepared.path("issues").get(0).path("source").asText());
   }
 }

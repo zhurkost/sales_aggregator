@@ -87,6 +87,7 @@ export interface Prepared {
   platform: string;
   values: Record<string, JsonValue>;
   issues: { field: string; source?: string; code: string; message: string }[];
-  dataReady: boolean;
+  /** No issues on this platform; only then may an automatic launch press the final button. */
+  checksPassed: boolean;
   publicationReady: boolean;
 }
