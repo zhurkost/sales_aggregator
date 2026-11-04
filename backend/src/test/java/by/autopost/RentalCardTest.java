@@ -62,7 +62,9 @@ class RentalCardTest {
               "schema",
               p + "/apartments_long_term_rent_" + p + ".json",
               "plan",
-              "runtime/preparation_" + p + ".json"));
+              "runtime/preparation_" + p + ".json",
+              "browser",
+              "runtime/browser_" + p + ".json"));
       JsonNode schema =
           array(
               List.of(
@@ -122,6 +124,25 @@ class RentalCardTest {
                       "conversion",
                       object(
                           "kind", "lookup", "values", List.of(object("from", "two", "to", 2)))))));
+      write(
+          "runtime/browser_" + p + ".json",
+          object(
+              "format",
+              1,
+              "platform",
+              p,
+              "startUrl",
+              "https://" + p + ".example/new",
+              "ready",
+              List.of(object("selector", "form")),
+              "controls",
+              List.of(object("field", "rooms", "action", "choices", "selector", "[name=rooms]")),
+              "setup",
+              List.of(),
+              "next",
+              List.of(),
+              "submit",
+              List.of()));
     }
     write(
         "runtime/card.json",

@@ -201,39 +201,9 @@ class ReferenceBundleTest {
     }
   }
 
-  /** Adds a browser recipe for the example platform to the fixture bundle. */
-  void withBrowserRecipe() throws Exception {
-    var manifest = (ObjectNode) read("manifest.json");
-    ((ObjectNode) manifest.path("platforms").path("example"))
-        .put("browser", "example.browser.json");
-    write("manifest.json", manifest);
-    write(
-        "example.browser.json",
-        object(
-            "format",
-            1,
-            "platform",
-            "example",
-            "startUrl",
-            "https://form.example/new",
-            "ready",
-            List.of(object("selector", "form")),
-            "controls",
-            List.of(
-                object("field", "rent", "action", "text", "selector", "input[name=rent]"),
-                object("field", "currency", "action", "select", "selector", "select")),
-            "setup",
-            List.of(),
-            "next",
-            List.of(),
-            "submit",
-            List.of()));
-  }
-
   @Test
   void recipePlanAndSchemaEditsChangeOnlyTheIntegrationVersion() throws Exception {
     fixture();
-    withBrowserRecipe();
     var before = new FileReferenceRepository(dir.toString()).snapshot();
     Map<String, java.util.function.Consumer<Map<String, JsonNode>>> integration =
         Map.of(
@@ -272,7 +242,6 @@ class ReferenceBundleTest {
   @Test
   void openCardKeepsSavingCheckingAndLaunchingAfterASelectorFix() throws Exception {
     fixture();
-    withBrowserRecipe();
     var drafts =
         new RentalDraftService(
             new JdbcRentalDraftRepository(
@@ -351,7 +320,6 @@ class ReferenceBundleTest {
   @Test
   void browserJobCarriesDataReadyOfItsOwnPreparation() throws Exception {
     fixture();
-    withBrowserRecipe();
     var catalog = new RentalCatalog(load());
     for (var values :
         List.of(
@@ -490,6 +458,17 @@ class ReferenceBundleTest {
     write("manifest.json", manifest);
     var error = broken();
     assertTrue(error.getMessage().contains("неизвестный ключ binding"), error.getMessage());
+  }
+
+  @Test
+  void everyPlatformNeedsABrowserRecipe() throws Exception {
+    fixture();
+    var manifest = (ObjectNode) read("manifest.json");
+    ((ObjectNode) manifest.path("platforms").path("example")).remove("browser");
+    write("manifest.json", manifest);
+    var error = broken();
+    assertTrue(
+        error.getMessage().contains("не указан путь browser площадки example"), error.getMessage());
   }
 
   @Test

@@ -66,12 +66,10 @@ public class FileReferenceRepository implements ReferenceRepository {
           planFile, () -> ReferenceValidator.plan(category, canonical, id, schema, graph, plan));
       schemas.put(id, schema);
       plans.put(id, plan);
-      if (entry.has("browser")) {
-        String browserFile = text(entry, "browser");
-        JsonNode browser = files.read(browserFile);
-        files.check(browserFile, () -> new BrowserRecipeValidator().validate(id, schema, browser));
-        browsers.put(id, browser);
-      }
+      String browserFile = text(entry, "browser");
+      JsonNode browser = files.read(browserFile);
+      files.check(browserFile, () -> new BrowserRecipeValidator().validate(id, schema, browser));
+      browsers.put(id, browser);
     }
     String cardVersion = Hashing.sha256(object("common", common, "card", card).toString());
     String integrationVersion =
@@ -107,10 +105,10 @@ public class FileReferenceRepository implements ReferenceRepository {
               String id = platform.getKey();
               check(id.matches("[a-z][a-z0-9_]{0,39}"), "некорректный идентификатор площадки " + id);
               ReferenceValidator.keys(platform.getValue(), "manifest: площадка " + id, PLATFORM);
+              // A plan without a form recipe would transfer nothing: every platform has both.
               for (String key : PLATFORM)
                 check(
-                    !text(platform.getValue(), key).isBlank()
-                        || key.equals("browser") && !platform.getValue().has(key),
+                    !text(platform.getValue(), key).isBlank(),
                     "в manifest не указан путь " + key + " площадки " + id);
             });
   }

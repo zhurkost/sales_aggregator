@@ -1,0 +1,25 @@
+{
+  "format": 1,
+  "platform": "example",
+  "startUrl": "https://form.example/new",
+  "ready": [
+    {
+      "selector": "form"
+    }
+  ],
+  "controls": [
+    {
+      "field": "rent",
+      "action": "text",
+      "selector": "input[name=rent]"
+    },
+    {
+      "field": "currency",
+      "action": "select",
+      "selector": "select"
+    }
+  ],
+  "setup": [],
+  "next": [],
+  "submit": []
+}
