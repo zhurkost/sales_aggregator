@@ -347,7 +347,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async logout() {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.flush();
+      if (this.rentalEditor) await this.rentalEditor.store.flush();
       if (this.ext) await extension("PAUSE", { profileId: this.profile!.id });
       if (this.dirty) await this.persist();
       await api("workspace/logout", {});
@@ -450,7 +450,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async navigate(view: string) {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.flush();
+      if (this.rentalEditor) await this.rentalEditor.store.flush();
       if (this.dirty) await this.persist();
       this.view = view;
       if (["cabinet", "queue", "edit-many"].includes(view))
@@ -461,7 +461,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async fresh() {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.flush();
+      if (this.rentalEditor) await this.rentalEditor.store.flush();
       if (this.dirty) await this.persist();
       this.resetEditor(
         newRecord(withSellerContacts({ ...emptyListing }, this.settings)),
@@ -1152,7 +1152,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async switchWorkspace(workspaceId: string) {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.flush();
+      if (this.rentalEditor) await this.rentalEditor.store.flush();
       if (this.dirty) await this.persist();
       if (this.ext) await extension("PAUSE", { profileId: this.profile!.id });
       await api("workspace/team", { action: "switch", workspaceId });

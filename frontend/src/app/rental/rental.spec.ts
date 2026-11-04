@@ -16,26 +16,26 @@ describe("rental preparation editor", () => {
     const c = new RentalEditorComponent();
     let resolve!: (r: Response) => void;
     vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
-    const opening = c.open("another");
+    const opening = c.store.open("another");
     await vi.waitFor(() => expect(resolve).toBeDefined());
     const field = {id:"listing.title", type:"text", name:"Title", description:"", options:[], fill_rule:{}};
     c.setValue(field, "Must not accept locked input");
-    expect(c.draft.values[field.id]).toBeUndefined();
-    c.draft.values[field.id] = "Unexpected asynchronous edit";
-    c.changed();
+    expect(c.store.draft.values[field.id]).toBeUndefined();
+    c.store.draft.values[field.id] = "Unexpected asynchronous edit";
+    c.store.changed();
     resolve(response({id:"another", revision:1, draft:{schemaVersion:"1",values:{},extras:{},platforms:[],address:null}}));
     await opening;
-    expect(c.id).not.toBe("another");
-    expect(c.draft.values[field.id]).toBe("Unexpected asynchronous edit");
-    expect(c.dirty).toBe(true);
+    expect(c.store.id).not.toBe("another");
+    expect(c.store.draft.values[field.id]).toBe("Unexpected asynchronous edit");
+    expect(c.store.dirty).toBe(true);
     c.ngOnDestroy();
   });
   it("editing nearby landmarks never clears the apartment address", () => {
     const c = new RentalEditorComponent();
-    c.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
+    c.store.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
     for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
       c.setValue({id, name:id, type:"text", options:[], fill_rule:{}, description:""}, "Example");
-    expect(c.draft.address.settlement).toBe("Минск");
+    expect(c.store.draft.address.settlement).toBe("Минск");
     c.ngOnDestroy();
   });
   it("clearing a manual address updates the visible input too", () => {
@@ -59,27 +59,27 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
+    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
       platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress","coordinates"]}}};
-    c.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
-    c.draft.values["location.metro"] = "Old metro";
-    c.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
+    c.store.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
+    c.store.draft.values["location.metro"] = "Old metro";
+    c.store.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
     c.addressChanged({provider:"dadata",label:"New",countryIso:"BY",settlement:"New",street:"New",house:"2",confirmed:true});
-    expect(c.draft.extras.example).toEqual({other:"Keep"});
-    expect(c.draft.values["location.metro"]).toBeUndefined();
+    expect(c.store.draft.extras.example).toEqual({other:"Keep"});
+    expect(c.store.draft.values["location.metro"]).toBeUndefined();
     c.ngOnDestroy();
   });
   it("recovers revision conflicts by saving a separate card without overwriting the original", async () => {
     const c = new RentalEditorComponent();
-    const original = c.id; c.revision = 7; c.dirty = true;
-    c.draft.values["listing.title"] = "Keep my edits";
+    const original = c.store.id; c.store.revision = 7; c.store.dirty = true;
+    c.store.draft.values["listing.title"] = "Keep my edits";
     const calls: {url:string, body:any}[] = [];
     vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
       calls.push({url,body:init?.body ? JSON.parse(String(init.body)) : null});
       return response(url.endsWith("/drafts") ? {drafts:[]} : {revision:1});
     }));
-    await c.saveCopy();
-    expect(c.id).not.toBe(original);
+    await c.store.saveCopy();
+    expect(c.store.id).not.toBe(original);
     expect(calls[0].body.revision).toBe(0);
     expect(calls[0].body.draft.values["listing.title"]).toBe("Keep my edits");
     expect(calls.some(call => call.url.endsWith(original))).toBe(false);
@@ -96,18 +96,18 @@ describe("rental preparation editor", () => {
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
     await vi.waitFor(() => {fixture.detectChanges(); expect(fixture.nativeElement.textContent).toContain("Пятая площадка");});
     const c = fixture.componentInstance;
-    expect(c.draft.platforms).toHaveLength(5);
+    expect(c.store.draft.platforms).toHaveLength(5);
     c.setValue(field,"42,5"); c.togglePlatform("fifth",false); fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[id="rental-rental.test"]')).toBeNull();
     c.togglePlatform("fifth",true); fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]')).toHaveLength(1);
-    expect(c.draft.values[field.id]).toBe("42,5"); fixture.destroy();
+    expect(c.store.draft.values[field.id]).toBe("42,5"); fixture.destroy();
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
-    c.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
-    c.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
-    expect(c.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
+    c.store.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
+    c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
+    expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
   });
   it("renders delete confirmation, supports cancellation and updates the saved list", async () => {
@@ -129,7 +129,7 @@ describe("rental preparation editor", () => {
       fixture.detectChanges();
       await vi.waitFor(() => {
         fixture.detectChanges();
-        expect(fixture.componentInstance.schema).not.toBeNull();
+        expect(fixture.componentInstance.store.schema).not.toBeNull();
         fixture.componentInstance.openPanel("saved");
         fixture.detectChanges();
         expect(element.querySelector(".saved-row .delete-item")).not.toBeNull();
@@ -157,18 +157,18 @@ describe("rental preparation editor", () => {
     const c = new RentalEditorComponent();
     const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
-    await c.remove(c.id);
+    await c.store.remove(c.store.id);
     expect(fetch).not.toHaveBeenCalled();
-    expect(c.busy).toBe(false);
+    expect(c.store.busy).toBe(false);
     c.ngOnDestroy();
   });
   it("waits for an in-flight save and never recreates the deleted active card", async () => {
     vi.useFakeTimers();
     const c = new RentalEditorComponent();
     c.workspaceId = "owner";
-    const id = c.id;
-    c.revision = 1;
-    c.drafts = [{ id, title: "Apartment", address: "", revision: 1 }];
+    const id = c.store.id;
+    c.store.revision = 1;
+    c.store.drafts = [{ id, title: "Apartment", address: "", revision: 1 }];
     let finish!: (response: Response) => void;
     const calls: { url: string; body: any }[] = [];
     vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
@@ -177,66 +177,66 @@ describe("rental preparation editor", () => {
       if (url.endsWith("/drafts")) return response({ drafts: [{ id, title: "Apartment", address: "", revision: 2 }] });
       return new Promise<Response>((resolve) => { finish = resolve; });
     }));
-    c.changed();
-    const saving = c.save();
+    c.store.changed();
+    const saving = c.store.save();
     await Promise.resolve();
     await Promise.resolve();
-    c.changed();
-    const queuedSave = c.save();
-    c.pendingDelete = id;
-    const deleting = c.remove(id);
+    c.store.changed();
+    const queuedSave = c.store.save();
+    c.store.pendingDelete = id;
+    const deleting = c.store.remove(id);
     expect(calls.some((call) => call.url.endsWith("/delete"))).toBe(false);
     finish(response({ revision: 2 }));
     await Promise.all([saving, queuedSave, deleting]);
     await vi.advanceTimersByTimeAsync(2000);
     expect(calls.filter((call) => call.body?.draft)).toHaveLength(1);
     expect(calls.find((call) => call.url.endsWith("/delete"))?.body).toEqual({ revision: 2 });
-    expect(c.drafts).toEqual([]);
-    expect(c.id).not.toBe(id);
-    expect(c.revision).toBe(0);
-    expect(c.draft.values).toEqual({});
-    expect(c.dirty).toBe(false);
-    expect(c.status).toBe("Квартира удалена");
+    expect(c.store.drafts).toEqual([]);
+    expect(c.store.id).not.toBe(id);
+    expect(c.store.revision).toBe(0);
+    expect(c.store.draft.values).toEqual({});
+    expect(c.store.dirty).toBe(false);
+    expect(c.store.status).toBe("Квартира удалена");
     c.ngOnDestroy();
   });
   it("keeps another open apartment intact when removing an item from the list", async () => {
     const c = new RentalEditorComponent();
-    const current = c.id;
-    c.draft.values["listing.title"] = "Keep edits";
-    c.dirty = true;
-    c.drafts = [{ id: "other", title: "Other", address: "", revision: 4 }];
-    c.pendingDelete = "other";
+    const current = c.store.id;
+    c.store.draft.values["listing.title"] = "Keep edits";
+    c.store.dirty = true;
+    c.store.drafts = [{ id: "other", title: "Other", address: "", revision: 4 }];
+    c.store.pendingDelete = "other";
     vi.stubGlobal("fetch", vi.fn(async () => response({ deleted: true })));
-    await c.remove("other");
-    expect(c.drafts).toEqual([]);
-    expect(c.id).toBe(current);
-    expect(c.draft.values["listing.title"]).toBe("Keep edits");
-    expect(c.dirty).toBe(true);
+    await c.store.remove("other");
+    expect(c.store.drafts).toEqual([]);
+    expect(c.store.id).toBe(current);
+    expect(c.store.draft.values["listing.title"]).toBe("Keep edits");
+    expect(c.store.dirty).toBe(true);
     c.ngOnDestroy();
   });
   it("preserves the card and unsaved edits if deletion fails or conflicts", async () => {
     const c = new RentalEditorComponent();
-    const id = c.id;
-    c.revision = 3;
-    c.draft.values["listing.title"] = "Keep";
-    c.dirty = true;
-    c.drafts = [{ id, title: "Keep", address: "", revision: 3 }];
-    c.pendingDelete = id;
+    const id = c.store.id;
+    c.store.revision = 3;
+    c.store.draft.values["listing.title"] = "Keep";
+    c.store.dirty = true;
+    c.store.drafts = [{ id, title: "Keep", address: "", revision: 3 }];
+    c.store.pendingDelete = id;
     vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: "Карточка изменена" }), { status: 409 })));
-    await c.remove(id);
-    expect(c.error).toBe("Карточка изменена");
-    expect(c.id).toBe(id);
-    expect(c.drafts).toHaveLength(1);
-    expect(c.draft.values["listing.title"]).toBe("Keep");
-    expect(c.dirty).toBe(true);
-    expect(c.busy).toBe(false);
-    expect(c.deletingId).toBeNull();
+    await c.store.remove(id);
+    expect(c.store.error).toBe("Карточка изменена");
+    expect(c.store.id).toBe(id);
+    expect(c.store.drafts).toHaveLength(1);
+    expect(c.store.draft.values["listing.title"]).toBe("Keep");
+    expect(c.store.dirty).toBe(true);
+    expect(c.store.busy).toBe(false);
+    expect(c.store.deletingId).toBeNull();
     c.ngOnDestroy();
   });
   it("flushes edits made during an in-flight save before leaving", async () => {
     const c = new RentalEditorComponent();
     c.workspaceId = "a";
-    c.changed();
+    c.store.changed();
     let writes = 0;
     vi.stubGlobal(
       "fetch",
@@ -244,15 +244,15 @@ describe("rental preparation editor", () => {
         if (url.endsWith("/drafts")) return response({ drafts: [] });
         writes++;
         if (writes === 1) {
-          c.draft.values["listing.title"] = "Latest";
-          c.changed();
+          c.store.draft.values["listing.title"] = "Latest";
+          c.store.changed();
         }
         return response({ revision: writes });
       }),
     );
-    await c.flush();
+    await c.store.flush();
     expect(writes).toBe(2);
-    expect(c.dirty).toBe(false);
+    expect(c.store.dirty).toBe(false);
     c.ngOnDestroy();
   });
   it("keeps the new query when clearing a previous address and resets on another draft", () => {
@@ -295,7 +295,7 @@ describe("rental preparation editor", () => {
   });
   it("shows only the address fields for the chosen region", () => {
     const c = new RentalEditorComponent();
-    c.schema = {
+    c.store.schema = {
       category: { options: [] },
       canonicalValues: {},
       version: "1",
@@ -329,10 +329,10 @@ describe("rental preparation editor", () => {
         },
       },
     };
-    expect(c.availableExtras("example")).toHaveLength(0);
-    expect(c.waitingExtras("example")).toBe(true);
-    c.draft.extras["example"] = { region: "b" };
-    expect(c.availableExtras("example").map((f) => f.id)).toEqual(["area-b"]);
+    expect(c.view.availableExtras("example")).toHaveLength(0);
+    expect(c.view.waitingExtras("example")).toBe(true);
+    c.store.draft.extras["example"] = { region: "b" };
+    expect(c.view.availableExtras("example").map((f) => f.id)).toEqual(["area-b"]);
     c.ngOnDestroy();
   });
   it("ignores a stale address response after the query changes", async () => {
@@ -388,7 +388,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates coordinates when the confirmed address changes", () => {
     const c = new RentalEditorComponent();
-    c.draft.address = {
+    c.store.draft.address = {
       provider: "dadata",
       label: "Old",
       countryIso: "BY",
@@ -397,10 +397,10 @@ describe("rental preparation editor", () => {
       house: "1",
       confirmed: true,
     };
-    c.draft.values["location.latitude"] = "53.9";
+    c.store.draft.values["location.latitude"] = "53.9";
     c.addressChanged(null);
-    expect(c.draft.values["location.latitude"]).toBeUndefined();
-    expect(c.draft.address).toBeNull();
+    expect(c.store.draft.values["location.latitude"]).toBeUndefined();
+    expect(c.store.draft.address).toBeNull();
     c.ngOnDestroy();
   });
   it("keeps typed numeric text exact until server conversion", () => {
@@ -414,13 +414,13 @@ describe("rental preparation editor", () => {
       options: [],
     };
     c.setExtra("example", field, "1,123456789012345678");
-    expect(c.extra("example", "amount")).toBe("1,123456789012345678");
+    expect(c.view.extra("example", "amount")).toBe("1,123456789012345678");
     c.ngOnDestroy();
   });
   it("does not lose edits made during a save and pins workspace", async () => {
     const c = new RentalEditorComponent();
     c.workspaceId = "original";
-    c.changed();
+    c.store.changed();
     let finish!: (r: Response) => void;
     const fetch = vi.fn((url: string, init?: RequestInit) =>
       url.endsWith("/drafts")
@@ -428,15 +428,15 @@ describe("rental preparation editor", () => {
         : new Promise<Response>((r) => (finish = r)),
     );
     vi.stubGlobal("fetch", fetch);
-    const save = c.save();
+    const save = c.store.save();
     await Promise.resolve();
     await Promise.resolve();
-    c.draft.values["listing.title"] = "New";
-    c.changed();
+    c.store.draft.values["listing.title"] = "New";
+    c.store.changed();
     finish(response({ revision: 1 }));
     await save;
-    expect(c.dirty).toBe(true);
-    expect(c.revision).toBe(1);
+    expect(c.store.dirty).toBe(true);
+    expect(c.store.revision).toBe(1);
     expect(
       (fetch.mock.calls[0][1]?.headers as Record<string, string>)[
         "X-Autopost-Workspace"
@@ -447,8 +447,8 @@ describe("rental preparation editor", () => {
   it("keeps conflicting edits instead of resetting the form", async () => {
     const c = new RentalEditorComponent();
     c.workspaceId = "a";
-    c.draft.values["listing.title"] = "Keep";
-    c.changed();
+    c.store.draft.values["listing.title"] = "Keep";
+    c.store.changed();
     vi.stubGlobal(
       "fetch",
       vi.fn(
@@ -456,9 +456,9 @@ describe("rental preparation editor", () => {
           new Response(JSON.stringify({ error: "Конфликт" }), { status: 409 }),
       ),
     );
-    await expect(c.save()).rejects.toThrow("Конфликт");
-    expect(c.dirty).toBe(true);
-    expect(c.draft.values["listing.title"]).toBe("Keep");
+    await expect(c.store.save()).rejects.toThrow("Конфликт");
+    expect(c.store.dirty).toBe(true);
+    expect(c.store.draft.values["listing.title"]).toBe("Keep");
     c.ngOnDestroy();
   });
   describe("nearby facts follow the confirmed house", () => {
@@ -468,48 +468,48 @@ describe("rental preparation editor", () => {
     const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
     function editor() {
       const c = new RentalEditorComponent();
-      c.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, version:"2", addressSuggestions:true,
+      c.store.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, version:"2", addressSuggestions:true,
         category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
           {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
           {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},
         platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress"]}}};
-      c.draft.address = house(18);
-      c.draft.values = {[facts[0]]:"Немига", [facts[1]]:"Новая Боровая", "location.latitude":"53.9"};
-      c.draft.aiEvidence = {[facts[0]]:"рядом метро Немига"};
-      c.draft.extras.example = {nativeAddress:"Брикета 18"};
+      c.store.draft.address = house(18);
+      c.store.draft.values = {[facts[0]]:"Немига", [facts[1]]:"Новая Боровая", "location.latitude":"53.9"};
+      c.store.draft.aiEvidence = {[facts[0]]:"рядом метро Немига"};
+      c.store.draft.extras.example = {nativeAddress:"Брикета 18"};
       return c;
     }
     it("typing in the search and editing parts keep nearby facts but drop coordinates", () => {
       const c = editor();
       for (const text of ["М", "Минск, Брик", "Минск, Брикета 1"]) c.addressChanged(typed(text));
       c.addressChanged({...house(19), provider:"manual", confirmed:false});
-      expect(c.draft.values[facts[0]]).toBe("Немига");
-      expect(c.draft.values[facts[1]]).toBe("Новая Боровая");
-      expect(c.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
-      expect(c.draft.values["location.latitude"]).toBeUndefined();
-      expect(c.draft.extras.example).toEqual({});
+      expect(c.store.draft.values[facts[0]]).toBe("Немига");
+      expect(c.store.draft.values[facts[1]]).toBe("Новая Боровая");
+      expect(c.store.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
+      expect(c.store.draft.values["location.latitude"]).toBeUndefined();
+      expect(c.store.draft.extras.example).toEqual({});
       expect(c.resetFacts).toBeNull();
       c.addressChanged(house(18));
-      expect(c.draft.values[facts[0]]).toBe("Немига");
+      expect(c.store.draft.values[facts[0]]).toBe("Немига");
       c.ngOnDestroy();
     });
     it("another confirmed house resets them once and Вернуть restores them", () => {
       const c = editor();
       c.addressChanged(typed("Минск, Брикета 2"));
       c.addressChanged(house(20));
-      expect(c.draft.values[facts[0]]).toBeUndefined();
-      expect(c.draft.values[facts[1]]).toBeUndefined();
+      expect(c.store.draft.values[facts[0]]).toBeUndefined();
+      expect(c.store.draft.values[facts[1]]).toBeUndefined();
       expect(c.resetFacts?.names).toEqual(["Метро", "Жилой комплекс"]);
-      c.dirty = false;
+      c.store.dirty = false;
       c.restoreFacts();
-      expect(c.draft.values[facts[0]]).toBe("Немига");
-      expect(c.draft.values[facts[1]]).toBe("Новая Боровая");
-      expect(c.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
-      expect(c.draft.address?.house).toBe("20");
+      expect(c.store.draft.values[facts[0]]).toBe("Немига");
+      expect(c.store.draft.values[facts[1]]).toBe("Новая Боровая");
+      expect(c.store.draft.aiEvidence?.[facts[0]]).toBe("рядом метро Немига");
+      expect(c.store.draft.address?.house).toBe("20");
       expect(c.resetFacts).toBeNull();
-      expect(c.dirty).toBe(true);
+      expect(c.store.dirty).toBe(true);
       c.addressChanged(house(20));
-      expect(c.draft.values[facts[0]]).toBe("Немига");
+      expect(c.store.draft.values[facts[0]]).toBe("Немига");
       c.ngOnDestroy();
     });
     it("the restore offer lasts until the next address change", () => {
@@ -519,14 +519,14 @@ describe("rental preparation editor", () => {
       c.addressChanged(typed("Минск"));
       expect(c.resetFacts).toBeNull();
       c.restoreFacts();
-      expect(c.draft.values[facts[0]]).toBeUndefined();
+      expect(c.store.draft.values[facts[0]]).toBeUndefined();
       c.ngOnDestroy();
     });
     it("clearing the address resets them", () => {
       for (const empty of [null, typed("")]) {
         const c = editor();
         c.addressChanged(empty);
-        expect(c.draft.values[facts[0]]).toBeUndefined();
+        expect(c.store.draft.values[facts[0]]).toBeUndefined();
         expect(c.resetFacts?.names).toEqual(["Метро", "Жилой комплекс"]);
         c.ngOnDestroy();
       }
@@ -534,14 +534,14 @@ describe("rental preparation editor", () => {
     it("shows what was reset with a Вернуть button", async () => {
       const prepared = editor();
       prepared.ngOnDestroy();
-      vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? prepared.schema : {drafts: []})));
+      vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? prepared.store.schema : {drafts: []})));
       const fixture = TestBed.createComponent(RentalEditorComponent);
       fixture.componentRef.setInput("workspaceId", "owner");
       fixture.detectChanges();
       const c = fixture.componentInstance;
-      await vi.waitFor(() => expect(c.schema?.version).toBe("2"));
-      c.draft.address = prepared.draft.address;
-      Object.assign(c.draft.values, prepared.draft.values);
+      await vi.waitFor(() => expect(c.store.schema?.version).toBe("2"));
+      c.store.draft.address = prepared.store.draft.address;
+      Object.assign(c.store.draft.values, prepared.store.draft.values);
       c.addressChanged(house(20));
       fixture.detectChanges();
       const el = fixture.nativeElement as HTMLElement;
@@ -550,7 +550,7 @@ describe("rental preparation editor", () => {
       restore.click();
       fixture.detectChanges();
       expect(el.querySelector(".reset-facts")).toBeNull();
-      expect(c.draft.values[facts[0]]).toBe("Немига");
+      expect(c.store.draft.values[facts[0]]).toBe("Немига");
       fixture.destroy();
     });
   });

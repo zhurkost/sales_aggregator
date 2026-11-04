@@ -100,9 +100,9 @@ describe("rental editing and validation", () => {
     try {
       await vi.waitFor(() => {
         fixture.detectChanges();
-        expect(c.schema).not.toBeNull();
+        expect(c.store.schema).not.toBeNull();
       });
-      await c.prepare();
+      await c.store.prepare();
       fixture.detectChanges();
       fetch.mockClear();
       vi.useFakeTimers();
@@ -141,7 +141,7 @@ describe("rental editing and validation", () => {
       expect(el.querySelector(".results")).toBe(panel);
       expect(document.activeElement).toBe(input);
       expect(c.store.check.stale).toBe(false);
-      expect(c.status).toBe("Сохранено");
+      expect(c.store.status).toBe("Сохранено");
       expect(input.disabled).toBe(false);
     } finally {
       fixture.destroy();
@@ -167,12 +167,12 @@ describe("rental editing and validation", () => {
     const c = fixture.componentInstance,
       el = fixture.nativeElement as HTMLElement;
     try {
-      await vi.waitFor(() => expect(c.drafts).toEqual([other]));
+      await vi.waitFor(() => expect(c.store.drafts).toEqual([other]));
       fetch.mockClear();
       vi.useFakeTimers();
       for (const title of ["Квартира", "Квартира у метро", "Квартира у метро Немига"]) {
-        c.draft.values["listing.title"] = title;
-        c.changed();
+        c.store.draft.values["listing.title"] = title;
+        c.store.changed();
         await vi.advanceTimersByTimeAsync(1300);
       }
       c.addressChanged({
@@ -187,10 +187,10 @@ describe("rental editing and validation", () => {
       await vi.advanceTimersByTimeAsync(1300);
       expect(
         fetch.mock.calls.map(([url, init]) => `${init?.method} ${url}`),
-      ).toEqual(Array(4).fill(`POST /api/workspace/rental/drafts/${c.id}`));
-      expect(c.drafts).toEqual([
+      ).toEqual(Array(4).fill(`POST /api/workspace/rental/drafts/${c.store.id}`));
+      expect(c.store.drafts).toEqual([
         {
-          id: c.id,
+          id: c.store.id,
           revision: 4,
           title: "Квартира у метро Немига",
           address: "Минск, Брикета 18",
@@ -248,18 +248,18 @@ describe("rental editing and validation", () => {
   it("retains the report on validation failure and retries without blocking input", async () => {
     mockApi();
     const c = new RentalEditorComponent();
-    await c.prepare();
+    await c.store.prepare();
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => response({ error: "Временно недоступно" }, 503)),
     );
     await c.store.check.refresh();
-    expect(c.results).toEqual(report);
+    expect(c.store.results).toEqual(report);
     expect(c.store.check.stale).toBe(true);
     expect(c.store.check.error).toBe("Временно недоступно");
-    expect(c.busy).toBe(false);
+    expect(c.store.busy).toBe(false);
     mockApi();
-    await c.prepare();
+    await c.store.prepare();
     expect(c.store.check.stale).toBe(false);
     expect(c.store.check.error).toBe("");
     c.ngOnDestroy();
@@ -268,7 +268,7 @@ describe("rental editing and validation", () => {
   it("keeps validation separate from a failed save", async () => {
     vi.useFakeTimers();
     const c = new RentalEditorComponent();
-    c.changed();
+    c.store.changed();
     vi.stubGlobal(
       "fetch",
       vi.fn(async (url: string) =>
@@ -277,10 +277,10 @@ describe("rental editing and validation", () => {
           : response({ error: "Не удалось сохранить" }, 503),
       ),
     );
-    await c.prepare();
-    expect(c.results).toEqual(report);
-    expect(c.error).toBe("Не удалось сохранить");
-    expect(c.dirty).toBe(true);
+    await c.store.prepare();
+    expect(c.store.results).toEqual(report);
+    expect(c.store.error).toBe("Не удалось сохранить");
+    expect(c.store.dirty).toBe(true);
     expect(c.store.check.stale).toBe(false);
     c.ngOnDestroy();
   });
@@ -494,9 +494,9 @@ describe("rental revision conflicts", () => {
       button = (selector: string) =>
         el.querySelector<HTMLButtonElement>(selector)!;
     try {
-      await vi.waitFor(() => expect(c.schema).not.toBeNull());
-      id = c.id;
-      c.revision = 4;
+      await vi.waitFor(() => expect(c.store.schema).not.toBeNull());
+      id = c.store.id;
+      c.store.revision = 4;
       vi.useFakeTimers();
       c.setDescription("Моя локальная правка");
       await vi.advanceTimersByTimeAsync(1300);
@@ -513,8 +513,8 @@ describe("rental revision conflicts", () => {
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();
       expect(c.store.conflict).toBe(false);
-      expect(c.dirty).toBe(false);
-      expect(c.revision).toBe(5);
+      expect(c.store.dirty).toBe(false);
+      expect(c.store.revision).toBe(5);
       expect(c.description).toBe("Сохранённая версия");
       expect(el.querySelector(".conflict")).toBeNull();
       calls.length = 0;
