@@ -620,7 +620,7 @@ test("Kufar recipe marks its chips with the class proven by its ready guard", ()
     kufar.setup.filter((s) => s.selectedClass).map((s) => s.selector),
     ['[data-name="type"] [role="button"]'],
   );
-  for (const p of ["onliner", "realt", "domovita"]) {
+  for (const p of ["onliner", "domovita"]) {
     const other = recipe(p);
     assert.equal(
       [...other.controls, ...other.setup, ...other.next, ...other.submit].some((r) => r.selectedClass),
@@ -628,7 +628,7 @@ test("Kufar recipe marks its chips with the class proven by its ready guard", ()
       p,
     );
   }
-  for (const bad of ["chip filled", 'x"]', 5, ""]) {
+  for (const bad of ["chip filled", "text-white bg-basic", 'x"]', 5, ""]) {
     const control = payload();
     control.jobs[0].controls[0].selectedClass = bad;
     assert.throws(() => core.validate(control), /Неизвестное правило заполнения/);
@@ -637,4 +637,29 @@ test("Kufar recipe marks its chips with the class proven by its ready guard", ()
     assert.throws(() => core.validate(step), /Неизвестный переход формы/);
   }
   assert.doesNotThrow(() => core.validate(payload()));
+});
+// Chip classes as seen on the live Realt form, 2026-11-04 (research/rental/…/live-check-2026-11-04.md).
+const realtChip = "cursor-pointer inline-flex px-4 rounded-md transition-colors m-1 items-center";
+const realtChosen = realtChip + " rounded-l-md text-white bg-basic text-subhead py-1.5";
+const realtOther = realtChip + " bg-basic-50 text-basic-900 hover:bg-basic-100 text-subhead py-1.5";
+test("Realt recipe marks its chosen chips; shared code no longer knows the Realt class", async () => {
+  const realt = recipe("realt");
+  for (const c of realt.controls)
+    assert.equal(c.selectedClass, c.action === "choices" ? "text-white" : undefined, c.field);
+  assert.equal([...realt.setup, ...realt.next, ...realt.submit].some((s) => s.selectedClass), false);
+  assert.equal(realtOther.includes("text-white"), false);
+  const currency = realt.controls.find((c) => c.field === "realt.currency");
+  const html = `<div id="termsOfDeal"><div><p>Цена</p><div><div role="button" class="${realtChosen}">BYN</div><div role="button" class="${realtOther}">USD</div></div></div></div>`;
+  for (const [control, value, clicks] of [
+    [currency, "BYN", [0, 0]],
+    [currency, "USD", [0, 1]],
+    [{ ...currency, selectedClass: undefined }, "BYN", [1, 0]],
+  ]) {
+    const f = await fixture(html, [{ ...control, value }]);
+    const seen = [0, 0];
+    f.document.querySelectorAll('[role="button"]').forEach((e, i) => (e.onclick = () => seen[i]++));
+    await f.form.tick();
+    assert.deepEqual(seen, clicks, value + " " + JSON.stringify(control.selectedClass));
+    f.window.happyDOM.abort();
+  }
 });

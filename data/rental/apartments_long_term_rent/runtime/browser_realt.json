@@ -124,49 +124,57 @@
       "field": "realt.rooms",
       "action": "choices",
       "selector": "[id=\"apartment\"]",
-      "label": "Комнат"
+      "label": "Комнат",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.repair",
       "action": "choices",
       "selector": "[id=\"apartment\"]",
-      "label": "Ремонт"
+      "label": "Ремонт",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.balcony",
       "action": "choices",
       "selector": "[id=\"apartment\"]",
-      "label": "Балконов / лоджий"
+      "label": "Балконов / лоджий",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.currency",
       "action": "choices",
       "selector": "[id=\"termsOfDeal\"]",
-      "label": "Цена"
+      "label": "Цена",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.utilities",
       "action": "choices",
       "selector": "[id=\"termsOfDeal\"]",
-      "label": "Коммунальные платежи"
+      "label": "Коммунальные платежи",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.rental_term",
       "action": "choices",
       "selector": "[id=\"termsOfDeal\"]",
-      "label": "Срок сдачи"
+      "label": "Срок сдачи",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.prepayment",
       "action": "choices",
       "selector": "[id=\"termsOfDeal\"]",
-      "label": "Предоплата"
+      "label": "Предоплата",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.tenant_condition",
       "action": "choices",
       "selector": "[id=\"termsOfDeal\"]",
-      "label": "Условия сдачи"
+      "label": "Условия сдачи",
+      "selectedClass": "text-white"
     },
     {
       "field": "realt.photos",

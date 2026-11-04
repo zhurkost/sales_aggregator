@@ -136,8 +136,6 @@
       e.getAttribute("aria-selected") === "true" ||
       e.getAttribute("data-state") === "checked" ||
       /(?:^|[\s_\-])(?:selected|active|checked)(?:[\s_\-]|$)/i.test(className) ||
-      // The platform using this class is not established by the research reports yet.
-      className.includes("text-white bg-basic") ||
       (!!rule?.selectedClass && className.includes(rule.selectedClass))
     );
   }
