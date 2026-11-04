@@ -48,7 +48,10 @@ name = Долгосрочная аренда квартир
   integration/parsing_input.txt
 
 Каталог результатов относительно корня репозитория:
-  data/parsing/apartments_long_term_rent/
+  research/rental/apartments_long_term_rent/<platform>/
+Рабочие копии схем, common и планов — data/rental/apartments_long_term_rent/;
+результат исследования туда не копируется без отдельного проверяемого обновления.
+Пути внутри parsing_input.txt и отчётов — исторические (каталог data/parsing/ удалён).
 
 Ожидаемые основные файлы после объединения всех доступных площадок:
   apartments_long_term_rent_kufar.json
@@ -82,31 +85,31 @@ bindings_; для новых результатов применяется bindi
 
 Агент Kufar:
 «Исследуй схему подачи долгосрочной аренды квартиры на Kufar по заданию
-docs/parsing/apartments_long_term_rent/kufar/parsing_input.txt. Прочитай также
+research/rental/apartments_long_term_rent/kufar/parsing_input.txt. Прочитай также
 указанные там общие правила и корневые контракты. Выполни исследование,
 подготовь свои файлы и отчёт. Common и маппинги создаёт отдельный интегратор».
 
 Агент Onliner:
 «Исследуй схему подачи долгосрочной аренды квартиры на Onliner по заданию
-docs/parsing/apartments_long_term_rent/onliner/parsing_input.txt. Прочитай также
+research/rental/apartments_long_term_rent/onliner/parsing_input.txt. Прочитай также
 указанные там общие правила и корневые контракты. Выполни исследование,
 подготовь свои файлы и отчёт. Common и маппинги создаёт отдельный интегратор».
 
 Агент Realt:
 «Исследуй схему подачи долгосрочной аренды квартиры на Realt по заданию
-docs/parsing/apartments_long_term_rent/realt/parsing_input.txt. Прочитай также
+research/rental/apartments_long_term_rent/realt/parsing_input.txt. Прочитай также
 указанные там общие правила и корневые контракты. Выполни исследование,
 подготовь свои файлы и отчёт. Common и маппинги создаёт отдельный интегратор».
 
 Агент Domovita:
 «Исследуй схему подачи долгосрочной аренды квартиры на Domovita по заданию
-docs/parsing/apartments_long_term_rent/domovita/parsing_input.txt. Прочитай также
+research/rental/apartments_long_term_rent/domovita/parsing_input.txt. Прочитай также
 указанные там общие правила и корневые контракты. Выполни исследование,
 подготовь свои файлы и отчёт. Common и маппинги создаёт отдельный интегратор».
 
 Отдельное задание этапа B, которое человек выдаёт после передачи результатов:
 «Объедини собранные схемы долгосрочной аренды квартир по заданию
-docs/parsing/apartments_long_term_rent/integration/parsing_input.txt.
+research/rental/apartments_long_term_rent/integration/parsing_input.txt.
 Пройди только по указанным готовым схемам и отчётам. Сопоставь name полей
 и name дочерних choice для enum/multi_enum, проверь доказательства совпадений,
 создай common и маппинги для входных площадок. Сайты заново не исследуй,
