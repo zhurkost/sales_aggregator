@@ -108,7 +108,7 @@ describe("rental preparation editor", () => {
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
     c.store.schema = {cardVersion:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
-    c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},checksPassed:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
+    c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},checksPassed:false,form:[],manual:[],publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
     expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
   });

@@ -83,23 +83,29 @@ export class RentalViewModel {
   display(value: JsonValue) {
     return typeof value === "string" ? value : JSON.stringify(value);
   }
-  preparedValues(result: Prepared) {
-    const schema = this.store.schema?.platforms[result.platform];
-    return Object.entries(result.values).map(([id, value]) => ({
-      id,
-      name: schema?.labels[id] || id,
-      value: Array.isArray(value)
-        ? value
-            .map(
-              (v) =>
-                schema?.choiceLabels[id]?.[JSON.stringify(v)] ||
-                this.display(v),
-            )
-            .join(", ")
-        : schema?.choiceLabels[id]?.[JSON.stringify(value)] ||
-          (id.endsWith(".description")
-            ? String(this.store.draft.values["listing.description"] || value)
-            : this.display(value)),
-    }));
+  /** The platform's state in the check: never «Подготовлено» while fields stay manual. */
+  checkStatus(result: Prepared) {
+    if (this.store.check.stale) return "Ожидает проверки";
+    if (!result.checksPassed) return "Нужна проверка";
+    return result.manual.length ? "Часть вручную" : "Подготовлено";
+  }
+  transferLine(result: Prepared) {
+    const n = result.form.length, tens = n % 100, ones = n % 10;
+    const fields = tens >= 11 && tens <= 14 ? "полей" : ones === 1 ? "поле" : ones >= 2 && ones <= 4 ? "поля" : "полей";
+    return `Уйдёт в форму: ${n} ${fields} · Вручную на площадке: ${result.manual.length}`;
+  }
+  formValues(result: Prepared) {
+    return result.form.map((v) => ({ id: v.field, name: v.name, value: this.prepared(result.platform, v.field, v.value) }));
+  }
+  manualValues(result: Prepared) {
+    return result.manual.map((v) => ({ id: v.field, name: v.name, value: this.prepared(result.platform, v.field, v.value), reason: v.reason }));
+  }
+  private prepared(platform: string, id: string, value: JsonValue) {
+    const choices = this.store.schema?.platforms[platform]?.choiceLabels[id];
+    if (Array.isArray(value)) return value.map((v) => choices?.[JSON.stringify(v)] || this.display(v)).join(", ");
+    return choices?.[JSON.stringify(value)] ||
+      (id.endsWith(".description")
+        ? String(this.store.draft.values["listing.description"] || value)
+        : this.display(value));
   }
 }

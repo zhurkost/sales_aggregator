@@ -83,11 +83,25 @@ export interface EditorSchema {
   cardVersion: string;
   addressSuggestions: boolean;
 }
+/** A value the extension fills in the platform's form. */
+export interface FormValue {
+  field: string;
+  name: string;
+  value: JsonValue;
+}
+/** A prepared value the form does not receive: the user enters it on the platform. */
+export interface ManualValue extends FormValue {
+  reason: string;
+}
 export interface Prepared {
   platform: string;
   values: Record<string, JsonValue>;
   issues: { field: string; source?: string; code: string; message: string }[];
   /** No issues on this platform; only then may an automatic launch press the final button. */
   checksPassed: boolean;
+  /** What the extension fills, computed by the server from the coverage of the plan. */
+  form: FormValue[];
+  /** What the user enters on the platform by hand, with the reason. */
+  manual: ManualValue[];
   publicationReady: boolean;
 }

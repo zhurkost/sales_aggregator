@@ -56,6 +56,8 @@ const report: Prepared[] = [
     platform: "kufar",
     values: {},
     checksPassed: false,
+    form: [],
+    manual: [],
     publicationReady: false,
     issues: [
       {
@@ -90,6 +92,69 @@ afterEach(() => {
 });
 
 describe("rental editing and validation", () => {
+  it("shows what each platform receives and never calls a card with manual fields prepared", async () => {
+    mockApi();
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    const c = fixture.componentInstance;
+    try {
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(c.store.schema).not.toBeNull();
+      });
+      c.store.schema!.platforms["onliner"] = { name: "Onliner", labels: {}, choiceLabels: {}, constants: {}, bindings: [] };
+      const reason = "Ссылка на YouTube на Kufar доступна партнёрам площадки; перенос ссылки не настроен.";
+      c.store.results = [
+        {
+          platform: "kufar",
+          values: {},
+          checksPassed: true,
+          publicationReady: false,
+          issues: [],
+          form: [
+            { field: "kufar.title", name: "Название объявления", value: "Квартира у парка" },
+            { field: "kufar.price", name: "Цена", value: 900 },
+          ],
+          manual: [{ field: "kufar.video", name: "Видео на YouTube", value: ["https://youtu.be/x"], reason }],
+        },
+        {
+          platform: "onliner",
+          values: {},
+          checksPassed: true,
+          publicationReady: false,
+          issues: [],
+          form: [{ field: "onliner.description", name: "Описание", value: "Текст" }],
+          manual: [],
+        },
+      ];
+      c.store.check.checked = true;
+      fixture.detectChanges();
+      const el = fixture.nativeElement as HTMLElement;
+      const buttons = Array.from(el.querySelectorAll(".result-platforms button")).map((b) => b.textContent!.replace(/\s+/g, " ").trim());
+      expect(buttons).toEqual([
+        "Kufar · Часть вручную Уйдёт в форму: 2 поля · Вручную на площадке: 1",
+        "Onliner · Подготовлено Уйдёт в форму: 1 поле · Вручную на площадке: 0",
+      ]);
+      c.openPanel("result");
+      fixture.detectChanges();
+      const kufar = el.querySelector(".prepared-platform")!;
+      expect(Array.from(kufar.querySelectorAll("h4")).map((h) => h.textContent)).toEqual([
+        "Уйдёт в форму",
+        "Вручную на площадке",
+      ]);
+      expect(
+        Array.from(kufar.querySelectorAll("dl")).map((dl) =>
+          Array.from(dl.children).map((e) => e.textContent!.trim()),
+        ),
+      ).toEqual([
+        ["Название объявления", "Квартира у парка", "Цена", "900"],
+        ["Видео на YouTube", "https://youtu.be/x " + reason],
+      ]);
+    } finally {
+      fixture.destroy();
+    }
+  });
   it("keeps the visible report and textarea focus, debouncing saves and rechecks", async () => {
     const fetch = mockApi();
     const fixture = TestBed.createComponent(RentalEditorComponent);

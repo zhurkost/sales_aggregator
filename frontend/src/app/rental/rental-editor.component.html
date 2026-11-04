@@ -76,7 +76,7 @@
       <section class="results" [attr.aria-busy]="store.check.checking">
         <div class="extra-heading"><h2>Проверка карточки</h2><span role="status">{{ store.check.checking ? 'Обновляем проверку…' : store.check.stale ? 'Данные изменены — проверка неактуальна' : 'Ещё не опубликовано' }}</span></div>
         @if (store.check.error) { <p class="error-banner" role="alert">{{ store.check.error }} <button type="button" class="text-button" [disabled]="store.check.checking" (click)="store.prepare()">Повторить проверку</button></p> }
-        <div class="result-platforms">@for (result of store.results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')">{{ view.platformName(result.platform) }} · {{ store.check.stale ? 'Ожидает проверки' : result.checksPassed ? 'Подготовлено' : 'Нужна проверка' }}</button> }</div>
+        <div class="result-platforms">@for (result of store.results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')"><strong>{{ view.platformName(result.platform) }} · {{ view.checkStatus(result) }} </strong><small>{{ view.transferLine(result) }}</small></button> }</div>
         @if (view.groupedIssues.length) {
           <ul class="issues">@for (issue of view.groupedIssues; track $index) {
             <li><div><span>{{ issue.message }}</span><small>@for (p of issue.platforms; track p; let last = $last) { {{ view.platformName(p) }}{{ last ? '' : ', ' }} }</small></div>@if (view.canFocus(issue.source)) { <button type="button" class="text-button" (click)="focusField(issue.source)">Уточнить</button> }</li>
@@ -105,7 +105,10 @@
         </div>
       } @else {
         @if (store.check.stale) { <p role="status">Данные изменены. Показан результат предыдущей проверки.</p> }
-        <div class="drawer-body">@for (result of store.results; track result.platform) { <section class="prepared-platform"><h3>{{ view.platformName(result.platform) }}</h3><dl>@for (field of view.preparedValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl></section> }</div>
+        <div class="drawer-body">@for (result of store.results; track result.platform) { <section class="prepared-platform"><h3>{{ view.platformName(result.platform) }}</h3>
+          <h4>Уйдёт в форму</h4>@if (result.form.length) { <dl>@for (field of view.formValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl> } @else { <p class="empty-state">Нет заполненных полей</p> }
+          @if (result.manual.length) { <h4>Вручную на площадке</h4><dl>@for (field of view.manualValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }} <small>{{ field.reason }}</small></dd> }</dl> }
+        </section> }</div>
       }
       <footer class="drawer-footer"><span role="status">{{ store.status }}</span><button type="button" class="primary" (click)="closePanel()">Готово</button></footer>
     </section>

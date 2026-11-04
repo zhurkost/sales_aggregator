@@ -34,6 +34,9 @@ button:disabled { opacity:.55; cursor:default; }
 .legacy-item p { margin:4px 0; }
 .results .extra-heading>span { font-size:12px; color:#65758d; }
 .result-platforms { margin-top:16px; }
+.result-platforms button { text-align:left; }
+.result-platforms small,.prepared-platform dd small { display:block; color:#65758d; font-size:12px; margin-top:3px; }
+.prepared-platform h4 { margin:16px 0 8px; font-size:13px; color:#4b5d77; }
 .issues { list-style:none; padding:0; margin:14px 0 0; }
 .issues li { display:flex; align-items:center; gap:16px; border-top:1px solid #edf0f5; padding:12px 0; font-size:13px; }
 .issues li>div { flex:1; }
