@@ -216,6 +216,27 @@ describe("rental preparation editor", () => {
     expect(requests.at(-1)).toEqual({"rental.room_configuration": "1"});
     fixture.destroy();
   });
+  it("computes the drawn lists once per change and follows every edit", () => {
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
+    c.store.schema = {cardVersion:"2",card:card(),groups:[{id:"group.main",name:"Main",fields:[field("rental.floor")]},
+      {id:"group.terms",name:"Условия",fields:[field("tenant.pets")]}],addressSuggestions:false,photoLimit:12,platforms:{}};
+    c.store.fields.fields = new Map([["rental.floor", state("rental.floor")], ["tenant.pets", state("tenant.pets", false)]]);
+    const main = c.view.mainFields, filled = c.view.additionalFilled;
+    // Change detection reads them on every cycle: the same lists until something changes.
+    expect(c.view.mainFields).toBe(main);
+    expect(c.view.additionalFilled).toBe(filled);
+    expect(filled).toEqual([]);
+    expect(c.view.untransferred).toEqual(["tenant.pets"]);
+    c.setTyped(field("tenant.pets"), "allowed");
+    expect(c.view.additionalFilled.map(f => f.id)).toEqual(["tenant.pets"]);
+    expect(c.view.mainFields).toBe(main);
+    c.view.parameterSearch = "нет такого";
+    expect(c.view.additionalGroups).toEqual([]);
+    c.store.fields.fields = new Map([["rental.floor", state("rental.floor")]]);
+    expect(c.view.mainFields).not.toBe(main);
+    expect(c.view.untransferred).toEqual([]);
+    c.ngOnDestroy();
+  });
   it("groups different native required labels into one canonical correction", () => {
     const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.store.schema = {cardVersion:"2",card:card(),groups:[{id:"group.main",name:"Main",fields:[field("rental.area","Жилая площадь")]}],addressSuggestions:false,photoLimit:12,platforms:{}};

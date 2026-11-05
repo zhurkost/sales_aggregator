@@ -7,7 +7,7 @@ import type {
   RentalPhotos,
   RentalPublication,
 } from "./rental-models";
-import { inject } from "@angular/core";
+import { inject, signal } from "@angular/core";
 import { RentalApi, RentalApiError } from "./rental-api";
 import { TITLE } from "./card-fields.generated";
 import { RentalCardCheck } from "./rental-card-check";
@@ -19,7 +19,10 @@ import {
 import { forgetLocalRentalPhotos } from "./rental-local-photos";
 const CONFLICT =
   "Карточка изменена в другой вкладке. Сохраните копию или загрузите сохранённую версию.";
-/** Per-editor session: persistence, revision checks and serialized writes. No DOM. */
+/**
+ * Per-editor session: persistence, revision checks and serialized writes. No DOM. Its state is
+ * kept in signals: the editor's computed values follow the schema, the card and every edit.
+ */
 export class RentalDraftStore {
   constructor(
     private workspaceId: () => string,
@@ -28,26 +31,52 @@ export class RentalDraftStore {
   ) {}
   /** The server's rental API, shared with the parts of this session. */
   readonly api = inject(RentalApi);
-  schema: EditorSchema | null = null;
-  draft: RentalDraft = {
-    cardVersion: "",
-    values: {},
-    platforms: [],
-    address: null,
+  private readonly state = {
+    schema: signal<EditorSchema | null>(null),
+    draft: signal<RentalDraft>({ cardVersion: "", values: {}, platforms: [], address: null }),
+    /** Bumped by every edit: the card's values change in place. */
+    edits: signal(0),
+    id: signal<string>(crypto.randomUUID()),
+    revision: signal(0),
+    photos: signal<RentalPhoto[]>([]),
+    dirty: signal(false),
+    conflict: signal(false),
+    status: signal(""),
+    error: signal(""),
+    busy: signal(false),
+    pendingDelete: signal<string | null>(null),
+    deletingId: signal<string | null>(null),
+    drafts: signal<RentalListedDraft[]>([]),
   };
-  id: string = crypto.randomUUID();
-  revision = 0;
+  get schema() { return this.state.schema(); }
+  set schema(value: EditorSchema | null) { this.state.schema.set(value); }
+  /** The card being edited; reading it follows each edit. */
+  get draft() { this.state.edits(); return this.state.draft(); }
+  set draft(value: RentalDraft) { this.state.draft.set(value); }
+  get id() { return this.state.id(); }
+  set id(value: string) { this.state.id.set(value); }
+  get revision() { return this.state.revision(); }
+  set revision(value: number) { this.state.revision.set(value); }
   /** Photos stored with the card on the server, in their order. */
-  photos: RentalPhoto[] = [];
-  dirty = false;
+  get photos() { return this.state.photos(); }
+  set photos(value: RentalPhoto[]) { this.state.photos.set(value); }
+  get dirty() { return this.state.dirty(); }
+  set dirty(value: boolean) { this.state.dirty.set(value); }
   /** The server has a newer revision: autosave stops until a copy is saved or it is loaded. */
-  conflict = false;
-  status = "";
-  error = "";
-  busy = false;
-  pendingDelete: string | null = null;
-  deletingId: string | null = null;
-  drafts: RentalListedDraft[] = [];
+  get conflict() { return this.state.conflict(); }
+  set conflict(value: boolean) { this.state.conflict.set(value); }
+  get status() { return this.state.status(); }
+  set status(value: string) { this.state.status.set(value); }
+  get error() { return this.state.error(); }
+  set error(value: string) { this.state.error.set(value); }
+  get busy() { return this.state.busy(); }
+  set busy(value: boolean) { this.state.busy.set(value); }
+  get pendingDelete() { return this.state.pendingDelete(); }
+  set pendingDelete(value: string | null) { this.state.pendingDelete.set(value); }
+  get deletingId() { return this.state.deletingId(); }
+  set deletingId(value: string | null) { this.state.deletingId.set(value); }
+  get drafts() { return this.state.drafts(); }
+  set drafts(value: RentalListedDraft[]) { this.state.drafts.set(value); }
   readonly check = new RentalCardCheck(this.api, () => ({
     workspace: this.workspaceId(),
     id: this.id,
@@ -138,6 +167,7 @@ export class RentalDraftStore {
   }
   changed() {
     this.editVersion++;
+    this.state.edits.update((n) => n + 1);
     this.dirty = true;
     this.check.invalidate();
     this.fields.schedule();

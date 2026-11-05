@@ -1,12 +1,20 @@
+import { computed, signal } from "@angular/core";
 import type { Field, FieldGroup, JsonValue, Prepared, RentalDraft } from "./rental-models";
 import { hasValue } from "./rental-values";
 import { RentalDraftStore } from "./rental-draft.store";
 import { DESCRIPTION, MAIN_GROUP } from "./card-fields.generated";
 
-/** Read-only projection of the current draft for presentation. Never saves or calls APIs. */
+/**
+ * Read-only projection of the current draft for presentation. Never saves or calls APIs. The lists
+ * the editor draws are computed from the store's signals, once per change, not on every cycle.
+ */
 export class RentalViewModel {
-  parameterSearch = "";
-  filledOnly = false;
+  private readonly search = signal("");
+  private readonly filled = signal(false);
+  get parameterSearch() { return this.search(); }
+  set parameterSearch(value: string) { this.search.set(value); }
+  get filledOnly() { return this.filled(); }
+  set filledOnly(value: boolean) { this.filled.set(value); }
   constructor(private store: RentalDraftStore) {}
   label(value: string) { return this.store.schema?.card.valueLabels[value] || value; }
   platformName(p: string) { return this.store.schema?.platforms[p]?.name || p; }
@@ -17,10 +25,10 @@ export class RentalViewModel {
     return group.fields.filter(f => this.store.fields.fields.has(f.id));
   }
   /** Shown card fields that no chosen platform's form receives yet, as the server says. */
-  get untransferred() {
-    return [...this.store.fields.fields.values()].filter(f => !f.transferred).map(f => f.id);
-  }
-  get groupedIssues() {
+  readonly untransferredFields = computed(() =>
+    [...this.store.fields.fields.values()].filter(f => !f.transferred).map(f => f.id));
+  get untransferred() { return this.untransferredFields(); }
+  readonly issues = computed(() => {
     const groups = new Map<string, {source: string; message: string; platforms: string[]}>();
     const fields = this.allFields;
     for (const result of this.store.results) for (const issue of result.issues) {
@@ -36,26 +44,29 @@ export class RentalViewModel {
       groups.set(key, entry);
     }
     return [...groups.values()];
-  }
+  });
+  get groupedIssues() { return this.issues(); }
   canFocus(source: string) {
     return source === "legacy" || source === "address" && !this.store.draft.address?.label ||
       this.groups.some(g => g.id === source || g.fields.some(f => f.id === source));
   }
-  get mainFields() {
+  readonly main = computed(() => {
     const main = this.groups.find(g => g.id === MAIN_GROUP);
     return main ? this.groupFields(main) : [];
-  }
-  get additionalGroups() {
+  });
+  get mainFields() { return this.main(); }
+  readonly additional = computed(() => {
     const query = this.parameterSearch.trim().toLocaleLowerCase();
     return this.groups.filter(g => g.id !== MAIN_GROUP).map(g => ({...g, fields:this.groupFields(g).filter(f =>
       f.id !== DESCRIPTION && (!this.filledOnly || hasValue(this.store.draft.values[f.id])) &&
       (!query || (g.name + " " + f.name + " " + this.valueLabel(f.id, this.store.draft.values[f.id])).toLocaleLowerCase().includes(query))
     )})).filter(g => g.fields.length);
-  }
-  get additionalFilled() {
-    return this.groups.filter(g => g.id !== MAIN_GROUP).flatMap(g => this.groupFields(g))
-      .filter(f => f.id !== DESCRIPTION && hasValue(this.store.draft.values[f.id]));
-  }
+  });
+  get additionalGroups() { return this.additional(); }
+  readonly filledFields = computed(() =>
+    this.groups.filter(g => g.id !== MAIN_GROUP).flatMap(g => this.groupFields(g))
+      .filter(f => f.id !== DESCRIPTION && hasValue(this.store.draft.values[f.id])));
+  get additionalFilled() { return this.filledFields(); }
   fieldName(id: string) { return this.allFields.find(f => f.id === id)?.name || id; }
   valueLabel(id: string, value: JsonValue | undefined) {
     if (value === true) return "Да"; if (value === false) return "Нет";

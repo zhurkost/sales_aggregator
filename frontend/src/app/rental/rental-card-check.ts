@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import type { RentalApi } from "./rental-api";
 import type { Prepared, RentalDraft } from "./rental-models";
 
@@ -11,7 +12,9 @@ type Context = {
 
 /** Validation is independent of saving. Keep the last report while editing. */
 export class RentalCardCheck {
-  results: Prepared[] = [];
+  private readonly report = signal<Prepared[]>([]);
+  get results() { return this.report(); }
+  set results(value: Prepared[]) { this.report.set(value); }
   checked = false;
   stale = false;
   checking = false;

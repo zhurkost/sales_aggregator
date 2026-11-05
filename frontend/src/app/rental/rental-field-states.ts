@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import type { RentalApi } from "./rental-api";
 import type { FieldState, RentalDraft } from "./rental-models";
 
@@ -9,7 +10,10 @@ type Context = { workspace: string; draft: RentalDraft; destroyed: boolean };
  * the answer. The last answer stays until the next one arrives.
  */
 export class RentalFieldStates {
-  fields = new Map<string, FieldState>();
+  private readonly answer = signal(new Map<string, FieldState>());
+  /** The last answer: field id → its state. */
+  get fields() { return this.answer(); }
+  set fields(value: Map<string, FieldState>) { this.answer.set(value); }
   private sequence = 0;
   private timer?: ReturnType<typeof setTimeout>;
   constructor(
