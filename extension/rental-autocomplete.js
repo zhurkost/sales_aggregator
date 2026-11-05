@@ -4,7 +4,7 @@
     String(value ?? "")
       .replace(/\s+/g, " ")
       .trim()
-      .toLocaleLowerCase("ru");
+      .toLocaleLowerCase("ru").replace(/ё/g, "е");
   const types = {
     settlement: [
       ["город", ["город", "г"]],
@@ -73,12 +73,30 @@
       query(config.optionSelector || '[role="option"]', scope).filter(
         (e) => visible(e) && enabled(e),
       );
-    const label = (e) =>
+    const rawLabel = (e) =>
       config.labelSelector
         ? query(config.labelSelector, e)[0]?.textContent || ""
         : e.textContent;
+    const parts = (text) => {
+      if (config.labelFormat === "settlement-region-district") {
+        const match = String(text).trim().match(/^(.+?)\s+(\S+\s+область)(?:\s+(.+?\s+район))?$/iu);
+        if (match) return { label: match[1], context: match.slice(2).filter(Boolean) };
+      }
+      return { label: text, context: [] };
+    };
+    const label = (e) => parts(rawLabel(e)).label;
+    const display = () => query(config.selectedValueSelector, scope)[0]?.textContent || "";
     let pending = form.pending.get(control.field);
     if (!pending) {
+      if (config.selectedValueSelector && display()) {
+        // Preserve a selection made before the helper started.
+        const selected = parts(display());
+        if (matches(selected.label, control.matchValue || control.value, config.kind) &&
+            (control.matchContext || []).filter(Boolean).every(p => selected.context.map(adminName).includes(adminName(p))))
+          form.done.add(control.field);
+        else form.protected.add(control.field);
+        return;
+      }
       const current = input.value;
       const search = config.kind
         ? addressName(control.value, config.kind).name
@@ -106,6 +124,7 @@
     if (pending.phase === "confirm") {
       // A click is not proof of acceptance. Wait for the selected label and closed popup.
       const value =
+        config.confirm === "display-and-closed" ? display() :
         config.kind === "settlement" ? input.value.split(",")[0] : input.value;
       if (!options().length && norm(value) === norm(pending.label))
         form.done.add(control.field);
@@ -128,7 +147,7 @@
         ? query(config.contextSelector, e)
             .flatMap((n) => n.textContent.split(","))
             .map(adminName)
-        : [];
+        : parts(rawLabel(e)).context.map(adminName);
       return (control.matchContext || [])
         .filter(Boolean)
         .every((part) => context.includes(adminName(part)));
@@ -138,7 +157,7 @@
       return;
     }
     const option = candidates[0];
-    if (config.confirm === "value-and-closed") {
+    if (config.confirm) {
       const signature = norm(option.textContent);
       // Debounced searches briefly display results from the previous query.
       if (pending.signature !== signature) {
@@ -146,7 +165,7 @@
         return;
       }
       pending.phase = "confirm";
-      pending.label = label(option);
+      pending.label = config.confirm === "display-and-closed" ? rawLabel(option) : label(option);
       form.waiting = { field: control.field, tries: 0 };
     }
     option.click();

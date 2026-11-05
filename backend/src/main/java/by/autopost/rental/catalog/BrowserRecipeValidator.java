@@ -51,11 +51,21 @@ public final class BrowserRecipeValidator {
               .contains(text(control, "action")),
           "действие browser");
       selector(control);
+      if (control.has("blockedSelector")) {
+        selectorValue(text(control, "blockedSelector"));
+        check(!text(control, "blockedMessage").isBlank() && text(control, "blockedMessage").length() <= 400,
+            "сообщение блокировки browser");
+      }
       if (control.has("autocomplete")) {
         var config = control.path("autocomplete");
         check(text(control, "action").equals("autocomplete") && config.isObject(), "autocomplete");
-        check(Set.of("settlement", "street").contains(text(config, "kind")), "тип autocomplete");
-        check(text(config, "confirm").equals("value-and-closed"), "подтверждение autocomplete");
+        check(Set.of("settlement", "street", "house").contains(text(config, "kind")), "тип autocomplete");
+        check(Set.of("value-and-closed", "display-and-closed").contains(text(config, "confirm")), "подтверждение autocomplete");
+        if (text(config, "confirm").equals("display-and-closed"))
+          selectorValue(text(config, "selectedValueSelector"));
+        if (config.has("labelFormat"))
+          check(text(config, "kind").equals("settlement") &&
+              text(config, "labelFormat").equals("settlement-region-district"), "формат autocomplete");
         for (String key : List.of("scopeSelector", "optionSelector"))
           selectorValue(text(config, key));
         for (String key : List.of("labelSelector", "busySelector", "contextSelector"))
@@ -68,7 +78,7 @@ public final class BrowserRecipeValidator {
             check(
                 Set.of("region", "district").contains(part.asText()),
                 "часть контекста autocomplete");
-          if (!config.path("contextParts").isEmpty())
+          if (!config.path("contextParts").isEmpty() && !config.has("labelFormat"))
             selectorValue(text(config, "contextSelector"));
         }
         check(!config.has("code") && !config.has("script"), "исполняемый код autocomplete");

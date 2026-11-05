@@ -84,7 +84,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     if (this.busy || this.store.busy || !this.store.draft.platforms.length)
       return;
     if (!this.ready) {
-      this.error = "Установите расширение 0.9.3 и обновите вкладку Автопоста.";
+      this.error = "Установите расширение 0.9.4 и обновите вкладку Автопоста.";
       return;
     }
     this.busy = true;

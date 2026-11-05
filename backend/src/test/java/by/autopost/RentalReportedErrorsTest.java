@@ -119,6 +119,23 @@ class RentalReportedErrorsTest {
     }
   }
 
+  @Test void domovitaBrowserRecipePreservesAddressContextAndPhotoGate() {
+    var draft = object("schemaVersion", catalog.version(), "modelVersion", 2,
+        "values", object(), "extras", object(), "platforms", List.of("domovita"),
+        "address", object("settlement", "Лесная", "settlementWithType", "д. Лесная",
+            "region", "Брестская область", "district", "Ивацевичский район",
+            "street", "Мира", "streetWithType", "ул. Мира", "house", "27/1"));
+    var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+    var town = controls.stream().filter(c -> text(c, "field").equals("domovita.town")).findFirst().orElseThrow();
+    assertEquals("д. Лесная", text(town, "matchValue"));
+    assertEquals(List.of("Брестская область", "Ивацевичский район"),
+        list(town.path("matchContext")).stream().map(JsonNode::asText).toList());
+    assertEquals("display-and-closed", text(town.path("autocomplete"), "confirm"));
+    var photos = controls.stream().filter(c -> text(c, "action").equals("files")).findFirst().orElseThrow();
+    assertFalse(text(photos, "blockedSelector").isBlank());
+    assertFalse(text(photos, "blockedMessage").isBlank());
+  }
+
   @Test void addressComponentsDoNotCarryTypePrefixes() {
     for (String prefix : List.of("г.", "г ", "город ", "пос.", "аг. "))
       assertEquals("Минск", LiteralAddress.cleanComponent(prefix + "Минск", "settlement"));

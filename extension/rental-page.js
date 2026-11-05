@@ -90,6 +90,12 @@
       const changed = await form.tick();
       if (departed) return;
       idle = changed ? 0 : idle + 1;
+      const reason = form.blockedReason();
+      if (reason) {
+        idle = cycles = 0;
+        await report("needs_action", reason);
+        return;
+      }
       if (idle < 3) {
         await report("running", "Перенесено полей: " + form.done.size);
         return;

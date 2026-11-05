@@ -138,6 +138,7 @@
     async fill(c) {
       if (this.done.has(c.field) || this.protected.has(c.field)) return;
       if (c.after && !this.done.has(c.after)) return;
+      if (c.blockedSelector && query(c.blockedSelector).some(visible)) return;
       const elements = targets(c);
       if (!elements.length) return;
       const value = c.value,
@@ -385,6 +386,12 @@
         )
         .map((c) => c.name || c.field)
         .concat(this.recipe.unbound || []);
+    }
+    blockedReason() {
+      return this.recipe.controls.find(c => !this.done.has(c.field) &&
+        !this.protected.has(c.field) &&
+        (c.action !== "files" || this.photos.length && !this.photoSent) &&
+        c.blockedSelector && query(c.blockedSelector).some(visible))?.blockedMessage || "";
     }
   }
   root.AutopostRentalForm = { Form, targets, norm, visible, paymentRequired };

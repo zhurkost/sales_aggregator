@@ -98,7 +98,9 @@
     {
       "field": "domovita.images",
       "action": "files",
-      "selector": "input[type=\"file\"]"
+      "selector": "input[type=\"file\"]",
+      "blockedSelector": "[class*=\"image-upload-dropzone-disabled\"]",
+      "blockedMessage": "Подтвердите телефон на Domovita. После разблокировки загрузки фотографии перенесутся автоматически."
     },
     {
       "field": "domovita.currency",
@@ -111,25 +113,51 @@
     {
       "field": "domovita.town",
       "action": "autocomplete",
-      "selector": "input[role=\"combobox\"]",
-      "index": 0,
-      "addressPart": "settlement"
+      "selector": "div:has(> input[name=\"town_id\"]) input[role=\"combobox\"]",
+      "addressPart": "settlement",
+      "autocomplete": {
+        "kind": "settlement",
+        "scopeSelector": "div:has(> .custom-select__control)",
+        "optionSelector": "[role=\"option\"]",
+        "busySelector": ".custom-select__menu-notice--loading",
+        "selectedValueSelector": ".custom-select__single-value",
+        "confirm": "display-and-closed",
+        "labelFormat": "settlement-region-district",
+        "contextParts": [
+          "region",
+          "district"
+        ]
+      }
     },
     {
       "field": "domovita.street",
       "action": "autocomplete",
-      "selector": "input[role=\"combobox\"]",
-      "index": 1,
+      "selector": "div:has(> input[name=\"street_name\"]) input[role=\"combobox\"]",
       "addressPart": "street",
-      "after": "domovita.town"
+      "after": "domovita.town",
+      "autocomplete": {
+        "kind": "street",
+        "scopeSelector": "div:has(> .custom-select__control)",
+        "optionSelector": "[role=\"option\"]",
+        "busySelector": ".custom-select__menu-notice--loading",
+        "selectedValueSelector": ".custom-select__single-value",
+        "confirm": "display-and-closed"
+      }
     },
     {
       "field": "domovita.house_number",
       "action": "autocomplete",
-      "selector": "input[role=\"combobox\"]",
-      "index": 2,
+      "selector": "div:has(> input[name=\"house_number\"]) input[role=\"combobox\"]",
       "addressPart": "house",
-      "after": "domovita.street"
+      "after": "domovita.street",
+      "autocomplete": {
+        "kind": "house",
+        "scopeSelector": "div:has(> .custom-select__control)",
+        "optionSelector": "[role=\"option\"]",
+        "busySelector": ".custom-select__menu-notice--loading",
+        "selectedValueSelector": ".custom-select__single-value",
+        "confirm": "display-and-closed"
+      }
     }
   ],
   "next": [
@@ -142,7 +170,7 @@
   "submit": [],
   "format": 1,
   "platform": "domovita",
-  "observedAt": "2026-11-02",
+  "observedAt": "2026-11-05",
   "note": "Проверены элементы формы. Переходы после сохранения и окончательная публикация требуют проверки на реальном объявлении; без подтверждения успешной подачи статус published не выставляется.",
   "ready": [
     {
