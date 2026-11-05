@@ -36,6 +36,7 @@
   let running = false,
     departed = false,
     paused = false,
+    resumeWhenVisible = false,
     idle = 0,
     cycles = 0,
     interval;
@@ -68,13 +69,14 @@
     ].some((e) => api.visible(e));
   }
   async function tick() {
-    if (running || paused || departed) return;
+    if (running || paused || departed || document.hidden) return;
     running = true;
     try {
       const current = await request("GET", { metadataOnly: true });
-      if (departed) return;
+      if (departed || document.hidden) return;
       if (!current?.task) {
         paused = true;
+        resumeWhenVisible = false;
         clearInterval(interval);
         status.textContent = "Задание остановлено в Автопосте";
         return;
@@ -86,9 +88,14 @@
         );
         return;
       }
-      cycles++;
       const changed = await form.tick();
-      if (departed) return;
+      if (departed || document.hidden) return;
+      if (!form.ready()) {
+        idle = cycles = 0;
+        await report("running", "Ожидаем открытия формы площадки.");
+        return;
+      }
+      cycles++;
       idle = changed ? 0 : idle + 1;
       if (form.awaitingPhotos() && cycles < 100) idle = 0;
       const reason = form.blockedReason();
@@ -103,6 +110,7 @@
       }
       if (idle >= 8 || cycles >= 100) {
         paused = true;
+        resumeWhenVisible = form.remaining().length > 0;
         await report(
           "needs_action",
           form.done.size
@@ -112,6 +120,7 @@
       }
     } catch (e) {
       paused = true;
+      resumeWhenVisible = false;
       await report(
         "needs_action",
         String(e.message || "Не удалось заполнить форму"),
@@ -122,6 +131,7 @@
   }
   retry.onclick = () => {
     paused = false;
+    resumeWhenVisible = false;
     idle = 0;
     cycles = 0;
     form.tried.clear();
@@ -129,9 +139,21 @@
   };
   stop.onclick = () => {
     paused = !paused;
+    resumeWhenVisible = false;
     stop.textContent = paused ? "Продолжить" : "Пауза";
     if (!paused) void tick();
   };
+  document.addEventListener("visibilitychange", () => {
+    if (departed) return;
+    idle = cycles = 0;
+    if (document.hidden) return;
+    if (resumeWhenVisible) {
+      paused = false;
+      resumeWhenVisible = false;
+      form.tried.clear();
+    }
+    void tick();
+  });
   interval = setInterval(() => void tick(), 900);
   chrome.runtime.onMessage.addListener((message, sender, reply) => {
     if (
@@ -143,6 +165,7 @@
       return;
     task.mode = message.mode;
     paused = false;
+    resumeWhenVisible = false;
     idle = 0;
     cycles = 0;
     clearInterval(interval);
