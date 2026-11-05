@@ -1,4 +1,4 @@
-import type { EditorSchema, RentalDraft } from "./rental-models";
+import type { EditorSchema, RentalCard } from "./rental-models";
 
 export type RentalProfile = {
   phone?: string;
@@ -8,7 +8,7 @@ export type RentalProfile = {
 
 /** Copy only declared defaults, preserving even an explicitly cleared card field. */
 export function applyProfileDefaults(
-  draft: RentalDraft,
+  card: RentalCard,
   schema: EditorSchema | null,
   profile: RentalProfile,
 ): boolean {
@@ -19,11 +19,11 @@ export function applyProfileDefaults(
     ),
   );
   for (const rule of schema?.card?.profileDefaults || []) {
-    if (!fields.has(rule.field) || Object.hasOwn(draft.values, rule.field))
+    if (!fields.has(rule.field) || Object.hasOwn(card.values, rule.field))
       continue;
     const value = profile[rule.setting]?.trim();
     if (!value) continue;
-    draft.values[rule.field] =
+    card.values[rule.field] =
       rule.setting === "phone" ? value.replace(/[\s()-]/g, "") : value;
     changed = true;
   }

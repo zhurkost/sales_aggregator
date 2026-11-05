@@ -24,7 +24,7 @@ function createBridge({ sendMessage, fetchCatalog, configureChrome } = {}) {
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../bridge.js'), 'utf8'), { AutopostCore: core, window, chrome, location: { origin }, navigator: { userActivation: { isActive: true } }, Date,fetch,AbortController,setTimeout,clearTimeout });
   async function event(type, data) { for (const listener of listeners[type] || []) await listener(data); }
   async function request(type, requestId = 'req-1', overrides = {}) {
-    return event('message', { source: window, origin, data: { source: 'autopost-app', type, requestId, payload: { id: requestId, profileId:'owner', draft:{values:{}}, mode:'assist', photos: [], jobs:[{startUrl:'https://attacker.invalid'}], extra:'do not forward' } }, ...overrides });
+    return event('message', { source: window, origin, data: { source: 'autopost-app', type, requestId, payload: { id: requestId, profileId:'owner', card:{values:{}}, mode:'assist', photos: [], jobs:[{startUrl:'https://attacker.invalid'}], extra:'do not forward' } }, ...overrides });
   }
   return { event, request, responses, handshakes, forwarded, window, origin,catalogRequests,chrome };
 }
@@ -53,12 +53,12 @@ test('RENTAL_RUN requires a trusted event and allows only one request per gestur
 test('rental launch obtains a server recipe after a trusted click and never sends photos to the server',async()=>{
  const recipe={format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]};
  const bridge=createBridge({fetchCatalog:async()=>Response.json(recipe)});
- const input={profileId:'owner',id:'rental',draft:{values:{description:'Apartment'}},photos:[{id:'image'}],mode:'assist',jobs:[{startUrl:'https://evil.invalid'}]};
+ const input={profileId:'owner',id:'rental',revision:7,card:{values:{description:'Apartment'}},photos:[{id:'image'}],mode:'assist',jobs:[{startUrl:'https://evil.invalid'}]};
  const overrides={data:{source:'autopost-app',type:'RENTAL_RUN',requestId:'rental-1',payload:input}};
  await bridge.request('RENTAL_RUN','rental-1',overrides);assert.equal(bridge.catalogRequests.length,0);
  await bridge.event('click',{isTrusted:true});overrides.data.requestId='rental-2';await bridge.request('RENTAL_RUN','rental-2',overrides);
  assert.equal(bridge.catalogRequests[0].url,'/api/workspace/rental/extension-config');
- const request=bridge.catalogRequests[0].options;assert.equal(request.headers['X-Autopost-Workspace'],'owner');assert.equal('photos' in JSON.parse(request.body),false);
+ const request=bridge.catalogRequests[0].options;assert.equal(request.headers['X-Autopost-Workspace'],'owner');assert.equal('photos' in JSON.parse(request.body),false);assert.equal(JSON.parse(request.body).revision,7);assert.deepEqual(JSON.parse(request.body).card,input.card);
  assert.equal(bridge.forwarded[0].kind,'RENTAL_REQUEST');assert.deepEqual(bridge.forwarded[0].payload.jobs,recipe.jobs);assert.equal(bridge.forwarded[0].payload.mode,'assist');
 });
 test('catalog failures prevent launch; no stale dictionary or executable response is used',async()=>{
@@ -137,4 +137,12 @@ test('runtime disappearing while the catalog loads fails without launching or re
   await request;
   assert.equal(bridge.forwarded.length,0);
   assert.equal(bridge.responses.at(-1).message.payload.code,'EXTENSION_RELOAD_REQUIRED');
+});
+
+test('current form preparation errors are returned once without polling for persistence',async()=>{
+  const bridge=createBridge({fetchCatalog:async()=>Response.json({error:'Правила обновились'},{status:409})});
+  await bridge.event('click',{isTrusted:true});await bridge.request('RENTAL_RUN');
+  assert.equal(bridge.catalogRequests.length,1);
+  assert.equal(bridge.forwarded.length,0);
+  assert.equal(bridge.responses.at(-1).message.payload.error,'Правила обновились');
 });

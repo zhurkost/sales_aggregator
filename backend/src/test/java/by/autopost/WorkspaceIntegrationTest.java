@@ -23,41 +23,10 @@ import org.springframework.test.web.servlet.*;
 @SpringBootTest(properties = "autopost.rental-reference-dir=")
 @AutoConfigureMockMvc
 class WorkspaceIntegrationTest {
-  @Test
-  void rentalDraftsArePrivateAndUseOptimisticRevision() throws Exception {
-    var owner = register();
-    var other = register();
-    String id = UUID.randomUUID().toString();
-    var draft =
-        object(
-            "schemaVersion",
-            "example",
-            "values",
-            object("listing.title", "My apartment"),
-            "platforms",
-            List.of("kufar"),
-            "extras",
-            object());
-    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 0, "draft", draft), 200);
-    assertEquals(1, getJson("rental/drafts", owner.cookie(), 200).path("drafts").size());
-    assertTrue(getJson("rental/drafts", other.cookie(), 200).path("drafts").isEmpty());
-    getJson("rental/drafts/" + id, other.cookie(), 404);
-    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 0, "draft", draft), 409);
-    assertEquals(
-        "My apartment",
-        getJson("rental/drafts/" + id, owner.cookie(), 200)
-            .path("draft")
-            .path("values")
-            .path("listing.title")
-            .asText());
-    postJson("rental/drafts/" + id, owner.cookie(), object("revision", 1, "draft", draft), 200);
-    assertEquals(2, getJson("rental/drafts/" + id, owner.cookie(), 200).path("revision").asInt());
-  }
 
   @Test
   void rentalEndpointsRequireAuthenticationAndNeverExposeProviderKey() throws Exception {
     getJson("rental/editor", "", 401);
-    getJson("rental/drafts", "", 401);
     postJson("rental/address/suggest", "", object("query", "Минск"), 401);
     postJson("rental/prepare", "", object(), 401);
     postJson("rental/applicability", "", object(), 401);
@@ -70,40 +39,15 @@ class WorkspaceIntegrationTest {
     postJson("rental/analyze", account.cookie(), object("text", "М"), 400);
   }
 
+
   @Test
-  void deletesOnlyTheConfirmedRentalRevisionInTheCurrentWorkspace() throws Exception {
-    var owner = register();
-    var other = register();
-    String id = UUID.randomUUID().toString(), keep = UUID.randomUUID().toString();
-    var draft = object("values", object("listing.title", "Delete test"));
-    String path = "rental/drafts/" + id;
-    postJson(path, owner.cookie(), object("revision", 0, "draft", draft), 200);
-    postJson("rental/drafts/" + keep, owner.cookie(), object("revision", 0, "draft", draft), 200);
-    postJson(path + "/delete", "", object("revision", 1), 401);
-    postJson(path + "/delete", other.cookie(), object("revision", 1), 404);
-    postJson(path + "/delete", owner.cookie(), object(), 400);
-    var cross =
-        mvc.perform(
-                post("/api/workspace/" + path + "/delete")
-                    .header("Origin", "https://evil.example")
-                    .header("Cookie", owner.cookie())
-                    .contentType("application/json")
-                    .content("{\"revision\":1}"))
-            .andReturn();
-    assertEquals(403, cross.getResponse().getStatus());
-    postJson(path, owner.cookie(), object("revision", 1, "draft", draft), 200);
-    postJson(path + "/delete", owner.cookie(), object("revision", 1), 409);
-    assertEquals(2, getJson(path, owner.cookie(), 200).path("revision").asInt());
-    // An identical ID in another cabinet must remain untouched.
-    postJson(path, other.cookie(), object("revision", 0, "draft", draft), 200);
-    postJson(path + "/delete", owner.cookie(), object("revision", 2), 200);
-    getJson(path, owner.cookie(), 404);
-    getJson(path, other.cookie(), 200);
-    getJson("rental/drafts/" + keep, owner.cookie(), 200);
-    assertEquals(1, getJson("rental/drafts", owner.cookie(), 200).path("drafts").size());
-    // A late autosave from a previously opened card cannot bring it back.
-    postJson(path, owner.cookie(), object("revision", 2, "draft", draft), 409);
-    getJson(path, owner.cookie(), 404);
+  void removedCardStorageRoutesReturnNotFound() throws Exception {
+    var account = register();
+    for (String path : List.of("rental/drafts", "rental/drafts/example", "rental/drafts/example/delete")) {
+      getJson(path, account.cookie(), 404);
+      postJson(path, account.cookie(), object(), 404);
+    }
+    assertEquals(0, db.count("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='rental_drafts'"));
   }
 
   static final Path DATA;
@@ -236,14 +180,14 @@ class WorkspaceIntegrationTest {
     assertEquals(
         409,
         mvc.perform(
-                get("/api/workspace/rental/drafts")
+                get("/api/workspace/settings")
                     .header("Cookie", account.cookie())
                     .header("X-Autopost-Workspace", other.id()))
             .andReturn()
             .getResponse()
             .getStatus());
     postJson("logout", account.cookie(), object(), 200);
-    getJson("rental/drafts", account.cookie(), 401);
+    getJson("rental/editor", account.cookie(), 401);
   }
 
   record Account(String id, String login, String cookie) {}

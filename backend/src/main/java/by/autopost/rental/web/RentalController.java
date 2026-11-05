@@ -17,19 +17,16 @@ class RentalController {
   private final Access access;
   private final RentalCatalog catalog;
   private final AddressService addresses;
-  private final RentalDraftService drafts;
   private final RentalPublicationService publication;
 
   RentalController(
       Access access,
       RentalCatalog catalog,
       AddressService addresses,
-      RentalDraftService drafts,
       RentalPublicationService publication) {
     this.access = access;
     this.catalog = catalog;
     this.addresses = addresses;
-    this.drafts = drafts;
     this.publication = publication;
   }
 
@@ -73,28 +70,10 @@ class RentalController {
     return catalog.applicability(input);
   }
 
-  @GetMapping("/drafts")
-  ObjectNode drafts(HttpServletRequest req) {
-    return drafts.list(access.require(req).workspace());
-  }
-
   @PostMapping("/extension-config")
   ObjectNode extensionConfig(HttpServletRequest req, @RequestBody JsonNode input) {
-    return publication.configuration(access.require(req).workspace(), input);
+    access.require(req);
+    return publication.configuration(input);
   }
 
-  @GetMapping("/drafts/{id}")
-  ObjectNode draft(HttpServletRequest req, @PathVariable String id) {
-    return drafts.get(access.require(req).workspace(), id);
-  }
-
-  @PostMapping("/drafts/{id}")
-  ObjectNode save(HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
-    return drafts.save(access.require(req).workspace(), id, input);
-  }
-
-  @PostMapping("/drafts/{id}/delete")
-  ObjectNode delete(HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
-    return drafts.delete(access.require(req).workspace(), id, input);
-  }
 }

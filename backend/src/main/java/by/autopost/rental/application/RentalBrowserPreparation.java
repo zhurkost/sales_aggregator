@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /** Compiles filled native values and verified selectors, independent of advisory readiness. */
 final class RentalBrowserPreparation {
-  ObjectNode compile(ReferenceSnapshot snapshot, JsonNode prepared, JsonNode draft) {
+  ObjectNode compile(ReferenceSnapshot snapshot, JsonNode prepared, JsonNode card) {
     var jobs = array();
     for (var result : prepared.path("platforms")) {
       String platform = text(result, "platform");
@@ -24,11 +24,11 @@ final class RentalBrowserPreparation {
         supported.add(id);
         JsonNode value = result.path("values").get(id);
         if (source.has("addressPart")) {
-          value = draft.path("address").get(text(source, "addressPart"));
+          value = card.path("address").get(text(source, "addressPart"));
           if (value != null && value.isTextual())
             value = com.fasterxml.jackson.databind.node.TextNode.valueOf(
                 text(source, "addressPart").equals("label")
-                    ? LiteralAddress.searchText(draft.path("address"))
+                    ? LiteralAddress.searchText(card.path("address"))
                     : text(source, "addressPart").equals("settlement") &&
                         text(source.path("autocomplete"), "kind").equals("address")
                     ? LiteralAddress.searchText(object("label", value.asText()))
@@ -43,8 +43,8 @@ final class RentalBrowserPreparation {
         control.set("value", value == null ? array() : value.deepCopy());
         if (source.has("addressPart")) {
           String part = text(source, "addressPart");
-          String current = text(draft.path("address"), part);
-          String original = text(draft.path("address"), part + "WithType");
+          String current = text(card.path("address"), part);
+          String original = text(card.path("address"), part + "WithType");
           if (original.isBlank() || !LiteralAddress.cleanComponent(current, part).equals(current))
             original = current;
           boolean sameAddress = value != null && (part.equals("label")
@@ -55,12 +55,12 @@ final class RentalBrowserPreparation {
         }
         var matchContext = array();
         for (var part : source.path("autocomplete").path("contextParts")) {
-          String context = text(draft.path("address"), part.asText());
+          String context = text(card.path("address"), part.asText());
           // A city may be its own first-level region (DaData's "г Минск").
           // The city already matches the primary suggestion label; treating it as an
           // additional oblast would reject the correct suggestion on another platform.
           if (part.asText().equals("region")
-              && placeName(context).equals(placeName(text(draft.path("address"), "settlement"))))
+              && placeName(context).equals(placeName(text(card.path("address"), "settlement"))))
             continue;
           if (!context.isBlank()) matchContext.add(context);
         }

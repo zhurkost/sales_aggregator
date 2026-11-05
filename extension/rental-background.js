@@ -148,7 +148,6 @@
         sourceTabId: sender.tab.id,
         created: Date.now(),
         mode: data.mode,
-        draft: data.draft,
         photoKey: "rental:" + crypto.randomUUID(),
         jobs: data.jobs.map((recipe) => ({
           id: crypto.randomUUID(),

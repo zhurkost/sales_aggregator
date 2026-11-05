@@ -21,7 +21,7 @@ const payload = () => ({
   profileId: "owner",
   revision: 1,
   mode: "automatic",
-  draft: { values: {} },
+  card: { values: {} },
   jobs: Object.keys(core.starts).map(recipe),
   photos: [],
 });
@@ -30,7 +30,7 @@ test("rental launch accepts partial cards for all four sites, independent of adv
   p.jobs.forEach((j) => (j.controls = []));
   const result = core.validate(p);
   assert.equal(result.jobs.length, 4);
-  assert.deepEqual(result.draft.values, {});
+  assert.deepEqual(result.card.values, {});
   for (const wrong of [
     "https://www.kufar.by.evil.test/ain/create",
     "javascript:alert(1)",

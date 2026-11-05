@@ -1,8 +1,0 @@
-          @if (drafts.length) {
-            <div class="rental-saved">
-              @for (item of drafts; track item.id) {
-                <div class="saved-row"><button type="button" class="saved-item" [disabled]="busy" (click)="openDraft.emit(item.id)">{{ item.title || item.address || 'Квартира без названия' }}</button><button type="button" class="delete-item" [disabled]="busy" [attr.aria-label]="'Удалить квартиру: ' + (item.title || item.address || 'Квартира без названия')" (click)="confirmDelete.emit(item.id)">Удалить</button></div>
-                @if (pendingDelete === item.id) { <div class="delete-confirmation"><p>Удалить квартиру? Восстановить её не получится.</p><div class="delete-actions"><button type="button" class="secondary" [disabled]="busy" (click)="confirmDelete.emit(null)">Отмена</button><button type="button" class="delete-item" [disabled]="busy" (click)="deleteDraft.emit(item.id)">Да, удалить</button></div></div> }
-              }
-            </div>
-          } @else { <p class="empty-state">Пока нет сохранённых квартир</p> }

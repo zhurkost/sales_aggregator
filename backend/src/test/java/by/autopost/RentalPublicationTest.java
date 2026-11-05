@@ -2,7 +2,6 @@ package by.autopost;
 
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import by.autopost.rental.application.*;
 import by.autopost.rental.catalog.*;
@@ -224,20 +223,19 @@ class RentalPublicationTest {
   }
 
   @Test
-  void onlySavedSnapshotInOwnWorkspaceCanBeLaunched() {
-    var drafts = mock(RentalDraftService.class);
-    var service = new RentalPublicationService(drafts, catalog);
-    var draft = partial();
-    String id = UUID.randomUUID().toString();
-    when(drafts.get("owner", id))
-        .thenReturn(object("id", id, "revision", 3, "draft", catalog.normalize(draft)));
-    when(drafts.get("other", id)).thenThrow(new ApiException(404, "Не найдено"));
-    var request = object("id", id, "draft", draft);
-    assertEquals(3, service.configuration("owner", request).path("revision").asInt());
-    assertThrows(ApiException.class, () -> service.configuration("other", request));
-    ((ObjectNode) request.path("draft").path("values"))
-        .put("listing.description", "Изменено после сохранения");
-    assertThrows(ApiException.class, () -> service.configuration("owner", request));
+  void currentFormCanLaunchWithoutStorageAndRejectsInvalidInput() {
+    var service = new RentalPublicationService(catalog);
+    var card = partial();
+    var request = object("id", UUID.randomUUID().toString(), "revision", 1, "card", card);
+    assertEquals(4, service.configuration(request).path("jobs").size());
+    assertEquals(1, service.configuration(request).path("revision").asInt());
+    ((ObjectNode)card.path("values")).put("listing.description", "Новый текст без сохранения");
+    assertEquals(4, service.configuration(request).path("jobs").size());
+    request.put("revision", 0);
+    assertEquals(400, assertThrows(ApiException.class, () -> service.configuration(request)).status);
+    request.put("revision", 1);
+    ((ObjectNode)request.path("card")).put("schemaVersion", "old");
+    assertEquals(409, assertThrows(ApiException.class, () -> service.configuration(request)).status);
   }
 
   @Test

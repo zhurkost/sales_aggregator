@@ -39,7 +39,7 @@ import { RentalAddressGateway } from "./rental-address.gateway";
       @if (selected?.confirmed && !compact) {
         <p class="address-confirmation">Выбран: <strong>{{ selected?.label }}</strong></p>
       } @else if (query && !compact) {
-        <p class="fine-print">Текст сохранён. Выберите подсказку или уточните части адреса вручную.</p>
+        <p class="fine-print">Адрес введён. Выберите подсказку или уточните части адреса вручную.</p>
       }
     } @else {
       <div class="manual-grid" id="rental-address" tabindex="-1">
@@ -97,9 +97,9 @@ export class AddressInputComponent implements OnDestroy {
   constructor(private addresses: RentalAddressGateway = new RentalAddressGateway()) {}
   @Input({ required: true }) workspaceId = "";
   @Input() compact = false;
-  @Input() set draftId(id: string) {
-    if (id === this.currentDraft) return;
-    this.currentDraft = id;
+  @Input() set sessionId(id: string) {
+    if (id === this.currentSession) return;
+    this.currentSession = id;
     this.resetPending();
     this.selected = null;
     this.query = "";
@@ -139,7 +139,7 @@ export class AddressInputComponent implements OnDestroy {
   error = "";
   suggestions: { id: string; label: string }[] = [];
   private generation = 0;
-  private currentDraft = "";
+  private currentSession = "";
   private timer?: ReturnType<typeof setTimeout>;
   private resetPending() {
     clearTimeout(this.timer);

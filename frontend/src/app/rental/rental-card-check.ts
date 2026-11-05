@@ -1,11 +1,11 @@
 import { rentalApi } from "./rental-api";
-import type { Prepared, RentalDraft } from "./rental-models";
+import type { Prepared, RentalCard } from "./rental-models";
 
 type Context = {
   workspace: string;
   id: string;
   version: number;
-  draft: RentalDraft;
+  card: RentalCard;
   destroyed: boolean;
 };
 
@@ -52,7 +52,7 @@ export class RentalCardCheck {
       const result = await rentalApi<{ platforms: Prepared[] }>(
         before.workspace,
         "prepare",
-        structuredClone(before.draft),
+        structuredClone(before.card),
       );
       if (current()) {
         this.results = result.platforms;

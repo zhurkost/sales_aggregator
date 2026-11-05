@@ -1,8 +1,8 @@
 import { rentalApi } from "./rental-api";
-import type { RentalDraft } from "./rental-models";
+import type { RentalCard } from "./rental-models";
 
 type Context = { workspace: string; id: string; version: number; schemaVersion?: string;
-  enabled: boolean; destroyed: boolean; draft: RentalDraft };
+  enabled: boolean; destroyed: boolean; card: RentalCard };
 type Result = { schemaVersion: string; platforms: Record<string, Record<string, boolean | null>> };
 
 /** Presentation consumes server decisions. It never executes marketplace rules. */
@@ -48,7 +48,7 @@ export class RentalApplicability {
         before.id === now.id && before.version === now.version && before.schemaVersion === now.schemaVersion;
     };
     try {
-      const result = await rentalApi<Result>(before.workspace, "applicability", structuredClone(before.draft));
+      const result = await rentalApi<Result>(before.workspace, "applicability", structuredClone(before.card));
       if (!current()) return;
       if (result.schemaVersion !== before.schemaVersion) throw new Error("Правила обновились. Обновите поля карточки.");
       this.fields = result.platforms;

@@ -36,22 +36,14 @@ describe("Rental-only workspace",()=>{
       expect(fixture.nativeElement.textContent).not.toContain(label);
     expect(fetcher.mock.calls.map(c=>c[0])).toEqual(["/api/workspace/session","/api/workspace/settings"]);
   });
-  it("keeps the profile and rental editor when saving before logout fails",async()=>{
-    app=new AppComponent();app.profile=profile;
-    app.rentalEditor={flush:vi.fn().mockRejectedValue(new Error("Не удалось сохранить"))} as unknown as RentalEditorComponent;
-    const fetcher=vi.fn();vi.stubGlobal("fetch",fetcher);
-    await app.logout();
-    expect(app.profile).toEqual(profile);expect(app.toast).toBe("Не удалось сохранить");expect(fetcher).not.toHaveBeenCalled();
-  });
-  it("flushes the rental draft before ending the session",async()=>{
+  it("ends the session without storing the form",async()=>{
     app=new AppComponent();app.profile=profile;
     const steps:string[]=[];
-    app.rentalEditor={flush:async()=>{steps.push("save");}} as unknown as RentalEditorComponent;
     vi.stubGlobal("fetch",vi.fn(async(url:unknown)=>{
       steps.push(String(url));return response(url==="/api/workspace/session"?{profile:null,profiles:[profile]}:{ok:true});
     }));
     await app.logout();
-    expect(steps).toEqual(["save","/api/workspace/logout","/api/workspace/session"]);
+    expect(steps).toEqual(["/api/workspace/logout","/api/workspace/session"]);
     expect(app.profile).toBeNull();expect(app.settings).toEqual({});
   });
   it("keeps login and registration available without exposing removed views",async()=>{

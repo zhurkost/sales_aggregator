@@ -3,16 +3,14 @@ import {
   Input,
   OnInit,
   OnDestroy,
-  HostListener,
 } from "@angular/core";
-import { RentalSavedListComponent } from "./rental-saved-list.component";
 import { RentalAiReviewComponent } from "./rental-ai-review.component";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalFieldsComponent } from "./rental-fields.component";
-import { RentalDraftEditor } from "./rental-draft.editor";
-import { RentalDraftStore } from "./rental-draft.store";
+import { RentalFormEditor } from "./rental-form.editor";
+import { RentalFormStore } from "./rental-form.store";
 import { RentalAiAssistant } from "./rental-ai.assistant";
 import { RentalViewModel } from "./rental-view.model";
 import { hasValue } from "./rental-values";
@@ -27,57 +25,38 @@ import {
 @Component({
   selector: "app-rental-editor",
   standalone: true,
-  imports: [RentalPublicationComponent, RentalSavedListComponent, RentalAiReviewComponent, FormsModule, CommonModule, AddressInputComponent, RentalFieldsComponent],
+  imports: [RentalPublicationComponent, RentalAiReviewComponent, FormsModule, CommonModule, AddressInputComponent, RentalFieldsComponent],
   templateUrl: "./rental-editor.component.html",
   styleUrl: "./rental-editor.component.css",
 })
 export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
   @Input() profileDefaults: RentalProfile = {};
-  readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); }, () => this.profileDefaults);
-  readonly editing = new RentalDraftEditor(this.store, address => this.addressChanged(address));
+  readonly store = new RentalFormStore(() => this.workspaceId, () => this.profileDefaults);
+  readonly editing = new RentalFormEditor(this.store, address => this.addressChanged(address));
   readonly ai = new RentalAiAssistant(this.store, () => this.workspaceId, address => this.replaceAddress(address), address => this.addressChanged(address));
   readonly view = new RentalViewModel(this.store);
-  panel: "parameters" | "saved" | "result" | null = null;
+  panel: "parameters" | "result" | null = null;
   private panelTrigger: HTMLElement | null = null;
   private focusTimer?: ReturnType<typeof setTimeout>;
   ngOnInit() { return this.store.load(); }
   get schema() { return this.store.schema; }
-  set schema(value: RentalDraftStore["schema"]) { this.store.schema = value; }
-  get draft() { return this.store.draft; }
-  set draft(value: RentalDraftStore["draft"]) { this.store.draft = value; }
+  set schema(value: RentalFormStore["schema"]) { this.store.schema = value; }
+  get card() { return this.store.card; }
+  set card(value: RentalFormStore["card"]) { this.store.card = value; }
   get id() { return this.store.id; }
-  set id(value: RentalDraftStore["id"]) { this.store.id = value; }
-  get revision() { return this.store.revision; }
-  set revision(value: RentalDraftStore["revision"]) { this.store.revision = value; }
-  get dirty() { return this.store.dirty; }
-  set dirty(value: RentalDraftStore["dirty"]) { this.store.dirty = value; }
-  get status() { return this.store.status; }
-  set status(value: RentalDraftStore["status"]) { this.store.status = value; }
+  set id(value: RentalFormStore["id"]) { this.store.id = value; }
   get error() { return this.store.error; }
-  set error(value: RentalDraftStore["error"]) { this.store.error = value; }
+  set error(value: RentalFormStore["error"]) { this.store.error = value; }
   get busy() { return this.store.busy; }
-  set busy(value: RentalDraftStore["busy"]) { this.store.busy = value; }
-  get pendingDelete() { return this.store.pendingDelete; }
-  set pendingDelete(value: RentalDraftStore["pendingDelete"]) { this.store.pendingDelete = value; }
-  get deletingId() { return this.store.deletingId; }
-  set deletingId(value: RentalDraftStore["deletingId"]) { this.store.deletingId = value; }
-  get drafts() { return this.store.drafts; }
-  set drafts(value: RentalDraftStore["drafts"]) { this.store.drafts = value; }
+  set busy(value: RentalFormStore["busy"]) { this.store.busy = value; }
   get results() { return this.store.results; }
-  set results(value: RentalDraftStore["results"]) { this.store.results = value; }
+  set results(value: RentalFormStore["results"]) { this.store.results = value; }
   get platforms() { return this.store.platforms; }
-  refresh = (...args: Parameters<RentalDraftStore["refresh"]>) => this.store.refresh(...args);
-  changed = (...args: Parameters<RentalDraftStore["changed"]>) => this.store.changed(...args);
-  save = (...args: Parameters<RentalDraftStore["save"]>) => this.store.save(...args);
-  flush = (...args: Parameters<RentalDraftStore["flush"]>) => this.store.flush(...args);
-  open = (...args: Parameters<RentalDraftStore["open"]>) => this.store.open(...args);
-  fresh = (...args: Parameters<RentalDraftStore["fresh"]>) => this.store.fresh(...args);
-  remove = (...args: Parameters<RentalDraftStore["remove"]>) => this.store.remove(...args);
-  updateFields = (...args: Parameters<RentalDraftStore["updateFields"]>) => this.store.updateFields(...args);
-  saveCopy = (...args: Parameters<RentalDraftStore["saveCopy"]>) => this.store.saveCopy(...args);
-  prepare = (...args: Parameters<RentalDraftStore["prepare"]>) => this.store.prepare(...args);
-  acceptSchema = (...args: Parameters<RentalDraftStore["acceptSchema"]>) => this.store.acceptSchema(...args);
+  changed = (...args: Parameters<RentalFormStore["changed"]>) => this.store.changed(...args);
+  updateFields = (...args: Parameters<RentalFormStore["updateFields"]>) => this.store.updateFields(...args);
+  prepare = (...args: Parameters<RentalFormStore["prepare"]>) => this.store.prepare(...args);
+  acceptSchema = (...args: Parameters<RentalFormStore["acceptSchema"]>) => this.store.acceptSchema(...args);
   get aiBusy() { return this.ai.busy; }
   set aiBusy(value: RentalAiAssistant["busy"]) { this.ai.busy = value; }
   get aiMessage() { return this.ai.message; }
@@ -118,7 +97,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   set parameterSearch(value: RentalViewModel["parameterSearch"]) { this.view.parameterSearch = value; }
   get filledOnly() { return this.view.filledOnly; }
   set filledOnly(value: RentalViewModel["filledOnly"]) { this.view.filledOnly = value; }
-  setValue = (...args: Parameters<RentalDraftEditor["setValue"]>) => this.editing.setValue(...args);
+  setValue = (...args: Parameters<RentalFormEditor["setValue"]>) => this.editing.setValue(...args);
   addressChanged(address: Address | null) {
     if (this.busy) return;
     this.replaceAddress(address);
@@ -127,9 +106,9 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.aiConflicts = this.aiConflicts.filter(item => !dependent.includes(item.field));
     this.changed();
   }
-  replaceAddress = (...args: Parameters<RentalDraftEditor["replaceAddress"]>) => this.editing.replaceAddress(...args);
-  setTyped = (...args: Parameters<RentalDraftEditor["setTyped"]>) => this.editing.setTyped(...args);
-  toggleChoice = (...args: Parameters<RentalDraftEditor["toggleChoice"]>) => this.editing.toggleChoice(...args);
+  replaceAddress = (...args: Parameters<RentalFormEditor["replaceAddress"]>) => this.editing.replaceAddress(...args);
+  setTyped = (...args: Parameters<RentalFormEditor["setTyped"]>) => this.editing.setTyped(...args);
+  toggleChoice = (...args: Parameters<RentalFormEditor["toggleChoice"]>) => this.editing.toggleChoice(...args);
   focusField(id: string) {
     const basic = id === "address" || id === "legacy" || this.mainFields.some(f => f.id === id) || id === "listing.description";
     if (!basic) { this.openPanel("parameters"); this.parameterSearch = ""; this.filledOnly = false; }
@@ -141,10 +120,10 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
       (el?.querySelector<HTMLElement>("button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled])") || el)?.focus();
     }, 0);
   }
-  get description() { return String(this.draft.values["listing.description"] || ""); }
+  get description() { return String(this.card.values["listing.description"] || ""); }
   setDescription(value: string) {
     if (this.busy) return;
-    this.draft.values["listing.description"] = value;
+    this.card.values["listing.description"] = value;
     this.clearAi();
     this.changed();
   }
@@ -156,7 +135,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.focusTimer = setTimeout(() => document.getElementById("rental-panel-title")?.focus(), 0);
   }
   closePanel(restoreFocus = true) {
-    this.panel = null; this.pendingDelete = null;
+    this.panel = null;
     clearTimeout(this.focusTimer);
     const trigger = this.panelTrigger;
     if (restoreFocus) this.focusTimer = setTimeout(() => trigger?.focus(), 0);
@@ -174,11 +153,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     if (event.shiftKey && (active === first || outside || beforeFirst)) { event.preventDefault(); last.focus(); }
     else if (!event.shiftKey && (active === last || outside || afterLast)) { event.preventDefault(); first.focus(); }
   }
-  resolveLegacy = (...args: Parameters<RentalDraftEditor["resolveLegacy"]>) => this.editing.resolveLegacy(...args);
-  togglePlatform = (...args: Parameters<RentalDraftEditor["togglePlatform"]>) => this.editing.togglePlatform(...args);
-  @HostListener("window:beforeunload", ["$event"])
-  unload(event: BeforeUnloadEvent) {
-    if (this.dirty) { event.preventDefault(); event.returnValue = ""; }
-  }
+  resolveLegacy = (...args: Parameters<RentalFormEditor["resolveLegacy"]>) => this.editing.resolveLegacy(...args);
+  togglePlatform = (...args: Parameters<RentalFormEditor["togglePlatform"]>) => this.editing.togglePlatform(...args);
   ngOnDestroy() { this.store.destroy(); clearTimeout(this.focusTimer); }
 }

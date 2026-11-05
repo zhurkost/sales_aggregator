@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (message.kind === "APP_REQUEST" && message.type === "PING") {
     if (!core.isAppOrigin(core.originOf(sender.url || sender.tab.url))) return false;
     // Health checks must not wait for photo storage or cleanup.
-    respond({version: core.VERSION, capabilities: ["rental-publishing", "rental-address-suggestions"]});
+    respond({version: core.VERSION, capabilities: ["rental-publishing", "rental-address-suggestions", "rental-form-session"]});
     return true;
   }
   if (!["RENTAL_REQUEST", "RENTAL_PAGE"].includes(message.kind)) return false;

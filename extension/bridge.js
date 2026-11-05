@@ -46,15 +46,13 @@
       return;
     }
     try {
-      // Check before reserving a launch on the server. An orphaned bridge must
-      // never consume the one-shot launch reservation or transfer card data.
       requireRuntime();
       let payload=event.data.payload;
       if (type.startsWith('RENTAL_')) {
         if (mutation) { consumedGestureId=gestureId; running=true; }
         if (type==='RENTAL_RUN') {
-          const config=await rentalConfig(payload,true);
-          payload={...config,profileId:payload.profileId,draft:payload.draft,mode:payload.mode,photos:payload.photos||[]};
+          const config=await rentalConfig(payload);
+          payload={...config,profileId:payload.profileId,card:payload.card,mode:payload.mode,photos:payload.photos||[]};
         }
         const result=await requireRuntime().sendMessage({kind:'RENTAL_REQUEST',type,payload,userGesture});
         respond(requestId,result||{error:'Расширение не ответило.'});return;
@@ -72,21 +70,18 @@
       });
     } finally { if (type.startsWith('RENTAL_')) running = false; }
   });
-  async function rentalConfig(payload, wait=false) {
-    const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),16000);
+  async function rentalConfig(payload) {
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(),16000);
     try {
-      for(let attempt=0;attempt<30;attempt++) {
-        const response=await fetch('/api/workspace/rental/extension-config',{
-          method:'POST',credentials:'same-origin',cache:'no-store',signal:controller.signal,
-          headers:{'Content-Type':'application/json','X-Autopost-Workspace':payload.profileId},
-          body:JSON.stringify({id:payload.id,draft:payload.draft}),
-        });
-        const data=await response.json();
-        if(response.ok)return data;
-        if(wait&&[404,409].includes(response.status)&&attempt<29){await new Promise(resolve=>setTimeout(resolve,300));continue;}
-        throw new Error(data.error||'Не удалось получить правила аренды.');
-      }
-    } finally {clearTimeout(timer);}
+      const response = await fetch('/api/workspace/rental/extension-config', {
+        method:'POST', credentials:'same-origin', cache:'no-store', signal:controller.signal,
+        headers:{'Content-Type':'application/json','X-Autopost-Workspace':payload.profileId},
+        body:JSON.stringify({id:payload.id,revision:payload.revision,card:payload.card}),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Не удалось подготовить данные формы.');
+      return data;
+    } finally { clearTimeout(timer); }
   }
   try {
     requireRuntime();

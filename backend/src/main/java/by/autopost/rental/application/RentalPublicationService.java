@@ -1,34 +1,26 @@
 package by.autopost.rental.application;
 
 import static by.autopost.shared.Json.*;
-
 import by.autopost.shared.ApiException;
+import by.autopost.shared.Json;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.stereotype.Service;
 
-/** The extension receives only the saved snapshot in the authenticated workspace. */
+/** Prepares the current form without database persistence. */
 @Service
 public final class RentalPublicationService {
-  private final RentalDraftService drafts;
   private final RentalCatalog catalog;
-
-  public RentalPublicationService(RentalDraftService drafts, RentalCatalog catalog) {
-    this.drafts = drafts;
-    this.catalog = catalog;
-  }
-
-  public ObjectNode configuration(String workspace, JsonNode input) {
-    if (!input.isObject() || input.toString().length() > 250000)
-      throw new ApiException(400, "Некорректная карточка.");
-    String id = clean(input, "id", 100);
-    var saved = drafts.get(workspace, id);
-    if (!saved.path("draft").equals(catalog.normalize(input.path("draft"))))
-      throw new ApiException(
-          409, "Карточка изменилась. Дождитесь сохранения и повторите публикацию.");
-    var result = catalog.browser(saved.path("draft"));
-    result.put("id", id);
-    result.set("revision", saved.path("revision"));
+  public RentalPublicationService(RentalCatalog catalog) { this.catalog = catalog; }
+  public ObjectNode configuration(JsonNode input) {
+    if (!input.isObject() || input.toString().length() > 250000 ||
+        !Json.id(text(input, "id")) || !input.path("card").isObject() ||
+        !input.path("revision").isIntegralNumber() || !input.path("revision").canConvertToInt() ||
+        input.path("revision").asInt() < 1)
+      throw new ApiException(400, "Некорректные данные формы.");
+    var result = catalog.browser(input.path("card"));
+    result.put("id", text(input, "id"));
+    result.set("revision", input.path("revision"));
     return result;
   }
 }

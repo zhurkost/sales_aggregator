@@ -18,7 +18,7 @@
       photosBusy
         ? "Обрабатываем…"
         : photos.length
-          ? photos.length + " фото · в этом браузере"
+          ? photos.length + " фото · в текущей форме"
           : "Или вставьте из буфера"
     }}</span>
     @for (photo of photos; track photo.id) {
@@ -45,7 +45,7 @@
       type="button"
       class="publish"
       [disabled]="
-        busy || photosBusy || store.busy || !store.draft.platforms.length
+        busy || photosBusy || store.busy || !store.card.platforms.length
       "
       (click)="publish()"
     >

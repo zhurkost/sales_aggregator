@@ -11,30 +11,12 @@ const response = (body: unknown) =>
   new Response(JSON.stringify(body), { status: 200 });
 
 describe("rental preparation editor", () => {
-  it("locks input during opening and rejects an unexpected late edit without losing it", async () => {
-    const c = new RentalEditorComponent();
-    let resolve!: (r: Response) => void;
-    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
-    const opening = c.open("another");
-    await vi.waitFor(() => expect(resolve).toBeDefined());
-    const field = {id:"listing.title", type:"text", name:"Title", description:"", options:[], };
-    c.setValue(field, "Must not accept locked input");
-    expect(c.draft.values[field.id]).toBeUndefined();
-    c.draft.values[field.id] = "Unexpected asynchronous edit";
-    c.changed();
-    resolve(response({id:"another", revision:1, draft:{schemaVersion:"1",values:{},extras:{},platforms:[],address:null}}));
-    await opening;
-    expect(c.id).not.toBe("another");
-    expect(c.draft.values[field.id]).toBe("Unexpected asynchronous edit");
-    expect(c.dirty).toBe(true);
-    c.ngOnDestroy();
-  });
   it("editing nearby landmarks never clears the apartment address", () => {
     const c = new RentalEditorComponent();
-    c.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
+    c.card.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
     for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
       c.setValue({id, name:id, type:"text", options:[], description:""}, "Example");
-    expect(c.draft.address.settlement).toBe("Минск");
+    expect(c.card.address.settlement).toBe("Минск");
     c.ngOnDestroy();
   });
   it("clearing a manual address updates the visible input too", () => {
@@ -60,27 +42,11 @@ describe("rental preparation editor", () => {
     const c = new RentalEditorComponent();
     c.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
       platforms:{example:{labels:{},choiceLabels:{},addressBoundFields:["nativeAddress","coordinates"]}}};
-    c.draft.values["location.metro"] = "Old metro";
-    c.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
+    c.card.values["location.metro"] = "Old metro";
+    c.card.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
     c.addressChanged({provider:"manual",label:"New",countryIso:"BY",settlement:"New",street:"",house:"",confirmed:false});
-    expect(c.draft.extras.example).toEqual({other:"Keep"});
-    expect(c.draft.values["location.metro"]).toBeUndefined();
-    c.ngOnDestroy();
-  });
-  it("recovers revision conflicts by saving a separate card without overwriting the original", async () => {
-    const c = new RentalEditorComponent();
-    const original = c.id; c.revision = 7; c.dirty = true;
-    c.draft.values["listing.title"] = "Keep my edits";
-    const calls: {url:string, body:any}[] = [];
-    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
-      calls.push({url,body:init?.body ? JSON.parse(String(init.body)) : null});
-      return response(url.endsWith("/drafts") ? {drafts:[]} : {revision:1});
-    }));
-    await c.saveCopy();
-    expect(c.id).not.toBe(original);
-    expect(calls[0].body.revision).toBe(0);
-    expect(calls[0].body.draft.values["listing.title"]).toBe("Keep my edits");
-    expect(calls.some(call => call.url.endsWith(original))).toBe(false);
+    expect(c.card.extras.example).toEqual({other:"Keep"});
+    expect(c.card.values["location.metro"]).toBeUndefined();
     c.ngOnDestroy();
   });
 
@@ -89,17 +55,17 @@ describe("rental preparation editor", () => {
     const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{},choiceLabels:{},}]));
     vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
       version:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
-    } : {drafts:[]})));
+    } : {})));
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
     await vi.waitFor(() => {fixture.detectChanges(); expect(fixture.nativeElement.textContent).toContain("Пятая площадка");});
     const c = fixture.componentInstance;
-    expect(c.draft.platforms).toHaveLength(5);
+    expect(c.card.platforms).toHaveLength(5);
     c.setValue(field,"42,5"); c.togglePlatform("fifth",false); fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[id="rental-rental.test"]')).toBeNull();
     c.togglePlatform("fifth",true); fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]')).toHaveLength(1);
-    expect(c.draft.values[field.id]).toBe("42,5"); fixture.destroy();
+    expect(c.card.values[field.id]).toBe("42,5"); fixture.destroy();
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
@@ -108,153 +74,9 @@ describe("rental preparation editor", () => {
     expect(c.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
   });
-  it("renders delete confirmation, supports cancellation and updates the saved list", async () => {
-    const fetch = vi.fn(async (url: string) => {
-      if (url.endsWith("/editor")) return response({
-        version: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
-        platforms: Object.fromEntries(["kufar", "onliner", "realt", "domovita"].map((name) => [name, {
-          labels: {}, choiceLabels: {}, }])),
-      });
-      if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1 }] });
-      return response({ deleted: true });
-    });
-    vi.stubGlobal("fetch", fetch);
-    const fixture = TestBed.createComponent(RentalEditorComponent);
-    fixture.componentRef.setInput("workspaceId", "owner");
-    const element = fixture.nativeElement as HTMLElement;
-    try {
-      fixture.detectChanges();
-      await vi.waitFor(() => {
-        fixture.detectChanges();
-        expect(fixture.componentInstance.schema).not.toBeNull();
-        fixture.componentInstance.openPanel("saved");
-        fixture.detectChanges();
-        expect(element.querySelector(".saved-row .delete-item")).not.toBeNull();
-      });
-      const remove = element.querySelector<HTMLButtonElement>(".saved-row .delete-item")!;
-      expect(remove.getAttribute("aria-label")).toContain("Тестовая квартира");
-      remove.click();
-      fixture.detectChanges();
-      expect(element.querySelector(".delete-confirmation")?.textContent).toContain("Восстановить её не получится");
-      element.querySelector<HTMLButtonElement>(".delete-actions .secondary")!.click();
-      fixture.detectChanges();
-      expect(element.querySelector(".delete-confirmation")).toBeNull();
-      expect(fetch.mock.calls.some(([url]) => url.endsWith("/delete"))).toBe(false);
-      remove.click();
-      fixture.detectChanges();
-      element.querySelector<HTMLButtonElement>(".delete-actions .delete-item")!.click();
-      await vi.waitFor(() => {
-        fixture.detectChanges();
-        expect(element.querySelector(".rental-saved")).toBeNull();
-      });
-      expect(element.textContent).toContain("Квартира удалена");
-    } finally { fixture.destroy(); }
-  });
-  it("requires confirmation before removing a saved apartment", async () => {
-    const c = new RentalEditorComponent();
-    const fetch = vi.fn();
-    vi.stubGlobal("fetch", fetch);
-    await c.remove(c.id);
-    expect(fetch).not.toHaveBeenCalled();
-    expect(c.busy).toBe(false);
-    c.ngOnDestroy();
-  });
-  it("waits for an in-flight save and never recreates the deleted active card", async () => {
-    vi.useFakeTimers();
-    const c = new RentalEditorComponent();
-    c.workspaceId = "owner";
-    const id = c.id;
-    c.revision = 1;
-    c.drafts = [{ id, title: "Apartment", address: "", revision: 1 }];
-    let finish!: (response: Response) => void;
-    const calls: { url: string; body: any }[] = [];
-    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
-      calls.push({ url, body: init?.body ? JSON.parse(String(init.body)) : null });
-      if (url.endsWith("/delete")) return response({ deleted: true });
-      if (url.endsWith("/drafts")) return response({ drafts: [{ id, title: "Apartment", address: "", revision: 2 }] });
-      return new Promise<Response>((resolve) => { finish = resolve; });
-    }));
-    c.changed();
-    const saving = c.save();
-    await Promise.resolve();
-    await Promise.resolve();
-    c.changed();
-    const queuedSave = c.save();
-    c.pendingDelete = id;
-    const deleting = c.remove(id);
-    expect(calls.some((call) => call.url.endsWith("/delete"))).toBe(false);
-    finish(response({ revision: 2 }));
-    await Promise.all([saving, queuedSave, deleting]);
-    await vi.advanceTimersByTimeAsync(2000);
-    expect(calls.filter((call) => call.body?.draft)).toHaveLength(1);
-    expect(calls.find((call) => call.url.endsWith("/delete"))?.body).toEqual({ revision: 2 });
-    expect(c.drafts).toEqual([]);
-    expect(c.id).not.toBe(id);
-    expect(c.revision).toBe(0);
-    expect(c.draft.values).toEqual({});
-    expect(c.dirty).toBe(false);
-    expect(c.status).toBe("Квартира удалена");
-    c.ngOnDestroy();
-  });
-  it("keeps another open apartment intact when removing an item from the list", async () => {
-    const c = new RentalEditorComponent();
-    const current = c.id;
-    c.draft.values["listing.title"] = "Keep edits";
-    c.dirty = true;
-    c.drafts = [{ id: "other", title: "Other", address: "", revision: 4 }];
-    c.pendingDelete = "other";
-    vi.stubGlobal("fetch", vi.fn(async () => response({ deleted: true })));
-    await c.remove("other");
-    expect(c.drafts).toEqual([]);
-    expect(c.id).toBe(current);
-    expect(c.draft.values["listing.title"]).toBe("Keep edits");
-    expect(c.dirty).toBe(true);
-    c.ngOnDestroy();
-  });
-  it("preserves the card and unsaved edits if deletion fails or conflicts", async () => {
-    const c = new RentalEditorComponent();
-    const id = c.id;
-    c.revision = 3;
-    c.draft.values["listing.title"] = "Keep";
-    c.dirty = true;
-    c.drafts = [{ id, title: "Keep", address: "", revision: 3 }];
-    c.pendingDelete = id;
-    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ error: "Карточка изменена" }), { status: 409 })));
-    await c.remove(id);
-    expect(c.error).toBe("Карточка изменена");
-    expect(c.id).toBe(id);
-    expect(c.drafts).toHaveLength(1);
-    expect(c.draft.values["listing.title"]).toBe("Keep");
-    expect(c.dirty).toBe(true);
-    expect(c.busy).toBe(false);
-    expect(c.deletingId).toBeNull();
-    c.ngOnDestroy();
-  });
-  it("flushes edits made during an in-flight save before leaving", async () => {
-    const c = new RentalEditorComponent();
-    c.workspaceId = "a";
-    c.changed();
-    let writes = 0;
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async (url: string) => {
-        if (url.endsWith("/drafts")) return response({ drafts: [] });
-        writes++;
-        if (writes === 1) {
-          c.draft.values["listing.title"] = "Latest";
-          c.changed();
-        }
-        return response({ revision: writes });
-      }),
-    );
-    await c.flush();
-    expect(writes).toBe(2);
-    expect(c.dirty).toBe(false);
-    c.ngOnDestroy();
-  });
-  it("keeps the new query when clearing a previous address and resets on another draft", () => {
+  it("keeps the new query when clearing a previous address and resets on another card", () => {
     const c = new AddressInputComponent();
-    c.draftId = "one";
+    c.sessionId = "one";
     c.value = {
       provider: "dadata",
       label: "Old",
@@ -267,7 +89,7 @@ describe("rental preparation editor", () => {
     c.search("New");
     c.value = c.selected;
     expect(c.query).toBe("New");
-    c.draftId = "two";
+    c.sessionId = "two";
     expect(c.query).toBe("");
     c.ngOnDestroy();
   });
@@ -305,14 +127,14 @@ describe("rental preparation editor", () => {
   it("opens manual components from an unresolved AI address and resets for another card", async () => {
     const fixture = TestBed.createComponent(AddressInputComponent);
     fixture.componentRef.setInput("workspaceId", "test");
-    fixture.componentRef.setInput("draftId", "one");
+    fixture.componentRef.setInput("sessionId", "one");
     fixture.componentRef.setInput("value", {provider:"manual",countryIso:"BY",label:"город Минск, ул. Брикета, дом 18",settlement:"город Минск",street:"ул. Брикета",house:"18",confirmed:false,resolution:"not_found"});
     fixture.detectChanges();await fixture.whenStable();fixture.detectChanges();
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelector<HTMLInputElement>('[aria-label="Населённый пункт"]')?.value).toBe("город Минск");
     expect(element.querySelector<HTMLInputElement>('[aria-label="Улица"]')?.value).toBe("ул. Брикета");
     expect(element.querySelector<HTMLInputElement>('[aria-label="Дом, включая букву"]')?.value).toBe("18");
-    fixture.componentRef.setInput("draftId", "two");fixture.componentRef.setInput("value", null);fixture.detectChanges();
+    fixture.componentRef.setInput("sessionId", "two");fixture.componentRef.setInput("value", null);fixture.detectChanges();
     expect(fixture.componentInstance.manual).toBe(false);fixture.destroy();
   });
   it("drops provider identity and coordinates after manual address editing", () => {
@@ -324,7 +146,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates coordinates when the confirmed address changes", () => {
     const c = new RentalEditorComponent();
-    c.draft.address = {
+    c.card.address = {
       provider: "dadata",
       label: "Old",
       countryIso: "BY",
@@ -333,10 +155,10 @@ describe("rental preparation editor", () => {
       house: "1",
       confirmed: true,
     };
-    c.draft.values["location.latitude"] = "53.9";
+    c.card.values["location.latitude"] = "53.9";
     c.addressChanged(null);
-    expect(c.draft.values["location.latitude"]).toBeUndefined();
-    expect(c.draft.address).toBeNull();
+    expect(c.card.values["location.latitude"]).toBeUndefined();
+    expect(c.card.address).toBeNull();
     c.ngOnDestroy();
   });
   it("keeps typed numeric text exact until server conversion", () => {
@@ -349,51 +171,7 @@ describe("rental preparation editor", () => {
       options: [],
     };
     c.setValue(field, "1,123456789012345678");
-    expect(c.draft.values["amount"]).toBe("1,123456789012345678");
-    c.ngOnDestroy();
-  });
-  it("does not lose edits made during a save and pins workspace", async () => {
-    const c = new RentalEditorComponent();
-    c.workspaceId = "original";
-    c.changed();
-    let finish!: (r: Response) => void;
-    const fetch = vi.fn((url: string, init?: RequestInit) =>
-      url.endsWith("/drafts")
-        ? Promise.resolve(response({ drafts: [] }))
-        : new Promise<Response>((r) => (finish = r)),
-    );
-    vi.stubGlobal("fetch", fetch);
-    const save = c.save();
-    await Promise.resolve();
-    await Promise.resolve();
-    c.draft.values["listing.title"] = "New";
-    c.changed();
-    finish(response({ revision: 1 }));
-    await save;
-    expect(c.dirty).toBe(true);
-    expect(c.revision).toBe(1);
-    expect(
-      (fetch.mock.calls[0][1]?.headers as Record<string, string>)[
-        "X-Autopost-Workspace"
-      ],
-    ).toBe("original");
-    c.ngOnDestroy();
-  });
-  it("keeps conflicting edits instead of resetting the form", async () => {
-    const c = new RentalEditorComponent();
-    c.workspaceId = "a";
-    c.draft.values["listing.title"] = "Keep";
-    c.changed();
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(
-        async () =>
-          new Response(JSON.stringify({ error: "Конфликт" }), { status: 409 }),
-      ),
-    );
-    await expect(c.save()).rejects.toThrow("Конфликт");
-    expect(c.dirty).toBe(true);
-    expect(c.draft.values["listing.title"]).toBe("Keep");
+    expect(c.card.values["amount"]).toBe("1,123456789012345678");
     c.ngOnDestroy();
   });
 });

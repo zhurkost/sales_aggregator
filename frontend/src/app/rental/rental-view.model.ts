@@ -1,14 +1,14 @@
-import type { Field, JsonValue, Prepared, RentalDraft } from "./rental-models";
+import type { Field, JsonValue, Prepared, RentalCard } from "./rental-models";
 import { hasValue } from "./rental-values";
-import { RentalDraftStore } from "./rental-draft.store";
+import { RentalFormStore } from "./rental-form.store";
 
-/** Read-only projection of the current draft for presentation. Never saves or calls APIs. */
+/** Read-only projection of the current card for presentation. Never saves or calls APIs. */
 export class RentalViewModel {
   parameterSearch = "";
   filledOnly = false;
-  constructor(private store: RentalDraftStore) {}
+  constructor(private store: RentalFormStore) {}
   value(field: Field) {
-    const v = this.store.draft.values[field.id];
+    const v = this.store.card.values[field.id];
     return Array.isArray(v) ? v.join("\n") : String(v ?? "");
   }
   choices(field: Field) {
@@ -17,18 +17,18 @@ export class RentalViewModel {
   label(value: string) { return this.store.schema?.card?.valueLabels?.[value] || value; }
   platformName(p: string) { return this.store.schema?.platforms[p]?.name || p; }
   groupFields(group: Field) {
-    return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.draft.platforms.includes(u.platform) && this.store.applicability.field(u.platform, u.target) !== false));
+    return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.card.platforms.includes(u.platform) && this.store.applicability.field(u.platform, u.target) !== false));
   }
   usedBy(field: Field) {
-    return [...new Set(field.uses?.map(u => u.platform).filter(p => this.store.draft.platforms.includes(p)) || [])];
+    return [...new Set(field.uses?.map(u => u.platform).filter(p => this.store.card.platforms.includes(p)) || [])];
   }
   hasChoice(field: Field, choice: string) {
-    const value = this.store.draft.values[field.id];
+    const value = this.store.card.values[field.id];
     return Array.isArray(value) && value.includes(choice);
   }
   filled(group: Field) {
     return this.groupFields(group).filter(f => {
-      const value = this.store.draft.values[f.id];
+      const value = this.store.card.values[f.id];
       return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
     }).length;
   }
@@ -50,7 +50,7 @@ export class RentalViewModel {
     return [...groups.values()];
   }
   canFocus(source: string) {
-    return source === "legacy" || source === "address" && !this.store.draft.address?.label ||
+    return source === "legacy" || source === "address" && !this.store.card.address?.label ||
       !!this.store.schema?.category.options.some(g => g.id === source || g.options.some(f => f.id === source));
   }
   get mainFields() {
@@ -60,13 +60,13 @@ export class RentalViewModel {
   get additionalGroups() {
     const query = this.parameterSearch.trim().toLocaleLowerCase();
     return (this.store.schema?.category.options || []).filter(g => g.id !== "group.main").map(g => ({...g, options:this.groupFields(g).filter(f =>
-      f.id !== "listing.description" && (!this.filledOnly || hasValue(this.store.draft.values[f.id])) &&
-      (!query || (g.name + " " + f.name + " " + this.valueLabel(this.store.draft.values[f.id])).toLocaleLowerCase().includes(query))
+      f.id !== "listing.description" && (!this.filledOnly || hasValue(this.store.card.values[f.id])) &&
+      (!query || (g.name + " " + f.name + " " + this.valueLabel(this.store.card.values[f.id])).toLocaleLowerCase().includes(query))
     )})).filter(g => g.options.length);
   }
   get additionalFilled() {
     return (this.store.schema?.category.options || []).filter(g => g.id !== "group.main").flatMap(g => this.groupFields(g))
-      .filter(f => f.id !== "listing.description" && hasValue(this.store.draft.values[f.id]));
+      .filter(f => f.id !== "listing.description" && hasValue(this.store.card.values[f.id]));
   }
   fieldName(id: string) { return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === id)?.name || id; }
   valueLabel(value: JsonValue | undefined) {
@@ -74,7 +74,7 @@ export class RentalViewModel {
     if (Array.isArray(value)) return value.map(v => this.label(String(v))).join(", ");
     return this.label(String(value ?? ""));
   }
-  legacyLabel(item: NonNullable<RentalDraft["legacy"]>[number]) {
+  legacyLabel(item: NonNullable<RentalCard["legacy"]>[number]) {
     return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === item.source)?.name ||
       this.store.schema?.platforms[item.platform]?.labels[item.field] || "Сохранённое значение";
   }

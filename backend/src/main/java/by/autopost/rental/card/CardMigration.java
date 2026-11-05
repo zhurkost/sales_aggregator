@@ -24,16 +24,16 @@ public final class CardMigration {
   }
 
   public ObjectNode normalize(JsonNode original) {
-    ObjectNode draft = original.deepCopy();
+    ObjectNode card = original.deepCopy();
     ObjectNode values =
-        draft.path("values").isObject() ? (ObjectNode) draft.get("values") : object();
-    draft.set("values", values);
-    ArrayNode legacy = draft.path("legacy").isArray() ? (ArrayNode) draft.get("legacy") : array();
-    draft.set("legacy", legacy);
+        card.path("values").isObject() ? (ObjectNode) card.get("values") : object();
+    card.set("values", values);
+    ArrayNode legacy = card.path("legacy").isArray() ? (ArrayNode) card.get("legacy") : array();
+    card.set("legacy", legacy);
     ObjectNode address =
-        draft.path("address").isObject() ? (ObjectNode) draft.get("address") : object();
+        card.path("address").isObject() ? (ObjectNode) card.get("address") : object();
     JsonNode projection = catalog.card().path("addressProjection");
-    if (draft.path("modelVersion").asInt() < 2) {
+    if (card.path("modelVersion").asInt() < 2) {
       projection
           .fields()
           .forEachRemaining(
@@ -96,14 +96,14 @@ public final class CardMigration {
         if (!address.has("confirmed")) address.put("confirmed", false);
         if (!address.has("countryIso")) address.put("countryIso", "BY");
         if (text(address, "label").isBlank()) address.put("label", addressLabel(address));
-        draft.set("address", address);
+        card.set("address", address);
       }
     }
     // Address object is the only editable source. Legacy projections never reach preparation.
     projection.fieldNames().forEachRemaining(values::remove);
     ObjectNode extras = object();
-    if (draft.path("extras").isObject())
-      draft
+    if (card.path("extras").isObject())
+      card
           .path("extras")
           .fields()
           .forEachRemaining(
@@ -201,10 +201,10 @@ public final class CardMigration {
                           }
                         });
               });
-    draft.set("extras", extras);
-    draft.put("modelVersion", 2);
-    draft.put("schemaVersion", catalog.version());
-    return draft;
+    card.set("extras", extras);
+    card.put("modelVersion", 2);
+    card.put("schemaVersion", catalog.version());
+    return card;
   }
 
   public static JsonNode reverse(JsonNode pairs, JsonNode v) {

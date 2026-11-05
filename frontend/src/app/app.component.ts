@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { IconComponent } from "./icon.component";
 import { RentalEditorComponent } from "./rental/rental-editor.component";
@@ -15,7 +15,6 @@ import { WorkspaceGateway } from "./workspace.gateway";
 })
 export class AppComponent implements OnInit, OnDestroy {
   constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
-  @ViewChild(RentalEditorComponent) rentalEditor?: RentalEditorComponent;
   ready = false;
   unavailable = false;
   profile: Profile | null = null;
@@ -89,8 +88,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async logout() {
     await this.guard(async () => {
-      // Failed saves must keep the editor and session available to the user.
-      if (this.rentalEditor) await this.rentalEditor.flush();
       await this.workspace.logout();
       this.profile = null;
       this.settings = {};

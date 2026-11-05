@@ -28,12 +28,11 @@ export interface Address {
   sourceId?: string;
   confirmedAt?: string;
 }
-export interface RentalDraft {
-  localPhotoIds?: string[];
+export interface RentalCard {
   modelVersion?: number;
   aiEvidence?: Record<string, string>;
   legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];
-  resolvedLegacy?: RentalDraft["legacy"];
+  resolvedLegacy?: RentalCard["legacy"];
   schemaVersion: string;
   values: Record<string, JsonValue>;
   extras: Record<string, Record<string, JsonValue>>;

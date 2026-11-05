@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { RentalEditorComponent } from "./rental-editor.component";
-import { RentalDraftStore } from "./rental-draft.store";
+import { RentalFormStore } from "./rental-form.store";
 import type { EditorSchema, Prepared } from "./rental-models";
 
 const schema: EditorSchema = {
@@ -69,11 +69,9 @@ function mockApi() {
     response(
       url.endsWith("/editor")
         ? schema
-        : url.endsWith("/drafts")
-          ? { drafts: [] }
-          : url.endsWith("/prepare")
+        : url.endsWith("/prepare")
             ? { platforms: report }
-            : { revision: 1 },
+            : {},
     ),
   );
   vi.stubGlobal("fetch", fetch);
@@ -85,7 +83,7 @@ afterEach(() => {
 });
 
 describe("rental editing and validation", () => {
-  it("keeps the visible report and textarea focus, debouncing saves and rechecks", async () => {
+  it("keeps the visible report and textarea focus, debouncing rechecks without persistence", async () => {
     const fetch = mockApi();
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId", "owner");
@@ -122,20 +120,9 @@ describe("rental editing and validation", () => {
       expect(
         fetch.mock.calls.filter(([url]) => url.endsWith("/prepare")),
       ).toHaveLength(1);
-      const writes = fetch.mock.calls.filter(
-        ([, init]) =>
-          init?.method === "POST" && JSON.parse(String(init.body)).draft,
-      );
-      expect(writes).toHaveLength(1);
-      expect(
-        JSON.parse(String(writes[0][1]?.body)).draft.values[
-          "listing.description"
-        ],
-      ).toBe("Сдам квартиру");
       expect(el.querySelector(".results")).toBe(panel);
       expect(document.activeElement).toBe(input);
       expect(c.store.check.stale).toBe(false);
-      expect(c.status).toBe("Сохранено");
       expect(input.disabled).toBe(false);
     } finally {
       fixture.destroy();
@@ -144,9 +131,8 @@ describe("rental editing and validation", () => {
 
   it("ignores a late validation response after editing and after changing apartments", async () => {
     vi.useFakeTimers();
-    const store = new RentalDraftStore(
+    const store = new RentalFormStore(
       () => "owner",
-      () => {},
     );
     store.results = structuredClone(report);
     let finish!: (response: Response) => void;
@@ -160,7 +146,7 @@ describe("rental editing and validation", () => {
       ),
     );
     const request = store.check.refresh();
-    store.draft.values["listing.description"] = "Новое описание";
+    store.card.values["listing.description"] = "Новое описание";
     store.changed();
     finish(response({ platforms: [] }));
     await request;
@@ -195,101 +181,43 @@ describe("rental editing and validation", () => {
     expect(c.store.check.error).toBe("");
     c.ngOnDestroy();
   });
-
-  it("keeps validation separate from a failed save", async () => {
-    vi.useFakeTimers();
-    const c = new RentalEditorComponent();
-    c.changed();
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async (url: string) =>
-        url.endsWith("/prepare")
-          ? response({ platforms: report })
-          : response({ error: "Не удалось сохранить" }, 503),
-      ),
-    );
-    await c.prepare();
-    expect(c.results).toEqual(report);
-    expect(c.error).toBe("Не удалось сохранить");
-    expect(c.dirty).toBe(true);
-    expect(c.store.check.stale).toBe(false);
-    c.ngOnDestroy();
-  });
 });
 
-describe("rental contacts from the active profile", () => {
-  it("fills new cards and saves the contact snapshot with the first edit", async () => {
-    const fetch = mockApi();
-    const profile = {
-      phone: "+375 (29) 000-00-00",
-      contactPerson: "Тестовое лицо",
-      company: "Тестовая компания",
-      city: "Минск",
-    };
-    const store = new RentalDraftStore(
-      () => "owner",
-      () => {},
-      () => profile,
-    );
-    await store.load();
-    expect(store.draft.values).toEqual({
-      "contact.phone": "+375290000000",
-      "contact.name": "Тестовое лицо",
-      "contact.organization_name": "Тестовая компания",
-    });
-    expect(store.draft.address).toBeNull();
-    expect(store.dirty).toBe(false);
-    expect(fetch.mock.calls.some(([, init]) => init?.method === "POST")).toBe(
-      false,
-    );
-    store.draft.values["listing.description"] = "Квартира";
-    store.changed();
-    await store.save();
-    const write = fetch.mock.calls.find(([, init]) => init?.method === "POST")!;
-    expect(
-      JSON.parse(String(write[1]?.body)).draft.values["contact.phone"],
-    ).toBe("+375290000000");
-    profile.phone = "+375330000000";
-    expect(store.draft.values["contact.phone"]).toBe("+375290000000");
-    await store.fresh();
-    expect(store.draft.values["contact.phone"]).toBe("+375330000000");
-    store.destroy();
-  });
 
-  it("fills only absent fields in saved cards, respecting custom and cleared contacts", async () => {
-    const store = new RentalDraftStore(
-      () => "owner",
-      () => {},
-      () => ({
-        phone: "+375290000000",
-        contactPerson: "Профиль",
-        company: "Компания",
-      }),
-    );
-    store.schema = schema;
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        response({
-          id: "saved",
-          revision: 1,
-          draft: {
-            schemaVersion: "test",
-            values: { "contact.phone": "", "contact.name": "Другой контакт" },
-            extras: {},
-            platforms: [],
-            address: null,
-          },
-        }),
-      ),
-    );
-    await store.open("saved");
-    expect(store.draft.values).toEqual({
-      "contact.phone": "",
-      "contact.name": "Другой контакт",
-      "contact.organization_name": "Компания",
-    });
-    expect(store.dirty).toBe(true);
-    store.destroy();
+
+describe("transient rental form", () => {
+  it("keeps header buttons inert and editing never persists or resets the form", async () => {
+    const fetch = mockApi();
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "owner");
+    fixture.detectChanges();
+    await vi.waitFor(() => expect(fixture.componentInstance.schema).not.toBeNull());
+    const c = fixture.componentInstance;
+    c.card.values["listing.description"] = "Не терять введённый текст";
+    c.changed(); fixture.detectChanges();
+    fetch.mockClear(); vi.useFakeTimers();
+    const buttons = fixture.nativeElement.querySelectorAll(".header-actions button") as NodeListOf<HTMLButtonElement>;
+    expect(buttons.length).toBe(2);
+    expect(buttons[0].textContent?.trim()).toBe("Мои квартиры");
+    expect(buttons[1].textContent?.trim()).toBe("＋ Новая");
+    buttons[0].click(); buttons[1].click();
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(fetch).not.toHaveBeenCalled();
+    expect(c.panel).toBeNull();
+    expect(c.card.values["listing.description"]).toBe("Не терять введённый текст");
+    expect(fixture.nativeElement.textContent).not.toContain("Сохранено");
+    fixture.destroy();
+  });
+  it("initializes contacts in memory and does not carry form data into a new editor", async () => {
+    const fetch = mockApi();
+    const store = new RentalFormStore(() => "owner", () => ({phone:"+375290000000",contactPerson:"Имя"}));
+    await store.load();
+    expect(store.card.values["contact.phone"]).toBe("+375290000000");
+    store.card.values["listing.description"] = "Текущая форма";
+    store.changed(); store.destroy();
+    const next = new RentalFormStore(() => "owner"); await next.load();
+    expect(next.card.values["listing.description"]).toBeUndefined();
+    expect(fetch.mock.calls.every(([url]) => url.endsWith("/editor"))).toBe(true);
+    next.destroy();
   });
 });

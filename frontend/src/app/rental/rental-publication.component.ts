@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { EXTENSION_VERSION, type Photo } from "../../../../lib/workspace";
-import { RentalDraftStore } from "./rental-draft.store";
+import { RentalFormStore } from "./rental-form.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 
 type Job = {
@@ -22,9 +22,9 @@ type Job = {
 })
 export class RentalPublicationComponent implements OnChanges, OnDestroy {
   constructor(private gateway: RentalPublicationGateway) {}
-  @Input({ required: true }) store!: RentalDraftStore;
+  @Input({ required: true }) store!: RentalFormStore;
   @Input({ required: true }) workspaceId = "";
-  @Input({ required: true }) draftId = "";
+  @Input({ required: true }) sessionId = "";
   mode: "automatic" | "assist" = "automatic";
   readonly extensionVersion = EXTENSION_VERSION;
   busy = false;
@@ -42,22 +42,15 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     this.jobs = [];
     this.photos = [];
     this.error = "";
-    if (!this.workspaceId || !this.draftId) return;
-    const workspace = this.workspaceId,
-      id = this.draftId;
-    try {
-      const photos = await this.gateway.photos(workspace, id);
-      if (generation === this.generation) this.photos = photos;
-    } catch (e) {
-      if (generation === this.generation) this.error = (e as Error).message;
-    }
+    if (!this.workspaceId || !this.sessionId) return;
     try {
       const ping = await this.gateway.request("PING", undefined, 4000);
       if (generation !== this.generation) return;
       this.ready =
         Array.isArray(ping["capabilities"]) &&
         ping["capabilities"].includes("rental-publishing") &&
-        ping["capabilities"].includes("rental-address-suggestions");
+        ping["capabilities"].includes("rental-address-suggestions") &&
+        ping["capabilities"].includes("rental-form-session");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)
@@ -72,7 +65,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     try {
       const result = await this.gateway.request(
         "RENTAL_STATUS",
-        { profileId: this.workspaceId, id: this.draftId },
+        { profileId: this.workspaceId, id: this.sessionId },
         4000,
       );
       if (generation === this.generation && !this.destroyed)
@@ -82,7 +75,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     }
   }
   async publish() {
-    if (this.busy || this.store.busy || !this.store.draft.platforms.length)
+    if (this.busy || this.store.busy || !this.store.card.platforms.length)
       return;
     if (!this.ready) {
       this.error = `Установите расширение ${this.extensionVersion} и обновите вкладку Автопоста.`;
@@ -91,21 +84,16 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     this.busy = true;
     this.error = "";
     const generation = this.generation;
-    // Send immediately from the click: the bridge records the trusted gesture,
-    // then waits for the serialized save before loading its server-owned recipe.
-    if (!this.store.revision) this.store.dirty = true;
     const payload = {
-      id: this.draftId,
+      id: this.sessionId,
+      revision: this.store.editVersion + 1,
       profileId: this.workspaceId,
-      draft: structuredClone(this.store.draft),
+      card: structuredClone(this.store.card),
       mode: this.mode,
       photos: this.photos,
     };
     try {
-      const [, result] = await Promise.all([
-        this.store.flush(),
-        this.gateway.request("RENTAL_RUN", payload, 25000),
-      ]);
+      const result = await this.gateway.request("RENTAL_RUN", payload, 25000);
       if (generation === this.generation)
         this.jobs = (result["jobs"] || []) as Job[];
     } catch (e) {
@@ -117,7 +105,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   async open(job: Job) {
     try {
       await this.gateway.request("RENTAL_OPEN", {
-        id: this.draftId,
+        id: this.sessionId,
         profileId: this.workspaceId,
         jobId: job.id,
       });
@@ -128,7 +116,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   async stop() {
     try {
       await this.gateway.request("RENTAL_STOP", {
-        id: this.draftId,
+        id: this.sessionId,
         profileId: this.workspaceId,
       });
       await this.refresh();
@@ -143,15 +131,11 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     if (this.photosBusy) return;
     this.photosBusy = true;
     this.error = "";
-    const generation = this.generation,
-      workspace = this.workspaceId,
-      id = this.draftId;
+    const generation = this.generation;
     try {
       const photos = await this.gateway.add(this.photos, files);
-      await this.gateway.photos(workspace, id, photos);
       if (generation === this.generation) {
         this.photos = photos;
-        this.store.draft.localPhotoIds = photos.map((photo) => photo.id);
         this.store.changed();
       }
     } catch (e) {
@@ -178,10 +162,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     const generation = this.generation;
     const photos = this.photos.filter((p) => p.id !== photo.id);
     try {
-      await this.gateway.photos(this.workspaceId, this.draftId, photos);
       if (generation === this.generation) {
         this.photos = photos;
-        this.store.draft.localPhotoIds = photos.map((photo) => photo.id);
         this.store.changed();
       }
     } catch (e) {
