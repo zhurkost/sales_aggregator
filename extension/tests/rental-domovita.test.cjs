@@ -85,5 +85,5 @@ test('page waits for photo verification without advancing and resumes after unlo
   assert.equal(claims,0);assert.equal(next,0);assert.equal(reports.at(-1).status,'needs_action');
   w.document.querySelector('input').parentElement.className='';
   for(let i=0;i<5;i++){tick();await flush();}
-  assert.equal(claims,1);assert.equal(next,1);
+  assert.equal(claims,1);assert.equal(next,0);
 });

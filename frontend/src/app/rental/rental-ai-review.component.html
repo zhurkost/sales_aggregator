@@ -8,7 +8,7 @@
               <div class="conflict"><span>Адрес: <s>{{ currentAddress?.label }}</s> → <strong>{{ aiAddress.label }}</strong></span><button type="button" class="text-button" (click)="applyAddress.emit()">Применить</button><button type="button" class="icon-button" aria-label="Оставить текущий адрес" (click)="dismissAddress.emit()">×</button></div>
             }
             @for (item of aiConflicts; track item.field; let index = $index) {
-              <div class="conflict"><span>{{ view.fieldName(item.field) }}: <s>{{ view.valueLabel(item.field, values[item.field]) }}</s> → <strong>{{ view.valueLabel(item.field, item.value) }}</strong></span><button type="button" class="text-button" (click)="applyField.emit(index)">Применить</button><button type="button" class="icon-button" [attr.aria-label]="'Оставить текущее: ' + view.fieldName(item.field)" (click)="dismissField.emit(index)">×</button></div>
+              <div class="conflict"><span>{{ view.fieldName(item.field) }}: <s>{{ view.valueLabel(values[item.field]) }}</s> → <strong>{{ view.valueLabel(item.value) }}</strong></span><button type="button" class="text-button" (click)="applyField.emit(index)">Применить</button><button type="button" class="icon-button" [attr.aria-label]="'Оставить текущее: ' + view.fieldName(item.field)" (click)="dismissField.emit(index)">×</button></div>
             }
           </div>
         }

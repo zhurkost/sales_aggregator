@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Автопост • помощник заполнения (beta)",
-  "description": "Автопост: категории, формы, фотографии, очередь и ссылки в личном кабинете. Ваша авторизация остаётся в браузере.",
-  "version": "0.9.7",
+  "description": "Автопост: заполнение объявлений об аренде квартир на Kufar, Onliner, Realt и Domovita. Публикацию подтверждает пользователь.",
+  "version": "0.9.8",
   "minimum_chrome_version": "112",
   "permissions": [
     "storage",
@@ -13,10 +13,6 @@
   "background": {
     "service_worker": "background.js"
   },
-  "host_permissions": [
-    "https://www.kufar.by/*",
-    "https://baraholka.onliner.by/*"
-  ],
   "content_scripts": [
     {
       "matches": [
@@ -30,37 +26,6 @@
         "bridge.js"
       ],
       "run_at": "document_start",
-      "all_frames": false
-    },
-    {
-      "matches": [
-        "https://av.by/*",
-        "https://cars.av.by/*",
-        "https://www.kufar.by/*",
-        "https://auto.kufar.by/*",
-        "https://kufar.by/*",
-        "https://bamper.by/*",
-        "https://www.bamper.by/*",
-        "https://ab.onliner.by/*",
-        "https://baraholka.onliner.by/*",
-        "https://profile.onliner.by/*",
-        "https://abw.by/*",
-        "https://www.abw.by/*",
-        "https://flagma.by/*",
-        "https://auto.drom.ru/*"
-      ],
-      "js": [
-        "core.js",
-        "publication.js",
-        "autopublish.js",
-        "dom.js",
-        "av.js",
-        "navigation.js",
-        "status.js",
-        "status-page.js",
-        "marketplace.js"
-      ],
-      "run_at": "document_idle",
       "all_frames": false
     },
     {

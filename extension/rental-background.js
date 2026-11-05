@@ -193,14 +193,13 @@
       await save(rows);
       if (!allowed) return { task: null };
       return payload.metadataOnly
-        ? { task: { jobId: j.id, submitted: !!j.submitted } }
+        ? { task: { jobId: j.id } }
         : {
             task: {
               jobId: j.id,
               recipe: j.recipe,
               mode: b.mode,
               photos: (await root.AutopostPhotos.get(b.photoKey)) || [],
-              submitted: !!j.submitted,
               photoSent: !!j.photoSent,
             },
           };
@@ -223,25 +222,6 @@
       j.remaining = Array.isArray(payload.remaining)
         ? payload.remaining.slice(0, 150).map((x) => String(x).slice(0, 120))
         : [];
-      await save(rows);
-      return { ok: true };
-    }
-    if (message.type === "BEFORE_SUBMIT") {
-      if (b.mode !== "automatic" || j.submitted) return { ok: false };
-      const verified = await chrome.tabs.sendMessage(b.sourceTabId, {
-        kind: "RENTAL_VERIFY",
-        origin: b.origin,
-        profileId: b.profileId,
-        id: b.id,
-        draft: b.draft,
-        revision: b.revision,
-      });
-      if (!verified?.ok)
-        throw new Error(
-          verified?.error || "Откройте Автопост для сверки карточки.",
-        );
-      // Persist before clicking: no duplicate submissions after navigation or worker restart.
-      j.submitted = true;
       await save(rows);
       return { ok: true };
     }

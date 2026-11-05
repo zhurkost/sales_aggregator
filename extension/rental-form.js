@@ -73,18 +73,6 @@
       String(e.className || "").includes("chip__filled-green")
     );
   }
-  function paymentRequired() {
-    return query('p,[role="alert"]')
-      .filter(visible)
-      .some((e) => {
-        const match = e.textContent.match(
-          /(?:к оплате|итого|оплатить)\s*:?\s*(\d[\d\s]*(?:[.,]\d{1,2})?)/i,
-        );
-        return (
-          match && Number(match[1].replace(/\s/g, "").replace(",", ".")) > 0
-        );
-      });
-  }
   function choiceScope(c, container) {
     if (!c.label) return container;
     const labels = query("label,p,span,div", container).filter(
@@ -427,6 +415,6 @@
         c.blockedSelector && query(c.blockedSelector).some(visible))?.blockedMessage || "";
     }
   }
-  root.AutopostRentalForm = { Form, targets, norm, visible, paymentRequired };
+  root.AutopostRentalForm = { Form, visible };
   if (typeof module !== "undefined") module.exports = root.AutopostRentalForm;
 })(globalThis);

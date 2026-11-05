@@ -20,12 +20,8 @@ import type { RentalProfile } from "./rental-profile-defaults";
 import { RentalPublicationComponent } from "./rental-publication.component";
 import {
   Address,
-  EditorSchema,
   Field,
   JsonValue,
-  Prepared,
-  RentalDraft,
-  RentalAiResult,
 } from "./rental-models";
 
 @Component({
@@ -180,9 +176,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   }
   resolveLegacy = (...args: Parameters<RentalDraftEditor["resolveLegacy"]>) => this.editing.resolveLegacy(...args);
   togglePlatform = (...args: Parameters<RentalDraftEditor["togglePlatform"]>) => this.editing.togglePlatform(...args);
-  setExtra = (...args: Parameters<RentalDraftEditor["setExtra"]>) => this.editing.setExtra(...args);
-  extraFiles = (...args: Parameters<RentalDraftEditor["extraFiles"]>) => this.editing.extraFiles(...args);
-  toggleExtra = (...args: Parameters<RentalDraftEditor["toggleExtra"]>) => this.editing.toggleExtra(...args);
   @HostListener("window:beforeunload", ["$event"])
   unload(event: BeforeUnloadEvent) {
     if (this.dirty) { event.preventDefault(); event.returnValue = ""; }

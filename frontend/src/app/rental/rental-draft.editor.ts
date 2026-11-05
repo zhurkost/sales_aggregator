@@ -9,7 +9,6 @@ export class RentalDraftEditor {
   private get busy() { return this.store.busy; }
   private get platforms() { return this.store.platforms; }
   private changed() { this.store.changed(); }
-  private extra(platform: string, field: string) { return this.draft.extras[platform]?.[field]; }
   setValue(field: Field, value: string) {
     if (this.busy) return;
     delete this.draft.aiEvidence?.[field.id];
@@ -63,32 +62,5 @@ export class RentalDraftEditor {
       ? [...new Set([...this.draft.platforms, p])]
       : this.draft.platforms.filter((x) => x !== p);
     this.changed();
-  }
-  setExtra(p: string, f: Field, raw: JsonValue) {
-    // Keep typed decimal text intact until the server's exact BigDecimal conversion.
-    this.draft.extras[p] ||= {};
-    this.draft.extras[p][f.id] = raw;
-    this.changed();
-  }
-  extraFiles(p: string, field: Field, text: string) {
-    this.setExtra(
-      p,
-      field,
-      text
-        .split(/\r?\n/)
-        .map((s) => s.trim())
-        .filter(Boolean),
-    );
-  }
-  toggleExtra(p: string, f: Field, value: JsonValue, checked: boolean) {
-    const old = this.extra(p, f.id);
-    const values = Array.isArray(old) ? old : [];
-    this.setExtra(
-      p,
-      f,
-      (checked
-        ? [...values, value]
-        : values.filter((x) => x !== value)) as string[],
-    );
   }
 }

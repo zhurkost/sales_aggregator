@@ -348,8 +348,8 @@ describe("rental preparation editor", () => {
       type: "number",
       options: [],
     };
-    c.setExtra("example", field, "1,123456789012345678");
-    expect(c.draft.extras["example"]["amount"]).toBe("1,123456789012345678");
+    c.setValue(field, "1,123456789012345678");
+    expect(c.draft.values["amount"]).toBe("1,123456789012345678");
     c.ngOnDestroy();
   });
   it("does not lose edits made during a save and pins workspace", async () => {

@@ -30,9 +30,9 @@ test('a launch is consumed once; reload and cached history cannot regain permiss
   assert.equal(core.claimFill(job,{documentId:'reload'},{type:'reload',referrer:'https://87.199.205.227/'},origins),false,'refresh cannot use a pending app launch');
 });
 
-test('both page controllers send the navigation type before touching the form on refresh', async () => {
+test('rental page controller send the navigation type before touching the form on refresh', async () => {
   const {Window} = await import('happy-dom');
-  for (const script of ['marketplace.js','rental-page.js']) {
+  for (const script of ['rental-page.js']) {
     const window = new Window({url:'https://www.kufar.by/ain/create',settings:{enableJavaScriptEvaluation:true}});
     try {
       window.document.body.innerHTML='<input id="price" value="1250">';

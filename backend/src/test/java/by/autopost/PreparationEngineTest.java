@@ -445,7 +445,7 @@ class PreparationEngineTest {
   }
 
   @Test
-  void editorRetainsParentConditionsWithoutChangingSource() {
+  void applicabilityRetainsParentConditionsWithoutChangingSource() {
     var field = option("name", "text", object());
     var group =
         option(
@@ -453,8 +453,12 @@ class PreparationEngineTest {
             "group",
             object("when", object("option_id", "owner", "operator", "equals", "value", false)),
             field);
-    var fields = EditorSchemaBuilder.editorFields(schema(group));
-    assertEquals("owner", fields.get("name").path("uiWhen").path("option_id").asText());
+    var applicability = new by.autopost.rental.preparation.FieldApplicability();
+    assertFalse(
+        applicability.evaluate(schema(group), object("owner", true)).path("name").asBoolean());
+    assertTrue(
+        applicability.evaluate(schema(group), object("owner", false)).path("name").asBoolean());
+    assertTrue(applicability.evaluate(schema(group), object()).path("name").isNull());
     assertFalse(field.has("uiWhen"));
   }
 }

@@ -1,3 +1,5 @@
+> Архив: описывает прежнюю версию приложения. Актуальное устройство и запуск — в README.md; удалённые компоненты доступны в истории Git.
+
 # Angular and Spring Boot migration
 
 The active application is an Angular 21 standalone frontend (`frontend/`) and a Spring Boot 3.5 / Java 17 API (`backend/`). The Russian seller workspace, category catalogue, SQLite records, HTTP endpoints, cookies and browser-extension protocol are retained. Shared browser/domain utilities remain in `lib/`; the backend executes Java, with no Node process or JavaScript interpreter.

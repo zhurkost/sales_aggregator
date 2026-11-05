@@ -37,7 +37,7 @@
         @if (additionalFilled.length) {
           <div class="fact-chips">
             @for (field of additionalFilled.slice(0, 6); track field.id) {
-              <button type="button" class="fact-chip" (click)="focusField(field.id)">{{ field.name }}: {{ valueLabel(field.id, draft.values[field.id]) }}</button>
+              <button type="button" class="fact-chip" (click)="focusField(field.id)">{{ field.name }}: {{ valueLabel(draft.values[field.id]) }}</button>
             }
             @if (additionalFilled.length > 6) { <button type="button" class="fact-chip" (click)="openPanel('parameters')">Ещё {{ additionalFilled.length - 6 }}</button> }
           </div>

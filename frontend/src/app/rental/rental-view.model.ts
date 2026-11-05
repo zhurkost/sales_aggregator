@@ -61,7 +61,7 @@ export class RentalViewModel {
     const query = this.parameterSearch.trim().toLocaleLowerCase();
     return (this.store.schema?.category.options || []).filter(g => g.id !== "group.main").map(g => ({...g, options:this.groupFields(g).filter(f =>
       f.id !== "listing.description" && (!this.filledOnly || hasValue(this.store.draft.values[f.id])) &&
-      (!query || (g.name + " " + f.name + " " + this.valueLabel(f.id, this.store.draft.values[f.id])).toLocaleLowerCase().includes(query))
+      (!query || (g.name + " " + f.name + " " + this.valueLabel(this.store.draft.values[f.id])).toLocaleLowerCase().includes(query))
     )})).filter(g => g.options.length);
   }
   get additionalFilled() {
@@ -69,7 +69,7 @@ export class RentalViewModel {
       .filter(f => f.id !== "listing.description" && hasValue(this.store.draft.values[f.id]));
   }
   fieldName(id: string) { return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === id)?.name || id; }
-  valueLabel(id: string, value: JsonValue | undefined) {
+  valueLabel(value: JsonValue | undefined) {
     if (value === true) return "Да"; if (value === false) return "Нет";
     if (Array.isArray(value)) return value.map(v => this.label(String(v))).join(", ");
     return this.label(String(value ?? ""));

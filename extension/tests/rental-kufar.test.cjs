@@ -110,7 +110,7 @@ test('Kufar supports calls and messages radio input',async t=>{
   assert.equal(f.form.done.has(c.field),true);
 });
 
-test('page waits for delayed uploads and does not act on promotion in manual submission recipe',async t=>{
+test('page waits for delayed uploads and ignores next, submit and promotion even in old automatic recipes',async t=>{
   const photos=[{name:'a.png',dataUrl:'data:image/png;base64,YQ=='}];
   const c=control('photos');
   const f=await fixture(t,'<p>К оплате: 14,10</p><div data-name="images"><span class="x_counter">Загружено 0 из 50</span><input id="imageLoaderDropzone" type="file"></div><button id="submit">Опубликовать</button>',[c]);
@@ -119,7 +119,7 @@ test('page waits for delayed uploads and does not act on promotion in manual sub
   f.doc.querySelector('#submit').onclick=()=>submitted++;
   w.setInterval=fn=>{tick=fn;return 1;};w.clearInterval=()=>{};
   w.AutopostCore={fillNavigation:()=>({type:'navigate'})};
-  const task={jobId:'test',mode:'automatic',recipe:{controls:[c],next:[],submit:[]},photos};
+  const task={jobId:'test',mode:'automatic',recipe:{controls:[c],next:[{selector:'#submit',text:'Опубликовать'}],submit:[{selector:'#submit',text:'Опубликовать'}]},photos};
   w.chrome={runtime:{id:'test',onMessage:{addListener(){}},async sendMessage(m){
     if(m.type==='GET')return {task};
     if(m.type==='CLAIM_PHOTOS'){claims++;return {ok:true};}

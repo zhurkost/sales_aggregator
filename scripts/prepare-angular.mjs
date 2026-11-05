@@ -1,5 +1,5 @@
-import { copyFileSync, mkdirSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { copyFileSync, mkdirSync, readdirSync, rmSync } from "node:fs";
+import { join, resolve } from "node:path";
 import "./package-extension.mjs";
 // Node 22 on Windows can abort in recursive cpSync on an existing asset directory.
 // Copy the authored tree explicitly so repeat builds and dev startup remain usable.
@@ -12,4 +12,8 @@ function copyAssets(source, target) {
     else throw new Error(`Unsupported asset entry: ${from}`);
   }
 }
-copyAssets("public", "frontend/public");
+// This directory is generated exclusively from public. Clear stale copied assets.
+const generatedAssets = resolve("frontend/public");
+if (generatedAssets !== join(process.cwd(), "frontend", "public")) throw new Error("Unexpected asset path");
+rmSync(generatedAssets, { recursive: true, force: true });
+copyAssets("public", generatedAssets);

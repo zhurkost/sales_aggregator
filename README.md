@@ -38,8 +38,8 @@ node scripts/package-angular-spring.mjs
 - backend/src/main/java/by/autopost/address — интерфейс адресного провайдера и HTTP-адаптер DaData.
 - data/rental/apartments_long_term_rent — версионируемые схемы и правила четырёх площадок.
 - lib/workspace.ts — сессия, связь с расширением и обработка фото.
-- extension — расширение; существующие адаптеры и их справочники/тесты сохранены, но старые разделы кабинета их больше не запускают.
+- extension — расширение только для четырёх площадок аренды; старые адаптеры, протоколы и универсальные справочники удалены.
 
 Разделение слоёв и принятые ограничения описаны в архитектуре. ArchUnit и проверки импортов TypeScript контролируют границы при обычном запуске тестов и в CI.
 
-[Правила аренды](docs/rental-preparation.txt) · [Архитектура](docs/rental-architecture.md) · [Развёртывание](docs/angular-spring-migration.md) · [История прежнего кабинета](docs/history-before-rental-only.md)
+[Правила аренды](docs/rental-preparation.txt) · [Архитектура](docs/rental-architecture.md) · [Развёртывание](docs/deployment.md) · [История прежнего кабинета](docs/history-before-rental-only.md)

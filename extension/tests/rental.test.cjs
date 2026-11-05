@@ -47,7 +47,6 @@ test("rental worker opens every selected site once and isolates profile, origin 
   const data = {},
     created = [],
     photos = new Map();
-  let verify = { ok: true };
   const chrome = {
     storage: {
       session: {
@@ -70,9 +69,6 @@ test("rental worker opens every selected site once and isolates profile, origin 
         const tab = created.find((t) => t.id === id);
         if (!tab) throw new Error("closed");
         return tab;
-      },
-      async sendMessage() {
-        return verify;
       },
     },
   };
@@ -156,19 +152,6 @@ test("rental worker opens every selected site once and isolates profile, origin 
     (await handle({ kind: "RENTAL_PAGE", type: "CLAIM_PHOTOS" }, sender)).ok,
     false,
   );
-  verify = { error: "Карточка изменилась" };
-  await assert.rejects(() =>
-    handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender),
-  );
-  verify = { ok: true };
-  assert.equal(
-    (await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok,
-    true,
-  );
-  assert.equal(
-    (await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok,
-    false,
-  );
   await handle(
     {
       kind: "RENTAL_REQUEST",
@@ -193,14 +176,6 @@ test("rental worker opens every selected site once and isolates profile, origin 
   assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},sender)).ok,false);
   await run();
   assert.equal(created.length,8,'double Publish is still idempotent');
-  assert.equal(
-    (await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender)).task.submitted,
-    true,
-  );
-  assert.equal(
-    (await handle({ kind: "RENTAL_PAGE", type: "BEFORE_SUBMIT" }, sender)).ok,
-    false,
-  );
   // Refresh is a new document, even with the same URL, referrer and assigned tab.
   const refreshed = {...sender,documentId:"refreshed"};
   assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET",payload:{navigation:{type:"reload",referrer:app.url}}},refreshed)).task,null);
@@ -215,8 +190,8 @@ test("rental worker opens every selected site once and isolates profile, origin 
   assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},reopened)).ok,true);
   assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},reopened)).ok,false);
   assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET"},refreshed)).task,null);
-  // The explicit open must preserve the one-shot submission guard.
-  assert.equal((await handle({kind:"RENTAL_PAGE",type:"BEFORE_SUBMIT"},reopened)).ok,false);
+  // Automatic submission is no longer a worker command.
+  await assert.rejects(() => handle({kind:"RENTAL_PAGE",type:"BEFORE_SUBMIT"},reopened), /Неизвестная команда/);
   assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET",payload:{navigation:{type:"reload",referrer:""}}},{...reopened,documentId:"reload-again"})).task,null);
   const beforeRun = created.length;
   await run();
@@ -344,12 +319,5 @@ test("native option values and displayed chip labels use the server mapping", as
   await f.form.tick();
   assert.equal(f.form.done.size, 2);
   assert.equal(f.document.querySelector("input").checked, true);
-  f.window.happyDOM.abort();
-});
-test("positive total prevents automated payment while zero does not", async () => {
-  const f = await fixture("<p>К оплате: 9,9 р.</p>", []);
-  assert.equal(f.window.AutopostRentalForm.paymentRequired(), true);
-  f.document.querySelector("p").textContent = "К оплате: 0 р.";
-  assert.equal(f.window.AutopostRentalForm.paymentRequired(), false);
   f.window.happyDOM.abort();
 });

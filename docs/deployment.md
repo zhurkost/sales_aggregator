@@ -4,7 +4,7 @@
 
 ## Устройство
 
-- nginx раздаёт `dist-angular/browser`, проверяет пароль и передаёт только `/api/` в Node.js.
+- nginx раздаёт `dist-angular/browser`, проверяет пароль и передаёт только `/api/` в Spring Boot.
 - Java 17+ запускает `backend/target/autopost-api.jar` на `127.0.0.1:3000` от системного пользователя `autopost`. Node.js нужен только для сборки Angular и инструментов разработки.
 - Angular-клиент находится в `frontend/`, Spring Boot API — в `backend/`. Конфигурация размещения — в `deploy/spring/`.
 - Прокси заменяет заголовок `X-Autopost-Proxy-Secret` своим секретом. API проверяет его и игнорирует клиентские заголовки идентификации. Порт 3000 наружу не открыт.

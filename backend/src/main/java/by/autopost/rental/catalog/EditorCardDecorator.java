@@ -1,6 +1,5 @@
 package by.autopost.rental.catalog;
 
-import static by.autopost.rental.model.Conditions.*;
 import static by.autopost.rental.model.MappingSources.sources;
 import static by.autopost.shared.Json.*;
 
@@ -31,12 +30,7 @@ public final class EditorCardDecorator {
                               "platform",
                               platform.getKey(),
                               "target",
-                              text(row, "platform_option_id"),
-                              "when",
-                              platform
-                                  .getValue()
-                                  .path("conditions")
-                                  .get(text(row, "platform_option_id"))));
+                              text(row, "platform_option_id")));
                   }
                 });
         ((ObjectNode) f).set("uses", uses);

@@ -101,40 +101,6 @@
         await report("running", "Перенесено полей: " + form.done.size);
         return;
       }
-      if (task.mode === "automatic" && !task.submitted && form.ready() &&
-          ((task.recipe.next || []).length || (task.recipe.submit || []).length)) {
-        if (api.paymentRequired()) {
-          paused = true;
-          await report(
-            "needs_action",
-            "Выбрана платная услуга площадки. Выберите бесплатный вариант или завершите оплату самостоятельно.",
-          );
-          return;
-        }
-        if (form.clickStep("next")) {
-          idle = 0;
-          return;
-        }
-        const final = (task.recipe.submit || []).flatMap((s) =>
-          api
-            .targets(s)
-            .filter((e) => api.norm(e.textContent) === api.norm(s.text)),
-        );
-        if (final.length === 1) {
-          const ok = await request("BEFORE_SUBMIT");
-          if (ok?.error) throw new Error(ok.error);
-          if (ok?.ok) {
-            task.submitted = true;
-            final[0].click();
-            await report(
-              "needs_action",
-              "Выполнена попытка подачи. Проверьте результат и сообщения площадки.",
-            );
-            paused = true;
-            return;
-          }
-        }
-      }
       if (idle >= 8 || cycles >= 100) {
         paused = true;
         await report(
