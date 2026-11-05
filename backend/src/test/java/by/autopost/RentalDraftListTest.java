@@ -38,12 +38,12 @@ class RentalDraftListTest {
             object("listing.title", "Двушка у метро"),
             "address",
             object("label", "г Минск, ул Брикета, д 18"));
-    service.save("ws", "flat", object("revision", 0, "draft", draft));
-    service.save("other", "foreign", object("revision", 0, "draft", draft));
+    service.save("ws", "flat", 0, RentalJson.document(draft));
+    service.save("other", "foreign", 0, RentalJson.document(draft));
     // A list must not depend on the card body: an unreadable body still lists by its columns.
     jdbc.update("UPDATE rental_drafts SET data='not json' WHERE id='flat'");
-    var row = byId(service.list("ws")).get("flat");
-    assertEquals(1, service.list("ws").path("drafts").size());
+    var row = byId(RentalJson.tree(service.list("ws"))).get("flat");
+    assertEquals(1, RentalJson.tree(service.list("ws")).path("drafts").size());
     assertEquals("Двушка у метро", text(row, "title"));
     assertEquals("г Минск, ул Брикета, д 18", text(row, "address"));
     assertEquals(1, row.path("revision").asInt());
@@ -64,17 +64,16 @@ class RentalDraftListTest {
             object("kufar", object("rooms", 2)),
             "platforms",
             List.of("kufar"));
-    service.save("ws", "flat", object("revision", 0, "draft", draft));
-    var opened = service.get("ws", "flat");
+    service.save("ws", "flat", 0, RentalJson.document(draft));
+    var opened = RentalJson.tree(service.get("ws", "flat"));
     assertEquals(draft, opened.path("draft"));
-    assertEquals(draft, service.get("ws", "flat").path("draft"));
+    assertEquals(draft, RentalJson.tree(service.get("ws", "flat")).path("draft"));
   }
 
   @Test
   void oldCardModelIsNotOpenedUntilMigrated() {
     var service = new RentalStorage(database()).draftService();
-    service.save(
-        "ws", "flat", object("revision", 0, "draft", object("values", object("rooms", "2"))));
+    service.save("ws", "flat", 0, RentalJson.document(object("values", object("rooms", "2"))));
     var error = assertThrows(ApiException.class, () -> service.get("ws", "flat"));
     assertEquals(409, error.status);
     assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
@@ -84,23 +83,13 @@ class RentalDraftListTest {
   void saveRewritesTitleAndAddressOfTheList() {
     var service =
         new RentalStorage(database()).draftService();
-    service.save(
-        "ws",
-        "flat",
-        object("revision", 0, "draft", object("values", object("listing.title", "A"))));
-    service.save(
-        "ws",
-        "flat",
-        object(
-            "revision",
-            1,
-            "draft",
-            object(
+    service.save("ws", "flat", 0, RentalJson.document(object("values", object("listing.title", "A"))));
+    service.save("ws", "flat", 1, RentalJson.document(object(
                 "values",
                 object("listing.title", "B"),
                 "address",
                 object("label", "Минск, Ленина, 10"))));
-    var row = byId(service.list("ws")).get("flat");
+    var row = byId(RentalJson.tree(service.list("ws"))).get("flat");
     assertEquals("B", text(row, "title"));
     assertEquals("Минск, Ленина, 10", text(row, "address"));
     assertEquals(2, row.path("revision").asInt());

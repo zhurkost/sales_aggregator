@@ -1,15 +1,22 @@
-package by.autopost.rental.model;
+package by.autopost.rental.engine;
 
-import static by.autopost.shared.Json.*;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import by.autopost.rental.model.Value;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-public final class Values {
-  public static BigDecimal decimal(JsonNode input, boolean integer) {
-    if (!input.isTextual()) throw new IllegalArgumentException("Введите число текстом.");
-    String value = input.asText().strip();
+/** Exact numbers and telephone numbers from what a person typed. */
+public final class Numbers {
+  private Numbers() {}
+
+  /** A number written as text: «45,5», «1 500»; never a range or a unit, never rounded. */
+  public static BigDecimal decimal(Value input, boolean integer) {
+    if (!(input instanceof Value.Text text))
+      throw new IllegalArgumentException("Введите число текстом.");
+    return decimal(text.value(), integer);
+  }
+
+  public static BigDecimal decimal(String input, boolean integer) {
+    String value = input.strip();
     if (value.length() > 64
         || !(value.matches("[+-]?\\d+(?:[.,]\\d+)?")
             || value.matches("[+-]?\\d{1,3}(?:[ \\u00a0\\u202f]\\d{3})+(?:[.,]\\d+)?")))
@@ -26,10 +33,11 @@ public final class Values {
     return number;
   }
 
-  public static String phone(JsonNode input, String format) {
-    if (!input.isTextual())
+  /** {@code BY_NATIONAL}: the nine digits after +375; {@code E164}: +country and number. */
+  public static String phone(Value input, String format) {
+    if (!(input instanceof Value.Text text))
       throw new IllegalArgumentException("Телефон должен оставаться строкой.");
-    String value = input.asText().strip();
+    String value = text.value().strip();
     if (!value.matches("[+0-9 ()\\-\\u00a0]+"))
       throw new IllegalArgumentException(
           "Проверьте телефон: только номер, без добавочного и букв.");
@@ -49,20 +57,7 @@ public final class Values {
     return value;
   }
 
-  public static boolean missing(JsonNode value) {
-    return value == null
-        || value.isMissingNode()
-        || value.isNull()
-        || value.isTextual() && value.asText().isBlank()
-        || value.isArray() && value.isEmpty();
-  }
-
-  public static boolean equal(JsonNode a, JsonNode b) {
-    if (a == null || b == null) return false;
-    if (a.isNumber() && b.isNumber()) return a.decimalValue().compareTo(b.decimalValue()) == 0;
-    return a.equals(b);
-  }
-
+  /** Comparison form of a name: case, ё and spacing do not matter. */
   public static String normalized(String value) {
     return value.strip().toLowerCase(Locale.ROOT).replace('ё', 'е').replaceAll("\\s+", " ");
   }

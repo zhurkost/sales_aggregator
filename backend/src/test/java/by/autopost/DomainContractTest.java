@@ -3,10 +3,8 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import by.autopost.rental.card.*;
 import by.autopost.rental.catalog.*;
 import by.autopost.rental.model.*;
-import by.autopost.rental.preparation.*;
 import org.junit.jupiter.api.Test;
 
 class DomainContractTest {

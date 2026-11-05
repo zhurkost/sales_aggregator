@@ -20,19 +20,19 @@ class ReferenceBundleTest {
     var repository = new FileReferenceRepository("../data/rental/apartments_long_term_rent");
     var snapshot = repository.snapshot();
     assertEquals(Set.of("kufar", "onliner", "realt", "domovita"), snapshot.platforms());
-    assertFalse(new RentalCatalog(repository).editor().path("category").path("options").isEmpty());
-    assertEquals(
-        3, new RentalCatalog(repository).editor().path("card").path("profileDefaults").size());
+    var editor = RentalJson.editor(new RentalCatalog(repository));
+    assertFalse(editor.path("groups").isEmpty());
+    assertEquals(3, editor.path("card").path("profileDefaults").size());
   }
 
   @Test
-  void buildingTheEditorLeavesTheOperationsCopyAsLoaded() {
-    var snapshot =
-        new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
-    var common = snapshot.common().deepCopy();
-    var editor = new EditorSchemaBuilder().build(snapshot);
+  void theEditorLeavesOutTheAddressProjectionWithoutChangingTheBundle() {
+    var repository = new FileReferenceRepository("../data/rental/apartments_long_term_rent");
+    var editor = RentalJson.editor(new RentalCatalog(repository));
     assertFalse(editor.toString().contains("group.address_projection"));
-    assertEquals(common, snapshot.common());
+    assertTrue(
+        repository.snapshot().common().categories().get(0).options().stream()
+            .anyMatch(group -> group.id().equals("group.address_projection")));
   }
 
   @Test
@@ -70,8 +70,8 @@ class ReferenceBundleTest {
     write("example.plan.json", plan);
     var catalog = new RentalCatalog(load());
     var result =
-        catalog
-            .prepare(
+        RentalJson.prepare(
+                catalog,
                 object(
                     "modelVersion",
                     2,
@@ -176,8 +176,8 @@ class ReferenceBundleTest {
     var catalog = new RentalCatalog(fixture());
     for (String code : List.of("BYN", "USD")) {
       var result =
-          catalog
-              .prepare(
+          RentalJson.prepare(
+                  catalog,
                   object(
                       "cardVersion",
                       catalog.cardVersion(),
@@ -246,7 +246,7 @@ class ReferenceBundleTest {
     var card =
         object(
             "cardVersion",
-            text(before.editor(), "cardVersion"),
+            before.cardVersion(),
             "modelVersion",
             2,
             "values",
@@ -254,29 +254,29 @@ class ReferenceBundleTest {
             "platforms",
             List.of("example"));
     String id = UUID.randomUUID().toString();
-    drafts.save("owner", id, object("revision", 0, "draft", card));
+    drafts.save("owner", id, 0, RentalJson.document(card));
     var launched =
-        storage.publicationService(before)
-            .configuration("owner", object("id", id, "draft", card));
+        RentalJson.tree(
+            storage.publicationService(before).configuration("owner", id, RentalJson.card(card)));
     // The next release fixes a selector; the editor opened before it stays usable.
     var recipe = (ObjectNode) read("example.browser.json");
     control(recipe, 0).put("selector", "input[name=price]");
     write("example.browser.json", recipe);
     var after = new RentalCatalog(new FileReferenceRepository(dir.toString()));
     ((ObjectNode) card.path("values")).put("rental.price", "1600");
-    var saved = drafts.save("owner", id, object("revision", 1, "draft", card));
-    assertEquals(2, saved.path("revision").asInt());
-    var check = after.prepare(card, 0).path("platforms").get(0);
+    var saved = drafts.save("owner", id, 1, RentalJson.document(card));
+    assertEquals(2, saved.revision());
+    var check = RentalJson.prepare(after, card, 0).path("platforms").get(0);
     assertTrue(check.path("issues").isEmpty(), check.toString());
     assertEquals(1600, check.path("values").path("rent").asInt());
     var relaunched =
-        storage.publicationService(after)
-            .configuration("owner", object("id", id, "draft", card));
+        RentalJson.tree(
+            storage.publicationService(after).configuration("owner", id, RentalJson.card(card)));
     var rent = relaunched.path("jobs").get(0).path("controls").get(0);
     assertEquals("input[name=price]", text(rent, "selector"));
     assertNotEquals(text(launched, "integrationVersion"), text(relaunched, "integrationVersion"));
     assertFalse(relaunched.has("schemaVersion"));
-    assertEquals(text(before.editor(), "cardVersion"), text(after.editor(), "cardVersion"));
+    assertEquals(before.cardVersion(), after.cardVersion());
   }
 
   /** The bundle as one edit leaves it; the fixture files are restored afterwards. */
@@ -329,8 +329,9 @@ class ReferenceBundleTest {
               values,
               "platforms",
               List.of("example"));
-      boolean clean = catalog.prepare(draft, 0).path("platforms").get(0).path("issues").isEmpty();
-      var job = catalog.browser(draft, 0).path("jobs").get(0);
+      boolean clean =
+          RentalJson.prepare(catalog, draft, 0).path("platforms").get(0).path("issues").isEmpty();
+      var job = RentalJson.browser(catalog, draft, 0).path("jobs").get(0);
       assertTrue(job.path("checksPassed").isBoolean(), values.toString());
       assertFalse(job.has("dataReady"), values.toString());
       assertEquals(clean, job.path("checksPassed").asBoolean(), values.toString());
@@ -339,22 +340,22 @@ class ReferenceBundleTest {
   }
 
   @Test
-  void filesAreReadOnceAndEachOperationCopiesThemOnce() throws Exception {
+  void filesAreReadOnceIntoRecordsNoOperationCanChange() throws Exception {
     var repo = fixture();
     var first = repo.snapshot();
-    // One copy per operation, not one per call.
-    assertSame(first.plan("example"), first.plan("example"));
-    assertSame(first.card(), first.card());
-    ((ObjectNode) first.plan("example")).put("platform", "corrupt");
-    var second = repo.snapshot();
-    assertNotSame(first.plan("example"), second.plan("example"));
-    assertEquals("example", text(second.plan("example"), "platform"));
+    // One immutable bundle for every operation: nothing to copy, nothing to corrupt.
+    assertSame(first, repo.snapshot());
+    assertThrows(UnsupportedOperationException.class, () -> first.plan("example").fields().clear());
+    assertThrows(UnsupportedOperationException.class, () -> first.platforms().clear());
+    assertThrows(
+        UnsupportedOperationException.class, () -> first.card().canonicalValues().clear());
+    assertEquals("example", repo.snapshot().plan("example").platform());
     // The running release never reads the files again: a new bundle is a new release.
     write("card.json", object("version", 1));
     Files.delete(dir.resolve("manifest.json"));
     var later = repo.snapshot();
     assertEquals(first.cardVersion(), later.cardVersion());
-    assertEquals(2, later.card().path("version").asInt());
+    assertEquals(2, later.card().version());
     assertEquals(Set.of("example"), later.platforms());
   }
 
@@ -487,7 +488,8 @@ class ReferenceBundleTest {
             });
     assertDoesNotThrow(
         () ->
-            catalog.prepare(
+            RentalJson.prepare(
+                catalog,
                 object(
                     "cardVersion",
                     first.cardVersion(),

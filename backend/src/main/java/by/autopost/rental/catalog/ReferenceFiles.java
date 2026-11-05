@@ -3,6 +3,7 @@ package by.autopost.rental.catalog;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.shared.ApiException;
+import by.autopost.shared.Json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
@@ -45,6 +46,18 @@ final class ReferenceFiles {
           e);
     } catch (IOException e) {
       throw fail(relative, "файл не читается: " + e.getMessage(), e);
+    }
+  }
+
+  /**
+   * The records of one file: an unknown key, a value of another JSON type or a broken fact
+   * rejects the file with the place in it.
+   */
+  <T> T typed(String relative, JsonNode data, Class<T> type) {
+    try {
+      return Json.TYPED.treeToValue(data, type);
+    } catch (JsonProcessingException e) {
+      throw fail(relative, ReferenceJson.reason(e), e);
     }
   }
 

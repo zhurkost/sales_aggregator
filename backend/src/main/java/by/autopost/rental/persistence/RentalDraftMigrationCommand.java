@@ -2,7 +2,6 @@ package by.autopost.rental.persistence;
 
 import static by.autopost.shared.Json.MAPPER;
 
-import by.autopost.rental.application.RentalDraftMigration;
 import by.autopost.rental.catalog.FileReferenceRepository;
 import java.nio.file.Files;
 import java.nio.file.Path;

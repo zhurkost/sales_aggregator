@@ -3,7 +3,7 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import by.autopost.rental.application.RentalDraftMigration;
+import by.autopost.rental.persistence.RentalDraftMigration;
 import by.autopost.rental.application.RentalDraftRepository;
 import by.autopost.rental.application.RentalDraftRepository.StoredDraft;
 import by.autopost.rental.catalog.FileReferenceRepository;
@@ -147,7 +147,9 @@ class RentalDraftMigrationTest {
               // The running release saves the card right before the migration writes it.
               assertTrue(
                   super.update(
-                      workspace, StoredDraft.of(draft.id(), revision + 1, saved, "now"), revision));
+                      workspace,
+                      StoredDraft.of(draft.id(), revision + 1, RentalJson.document(saved), "now"),
+                      revision));
             }
             return super.update(workspace, draft, revision);
           }

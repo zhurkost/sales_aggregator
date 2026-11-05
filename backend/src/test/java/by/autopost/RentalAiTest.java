@@ -3,36 +3,18 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import by.autopost.rental.ai.AiCard;
 import by.autopost.rental.ai.RentalAiPolicy;
-import by.autopost.rental.card.*;
 import by.autopost.rental.catalog.*;
-import by.autopost.rental.model.*;
-import by.autopost.rental.preparation.*;
 import com.fasterxml.jackson.databind.node.*;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 
 class RentalAiTest {
-  ObjectNode editor() {
-    List<ObjectNode> fields = new ArrayList<>();
-    for (var pair :
-        List.of(
-            new String[] {"price", "text"},
-            new String[] {"floor", "integer"},
-            new String[] {"wifi", "boolean"},
-            new String[] {"rental.currency", "enum"},
-            new String[] {"style", "multi_enum"},
-            new String[] {"complex", "text"},
-            new String[] {"rooms", "enum"},
-            new String[] {"levels", "multi_enum"},
-            new String[] {"listing.description", "text"},
-            new String[] {"photos", "files"}))
-      fields.add(object("id", pair[0], "name", pair[0], "type", pair[1]));
-    return object(
-        "category",
-        object("options", List.of(object("id", "main", "options", fields))),
-        "canonicalValues",
-        object(
+  /** What AiCard.of gives for a card whose price a platform converts to a number. */
+  AiCard editor() {
+    Map<String, List<String>> choices =
+        Map.of(
             "rental.currency",
             List.of("USD", "EUR", "BYN", "RUB"),
             "style",
@@ -40,18 +22,26 @@ class RentalAiTest {
             "rooms",
             List.of("studio", "1", "2", "5+"),
             "levels",
-            List.of("1", "2", "3")),
-        "platforms",
-        object(
-            "one",
-            object(
-                "rules",
-                List.of(
-                    object(
-                        "common_option_id",
-                        "price",
-                        "conversion",
-                        object("kind", "decimal", "target", "number"))))));
+            List.of("1", "2", "3"));
+    Map<String, AiCard.Field> fields = new LinkedHashMap<>();
+    for (var pair :
+        List.of(
+            new String[] {"price", "number"},
+            new String[] {"floor", "integer"},
+            new String[] {"wifi", "boolean"},
+            new String[] {"rental.currency", "enum"},
+            new String[] {"style", "multi_enum"},
+            new String[] {"complex", "text"},
+            new String[] {"rooms", "enum"},
+            new String[] {"levels", "multi_enum"}))
+      fields.put(
+          pair[0],
+          new AiCard.Field(pair[0], pair[0], pair[1], choices.getOrDefault(pair[0], List.of())));
+    return new AiCard("card", fields, Map.of());
+  }
+
+  static AiCard.Field field(String id, String type) {
+    return new AiCard.Field(id, id, type, List.of());
   }
 
   ObjectNode suggestion(String id, Object value, String quote) {
@@ -224,41 +214,35 @@ class RentalAiTest {
   void rejectsInventedContactTextInvalidDatesAndPhonesWithoutDigits() {
     assertNull(
         RentalAiPolicy.validValue(
-            object("id", "contact.name", "type", "text"),
-            array(),
+            field("contact.name", "text"),
             TextNode.valueOf("Выдуманный Контакт"),
             "Сдам квартиру"));
     assertNull(
         RentalAiPolicy.validValue(
-            object("id", "contact.phone", "type", "text"),
-            array(),
+            field("contact.phone", "text"),
             TextNode.valueOf("-------"),
             "Сдам квартиру"));
     assertNull(
         RentalAiPolicy.validValue(
-            object("id", "date", "type", "date"),
-            array(),
+            field("date", "date"),
             TextNode.valueOf("вчера"),
             "Договор вчера"));
     assertNull(
         RentalAiPolicy.validValue(
-            object("id", "date", "type", "date"),
-            array(),
+            field("date", "date"),
             TextNode.valueOf("2026-02-30"),
             "2026-02-30"));
     assertEquals(
         "2026-11-02",
         RentalAiPolicy.validValue(
-                object("id", "date", "type", "date"),
-                array(),
+            field("date", "date"),
                 TextNode.valueOf("2026-11-02"),
                 "Договор 2026-11-02")
             .asText());
     assertEquals(
         "Илья",
         RentalAiPolicy.validValue(
-                object("id", "contact.name", "type", "text"),
-                array(),
+            field("contact.name", "text"),
                 TextNode.valueOf("Илья"),
                 "Меня зовут Илья")
             .asText());
@@ -270,6 +254,14 @@ class RentalAiTest {
     assertTrue(prompt.contains("price"));
     assertTrue(prompt.contains("wifi"));
     assertFalse(prompt.contains("photos"));
-    assertFalse(RentalAiPolicy.fields(editor()).containsKey("listing.description"));
+    var card =
+        AiCard.of(new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot());
+    assertFalse(card.fields().containsKey("listing.description"));
+    assertFalse(card.fields().containsKey("media.images"));
+    assertFalse(card.fields().containsKey("location.latitude"));
+    // A text field a platform converts to a number is offered as that number.
+    assertEquals("number", card.fields().get("rental.total_area").type());
+    assertEquals("integer", card.fields().get("rental.floor").type());
+    assertTrue(card.fields().get("rental.currency").choices().contains("BYN"));
   }
 }

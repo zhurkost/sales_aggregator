@@ -1,7 +1,6 @@
 package by.autopost.rental.catalog;
 
-import static by.autopost.shared.Json.text;
-
+import by.autopost.rental.engine.Transfer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -54,7 +53,8 @@ public final class RentalCoverageReport {
   }
 
   private static String name(ReferenceSnapshot snapshot, String platform) {
-    String name = text(snapshot.card().path("platforms").path(platform), "name");
+    var entry = snapshot.card().platforms().get(platform);
+    String name = entry == null || entry.name() == null ? "" : entry.name();
     return name.isBlank() ? platform : name + " (" + platform + ")";
   }
 

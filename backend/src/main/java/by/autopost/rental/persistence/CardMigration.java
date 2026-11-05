@@ -1,13 +1,12 @@
-package by.autopost.rental.card;
+package by.autopost.rental.persistence;
 
-import static by.autopost.rental.model.SchemaFields.*;
-import static by.autopost.rental.model.Values.*;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.rental.catalog.ReferenceSnapshot;
+import by.autopost.rental.model.Conversion;
+import by.autopost.rental.model.MappingRule;
 import by.autopost.rental.model.ReferenceContract;
-import by.autopost.rental.model.Values;
-import by.autopost.shared.ApiException;
+import by.autopost.rental.model.Value;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,7 +19,8 @@ import java.util.Map;
 
 /**
  * Converts a card older than the current card model. It runs once per stored card, from
- * --migrate-rental-drafts; reading, checking and publishing a card never call it.
+ * --migrate-rental-drafts; reading, checking and publishing a card never call it. A stored card of
+ * an older model is a JSON document without a record of its own; the rules come from the bundle.
  */
 public final class CardMigration {
   private final ReferenceSnapshot catalog;
@@ -38,12 +38,6 @@ public final class CardMigration {
    */
   public static boolean migrationNeeded(JsonNode draft) {
     return outdated(draft) || draft.has("schemaVersion") || draft.has("localPhotoIds");
-  }
-
-  /** Reading, checking and publishing accept only cards of the current model. */
-  public static void requireCurrent(JsonNode draft) {
-    if (outdated(draft))
-      throw new ApiException(409, "Карточку нужно перенести командой миграции.");
   }
 
   public CardMigration(ReferenceSnapshot catalog) {
@@ -75,21 +69,18 @@ public final class CardMigration {
     draft.set("legacy", legacy);
     ObjectNode address =
         draft.path("address").isObject() ? (ObjectNode) draft.get("address") : object();
-    JsonNode projection = catalog.card().path("addressProjection");
+    var projection = catalog.card().addressProjection();
     if (draft.path("modelVersion").asInt() < ReferenceContract.CARD_MODEL_VERSION) {
-      projection
-          .fields()
-          .forEachRemaining(
-              e -> {
-                JsonNode v = values.path(e.getKey());
-                if (Values.missing(v)) return;
-                String part = e.getValue().asText();
+      projection.forEach(
+              (key, part) -> {
+                JsonNode v = values.path(key);
+                if (missing(v)) return;
                 if (part.equals("latitude") || part.equals("longitude")) {
-                  if (!Values.equal(address.get(part), v) || !address.path("confirmed").asBoolean())
+                  if (!equal(address.get(part), v) || !address.path("confirmed").asBoolean())
                     preserve(
                         legacy,
                         "",
-                        e.getKey(),
+                        key,
                         "",
                         v,
                         null,
@@ -123,12 +114,12 @@ public final class CardMigration {
                                         + text(address, "block"))
                             : text(address, part);
                 if (!derived.isBlank() && v.isTextual() && derived.equals(v.asText())) return;
-                if (Values.missing(address.get(part))) address.set(part, v.deepCopy());
-                else if (!Values.equal(address.get(part), v))
+                if (missing(address.get(part))) address.set(part, v.deepCopy());
+                else if (!equal(address.get(part), v))
                   preserve(
                       legacy,
                       "",
-                      e.getKey(),
+                      key,
                       "address." + part,
                       v,
                       v,
@@ -143,7 +134,7 @@ public final class CardMigration {
       }
     }
     // Address object is the only editable source.
-    projection.fieldNames().forEachRemaining(values::remove);
+    projection.keySet().forEach(values::remove);
     if (draft.path("extras").isObject())
       draft
           .path("extras")
@@ -151,9 +142,10 @@ public final class CardMigration {
           .forEachRemaining(
               platform -> {
                 String p = platform.getKey();
-                JsonNode plan = catalog.platforms().contains(p) ? catalog.plan(p) : object();
-                Map<String, JsonNode> rules = new HashMap<>();
-                for (var r : plan.path("fields")) rules.put(text(r, "platform_option_id"), r);
+                var plan = catalog.platforms().contains(p) ? catalog.plan(p) : null;
+                Map<String, MappingRule> rules = new HashMap<>();
+                Map<String, Value> constants = plan == null ? Map.of() : plan.constants();
+                if (plan != null) for (var r : plan.fields()) rules.put(r.platformOptionId(), r);
                 platform
                     .getValue()
                     .fields()
@@ -161,10 +153,10 @@ public final class CardMigration {
                         entry -> {
                           String target = entry.getKey();
                           JsonNode v = entry.getValue();
-                          if (Values.missing(v)) return;
-                          if (plan.path("constants").has(target)
-                              && Values.equal(plan.path("constants").get(target), v)) return;
-                          JsonNode row = rules.get(target);
+                          if (missing(v)) return;
+                          if (constants.containsKey(target)
+                              && equal(json(constants.get(target)), v)) return;
+                          MappingRule row = rules.get(target);
                           if (row == null) {
                             preserve(
                                 legacy,
@@ -177,20 +169,20 @@ public final class CardMigration {
                                     + " его пока нельзя.");
                             return;
                           }
-                          var cv = row.path("conversion");
-                          if (text(cv, "kind").equals("multi_lookup") && v.isArray()) {
+                          var cv = row.conversion();
+                          if (cv instanceof Conversion.MultiLookup list && v.isArray()) {
                             List<ObjectNode> transfers = new ArrayList<>();
                             boolean ambiguous = false;
                             for (var selected : v) {
                               List<ObjectNode> candidates = new ArrayList<>();
                               if (!selected.isNull() && !selected.isContainerNode())
-                                for (var member : cv.path("members")) {
-                                  JsonNode candidate = reverse(member.path("values"), selected);
+                                for (var member : list.members()) {
+                                  JsonNode candidate = reverse(member.values(), selected);
                                   if (candidate != null)
                                     candidates.add(
                                         object(
                                             "source",
-                                            text(member, "common_option_id"),
+                                            member.commonOptionId(),
                                             "value",
                                             candidate,
                                             "old",
@@ -225,21 +217,19 @@ public final class CardMigration {
                                     transfer.get("value"));
                           } else {
                             JsonNode candidate =
-                                switch (text(cv, "kind")) {
-                                  case "lookup" -> reverse(cv.path("values"), v);
-                                  case "list_lookup" -> reverseList(cv.path("values"), v);
-                                  case "identity", "files", "phone" -> v.deepCopy();
-                                  case "decimal" -> TextNode.valueOf(v.asText());
-                                  default -> null;
-                                };
+                                cv instanceof Conversion.Lookup lookup
+                                    ? reverse(lookup.values(), v)
+                                    : cv instanceof Conversion.ListLookup lookup
+                                        ? reverseList(lookup.values(), v)
+                                        : cv instanceof Conversion.Identity
+                                                || cv instanceof Conversion.Files
+                                                || cv instanceof Conversion.Phone
+                                            ? v.deepCopy()
+                                            : cv instanceof Conversion.Decimal
+                                                ? TextNode.valueOf(v.asText())
+                                                : null;
                             migrate(
-                                values,
-                                legacy,
-                                p,
-                                target,
-                                text(row, "common_option_id"),
-                                v,
-                                candidate);
+                                values, legacy, p, target, row.commonOptionId(), v, candidate);
                           }
                         });
               });
@@ -253,18 +243,18 @@ public final class CardMigration {
     return draft;
   }
 
-  public static JsonNode reverse(JsonNode pairs, JsonNode v) {
+  public static JsonNode reverse(List<Conversion.ValuePair> pairs, JsonNode v) {
     if (v == null || v.isNull() || v.isContainerNode()) return null;
     var matches =
-        list(pairs).stream()
-            .filter(p -> Values.equal(p.path("to"), v))
-            .map(p -> p.path("from"))
+        pairs.stream()
+            .filter(p -> equal(json(p.to()), v))
+            .map(p -> json(p.from()))
             .distinct()
             .toList();
     return matches.size() == 1 ? matches.get(0).deepCopy() : null;
   }
 
-  public static JsonNode reverseList(JsonNode pairs, JsonNode v) {
+  public static JsonNode reverseList(List<Conversion.ValuePair> pairs, JsonNode v) {
     if (!v.isArray()) return null;
     ArrayNode result = array();
     for (var item : v) {
@@ -284,11 +274,11 @@ public final class CardMigration {
       JsonNode old,
       JsonNode candidate) {
     if (candidate != null && !source.isBlank()) {
-      if (Values.missing(values.get(source))) {
+      if (missing(values.get(source))) {
         values.set(source, candidate.deepCopy());
         return;
       }
-      if (Values.equal(values.get(source), candidate)) return;
+      if (equal(values.get(source), candidate)) return;
     }
     preserve(
         legacy,
@@ -325,6 +315,25 @@ public final class CardMigration {
             "message",
             message);
     if (list(legacy).stream().noneMatch(entry::equals)) legacy.add(entry);
+  }
+
+  /** A code of the bundle as the JSON of a stored card. */
+  private static JsonNode json(Value value) {
+    return TYPED.valueToTree(value);
+  }
+
+  private static boolean missing(JsonNode value) {
+    return value == null
+        || value.isMissingNode()
+        || value.isNull()
+        || value.isTextual() && value.asText().isBlank()
+        || value.isArray() && value.isEmpty();
+  }
+
+  private static boolean equal(JsonNode a, JsonNode b) {
+    if (a == null || b == null) return false;
+    if (a.isNumber() && b.isNumber()) return a.decimalValue().compareTo(b.decimalValue()) == 0;
+    return a.equals(b);
   }
 
   public static String addressLabel(JsonNode a) {

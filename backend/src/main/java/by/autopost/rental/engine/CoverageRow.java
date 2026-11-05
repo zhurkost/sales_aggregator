@@ -1,4 +1,4 @@
-package by.autopost.rental.catalog;
+package by.autopost.rental.engine;
 
 import java.util.List;
 

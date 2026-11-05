@@ -5,6 +5,7 @@ import static by.autopost.shared.Json.*;
 import by.autopost.Access;
 import by.autopost.rental.address.AddressService;
 import by.autopost.rental.application.*;
+import by.autopost.rental.model.Card;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,6 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The HTTP boundary of the rental editor. A card arrives as JSON and becomes a {@link Card} here;
+ * the card document itself is stored as written.
+ */
 @RestController
 @RequestMapping("/api/workspace/rental")
 class RentalController {
@@ -56,13 +61,10 @@ class RentalController {
   record PublicationLink(String url) {}
 
   @GetMapping("/editor")
-  ObjectNode editor(HttpServletRequest req) {
+  EditorSchema editor(HttpServletRequest req) {
     access.require(req);
-    ObjectNode result = catalog.editor();
-    result.put("addressSuggestions", addresses.configured());
     // The editor shows the server's limit; the server enforces it.
-    result.put("photoLimit", RentalPhotoService.LIMIT);
-    return result;
+    return catalog.editor().with(addresses.configured(), RentalPhotoService.LIMIT);
   }
 
   @PostMapping("/address/suggest")
@@ -77,49 +79,77 @@ class RentalController {
     return addresses.select(access.require(req).workspace(), clean(input, "id", 80));
   }
 
+  /** «Обновить поля карточки»: the same card document with the current card version. */
   @PostMapping("/normalize")
   ObjectNode normalize(HttpServletRequest req, @RequestBody JsonNode input) {
     access.require(req);
-    return catalog.acceptRules(card(input));
+    var document = document(input);
+    ObjectNode accepted = input.deepCopy();
+    accepted.put("cardVersion", catalog.acceptRules(document.card()));
+    return accepted;
   }
 
   /** The check of the card being edited: {id, draft}; the photos are those stored with it. */
   @PostMapping("/prepare")
-  ObjectNode prepare(HttpServletRequest req, @RequestBody JsonNode input) {
+  CardCheck prepare(HttpServletRequest req, @RequestBody JsonNode input) {
     String workspace = access.require(req).workspace();
-    var draft = card(input.path("draft"));
-    if (!draft.isObject()) throw new ApiException(400, "Некорректная карточка.");
-    return catalog.prepare(draft, photos.count(workspace, clean(input, "id", 100)));
+    var card = document(input.path("draft")).card();
+    return catalog.prepare(card, photos.count(workspace, clean(input, "id", 100)));
+  }
+
+  /** The card fields the editor shows for the card being edited: {draft}. */
+  @PostMapping("/fields")
+  FieldStates fields(HttpServletRequest req, @RequestBody JsonNode input) {
+    access.require(req);
+    return catalog.fields(document(input.path("draft")).card());
   }
 
   @GetMapping("/drafts")
-  ObjectNode drafts(HttpServletRequest req) {
+  RentalDraftService.Drafts drafts(HttpServletRequest req) {
     return drafts.list(access.require(req).workspace());
   }
 
   @PostMapping("/extension-config")
-  ObjectNode extensionConfig(HttpServletRequest req, @RequestBody JsonNode input) {
+  ExtensionLaunch extensionConfig(HttpServletRequest req, @RequestBody JsonNode input) {
     String workspace = access.require(req).workspace();
-    card(input.path("draft"));
-    return publication.configuration(workspace, input);
+    if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
+    var card = document(input.path("draft")).card();
+    return publication.configuration(workspace, clean(input, "id", 100), card);
   }
 
   @GetMapping("/drafts/{id}")
-  ObjectNode draft(HttpServletRequest req, @PathVariable String id) {
+  RentalDraftService.Opened draft(HttpServletRequest req, @PathVariable String id) {
     return drafts.get(access.require(req).workspace(), id);
   }
 
   @PostMapping("/drafts/{id}")
-  ObjectNode save(HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
+  RentalDraftService.Saved save(
+      HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
     String workspace = access.require(req).workspace();
-    card(input.path("draft"));
-    return drafts.save(workspace, id, input);
+    var draft = document(input.path("draft"));
+    return drafts.save(workspace, id, revision(input.path("revision"), 0), draft);
   }
 
-  private static JsonNode card(JsonNode card) {
-    if (card.toString().length() > CARD_CHARACTERS)
-      throw new ApiException(413, "Карточка слишком большая.");
-    return card;
+  /**
+   * A card of a request: an object of at most {@link #CARD_CHARACTERS} characters whose values the
+   * server can read.
+   */
+  private static CardDocument document(JsonNode card) {
+    String json = card.toString();
+    if (json.length() > CARD_CHARACTERS) throw new ApiException(413, "Карточка слишком большая.");
+    if (!card.isObject()) throw new ApiException(400, "Некорректная карточка.");
+    try {
+      return new CardDocument(json, typed(card, Card.class));
+    } catch (IllegalArgumentException e) {
+      throw new ApiException(400, "Некорректная карточка.");
+    }
+  }
+
+  /** A revision the editor sent: a whole number from {@code min}. */
+  private static int revision(JsonNode value, int min) {
+    if (!value.isIntegralNumber() || !value.canConvertToInt() || value.asInt() < min)
+      throw new ApiException(400, "Некорректная карточка.");
+    return value.asInt();
   }
 
   @GetMapping("/drafts/{id}/photos/{photo}")
@@ -161,7 +191,12 @@ class RentalController {
   }
 
   @PostMapping("/drafts/{id}/delete")
-  ObjectNode delete(HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
-    return drafts.delete(access.require(req).workspace(), id, input);
+  RentalDraftService.Deleted delete(
+      HttpServletRequest req, @PathVariable String id, @RequestBody JsonNode input) {
+    String workspace = access.require(req).workspace();
+    var version = input.path("revision");
+    if (!version.isIntegralNumber() || !version.canConvertToInt() || version.asInt() < 1)
+      throw new ApiException(400, "Некорректная версия карточки.");
+    return drafts.delete(workspace, id, version.asInt());
   }
 }

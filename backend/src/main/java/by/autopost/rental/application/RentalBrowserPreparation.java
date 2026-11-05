@@ -1,67 +1,81 @@
 package by.autopost.rental.application;
 
-import static by.autopost.shared.Json.*;
-
 import by.autopost.rental.catalog.ReferenceSnapshot;
-import by.autopost.rental.model.SchemaFields;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import by.autopost.rental.model.Card;
+import by.autopost.rental.model.Value;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Compiles filled native values and verified selectors. Issues never block a launch; each job's
  * checksPassed (no issues for that platform) only decides whether the extension may submit itself.
  */
 final class RentalBrowserPreparation {
-  ObjectNode compile(ReferenceSnapshot snapshot, JsonNode prepared, JsonNode draft) {
-    var jobs = array();
-    for (var result : prepared.path("platforms")) {
-      String platform = text(result, "platform");
-      ObjectNode recipe = (ObjectNode) snapshot.browser(platform);
-      var fields = SchemaFields.fields(snapshot.schema(platform));
-      var controls = array();
-      for (var source : recipe.path("controls")) {
-        String id = text(source, "field");
-        JsonNode value = result.path("values").get(id);
-        if (source.has("addressPart"))
-          value = draft.path("address").get(text(source, "addressPart"));
-        if (!text(source, "action").equals("files")
-            && (value == null
-                || value.isNull()
-                || value.isTextual() && value.asText().isBlank()
-                || value.isArray() && value.isEmpty())) continue;
-        ObjectNode control = source.deepCopy();
-        control.set("value", value == null ? array() : value.deepCopy());
-        var matchContext = array();
-        for (var part : source.path("autocomplete").path("contextParts")) {
-          String context = text(draft.path("address"), part.asText());
-          // A city may be its own first-level region (DaData's "г Минск").
-          // The city already matches the primary suggestion label; treating it as an
-          // additional oblast would reject the correct suggestion on another platform.
-          if (part.asText().equals("region")
-              && placeName(context).equals(placeName(text(draft.path("address"), "settlement"))))
-            continue;
-          if (!context.isBlank()) matchContext.add(context);
-        }
-        if (!matchContext.isEmpty()) control.set("matchContext", matchContext);
-        control.put("name", text(fields.get(id), "name"));
-        var labels = object();
-        for (var choice : fields.get(id).path("options")) {
-          var v = choice.path("fill_rule").get("value");
-          if (v != null) labels.put(v.asText(), text(choice, "name"));
-        }
-        control.set("labels", labels);
-        controls.add(control);
+  ExtensionLaunch compile(
+      ReferenceSnapshot snapshot, List<RentalCatalog.Checked> checks, Card card) {
+    List<ExtensionLaunch.Job> jobs = new ArrayList<>();
+    var address = card.address();
+    for (var checked : checks) {
+      var check = checked.check();
+      String platform = check.platform();
+      var recipe = snapshot.form(platform);
+      var fields = snapshot.schema(platform).fields();
+      List<ExtensionLaunch.Control> controls = new ArrayList<>();
+      for (var source : recipe.controlList()) {
+        String id = source.field();
+        Value value =
+            source.addressPart() != null
+                ? Value.text(address.part(source.addressPart()))
+                : checked.preparation().values().get(id);
+        if (!source.action().equals("files") && Value.missing(value)) continue;
+        List<String> matchContext = new ArrayList<>();
+        if (source.autocomplete() != null && source.autocomplete().contextParts() != null)
+          for (String part : source.autocomplete().contextParts()) {
+            String context = address.part(part);
+            // A city may be its own first-level region (DaData's "г Минск").
+            // The city already matches the primary suggestion label; treating it as an
+            // additional oblast would reject the correct suggestion on another platform.
+            if (part.equals("region") && placeName(context).equals(placeName(address.settlement())))
+              continue;
+            if (!context.isBlank()) matchContext.add(context);
+          }
+        var field = fields.get(id);
+        Map<String, String> labels = new LinkedHashMap<>();
+        for (var option : field.options())
+          if (option.rule().value() != null)
+            labels.put(labelKey(option.rule().value()), option.name());
+        controls.add(
+            new ExtensionLaunch.Control(
+                source,
+                value == null ? new Value.Items(List.of()) : value,
+                matchContext.isEmpty() ? null : matchContext,
+                field.name(),
+                labels));
       }
       // The fields the user enters on the platform, as the check of the card lists them.
-      var unbound = array();
-      for (var manual : result.path("manual")) unbound.add(text(manual, "name"));
-      recipe.set("controls", controls);
-      recipe.set("unbound", unbound);
-      recipe.put("checksPassed", result.path("checksPassed").asBoolean());
-      jobs.add(recipe);
+      var unbound = check.manual().stream().map(manual -> manual.name()).toList();
+      jobs.add(
+          new ExtensionLaunch.Job(
+              recipe.format(),
+              recipe.platform(),
+              recipe.startUrl(),
+              recipe.ready(),
+              controls,
+              recipe.setup(),
+              recipe.next(),
+              recipe.submit(),
+              unbound,
+              check.checksPassed(),
+              null));
     }
-    return object(
-        "format", 1, "integrationVersion", snapshot.integrationVersion(), "jobs", jobs);
+    return new ExtensionLaunch(1, snapshot.integrationVersion(), jobs, null, null, null);
+  }
+
+  /** The key of an option code in the label table, as the extension looks it up. */
+  private static String labelKey(Value code) {
+    return code == Value.Null.NULL ? "null" : code.text();
   }
 
   private String placeName(String value) {

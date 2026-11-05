@@ -140,7 +140,8 @@ class RentalAiAddressTest {
             List.of("realt"),
             "address",
             address);
-    var controls = list(catalog.browser(draft, 0).path("jobs").get(0).path("controls"));
+    var controls =
+        list(RentalJson.browser(catalog, draft, 0).path("jobs").get(0).path("controls"));
     for (var pair :
         Map.of(
                 "realt.settlement",
@@ -234,7 +235,7 @@ class RentalAiAddressTest {
     var provider = new Provider();
     var result =
         RentalAiPolicy.sanitize(
-            catalog.editor(),
+            by.autopost.rental.ai.AiCard.of(catalog.reference()),
             "Сдам квартиру",
             object("address", object("label", LABEL, "quote", LABEL)));
     new RentalAiAddressResolver(provider).resolve("workspace", result);

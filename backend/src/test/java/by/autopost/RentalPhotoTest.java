@@ -41,7 +41,7 @@ class RentalPhotoTest {
     storage = RentalStorage.at(dir.resolve("workspace.sqlite"));
     drafts = storage.draftService();
     photos = new RentalPhotoService(storage.drafts, storage.photos);
-    drafts.save("owner", "flat", object("revision", 0, "draft", card()));
+    drafts.save("owner", "flat", 0, RentalJson.document(card()));
   }
 
   static com.fasterxml.jackson.databind.node.ObjectNode card() {
@@ -78,7 +78,7 @@ class RentalPhotoTest {
     assertEquals(5, removed.revision());
     assertEquals(List.of("three.webp", "two.png"), names(removed.photos()));
     // The card itself is unchanged; the editor saves on top of the revision the photos produced.
-    var card = drafts.get("owner", "flat");
+    var card = RentalJson.tree(drafts.get("owner", "flat"));
     assertEquals(5, card.path("revision").asInt());
     assertEquals(card(), card.path("draft"));
     assertEquals(
@@ -86,8 +86,8 @@ class RentalPhotoTest {
         list(card.path("photos")).stream().map(p -> text(p, "name")).toList());
     assertEquals(
         409,
-        status(() -> drafts.save("owner", "flat", object("revision", 4, "draft", card()))));
-    drafts.save("owner", "flat", object("revision", 5, "draft", card()));
+        status(() -> drafts.save("owner", "flat", 4, RentalJson.document(card()))));
+    drafts.save("owner", "flat", 5, RentalJson.document(card()));
     assertArrayEquals(WEBP, photos.file("owner", "flat", ids.get(2)).data());
   }
 
@@ -114,7 +114,7 @@ class RentalPhotoTest {
     assertEquals(400, error.status);
     assertEquals("У квартиры может быть до 12 фотографий.", error.getMessage());
     assertEquals(12, photos.add("owner", "flat", 2, List.of(jpeg("a.jpg"))).photos().size());
-    assertEquals(3, drafts.get("owner", "flat").path("revision").asInt());
+    assertEquals(3, RentalJson.tree(drafts.get("owner", "flat")).path("revision").asInt());
   }
 
   @Test
@@ -130,7 +130,7 @@ class RentalPhotoTest {
       assertEquals(400, status(() -> photos.add("owner", "flat", 1, List.of(wrong))), wrong.name());
     assertEquals(400, status(() -> photos.add("owner", "flat", 1, List.of())));
     assertTrue(photos.list("owner", "flat").isEmpty());
-    assertEquals(1, drafts.get("owner", "flat").path("revision").asInt());
+    assertEquals(1, RentalJson.tree(drafts.get("owner", "flat")).path("revision").asInt());
     // A file name never carries a path or control characters.
     var stored = photos.add("owner", "flat", 1, List.of(jpeg("../dir\\name\n.jpg"), jpeg(" ")));
     assertEquals(List.of("..dirname.jpg", "photo.jpg"), names(stored.photos()));
@@ -145,7 +145,7 @@ class RentalPhotoTest {
     assertEquals(404, status(() -> photos.remove("other", "flat", 2, id)));
     assertEquals(404, status(() -> photos.reorder("other", "flat", 2, List.of())));
     assertEquals(1, photos.list("owner", "flat").size());
-    assertEquals(2, drafts.get("owner", "flat").path("revision").asInt());
+    assertEquals(2, RentalJson.tree(drafts.get("owner", "flat")).path("revision").asInt());
   }
 
   @Test
@@ -163,15 +163,15 @@ class RentalPhotoTest {
     assertEquals(404, status(() -> photos.remove("owner", "flat", 2, "missing")));
     assertEquals(400, status(() -> photos.add("owner", "flat", null, List.of(jpeg("x.jpg")))));
     assertEquals(2, photos.list("owner", "flat").size());
-    assertEquals(2, drafts.get("owner", "flat").path("revision").asInt());
+    assertEquals(2, RentalJson.tree(drafts.get("owner", "flat")).path("revision").asInt());
   }
 
   @Test
   void deletingACardDeletesItsPhotos() {
     photos.add("owner", "flat", 1, List.of(jpeg("one.jpg")));
-    drafts.save("other", "flat", object("revision", 0, "draft", card()));
+    drafts.save("other", "flat", 0, RentalJson.document(card()));
     photos.add("other", "flat", 1, List.of(jpeg("theirs.jpg")));
-    drafts.delete("owner", "flat", object("revision", 2));
+    drafts.delete("owner", "flat", 2);
     assertEquals(0, storage.photos.count("owner", "flat"));
     assertEquals(1, storage.photos.count("other", "flat"));
   }

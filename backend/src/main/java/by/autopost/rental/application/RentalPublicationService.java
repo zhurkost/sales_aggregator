@@ -1,11 +1,8 @@
 package by.autopost.rental.application;
 
-import static by.autopost.shared.Json.*;
-
 import by.autopost.rental.application.RentalPublicationRepository.Publication;
+import by.autopost.rental.model.Card;
 import by.autopost.shared.ApiException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -44,30 +41,28 @@ public class RentalPublicationService {
    * returns the same publications, never new ones.
    */
   @Transactional
-  public ObjectNode configuration(String workspace, JsonNode input) {
-    if (!input.isObject()) throw new ApiException(400, "Некорректная карточка.");
-    String id = clean(input, "id", 100);
-    if (!input.path("draft").isObject()) throw new ApiException(400, "Некорректная карточка.");
-    var saved = drafts.get(workspace, id);
-    if (!saved.path("draft").equals(input.path("draft")))
+  public ExtensionLaunch configuration(String workspace, String id, Card sent) {
+    var saved = drafts.stored(workspace, id == null ? "" : id);
+    Cards.requireCurrent(saved.card());
+    // What the page shows must be what was saved: every value the server reads.
+    if (!saved.card().equals(sent))
       throw new ApiException(
           409, "Карточка изменилась. Дождитесь сохранения и повторите публикацию.");
-    var stored = photos.forExtension(workspace, id);
-    var result = catalog.browser(saved.path("draft"), stored.size());
-    int revision = saved.path("revision").asInt();
-    String integration = text(result, "integrationVersion"), now = Instant.now().toString();
-    for (var job : result.path("jobs"))
-      ((ObjectNode) job)
-          .put(
-              "publication",
-              publications
-                  .open(workspace, id, revision, integration, text(job, "platform"), now)
-                  .id());
-    result.put("id", id);
-    result.set("revision", saved.path("revision"));
-    // The extension puts these into the form's file inputs; the browser keeps no copy of its own.
-    result.set("photos", MAPPER.valueToTree(stored));
-    return result;
+    var stored = photos.forExtension(workspace, saved.id());
+    var result = catalog.browser(saved.card(), stored.size());
+    String integration = result.integrationVersion(), now = Instant.now().toString();
+    var jobs =
+        result.jobs().stream()
+            .map(
+                job ->
+                    job.withPublication(
+                        publications
+                            .open(workspace, saved.id(), saved.revision(), integration, job.platform(), now)
+                            .id()))
+            .toList();
+    // The extension puts the photos into the form's file inputs; the browser keeps no copy.
+    return new ExtensionLaunch(
+        result.format(), integration, jobs, saved.id(), saved.revision(), stored);
   }
 
   /**

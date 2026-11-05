@@ -4,10 +4,8 @@ import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-import by.autopost.rental.card.*;
 import by.autopost.rental.catalog.*;
 import by.autopost.rental.model.*;
-import by.autopost.rental.preparation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import java.nio.file.*;

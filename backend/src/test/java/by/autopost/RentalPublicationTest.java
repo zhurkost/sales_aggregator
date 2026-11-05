@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import by.autopost.rental.application.*;
 import by.autopost.rental.catalog.*;
+import by.autopost.rental.engine.Transfer;
+import by.autopost.rental.model.FormRecipe;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -54,10 +56,10 @@ class RentalPublicationTest {
   @Test
   void missingRequiredFieldsDoNotBlockAnySelectedPlatformAndAddressesAreQueriesNotCodes() {
     var draft = partial();
-    var check = catalog.prepare(draft, 0);
+    var check = RentalJson.prepare(catalog, draft, 0);
     assertTrue(
         list(check.path("platforms")).stream().anyMatch(p -> !p.path("checksPassed").asBoolean()));
-    var launch = catalog.browser(draft, 0);
+    var launch = RentalJson.browser(catalog, draft, 0);
     assertEquals(4, launch.path("jobs").size());
     for (var job : launch.path("jobs")) {
       var prepared =
@@ -87,7 +89,7 @@ class RentalPublicationTest {
         .put("region", "Минская обл")
         .put("district", "Минский р-н");
     var job =
-        list(catalog.browser(draft, 0).path("jobs")).stream()
+        list(RentalJson.browser(catalog, draft, 0).path("jobs")).stream()
             .filter(j -> text(j, "platform").equals("realt"))
             .findFirst()
             .orElseThrow();
@@ -143,7 +145,7 @@ class RentalPublicationTest {
               "53.908548"));
       var addressBefore = draft.path("address").deepCopy();
       var job =
-          list(catalog.browser(draft, 0).path("jobs")).stream()
+          list(RentalJson.browser(catalog, draft, 0).path("jobs")).stream()
               .filter(j -> text(j, "platform").equals("realt"))
               .findFirst()
               .orElseThrow();
@@ -178,17 +180,17 @@ class RentalPublicationTest {
     var draft = partial();
     String id = UUID.randomUUID().toString();
     for (int revision = 0; revision < 3; revision++)
-      storage.draftService().save("owner", id, object("revision", revision, "draft", draft));
+      storage.draftService().save("owner", id, revision, RentalJson.document(draft));
     var request = object("id", id, "draft", draft.deepCopy());
-    assertEquals(3, service.configuration("owner", request).path("revision").asInt());
+    assertEquals(3, launch(service, "owner", request).path("revision").asInt());
     assertEquals(
         404,
-        assertThrows(ApiException.class, () -> service.configuration("other", request)).status);
+        assertThrows(ApiException.class, () -> launch(service, "other", request)).status);
     ((ObjectNode) request.path("draft").path("values"))
         .put("listing.description", "Изменено после сохранения");
     assertEquals(
         409,
-        assertThrows(ApiException.class, () -> service.configuration("owner", request)).status);
+        assertThrows(ApiException.class, () -> launch(service, "owner", request)).status);
   }
 
   @Test
@@ -196,10 +198,10 @@ class RentalPublicationTest {
     var storage = RentalStorage.at(dir.resolve("drafts.sqlite"));
     var draft = partial();
     String id = UUID.randomUUID().toString();
-    storage.draftService().save("owner", id, object("revision", 0, "draft", draft));
+    storage.draftService().save("owner", id, 0, RentalJson.document(draft));
     var request = object("id", id, "draft", draft);
     var service = storage.publicationService(catalog);
-    assertTrue(service.configuration("owner", request).path("photos").isEmpty());
+    assertTrue(launch(service, "owner", request).path("photos").isEmpty());
     var added =
         storage
             .photoService()
@@ -210,7 +212,7 @@ class RentalPublicationTest {
                 List.of(RentalPhotoTest.jpeg("room.jpg"), RentalPhotoTest.jpeg("kitchen.jpg")));
     var ids = added.photos().stream().map(p -> p.id()).toList();
     storage.photoService().reorder("owner", id, 2, List.of(ids.get(1), ids.get(0)));
-    var launch = service.configuration("owner", request);
+    var launch = launch(service, "owner", request);
     // Photo changes are revisions of the card: the launch is of the revision that has them.
     assertEquals(3, launch.path("revision").asInt());
     var photos = list(launch.path("photos"));
@@ -221,6 +223,31 @@ class RentalPublicationTest {
     assertEquals(
         "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(RentalPhotoTest.JPEG),
         text(photos.get(0), "dataUrl"));
+  }
+
+  /** A launch as the extension receives it. */
+  static JsonNode launch(RentalPublicationService service, String workspace, JsonNode request) {
+    return RentalJson.tree(
+        service.configuration(
+            workspace, text(request, "id"), RentalJson.card(request.path("draft"))));
+  }
+
+  /** A committed form recipe as written, for an edit the loader would have to reject. */
+  static ObjectNode recipe(String platform) {
+    try {
+      return (ObjectNode)
+          MAPPER.readTree(
+              Path.of("../data/rental/apartments_long_term_rent/runtime/browser_" + platform + ".json")
+                  .toFile());
+    } catch (java.io.IOException e) {
+      throw new java.io.UncheckedIOException(e);
+    }
+  }
+
+  /** A recipe as the loader checks it: parsed into records, then against its schema. */
+  static void validate(ReferenceSnapshot snapshot, String platform, JsonNode recipe) {
+    new BrowserRecipeValidator()
+        .validate(platform, snapshot.schema(platform), ReferenceJson.parse(recipe, FormRecipe.class));
   }
 
   static JsonNode platform(JsonNode prepared, String id) {
@@ -250,7 +277,7 @@ class RentalPublicationTest {
             "onliner", "onliner.images",
             "realt", "realt.photos",
             "domovita", "domovita.images");
-    var none = catalog.prepare(draft, 0);
+    var none = RentalJson.prepare(catalog, draft, 0);
     for (var entry : photoField.entrySet()) {
       var result = platform(none, entry.getKey());
       var codes = codes(result, entry.getValue());
@@ -272,10 +299,10 @@ class RentalPublicationTest {
         "Добавьте фотографии квартиры: площадка не публикует объявление без фото.",
         text(remark, "message"));
     assertFalse(platform(none, "realt").path("checksPassed").asBoolean());
-    for (var job : catalog.browser(draft, 0).path("jobs"))
+    for (var job : RentalJson.browser(catalog, draft, 0).path("jobs"))
       if (!text(job, "platform").equals("kufar"))
         assertFalse(job.path("checksPassed").asBoolean(), text(job, "platform"));
-    var three = catalog.prepare(draft, 3);
+    var three = RentalJson.prepare(catalog, draft, 3);
     for (var entry : photoField.entrySet()) {
       var result = platform(three, entry.getKey());
       assertFalse(codes(result, entry.getValue()).contains("photos_required"), entry.getKey());
@@ -284,7 +311,7 @@ class RentalPublicationTest {
               .filter(v -> text(v, "field").equals(entry.getValue()))
               .toList();
       assertEquals(1, photos.size(), entry.getKey());
-      assertEquals("3 фото", text(photos.get(0), "value"));
+      assertEquals("3 фото", text(photos.get(0), "text"));
     }
   }
 
@@ -294,14 +321,14 @@ class RentalPublicationTest {
     var draft = partial();
     draft.set("platforms", array().add("onliner"));
     String id = UUID.randomUUID().toString();
-    storage.draftService().save("owner", id, object("revision", 0, "draft", draft));
+    storage.draftService().save("owner", id, 0, RentalJson.document(draft));
     var service = storage.publicationService(catalog);
     var request = object("id", id, "draft", draft);
-    var before = service.configuration("owner", request).path("jobs").get(0);
+    var before = launch(service, "owner", request).path("jobs").get(0);
     assertFalse(before.path("checksPassed").asBoolean());
     storage.photoService().add("owner", id, 1, List.of(RentalPhotoTest.jpeg("room.jpg")));
-    var check = catalog.prepare(draft, 1).path("platforms").get(0);
-    var after = service.configuration("owner", request).path("jobs").get(0);
+    var check = RentalJson.prepare(catalog, draft, 1).path("platforms").get(0);
+    var after = launch(service, "owner", request).path("jobs").get(0);
     assertEquals(check.path("checksPassed"), after.path("checksPassed"));
     assertTrue(codes(check, "onliner.images").isEmpty(), check.toString());
   }
@@ -313,15 +340,15 @@ class RentalPublicationTest {
     var old = partial();
     old.remove("modelVersion");
     String id = UUID.randomUUID().toString();
-    drafts.save("owner", id, object("revision", 0, "draft", old));
+    drafts.save("owner", id, 0, RentalJson.document(old));
     var service = storage.publicationService(catalog);
     var error =
         assertThrows(
             ApiException.class,
-            () -> service.configuration("owner", object("id", id, "draft", old)));
+            () -> launch(service, "owner", object("id", id, "draft", old)));
     assertEquals(409, error.status);
     assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
-    assertThrows(ApiException.class, () -> catalog.browser(old, 0));
+    assertThrows(ApiException.class, () -> RentalJson.browser(catalog, old, 0));
   }
 
   @Test
@@ -341,13 +368,13 @@ class RentalPublicationTest {
             "script",
             r -> ((ObjectNode) r.path("ready").get(0)).put("script", "alert(1)"));
     for (var edit : unknown.entrySet()) {
-      var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
+      var recipe = recipe("kufar");
       edit.getValue().accept(recipe);
       var error =
           assertThrows(
               ApiException.class,
               () ->
-                  new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe),
+                  validate(snapshot, "kufar", recipe),
               edit.getKey());
       assertTrue(
           error.getMessage().contains("неизвестный ключ " + edit.getKey()), error.getMessage());
@@ -361,11 +388,11 @@ class RentalPublicationTest {
             r -> control(r, "kufar.floor").put("displaySelector", ""),
             r -> ((ObjectNode) r.path("setup").get(0)).put("matchText", "false"));
     for (var edit : mistyped) {
-      var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
+      var recipe = recipe("kufar");
       edit.accept(recipe);
       assertThrows(
           ApiException.class,
-          () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe));
+          () -> validate(snapshot, "kufar", recipe));
     }
   }
 
@@ -377,19 +404,19 @@ class RentalPublicationTest {
         .put("rental.kitchen_area", "9")
         .put("location.metro_1_station", "Немига");
     draft.set("platforms", array().add("realt"));
-    var realt = catalog.prepare(draft, 0).path("platforms").get(0);
+    var realt = RentalJson.prepare(catalog, draft, 0).path("platforms").get(0);
     var form = list(realt.path("form"));
     var title =
         form.stream().filter(v -> text(v, "field").equals("realt.title")).findFirst().orElseThrow();
     assertEquals("Заголовок", text(title, "name"));
-    assertEquals("Двухкомнатная у метро", text(title, "value"));
+    assertEquals("Двухкомнатная у метро", text(title, "text"));
     // The address goes to the form through its own controls, from the confirmed address.
     var settlement =
         form.stream()
             .filter(v -> text(v, "field").equals("realt.settlement"))
             .findFirst()
             .orElseThrow();
-    assertEquals("Минск", text(settlement, "value"));
+    assertEquals("Минск", text(settlement, "text"));
     // Constants chosen by the setup steps are not values of the card.
     assertTrue(form.stream().noneMatch(v -> text(v, "field").equals("realt.deal_type")));
     var manual = list(realt.path("manual"));
@@ -402,11 +429,11 @@ class RentalPublicationTest {
             .findFirst()
             .orElseThrow();
     assertEquals("Площадь кухни, м²", text(kitchen, "name"));
-    assertEquals("9", kitchen.path("value").asText());
+    assertEquals("9", kitchen.path("text").asText());
     assertTrue(text(kitchen, "reason").contains("«Все параметры»"), kitchen.toString());
     assertTrue(form.stream().noneMatch(v -> text(v, "field").equals("realt.kitchen_area")));
     // The extension lists exactly the manual fields as not transferred.
-    var job = catalog.browser(draft, 0).path("jobs").get(0);
+    var job = RentalJson.browser(catalog, draft, 0).path("jobs").get(0);
     assertEquals(
         manual.stream().map(v -> text(v, "name")).toList(),
         list(job.path("unbound")).stream().map(JsonNode::asText).toList());
@@ -419,7 +446,7 @@ class RentalPublicationTest {
         .put("listing.title", "Двухкомнатная у метро")
         .put("listing.description", "Светлая квартира & балкон.\nВторая строка");
     draft.set("platforms", array().add("realt"));
-    var controls = list(catalog.browser(draft, 0).path("jobs").get(0).path("controls"));
+    var controls = list(RentalJson.browser(catalog, draft, 0).path("jobs").get(0).path("controls"));
     var title = controls.stream().filter(c -> text(c, "field").equals("realt.title")).findFirst();
     assertEquals("[id=\"description.title\"]", text(title.orElseThrow(), "selector"));
     assertEquals("text", text(title.orElseThrow(), "action"));
@@ -444,7 +471,7 @@ class RentalPublicationTest {
   void richTextInAnIframeIsAKnownActionWithoutExtraKeys() {
     var snapshot =
         new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
-    var recipe = (ObjectNode) snapshot.browser("realt").deepCopy();
+    var recipe = recipe("realt");
     var description =
         object(
             "field",
@@ -458,12 +485,12 @@ class RentalPublicationTest {
       if (text(controls.get(i), "field").equals("realt.description")) controls.remove(i);
     controls.add(description);
     assertDoesNotThrow(
-        () -> new BrowserRecipeValidator().validate("realt", snapshot.schema("realt"), recipe));
+        () -> validate(snapshot, "realt", recipe));
     description.put("frameSelector", "body#tinymce");
     var error =
         assertThrows(
             ApiException.class,
-            () -> new BrowserRecipeValidator().validate("realt", snapshot.schema("realt"), recipe));
+            () -> validate(snapshot, "realt", recipe));
     assertTrue(error.getMessage().contains("неизвестный ключ frameSelector"), error.getMessage());
   }
 
@@ -479,23 +506,22 @@ class RentalPublicationTest {
   void browserContractRejectsUnknownFieldsAndExecutableActions() {
     var snapshot =
         new FileReferenceRepository("../data/rental/apartments_long_term_rent").snapshot();
-    var recipe = (ObjectNode) snapshot.browser("kufar").deepCopy();
+    var recipe = recipe("kufar");
     ((ObjectNode) recipe.path("controls").get(0)).put("action", "eval");
     assertThrows(
         ApiException.class,
-        () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), recipe));
-    var other = (ObjectNode) snapshot.browser("kufar").deepCopy();
+        () -> validate(snapshot, "kufar", recipe));
+    var other = recipe("kufar");
     ((ObjectNode) other.path("controls").get(0)).put("field", "unknown");
     assertThrows(
         ApiException.class,
-        () -> new BrowserRecipeValidator().validate("kufar", snapshot.schema("kufar"), other));
-    var invalidAddress = (ObjectNode) snapshot.browser("realt").deepCopy();
+        () -> validate(snapshot, "kufar", other));
+    var invalidAddress = recipe("realt");
     ((ObjectNode) invalidAddress.path("controls").get(0).path("autocomplete"))
         .put("optionSelector", "");
     assertThrows(
         ApiException.class,
         () ->
-            new BrowserRecipeValidator()
-                .validate("realt", snapshot.schema("realt"), invalidAddress));
+            validate(snapshot, "realt", invalidAddress));
   }
 }

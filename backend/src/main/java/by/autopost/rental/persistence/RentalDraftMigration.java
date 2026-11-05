@@ -1,9 +1,10 @@
-package by.autopost.rental.application;
+package by.autopost.rental.persistence;
 
 import static by.autopost.shared.Json.parse;
 
-import by.autopost.rental.card.CardMigration;
+import by.autopost.rental.application.RentalDraftRepository;
 import by.autopost.rental.catalog.ReferenceSnapshot;
+import by.autopost.rental.model.CardFields;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
  * --migrate-rental-drafts; cards of the current model only move from {@code schemaVersion} to
  * {@code cardVersion} and lose {@code localPhotoIds}. Each card is written with the expected
  * revision, so a save made at the same moment is never overwritten; current cards are not touched.
+ * The stored cards are read as JSON documents: their older formats have no record of their own.
  */
 public final class RentalDraftMigration {
   /**
@@ -84,11 +86,22 @@ public final class RentalDraftMigration {
       var next = outdated ? migration.normalize(data) : migration.tidy(data);
       // The list order follows the owner's saves, so the migration keeps the saved time.
       var stored =
-          RentalDraftRepository.StoredDraft.of(id, row.revision() + 1, next, row.updated());
+          new RentalDraftRepository.StoredDraft(
+              id,
+              row.revision() + 1,
+              next.toString(),
+              textual(next.path("values").path(CardFields.TITLE)),
+              textual(next.path("address").path("label")),
+              row.updated());
       // Only a model conversion leaves new ambiguous values in legacy.
       if (drafts.update(workspace, stored, row.revision()))
         return new Result(Outcome.MIGRATED, outdated ? next.path("legacy").size() : 0);
     }
     return new Result(Outcome.CONFLICT, 0);
+  }
+
+  /** The list shows only text; any other JSON value is not a title or an address. */
+  private static String textual(JsonNode value) {
+    return value.isTextual() ? value.asText() : "";
   }
 }

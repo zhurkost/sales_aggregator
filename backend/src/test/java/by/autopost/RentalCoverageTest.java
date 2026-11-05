@@ -3,7 +3,10 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import by.autopost.rental.application.FieldStates;
+import by.autopost.rental.application.RentalCatalog;
 import by.autopost.rental.catalog.*;
+import by.autopost.rental.engine.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
 import java.nio.file.*;
@@ -152,11 +155,11 @@ class RentalCoverageTest {
     for (String platform : snapshot.platforms()) {
       var plan = snapshot.plan(platform);
       Set<String> planned = new LinkedHashSet<>();
-      for (var row : plan.path("fields")) planned.add(text(row, "platform_option_id"));
-      for (String list : List.of("addresses", "coordinates"))
-        for (var row : plan.path(list)) planned.add(text(row, "platform_option_id"));
-      plan.path("constants").fieldNames().forEachRemaining(planned::add);
-      plan.path("deferred_fields").fieldNames().forEachRemaining(planned::add);
+      for (var row : plan.fields()) planned.add(row.platformOptionId());
+      for (var row : plan.addresses()) planned.add(row.platformOptionId());
+      for (var row : plan.coordinates()) planned.add(row.platformOptionId());
+      planned.addAll(plan.constants().keySet());
+      planned.addAll(plan.deferredFields().keySet());
       var coverage = snapshot.coverage(platform);
       assertEquals(
           planned,
@@ -190,24 +193,30 @@ class RentalCoverageTest {
   }
 
   @Test
-  void editorTellsForEachUseOfACardFieldWhetherTheFormNeedsIt() {
-    var editor =
-        new by.autopost.rental.application.RentalCatalog(new FileReferenceRepository(COMMITTED))
-            .editor();
+  void theServerTellsForEachChosenPlatformWhetherItsFormNeedsACardField() {
+    var catalog = new RentalCatalog(new FileReferenceRepository(COMMITTED));
     Map<String, Map<String, Boolean>> uses = new HashMap<>();
-    for (var group : editor.path("category").path("options"))
-      for (var field : group.path("options"))
-        for (var use : field.path("uses"))
-          uses.computeIfAbsent(text(field, "id"), id -> new TreeMap<>())
-              .merge(
-                  text(use, "platform"), use.path("transferred").asBoolean(), Boolean::logicalOr);
+    for (String platform : catalog.reference().platforms())
+      for (var state : fields(catalog, platform).fields())
+        if (catalog.reference().plan(platform).fields().stream()
+            .anyMatch(rule -> rule.sources().contains(state.id())))
+          uses.computeIfAbsent(state.id(), id -> new TreeMap<>())
+              .put(platform, state.transferred());
     assertEquals(Map.of("kufar", true, "realt", true), uses.get("listing.title"));
     assertEquals(
         Map.of("kufar", true, "realt", false, "domovita", true), uses.get("rental.kitchen_area"));
     // Metro reaches no form: Kufar and Realt choose stations from the address themselves.
     assertEquals(Map.of("kufar", false, "realt", false), uses.get("location.metro_1_station"));
-    for (var platform : iterable(editor.path("platforms").fields()))
-      assertFalse(platform.getValue().has("coverage"), platform.getKey());
+    // The editor gets no rule of a platform: no mapping rows, conditions, codes or constants.
+    String editor = RentalJson.editor(catalog).toString();
+    for (String rule :
+        List.of("uses", "rules", "conditions", "uiWhen", "bindings", "constants", "fill_rule"))
+      assertFalse(editor.contains("\"" + rule + "\""), rule);
+  }
+
+  static FieldStates fields(RentalCatalog catalog, String platform) {
+    return catalog.fields(
+        RentalJson.card(object("modelVersion", 2, "values", object(), "platforms", List.of(platform))));
   }
 
   @Test
@@ -239,7 +248,7 @@ class RentalCoverageTest {
         .put("transfer", "manual")
         .put("manual_reason", "Валюту выбирают на площадке.");
     write("example.plan.json", plan);
-    var catalog = new by.autopost.rental.application.RentalCatalog(load());
+    var catalog = new RentalCatalog(load());
     java.util.function.Function<ObjectNode, ObjectNode> card =
         values ->
             object(
@@ -253,13 +262,14 @@ class RentalCoverageTest {
                 List.of("example"));
     // The manual field is empty: nothing would be lost, the checks pass.
     var empty = card.apply(object("rental.price", "1500"));
-    var passed = catalog.prepare(empty, 0).path("platforms").get(0);
+    var passed = RentalJson.prepare(catalog, empty, 0).path("platforms").get(0);
     assertTrue(passed.path("issues").isEmpty(), passed.toString());
     assertTrue(passed.path("checksPassed").asBoolean());
-    assertTrue(catalog.browser(empty, 0).path("jobs").get(0).path("checksPassed").asBoolean());
+    assertTrue(
+        RentalJson.browser(catalog, empty, 0).path("jobs").get(0).path("checksPassed").asBoolean());
     // A filled manual field would be missing from an automatically submitted ad.
     var filled = card.apply(object("rental.price", "1500", "rental.currency", "BYN"));
-    var blocked = catalog.prepare(filled, 0).path("platforms").get(0);
+    var blocked = RentalJson.prepare(catalog, filled, 0).path("platforms").get(0);
     assertFalse(blocked.path("checksPassed").asBoolean());
     assertEquals(1, blocked.path("issues").size(), blocked.toString());
     var issue = blocked.path("issues").get(0);
@@ -270,21 +280,15 @@ class RentalCoverageTest {
         text(issue, "message"));
     assertEquals(1, blocked.path("manual").size());
     // The extension sees only checksPassed; the assisted launch still fills the form.
-    var job = catalog.browser(filled, 0).path("jobs").get(0);
+    var job = RentalJson.browser(catalog, filled, 0).path("jobs").get(0);
     assertFalse(job.path("checksPassed").asBoolean());
     assertEquals("rent", text(job.path("controls").get(0), "field"));
   }
 
   JsonNode currencyUse() {
-    var editor = new by.autopost.rental.application.RentalCatalog(load()).editor();
-    for (var group : editor.path("category").path("options"))
-      for (var field : group.path("options"))
-        if (text(field, "id").equals("rental.currency")) return field.path("uses").get(0);
+    for (var state : fields(new RentalCatalog(load()), "example").fields())
+      if (state.id().equals("rental.currency")) return RentalJson.tree(state);
     throw new AssertionError("rental.currency");
-  }
-
-  static <T> Iterable<T> iterable(Iterator<T> iterator) {
-    return () -> iterator;
   }
 
   @Test
@@ -296,8 +300,8 @@ class RentalCoverageTest {
       assertEquals(Transfer.MANUAL, row.transfer(), field);
       assertTrue(row.reason().contains("«Добавить другой номер»"), row.reason());
       assertTrue(
-          list(snapshot.browser("domovita").path("controls")).stream()
-              .noneMatch(c -> text(c, "field").equals(field)),
+          snapshot.form("domovita").controlList().stream()
+              .noneMatch(c -> c.field().equals(field)),
           field);
     }
   }

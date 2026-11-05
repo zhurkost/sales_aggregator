@@ -7,6 +7,53 @@ import java.util.*;
 public final class Json {
   public static final ObjectMapper MAPPER = new ObjectMapper();
 
+  /**
+   * For typed records: an unknown key or a value of another JSON type is an error, not a no-op
+   * (records that read only part of a document say so themselves), and a fraction keeps its exact
+   * decimal value.
+   */
+  public static final ObjectMapper TYPED = typedMapper();
+
+  private static ObjectMapper typedMapper() {
+    var mapper =
+        com.fasterxml.jackson.databind.json.JsonMapper.builder()
+            .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
+            .disable(MapperFeature.ALLOW_COERCION_OF_SCALARS)
+            .build();
+    // A number or a yes/no where text is expected is another type, not text.
+    mapper
+        .coercionConfigFor(com.fasterxml.jackson.databind.type.LogicalType.Textual)
+        .setCoercion(
+            com.fasterxml.jackson.databind.cfg.CoercionInputShape.Integer,
+            com.fasterxml.jackson.databind.cfg.CoercionAction.Fail)
+        .setCoercion(
+            com.fasterxml.jackson.databind.cfg.CoercionInputShape.Float,
+            com.fasterxml.jackson.databind.cfg.CoercionAction.Fail)
+        .setCoercion(
+            com.fasterxml.jackson.databind.cfg.CoercionInputShape.Boolean,
+            com.fasterxml.jackson.databind.cfg.CoercionAction.Fail);
+    return mapper;
+  }
+
+  /** A typed record from JSON text; a document of another shape is an IllegalArgumentException. */
+  public static <T> T typed(String json, Class<T> type) {
+    try {
+      return TYPED.readValue(json, type);
+    } catch (Exception e) {
+      throw new IllegalArgumentException(e.getMessage(), e);
+    }
+  }
+
+  /** A typed record from a parsed request body. */
+  public static <T> T typed(JsonNode json, Class<T> type) {
+    try {
+      return TYPED.treeToValue(json, type);
+    } catch (Exception e) {
+      throw new IllegalArgumentException(e.getMessage(), e);
+    }
+  }
+
   public static ObjectNode object(Object... pairs) {
     ObjectNode n = MAPPER.createObjectNode();
     for (int i = 0; i < pairs.length; i += 2)

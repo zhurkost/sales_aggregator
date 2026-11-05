@@ -1,4 +1,4 @@
-package by.autopost.rental.catalog;
+package by.autopost.rental.engine;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Locale;

@@ -4,10 +4,11 @@ import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import by.autopost.rental.application.RentalCatalog;
-import by.autopost.rental.card.*;
 import by.autopost.rental.catalog.*;
+import by.autopost.rental.engine.CardChecks;
+import by.autopost.rental.engine.Issue;
 import by.autopost.rental.model.*;
-import by.autopost.rental.preparation.*;
+import by.autopost.rental.persistence.CardMigration;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
@@ -206,14 +207,25 @@ class RentalCardTest {
   @Test
   void fifthMarketplaceUsesSameEditorAndPreparationWithoutCodeChanges() throws Exception {
     RentalCatalog catalog = fixture();
-    var editor = catalog.editor();
+    var editor = RentalJson.editor(catalog);
     assertEquals(5, editor.path("platforms").size());
-    assertEquals(1, editor.path("category").path("options").get(0).path("options").size());
-    assertEquals(
-        5,
-        editor.path("category").path("options").get(0).path("options").get(0).path("uses").size());
+    assertEquals(1, editor.path("groups").get(0).path("fields").size());
+    // The one card field is shown for each platform alone, as the server decides.
+    for (String platform : List.of("one", "two", "three", "four", "fifth"))
+      assertEquals(
+          List.of("rental.rooms"),
+          catalog
+              .fields(
+                  RentalJson.card(
+                      object("modelVersion", 2, "values", object(), "platforms", List.of(platform))))
+              .fields()
+              .stream()
+              .map(f -> f.id())
+              .toList(),
+          platform);
     var result =
-        catalog.prepare(
+        RentalJson.prepare(
+            catalog,
             object(
                 "modelVersion",
                 2,
@@ -251,7 +263,7 @@ class RentalCardTest {
     assertTrue(migrated.path("extras").isEmpty());
     assertEquals(3, migrated.path("legacy").size());
     assertEquals(migrated, migration().normalize(migrated));
-    var output = c.prepare(migrated, 0).path("platforms").get(0);
+    var output = RentalJson.prepare(c, migrated, 0).path("platforms").get(0);
     assertFalse(output.path("values").has("address"));
     assertFalse(output.path("checksPassed").asBoolean());
     assertEquals("Old native address", old.path("extras").path("one").path("address").asText());
@@ -277,8 +289,8 @@ class RentalCardTest {
 
   @Test
   void oldDerivedAddressStringsDoNotAskForTheSameAddressAgain() throws Exception {
-    var c = fixture();
-    ObjectNode card = (ObjectNode) c.card();
+    fixture();
+    ObjectNode card = (ObjectNode) MAPPER.readTree(dir.resolve("runtime/card.json").toFile());
     card.set(
         "addressProjection",
         object(
@@ -328,9 +340,9 @@ class RentalCardTest {
 
   @Test
   void ambiguousListsAndNullCodesNeverInventSeveralCanonicalFacts() throws Exception {
-    var c = fixture();
-    String path = "runtime/preparation_one.json";
-    ObjectNode plan = (ObjectNode) c.plan("one").deepCopy();
+    fixture();
+    ObjectNode plan =
+        (ObjectNode) MAPPER.readTree(dir.resolve("runtime/preparation_one.json").toFile());
     ArrayNode members = array();
     for (String source : List.of("location.station1", "location.station2", "location.station3"))
       members.add(
@@ -346,24 +358,26 @@ class RentalCardTest {
                 "stations",
                 "conversion",
                 object("kind", "multi_lookup", "members", members)));
-    var repository = new FileReferenceRepository(dir.toString());
-    var snapshot = repository.snapshot();
-    Map<String, JsonNode> plans = new HashMap<>(), schemas = new HashMap<>();
-    for (String p : snapshot.platforms()) {
-      plans.put(p, snapshot.plan(p));
-      schemas.put(p, snapshot.schema(p));
-    }
-    plans.put("one", plan);
+    var snapshot = new FileReferenceRepository(dir.toString()).snapshot();
+    // An earlier plan that the current schema no longer validates: built by hand.
+    Map<String, ReferenceSnapshot.Platform> platforms = new HashMap<>();
+    for (String p : snapshot.platforms()) platforms.put(p, snapshot.platform(p));
+    var one = snapshot.platform("one");
+    platforms.put(
+        "one",
+        new ReferenceSnapshot.Platform(
+            "one",
+            one.schema(),
+            ReferenceJson.parse(plan, Mapping.class),
+            one.form(),
+            one.coverage()));
     var migration =
         new CardMigration(
             new ReferenceSnapshot(
                 snapshot.categoryId(),
                 snapshot.common(),
                 snapshot.card(),
-                schemas,
-                plans,
-                Map.of(),
-                Map.of(),
+                platforms,
                 snapshot.cardVersion(),
                 snapshot.integrationVersion()));
 
@@ -390,7 +404,9 @@ class RentalCardTest {
             object("one", object("rooms", 2)),
             "platforms",
             List.of("one"));
-    for (Runnable call : List.<Runnable>of(() -> c.prepare(old, 0), () -> c.acceptRules(old))) {
+    for (Runnable call :
+        List.<Runnable>of(
+            () -> c.prepare(RentalJson.card(old), 0), () -> c.acceptRules(RentalJson.card(old)))) {
       var error = assertThrows(ApiException.class, call::run);
       assertEquals(409, error.status);
       assertEquals("Карточку нужно перенести командой миграции.", error.getMessage());
@@ -414,19 +430,24 @@ class RentalCardTest {
             List.of(object("platform", "one", "field", "rooms", "value", 3)),
             "platforms",
             List.of("one"));
-    var accepted = c.acceptRules(card);
-    assertEquals(c.cardVersion(), text(accepted, "cardVersion"));
-    accepted.put("cardVersion", "previous");
-    assertEquals(card, accepted);
+    // The card document stays as it is: the editor endpoint only puts this version into it.
+    assertEquals(c.cardVersion(), c.acceptRules(RentalJson.card(card)));
   }
 
   @Test
   void projectedAddressValuesComeOnlyFromTheAddress() throws Exception {
+    fixture();
+    var model = new FileReferenceRepository(dir.toString()).snapshot().card();
     var values = object("location.street", "Old street", "rental.rooms", "two");
-    CardProjection.projectAddress(values, object(), fixture().card());
-    assertEquals(object("rental.rooms", "two"), values);
-    CardProjection.projectAddress(values, object("street", "New street"), fixture().card());
-    assertEquals("New street", text(values, "location.street"));
+    assertEquals(
+        Map.of("rental.rooms", Value.text("two")),
+        CardChecks.values(RentalJson.card(object("values", values)), model));
+    assertEquals(
+        Value.text("New street"),
+        CardChecks.values(
+                RentalJson.card(object("values", values, "address", object("street", "New street"))),
+                model)
+            .get("location.street"));
   }
 
   @Test
@@ -442,20 +463,21 @@ class RentalCardTest {
             object(),
             "platforms",
             List.of("fifth"));
-    var error = assertThrows(ApiException.class, () -> c.prepare(card, 0));
+    var error = assertThrows(ApiException.class, () -> c.prepare(RentalJson.card(card), 0));
     assertEquals(409, error.status);
     assertEquals("Правила обновились. Обновите поля карточки.", error.getMessage());
-    assertDoesNotThrow(() -> c.prepare(c.acceptRules(card), 0));
+    card.put("cardVersion", c.acceptRules(RentalJson.card(card)));
+    assertDoesNotThrow(() -> c.prepare(RentalJson.card(card), 0));
   }
 
   @Test
   void canonicalFloorCheckDoesNotDependOnSelectedMarketplace() {
-    ObjectNode prepared = object("issues", array(), "checksPassed", true);
-    CardProjection.annotate(
-        prepared,
-        object("platform", "example"),
-        object("values", object("rental.floor", "9", "building.total_floors", "5")));
-    assertFalse(prepared.path("checksPassed").asBoolean());
-    assertEquals("rental.floor", prepared.path("issues").get(0).path("source").asText());
+    var issues =
+        CardChecks.annotate(
+            List.<Issue>of(),
+            ReferenceJson.parse(object("platform", "example"), Mapping.class),
+            RentalJson.card(object("values", object("rental.floor", "9", "building.total_floors", "5"))));
+    assertEquals(1, issues.size());
+    assertEquals("rental.floor", issues.get(0).source());
   }
 }

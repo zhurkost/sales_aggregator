@@ -3,125 +3,121 @@ package by.autopost.rental.catalog;
 import static by.autopost.rental.catalog.ReferenceValidator.check;
 import static by.autopost.shared.Json.*;
 
+import by.autopost.rental.engine.PlatformCoverage;
+import by.autopost.rental.model.CardModel;
+import by.autopost.rental.model.FormRecipe;
+import by.autopost.rental.model.Mapping;
+import by.autopost.rental.model.Schema;
 import by.autopost.shared.Hashing;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 /**
- * The reference bundle of this release, read and validated once when the application starts. A
- * broken bundle throws {@link ReferenceBundleException} with the file and the reason, so the
- * application does not start. Files are never re-read: a new bundle is a new release.
+ * The reference bundle of this release, read, parsed into records and validated once when the
+ * application starts. A broken bundle throws {@link ReferenceBundleException} with the file and the
+ * reason, so the application does not start. Files are never re-read: a new bundle is a new
+ * release.
  */
 @Repository
 public class FileReferenceRepository implements ReferenceRepository {
   private static final String MANIFEST_FILE = "manifest.json";
-  private static final Set<String> MANIFEST =
-      Set.of(
-          "format_version", "source_schema_version", "category_id", "common", "card", "platforms");
-  private static final Set<String> PLATFORM = Set.of("schema", "plan", "browser");
   private final ReferenceSnapshot loaded;
 
   public FileReferenceRepository(@Value("${autopost.rental-reference-dir:}") String directory) {
     loaded = load(new ReferenceFiles(directory));
   }
 
-  /** A view of its own for one operation; the loaded bundle itself is never handed out. */
+  /** The loaded bundle: immutable, so every operation shares it. */
   @Override
   public ReferenceSnapshot snapshot() {
-    return loaded.view();
+    return loaded;
   }
 
   private static ReferenceSnapshot load(ReferenceFiles files) {
-    JsonNode manifest = files.read(MANIFEST_FILE);
+    JsonNode manifestJson = files.read(MANIFEST_FILE);
+    var manifest = files.typed(MANIFEST_FILE, manifestJson, Manifest.class);
     files.check(MANIFEST_FILE, () -> manifest(manifest));
-    String category = text(manifest, "category_id");
-    String commonFile = text(manifest, "common"), cardFile = text(manifest, "card");
-    JsonNode common = files.read(commonFile);
-    var canonical = files.checked(commonFile, () -> ReferenceValidator.common(common));
-    var ids = new TreeSet<String>();
-    manifest.path("platforms").fieldNames().forEachRemaining(ids::add);
-    JsonNode card = files.read(cardFile);
-    files.check(cardFile, () -> ReferenceValidator.card(card, canonical, ids));
-    Map<String, JsonNode> schemas = new TreeMap<>(),
-        plans = new TreeMap<>(),
-        browsers = new TreeMap<>();
-    Map<String, PlatformCoverage> coverage = new TreeMap<>();
+    String category = manifest.categoryId();
+    JsonNode commonJson = files.read(manifest.common());
+    var common = files.typed(manifest.common(), commonJson, Schema.class);
+    var canonical = files.checked(manifest.common(), () -> ReferenceValidator.common(common));
+    var ids = new TreeSet<>(manifest.platforms().keySet());
+    JsonNode cardJson = files.read(manifest.card());
+    var card = files.typed(manifest.card(), cardJson, CardModel.class);
+    files.check(manifest.card(), () -> ReferenceValidator.card(card, canonical, ids));
+    Map<String, JsonNode> schemas = new TreeMap<>(), plans = new TreeMap<>(), browsers = new TreeMap<>();
+    Map<String, ReferenceSnapshot.Platform> platforms = new TreeMap<>();
     for (String id : ids) {
-      var entry = manifest.path("platforms").path(id);
-      String schemaFile = text(entry, "schema"), planFile = text(entry, "plan");
-      JsonNode schema = files.read(schemaFile);
-      var graph =
-          files.checked(
-              schemaFile,
-              () -> {
-                SourceSchemaValidator.validate(schema);
-                return ReferenceValidator.schema(id, schema);
-              });
-      JsonNode plan = files.read(planFile);
+      var entry = manifest.platforms().get(id);
+      JsonNode schemaJson = files.read(entry.schema());
+      files.check(entry.schema(), () -> SourceSchemaValidator.validate(schemaJson));
+      var schema = files.typed(entry.schema(), schemaJson, Schema.class);
+      var graph = files.checked(entry.schema(), () -> ReferenceValidator.schema(id, schema));
+      JsonNode planJson = files.read(entry.plan());
+      var plan = files.typed(entry.plan(), planJson, Mapping.class);
       files.check(
-          planFile, () -> ReferenceValidator.plan(category, canonical, id, schema, graph, plan));
-      schemas.put(id, schema);
-      plans.put(id, plan);
-      String browserFile = text(entry, "browser");
-      JsonNode browser = files.read(browserFile);
-      files.check(browserFile, () -> new BrowserRecipeValidator().validate(id, schema, browser));
-      browsers.put(id, browser);
+          entry.plan(), () -> ReferenceValidator.plan(category, canonical, id, schema, graph, plan));
+      JsonNode browserJson = files.read(entry.browser());
+      var form = files.typed(entry.browser(), browserJson, FormRecipe.class);
+      files.check(entry.browser(), () -> new BrowserRecipeValidator().validate(id, schema, form));
       // Named after the plan: it marks what the recipe does not fill.
-      coverage.put(
-          id, files.checked(planFile, () -> PlatformCoverage.of(id, schema, plan, browser, graph)));
+      var coverage =
+          files.checked(
+              entry.plan(),
+              () -> {
+                ReferenceValidator.manualWithoutControl(id, plan, form);
+                var computed = PlatformCoverage.of(id, schema, plan, form, graph);
+                ReferenceValidator.everyFieldReachesTheForm(computed);
+                return computed;
+              });
+      schemas.put(id, schemaJson);
+      plans.put(id, planJson);
+      browsers.put(id, browserJson);
+      platforms.put(id, new ReferenceSnapshot.Platform(id, schema, plan, form, coverage));
     }
-    String cardVersion = Hashing.sha256(object("common", common, "card", card).toString());
+    // The versions are hashes of the files as they are written, not of the records.
+    String cardVersion = Hashing.sha256(object("common", commonJson, "card", cardJson).toString());
     String integrationVersion =
         Hashing.sha256(
             object(
-                    "manifest", manifest,
+                    "manifest", manifestJson,
                     "schemas", schemas,
                     "plans", plans,
                     "browsers", browsers)
                 .toString());
     return new ReferenceSnapshot(
-        category,
-        common,
-        card,
-        schemas,
-        plans,
-        browsers,
-        coverage,
-        cardVersion,
-        integrationVersion);
+        category, common, card, platforms, cardVersion, integrationVersion);
   }
 
   /** manifest.json: its format, the category and the files of every platform. */
-  private static void manifest(JsonNode manifest) {
-    ReferenceValidator.keys(manifest, "manifest", MANIFEST);
-    check(manifest.path("format_version").asInt() == 1, "неподдерживаемый format_version");
+  private static void manifest(Manifest manifest) {
     check(
-        text(manifest, "category_id").matches("[a-z][a-z0-9_]{0,79}"),
-        "некорректная категория " + text(manifest, "category_id"));
+        manifest.formatVersion() != null && manifest.formatVersion() == 1,
+        "неподдерживаемый format_version");
     check(
-        text(manifest, "source_schema_version").equals("1.2"),
-        "неподдерживаемая версия формата схем " + text(manifest, "source_schema_version"));
-    for (String key : Set.of("common", "card"))
-      check(!text(manifest, key).isBlank(), "в manifest не указан путь " + key);
-    var registry = manifest.path("platforms");
-    check(registry.isObject() && !registry.isEmpty(), "в manifest нет реестра площадок");
-    registry
-        .fields()
-        .forEachRemaining(
-            platform -> {
-              String id = platform.getKey();
+        manifest.categoryId().matches("[a-z][a-z0-9_]{0,79}"),
+        "некорректная категория " + manifest.categoryId());
+    check(
+        "1.2".equals(manifest.sourceSchemaVersion()),
+        "неподдерживаемая версия формата схем " + manifest.sourceSchemaVersion());
+    check(!manifest.common().isBlank(), "в manifest не указан путь common");
+    check(!manifest.card().isBlank(), "в manifest не указан путь card");
+    check(!manifest.platforms().isEmpty(), "в manifest нет реестра площадок");
+    manifest
+        .platforms()
+        .forEach(
+            (id, files) -> {
               check(id.matches("[a-z][a-z0-9_]{0,39}"), "некорректный идентификатор площадки " + id);
-              ReferenceValidator.keys(platform.getValue(), "manifest: площадка " + id, PLATFORM);
-              // A plan without a form recipe would transfer nothing: every platform has both.
-              for (String key : PLATFORM)
+              for (var path :
+                  Map.of("schema", files.schema(), "plan", files.plan(), "browser", files.browser())
+                      .entrySet())
                 check(
-                    !text(platform.getValue(), key).isBlank(),
-                    "в manifest не указан путь " + key + " площадки " + id);
+                    !path.getValue().isBlank(),
+                    "в manifest не указан путь " + path.getKey() + " площадки " + id);
             });
   }
 }

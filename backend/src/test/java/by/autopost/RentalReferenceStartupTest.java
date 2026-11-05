@@ -41,7 +41,7 @@ class RentalReferenceStartupTest {
     while (!(cause instanceof ReferenceBundleException) && cause.getCause() != null)
       cause = cause.getCause();
     String reason =
-        plan + ": Ошибка комплекта справочников: example: план: неизвестный ключ field.";
+        plan + ": Ошибка комплекта справочников: неизвестный ключ field.";
     assertEquals(reason, cause.getMessage());
     assertTrue(output.getAll().contains(reason), "the start log names the file and the reason");
   }

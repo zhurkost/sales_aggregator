@@ -33,11 +33,11 @@ class RentalPublicationHistoryTest {
     service = storage.publicationService(catalog);
     draft = new RentalPublicationTest().partial();
     draft.set("platforms", array().add("kufar").add("realt"));
-    storage.draftService().save("owner", "flat", object("revision", 0, "draft", draft));
+    storage.draftService().save("owner", "flat", 0, RentalJson.document(draft));
   }
 
-  ObjectNode launch(String workspace) {
-    return service.configuration(workspace, object("id", "flat", "draft", draft.deepCopy()));
+  JsonNode launch(String workspace) {
+    return RentalJson.tree(service.configuration(workspace, "flat", RentalJson.card(draft)));
   }
 
   static Map<String, String> publications(JsonNode launch) {
@@ -74,7 +74,7 @@ class RentalPublicationHistoryTest {
     assertEquals(2, rows());
     assertEquals(PublicationStatus.FILLED, status(first.get("kufar")));
     // A new revision is a new launch; the earlier one stays in the history.
-    storage.draftService().save("owner", "flat", object("revision", 1, "draft", draft));
+    storage.draftService().save("owner", "flat", 1, RentalJson.document(draft));
     var second = publications(launch("owner"));
     assertNotEquals(first.get("kufar"), second.get("kufar"));
     assertEquals(4, rows());
@@ -110,7 +110,7 @@ class RentalPublicationHistoryTest {
   @Test
   void theSubmissionIsAllowedOnlyForTheLaunchedRevisionAndRules() {
     String id = publications(launch("owner")).get("kufar");
-    storage.draftService().save("owner", "flat", object("revision", 1, "draft", draft));
+    storage.draftService().save("owner", "flat", 1, RentalJson.document(draft));
     var changed = refused(() -> service.report("owner", id, "submitted", ""));
     assertEquals(409, changed.status);
     assertEquals(
@@ -173,12 +173,12 @@ class RentalPublicationHistoryTest {
     service.link("owner", first.get("kufar"), "https://re.kufar.by/vi/1");
     service.report("owner", first.get("realt"), "filled", "Заполнено");
     // The next revision is launched and stopped: the last status is the stop, the link stays.
-    storage.draftService().save("owner", "flat", object("revision", 1, "draft", draft));
+    storage.draftService().save("owner", "flat", 1, RentalJson.document(draft));
     var second = publications(launch("owner"));
     service.report("owner", second.get("kufar"), "stopped", "Остановлено в Автопосте");
-    storage.draftService().save("owner", "empty", object("revision", 0, "draft", draft));
+    storage.draftService().save("owner", "empty", 0, RentalJson.document(draft));
     var listed = new java.util.HashMap<String, JsonNode>();
-    for (var row : storage.draftService().list("owner").path("drafts"))
+    for (var row : RentalJson.tree(storage.draftService().list("owner")).path("drafts"))
       listed.put(text(row, "id"), row);
     var flat = listed.get("flat").path("publications");
     assertEquals(2, flat.size());
@@ -195,17 +195,17 @@ class RentalPublicationHistoryTest {
     assertEquals("", text(realt, "url"));
     assertTrue(listed.get("empty").path("publications").isEmpty());
     // Another cabinet with a card of the same id sees none of it.
-    storage.draftService().save("other", "flat", object("revision", 0, "draft", draft));
-    var foreign = storage.draftService().list("other").path("drafts").get(0);
+    storage.draftService().save("other", "flat", 0, RentalJson.document(draft));
+    var foreign = RentalJson.tree(storage.draftService().list("other")).path("drafts").get(0);
     assertTrue(foreign.path("publications").isEmpty());
   }
 
   @Test
   void deletingACardDeletesItsPublications() {
     launch("owner");
-    storage.draftService().save("other", "flat", object("revision", 0, "draft", draft));
+    storage.draftService().save("other", "flat", 0, RentalJson.document(draft));
     launch("other");
-    storage.draftService().delete("owner", "flat", object("revision", 1));
+    storage.draftService().delete("owner", "flat", 1);
     assertEquals(
         2,
         storage.jdbc.queryForObject(
