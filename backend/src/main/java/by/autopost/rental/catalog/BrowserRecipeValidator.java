@@ -51,6 +51,10 @@ public final class BrowserRecipeValidator {
               .contains(text(control, "action")),
           "действие browser");
       selector(control);
+      if (control.has("uploadedCountSelector")) {
+        check(text(control, "action").equals("files"), "счётчик фотографий");
+        selectorValue(text(control, "uploadedCountSelector"));
+      }
       if (control.has("triggerEvent"))
         check(text(control, "action").equals("dropdown") &&
             text(control, "triggerEvent").equals("mousedown"), "событие dropdown");
@@ -62,7 +66,10 @@ public final class BrowserRecipeValidator {
       if (control.has("autocomplete")) {
         var config = control.path("autocomplete");
         check(text(control, "action").equals("autocomplete") && config.isObject(), "autocomplete");
-        check(Set.of("settlement", "street", "house").contains(text(config, "kind")), "тип autocomplete");
+        check(Set.of("settlement", "street", "house", "address").contains(text(config, "kind")), "тип autocomplete");
+        if (config.has("selection"))
+          check(text(config, "kind").equals("address") && text(config, "selection").equals("first"),
+              "выбор подсказки autocomplete");
         check(Set.of("value-and-closed", "display-and-closed").contains(text(config, "confirm")), "подтверждение autocomplete");
         if (text(config, "confirm").equals("display-and-closed"))
           selectorValue(text(config, "selectedValueSelector"));

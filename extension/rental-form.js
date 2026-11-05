@@ -139,12 +139,27 @@
       if (this.done.has(c.field) || this.protected.has(c.field)) return;
       if (c.after && !this.done.has(c.after)) return;
       if (c.blockedSelector && query(c.blockedSelector).some(visible)) return;
+      const uploadedCount = () => {
+        const counters = query(c.uploadedCountSelector).filter(visible);
+        return counters.length === 1
+          ? Number(counters[0].textContent.match(/\d+/)?.[0] ?? NaN) : NaN;
+      };
+      if (c.action === "files" && c.uploadedCountSelector && this.photoSent) {
+        if (this.photoExpected && uploadedCount() === this.photoExpected)
+          this.done.add(c.field);
+        return;
+      }
       const elements = targets(c);
       if (!elements.length) return;
       const value = c.value,
         values = Array.isArray(value) ? value : [value];
       if (c.action === "files") {
         if (!this.photos.length || this.photoSent) return;
+        // Existing uploads belong to the user; do not append duplicates or claim success.
+        if (c.uploadedCountSelector && uploadedCount() > 0) {
+          this.protected.add(c.field);
+          return;
+        }
         if (elements.length !== 1 || elements[0].files?.length) return;
         const transfer = new DataTransfer();
         for (const p of this.photos) {
@@ -159,10 +174,13 @@
           return;
         }
         elements[0].files = transfer.files;
+        this.photoSent = true;
+        this.photoExpected = this.photos.length;
         events(elements[0]);
-        if (elements[0].files.length === this.photos.length) {
+        // Some uploaders clear or replace the input as soon as they accept the files.
+        if (c.uploadedCountSelector ? uploadedCount() === this.photoExpected
+            : elements[0].files.length === this.photos.length) {
           this.done.add(c.field);
-          this.photoSent = true;
         }
         return;
       }
@@ -328,7 +346,10 @@
         }
         e.click();
         this.tried.add(key);
-        if (!selected(e)) all = false;
+        this.progress++;
+        // Let the site's render finish before the next choice. Synchronous clicks
+        // can share stale React state and overwrite an earlier selection.
+        return;
       }
       if (all) this.done.add(c.field);
     }
@@ -364,6 +385,7 @@
     }
     async tick() {
       const before = this.done.size;
+      const beforeProgress = this.progress;
       // Choose category before touching any values in a potentially unrelated form.
       if (!this.ready()) {
         if (this.clickStep("setup")) return true;
@@ -382,7 +404,11 @@
         await this.fill(c);
         if (this.waiting) break;
       }
-      return this.done.size > before;
+      return this.done.size > before || this.progress > beforeProgress;
+    }
+    awaitingPhotos() {
+      return !!this.photoExpected && this.recipe.controls.some(c =>
+        c.action === "files" && c.uploadedCountSelector && !this.done.has(c.field));
     }
     remaining() {
       return this.recipe.controls

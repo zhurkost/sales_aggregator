@@ -69,7 +69,14 @@
       "field": "kufar.address_text",
       "action": "autocomplete",
       "selector": "input#geocoder",
-      "addressPart": "label"
+      "addressPart": "label",
+      "autocomplete": {
+        "kind": "address",
+        "scopeSelector": "body",
+        "optionSelector": "[data-name^=\"autocomplete-option-\"]",
+        "confirm": "value-and-closed",
+        "selection": "first"
+      }
     },
     {
       "field": "kufar.rooms",
@@ -192,7 +199,8 @@
     {
       "field": "kufar.photos",
       "action": "files",
-      "selector": "#imageLoaderDropzone"
+      "selector": "#imageLoaderDropzone",
+      "uploadedCountSelector": "[data-name=\"images\"] [class*=\"_counter\"]"
     },
     {
       "field": "kufar.currency",
@@ -205,6 +213,11 @@
         "USD": "$",
         "EUR": "€"
       }
+    },
+    {
+      "field": "kufar.contact_method",
+      "action": "choices",
+      "selector": "input[name=\"phone_hidden\"]"
     }
   ],
   "next": [],

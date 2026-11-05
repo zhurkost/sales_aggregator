@@ -340,8 +340,9 @@ test("native option values and displayed chip labels use the server mapping", as
   f.document.querySelector("button").onclick = (e) =>
     e.currentTarget.setAttribute("aria-pressed", "true");
   await f.form.tick();
-  assert.equal(f.form.done.size, 2);
+  // Confirmation is read on the next tick, after the site's render.
   await f.form.tick();
+  assert.equal(f.form.done.size, 2);
   assert.equal(f.document.querySelector("input").checked, true);
   f.window.happyDOM.abort();
 });

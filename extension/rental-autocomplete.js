@@ -98,7 +98,7 @@
         return;
       }
       const current = input.value;
-      const search = config.kind
+      const search = config.kind && config.kind !== "address"
         ? addressName(control.value, config.kind).name
         : String(control.value);
       if (
@@ -141,7 +141,7 @@
       pending.signature = null;
       return;
     }
-    const candidates = options().filter((e) => {
+    const candidates = config.selection === "first" ? options().slice(0, 1) : options().filter((e) => {
       if (!matches(label(e), control.matchValue || control.value, config.kind)) return false;
       const context = config.contextSelector
         ? query(config.contextSelector, e)

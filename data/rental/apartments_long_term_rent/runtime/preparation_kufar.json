@@ -724,6 +724,10 @@
           {
             "from": "two",
             "to": "4"
+          },
+          {
+            "from": "balcony",
+            "to": "1"
           }
         ],
         "on_unmapped": "needs_review"
@@ -780,6 +784,10 @@
           {
             "from": "EUR",
             "to": "EUR"
+          },
+          {
+            "from": "BYN",
+            "to": "BYR"
           }
         ],
         "on_unmapped": "needs_review"

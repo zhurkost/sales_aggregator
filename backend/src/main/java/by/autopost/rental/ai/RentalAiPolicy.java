@@ -85,6 +85,9 @@ rental.room_configuration — ВСЕ комнаты, rental.separate_rooms — �
 Если указано только одно точное количество комнат, предложи его для обоих полей.
 Не приравнивай studio и 5+ к точному количеству. Раздельных комнат не может быть больше всех.
 Не смешивай залог, комиссию, предоплату и ежемесячную цену. Не пересчитывай валюты.
+«Залог за один месяц» — rental.prepayment="deposit_unspecified" (сам факт залога),
+а не months_1: длительность предоплаты из суммы залога не следует.
+«Плита» без указания типа не означает газовую или электрическую: amenity.stove_type пропусти.
 «Рубли», «рублей», «руб.» без указания страны означают BYN. Российские рубли и RUB — RUB.
 Boolean — только true/false, не строки. Не упомянутый факт отсутствует, а не false.
 Enum — только точный код из choices; multi_enum — массив этих кодов.
@@ -183,6 +186,14 @@ Enum — только точный код из choices; multi_enum — масс�
         return result.isEmpty() ? null : result;
       }
       if (!value.isTextual() || list(choices).stream().noneMatch(value::equals)) return null;
+      if (text(field, "id").equals("amenity.stove_type")
+          && !RentalAiFacts.stoveGrounded(value.asText(), quote)) return null;
+      if (text(field, "id").equals("rental.prepayment")) {
+        String payment = RentalAiFacts.paymentValue(value.asText(), quote);
+        if (payment == null) return null;
+        var corrected = TextNode.valueOf(payment);
+        return list(choices).contains(corrected) ? corrected : null;
+      }
       if (text(field, "id").equals("rental.currency") && !currencyGrounded(value.asText(), quote))
         return null;
       return value.deepCopy();

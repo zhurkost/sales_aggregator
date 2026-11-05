@@ -29,6 +29,57 @@ class RentalReportedErrorsTest {
         .map(s -> text(s, "value")).findFirst().orElse("");
   }
 
+  @Test void kufarBynBalconyDepositAndContactReachNativeControls() {
+    var draft = object("schemaVersion", catalog.version(), "modelVersion", 2,
+        "values", object("rental.currency", "BYN", "rental.monthly_price", "1300",
+            "rental.balcony", "balcony", "rental.prepayment", "deposit_unspecified",
+            "contact.communication_method", "calls_and_messages"),
+        "extras", object(), "platforms", List.of("kufar"));
+    var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+    for (var expected : Map.of("currency", "BYR", "price", "1300", "balcony", "1",
+        "prepayment", "25", "contact_method", "0").entrySet()) {
+      var c = controls.stream().filter(row -> text(row,"field").equals("kufar." + expected.getKey()))
+          .findFirst().orElseThrow();
+      if (expected.getKey().equals("price")) assertEquals(1300, c.path("value").decimalValue().intValueExact());
+      else assertEquals(expected.getValue(), text(c,"value"));
+    }
+  }
+
+  @Test void allKufarCurrenciesAreExplicitAndUnsupportedRubDoesNotTransferPrice() {
+    for (var entry : Map.of("BYN","BYR", "USD","USD", "EUR","EUR", "RUB", "").entrySet()) {
+      var draft = object("schemaVersion", catalog.version(), "modelVersion", 2,
+          "values", object("rental.currency", entry.getKey(), "rental.monthly_price", "1300"),
+          "extras", object(), "platforms", List.of("kufar"));
+      var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+      var currency = controls.stream().filter(c -> text(c,"field").equals("kufar.currency")).findFirst();
+      var price = controls.stream().filter(c -> text(c,"field").equals("kufar.price")).findFirst();
+      if (entry.getValue().isEmpty()) {
+        assertTrue(currency.isEmpty()); assertTrue(price.isEmpty());
+      } else {
+        assertEquals(entry.getValue(), text(currency.orElseThrow(),"value"));
+        assertEquals(1300, price.orElseThrow().path("value").decimalValue().intValueExact());
+      }
+    }
+  }
+
+  @Test void depositIsNotAdvanceRentAndGenericStoveHasNoFuelType() {
+    String source = "Есть холодильник, плита и микроволновка. Залог — за один месяц.";
+    var result = analyze(source, suggestion("amenity.stove_type", "gas", "плита"),
+        suggestion("rental.prepayment", "months_1", "Залог — за один месяц"));
+    assertEquals("", value(result,"amenity.stove_type"));
+    assertEquals("deposit_unspecified", value(result,"rental.prepayment"));
+    for (String quote : List.of("Газовая плита", "Плита газовая"))
+      assertEquals("gas", value(analyze(quote,suggestion("amenity.stove_type","gas",quote)),"amenity.stove_type"));
+    for (String quote : List.of("Электрическая плита", "Электроплита"))
+      assertEquals("electric", value(analyze(quote,suggestion("amenity.stove_type","electric",quote)),"amenity.stove_type"));
+    for (String quote : List.of("Без газовой плиты", "Нет газовой плиты"))
+      assertEquals("", value(analyze(quote,suggestion("amenity.stove_type","gas",quote)),"amenity.stove_type"));
+    String quote = "Предоплата за один месяц";
+    assertEquals("months_1", value(analyze(quote,suggestion("rental.prepayment","months_1",quote)),"rental.prepayment"));
+    quote = "Без залога";
+    assertEquals("", value(analyze(quote,suggestion("rental.prepayment","deposit_unspecified",quote)),"rental.prepayment"));
+  }
+
   @Test void totalRoomsIncludeSeparateRoomsAndSingleCountPopulatesBoth() {
     String source = "Всего 3 комнаты, из них 2 комнаты раздельные";
     var result = analyze(source,

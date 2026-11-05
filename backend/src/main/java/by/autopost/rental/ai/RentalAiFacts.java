@@ -15,6 +15,28 @@ final class RentalAiFacts {
   private static final String ROOMS = "rental.room_configuration";
   private static final String SEPARATE = "rental.separate_rooms";
 
+  static boolean stoveGrounded(String value, String quote) {
+    String type = value.equals("gas") ? "газов\\p{L}*" : "электрическ\\p{L}*|электро";
+    String stove = "(?:(?:" + type + ")\\s*плит\\p{L}*|плит\\p{L}*\\s+(?:" + type + "))";
+    return Pattern.compile("(?iu)(?<!\\p{L})" + stove).matcher(quote).find()
+        && !Pattern.compile("(?iu)(?:без|нет|не)\\s+" + stove).matcher(quote).find();
+  }
+
+  static String paymentValue(String value, String quote) {
+    boolean deposit = Pattern.compile("(?iu)(?<!\\p{L})залог\\p{L}*").matcher(quote).find();
+    boolean noDeposit = Pattern.compile("(?iu)(?:без\\s+залога|залог\\s+не\\s+(?:нужен|требуется)|нет\\s+залога)")
+        .matcher(quote).find();
+    boolean advance = Pattern.compile("(?iu)(?:предоплат|аванс|(?:оплат\\p{L}*|плат[её]ж\\p{L}*)\\s+(?:за\\s+\\S+\\s+)?впер[её]д)")
+        .matcher(quote).find();
+    if (value.startsWith("months_")) {
+      // The legacy code stores the presence of a deposit, not its amount.
+      if (deposit && !noDeposit && !advance) return "deposit_unspecified";
+      if (!advance) return null;
+    }
+    if (value.equals("deposit_unspecified") && (!deposit || noDeposit)) return null;
+    return value;
+  }
+
   static boolean spelledRoomCount(String value, String quote) {
     String prefix = Map.of("1", "одно", "2", "двух|дву", "3", "трех|трёх",
         "4", "четырех|четырёх", "5", "пяти", "6", "шести", "7", "семи").get(value);

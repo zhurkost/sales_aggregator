@@ -90,6 +90,7 @@
       const changed = await form.tick();
       if (departed) return;
       idle = changed ? 0 : idle + 1;
+      if (form.awaitingPhotos() && cycles < 100) idle = 0;
       const reason = form.blockedReason();
       if (reason) {
         idle = cycles = 0;
@@ -100,7 +101,8 @@
         await report("running", "Перенесено полей: " + form.done.size);
         return;
       }
-      if (task.mode === "automatic" && !task.submitted && form.ready()) {
+      if (task.mode === "automatic" && !task.submitted && form.ready() &&
+          ((task.recipe.next || []).length || (task.recipe.submit || []).length)) {
         if (api.paymentRequired()) {
           paused = true;
           await report(
