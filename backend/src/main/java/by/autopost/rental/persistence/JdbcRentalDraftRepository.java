@@ -1,6 +1,7 @@
 package by.autopost.rental.persistence;
 
 import by.autopost.rental.application.RentalDraftRepository;
+import by.autopost.rental.model.CardFields;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.annotation.DependsOn;
@@ -61,10 +62,14 @@ public class JdbcRentalDraftRepository implements RentalDraftRepository {
                         "ALTER TABLE rental_drafts ADD COLUMN "
                             + column
                             + " TEXT NOT NULL DEFAULT ''");
+                String title = "'$.values.\"" + CardFields.TITLE + "\"'";
                 statement.execute(
                     "UPDATE rental_drafts SET title=CASE WHEN json_valid(data) THEN CASE"
-                        + " json_type(data,'$.values.\"listing.title\"') WHEN 'text' THEN"
-                        + " json_extract(data,'$.values.\"listing.title\"') ELSE '' END ELSE ''"
+                        + " json_type(data,"
+                        + title
+                        + ") WHEN 'text' THEN json_extract(data,"
+                        + title
+                        + ") ELSE '' END ELSE ''"
                         + " END,address_label=CASE WHEN json_valid(data) THEN CASE"
                         + " json_type(data,'$.address.label') WHEN 'text' THEN"
                         + " json_extract(data,'$.address.label') ELSE '' END ELSE '' END");

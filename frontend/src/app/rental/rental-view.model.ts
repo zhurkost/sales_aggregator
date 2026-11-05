@@ -1,6 +1,7 @@
 import type { Field, FieldGroup, JsonValue, Prepared, RentalDraft } from "./rental-models";
 import { hasValue } from "./rental-values";
 import { RentalDraftStore } from "./rental-draft.store";
+import { DESCRIPTION, MAIN_GROUP } from "./card-fields.generated";
 
 /** Read-only projection of the current draft for presentation. Never saves or calls APIs. */
 export class RentalViewModel {
@@ -41,19 +42,19 @@ export class RentalViewModel {
       this.groups.some(g => g.id === source || g.fields.some(f => f.id === source));
   }
   get mainFields() {
-    const main = this.groups.find(g => g.id === "group.main");
+    const main = this.groups.find(g => g.id === MAIN_GROUP);
     return main ? this.groupFields(main) : [];
   }
   get additionalGroups() {
     const query = this.parameterSearch.trim().toLocaleLowerCase();
-    return this.groups.filter(g => g.id !== "group.main").map(g => ({...g, fields:this.groupFields(g).filter(f =>
-      f.id !== "listing.description" && (!this.filledOnly || hasValue(this.store.draft.values[f.id])) &&
+    return this.groups.filter(g => g.id !== MAIN_GROUP).map(g => ({...g, fields:this.groupFields(g).filter(f =>
+      f.id !== DESCRIPTION && (!this.filledOnly || hasValue(this.store.draft.values[f.id])) &&
       (!query || (g.name + " " + f.name + " " + this.valueLabel(f.id, this.store.draft.values[f.id])).toLocaleLowerCase().includes(query))
     )})).filter(g => g.fields.length);
   }
   get additionalFilled() {
-    return this.groups.filter(g => g.id !== "group.main").flatMap(g => this.groupFields(g))
-      .filter(f => f.id !== "listing.description" && hasValue(this.store.draft.values[f.id]));
+    return this.groups.filter(g => g.id !== MAIN_GROUP).flatMap(g => this.groupFields(g))
+      .filter(f => f.id !== DESCRIPTION && hasValue(this.store.draft.values[f.id]));
   }
   fieldName(id: string) { return this.allFields.find(f => f.id === id)?.name || id; }
   valueLabel(id: string, value: JsonValue | undefined) {

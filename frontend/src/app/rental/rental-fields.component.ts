@@ -20,8 +20,9 @@ export class RentalFieldsComponent {
   @Input() untransferred: string[] = [];
   @Input() disabled = false;
   @Output() edit = new EventEmitter<{field: Field; value: JsonValue}>();
+  /** The label with the unit the card model gives the field. */
   name(field: Field) {
-    return field.id.includes("area") && !field.name.includes("м²") ? field.name + ", м²" : field.name;
+    return field.unit ? field.name + ", " + field.unit : field.name;
   }
   label(value: string) { return this.labels[value] || value; }
   choices(field: Field) { return this.states.get(field.id)?.choices || []; }

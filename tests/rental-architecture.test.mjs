@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { generated } from '../scripts/rental-card-fields.mjs';
 
 const read = name => readFileSync(new URL('../frontend/src/app/rental/' + name, import.meta.url), 'utf8');
 
@@ -23,4 +24,16 @@ test('rental asks for the extension version that the download link ships', () =>
   assert.equal(required, manifest.version);
   for (const name of ['rental-publication.component.ts', 'rental-publication.component.html'])
     assert.doesNotMatch(read(name).replace(/REQUIRED_EXTENSION_VERSION = "[\d.]+"/, ''), /\b\d+\.\d+\.\d+\b/, name);
+});
+
+test('the card field IDs the editor reads come from the server model', () => {
+  // card-fields.generated.ts is written from rental/model/CardFields.java.
+  assert.equal(read('card-fields.generated.ts'), generated());
+  for (const name of readdirSync(new URL('../frontend/src/app/rental/', import.meta.url))) {
+    if (!/\.(ts|html)$/.test(name) || /\.spec\.ts$|generated/.test(name)) continue;
+    const source = read(name);
+    // No card field or group spelled out, no unit or style guessed from an id.
+    assert.doesNotMatch(source, /["'](?:listing|location|rental|building)\.[a-z_]+["']|group\.(?:main|address_projection)/, name);
+    assert.doesNotMatch(source, /id\.includes\(/, name);
+  }
 });

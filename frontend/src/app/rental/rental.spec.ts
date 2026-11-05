@@ -138,6 +138,21 @@ describe("rental preparation editor", () => {
     await vi.waitFor(() => expect(marked()).toEqual(["rental-rental.kitchen_area", "rental-location.metro"]));
     fixture.destroy();
   });
+  it("labels and styles a field by the unit and role the card model gives it, not by its id", async () => {
+    const fields = [{...field("rental.total_area", "Общая площадь"), unit: "м²"}, field("rental.area_note", "Заметка"),
+      {...field("rental.monthly_price", "Плата за месяц"), role: "price"}, field("rental.deposit", "Залог")];
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {cardVersion: "2", card: card(),
+      addressSuggestions: false, photoLimit: 12, platforms: {one: {name: "one", labels: {}}}, groups: [{id: "group.main", name: "Главное", fields}]}
+      : url.endsWith("/fields") ? {fields: fields.map(f => state(f.id))} : {drafts: []})));
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "test"); fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    await vi.waitFor(() => { fixture.detectChanges(); expect(el.querySelectorAll(".main-fields .field")).toHaveLength(4); });
+    const labels = Array.from(el.querySelectorAll(".main-fields .field label")).map(l => l.textContent!.trim());
+    expect(labels).toEqual(["Общая площадь, м²", "Заметка", "Плата за месяц", "Залог"]);
+    expect(Array.from(el.querySelectorAll(".main-fields .field.price label")).map(l => l.textContent!.trim())).toEqual(["Плата за месяц"]);
+    fixture.destroy();
+  });
   it("shows a field that depends on a number exactly when the server does", async () => {
     // The server's answer: separate rooms apply to two rooms and more.
     const rooms = field("rental.room_configuration", "Комнат", "enum"), separate = field("rental.separate_rooms", "Раздельных");

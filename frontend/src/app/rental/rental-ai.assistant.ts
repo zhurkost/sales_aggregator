@@ -1,3 +1,4 @@
+import { DESCRIPTION } from "./card-fields.generated";
 import type { Address, RentalAiResult } from "./rental-models";
 import { rentalApi } from "./rental-api";
 import { RentalDraftStore } from "./rental-draft.store";
@@ -7,7 +8,7 @@ export class RentalAiAssistant {
   constructor(private store: RentalDraftStore, private workspaceId: () => string,
     private replaceAddress: (address: Address | null) => void,
     private addressChanged: (address: Address | null) => void) {}
-  private description() { return String(this.store.draft.values["listing.description"] || ""); }
+  private description() { return String(this.store.draft.values[DESCRIPTION] || ""); }
   busy = false;
   message = "";
   questions: string[] = [];

@@ -27,8 +27,8 @@
     }
     <fieldset class="card" [disabled]="store.busy" [attr.aria-busy]="ai.busy">
       <section class="description-section">
-        <label for="rental-listing.description">Описание квартиры</label>
-        <textarea id="rental-listing.description" class="source-description" rows="4" maxlength="8000" [ngModel]="description" (ngModelChange)="setDescription($event)" placeholder="Например: сдам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9, 1500 BYN в месяц. Есть балкон и стиральная машина, можно с детьми."></textarea>
+        <label [attr.for]="descriptionId">Описание квартиры</label>
+        <textarea [id]="descriptionId" class="source-description" rows="4" maxlength="8000" [ngModel]="description" (ngModelChange)="setDescription($event)" placeholder="Например: сдам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9, 1500 BYN в месяц. Есть балкон и стиральная машина, можно с детьми."></textarea>
         <div class="description-actions">
           <span class="ai-status" role="status">{{ ai.busy ? 'ИИ заполняет карточку…' : ai.message }}</span>
           <button type="button" class="ai-button" [disabled]="store.busy || description.trim().length < 10" (click)="ai.fillFromDescription()">✦ {{ ai.busy ? 'Заполняем…' : 'Заполнить с ИИ' }}</button>

@@ -8,6 +8,7 @@ import type {
   RentalPublication,
 } from "./rental-models";
 import { RentalApiError, rentalApi } from "./rental-api";
+import { TITLE } from "./card-fields.generated";
 import { RentalCardCheck } from "./rental-card-check";
 import { RentalFieldStates } from "./rental-field-states";
 import {
@@ -102,7 +103,7 @@ export class RentalDraftStore {
   }
   // Same projection and order (latest first) as the server list, without re-reading it.
   private listed(id: string, revision: number, draft: RentalDraft) {
-    const title = draft.values["listing.title"];
+    const title = draft.values[TITLE];
     const item = {
       id,
       revision,

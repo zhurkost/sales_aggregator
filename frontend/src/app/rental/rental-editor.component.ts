@@ -18,6 +18,7 @@ import { hasValue } from "./rental-values";
 import type { RentalProfile } from "./rental-profile-defaults";
 import { RentalPublicationComponent } from "./rental-publication.component";
 import { Address, Field, JsonValue } from "./rental-models";
+import { DESCRIPTION } from "./card-fields.generated";
 
 const blankAddress = (a: Address | null) =>
   !a || ![a.label, a.settlement, a.street, a.house, a.block, a.region, a.district].some(v => v?.trim());
@@ -113,7 +114,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.store.changed();
   }
   focusField(id: string) {
-    const basic = id === "address" || id === "legacy" || this.view.mainFields.some(f => f.id === id) || id === "listing.description";
+    const basic = id === "address" || id === "legacy" || this.view.mainFields.some(f => f.id === id) || id === DESCRIPTION;
     if (!basic) { this.openPanel("parameters"); this.view.parameterSearch = ""; this.view.filledOnly = false; }
     else this.closePanel(false);
     clearTimeout(this.focusTimer);
@@ -123,10 +124,11 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
       (el?.querySelector<HTMLElement>("button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled])") || el)?.focus();
     }, 0);
   }
-  get description() { return String(this.store.draft.values["listing.description"] || ""); }
+  get description() { return String(this.store.draft.values[DESCRIPTION] || ""); }
+  readonly descriptionId = "rental-" + DESCRIPTION;
   setDescription(value: string) {
     if (this.store.busy) return;
-    this.store.draft.values["listing.description"] = value;
+    this.store.draft.values[DESCRIPTION] = value;
     this.ai.clear();
     this.store.changed();
   }

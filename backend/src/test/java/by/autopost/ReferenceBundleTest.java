@@ -23,6 +23,25 @@ class ReferenceBundleTest {
     var editor = RentalJson.editor(new RentalCatalog(repository));
     assertFalse(editor.path("groups").isEmpty());
     assertEquals(3, editor.path("card").path("profileDefaults").size());
+    // Units and roles come with the card fields: the editor guesses nothing from an id.
+    Map<String, String> units = new TreeMap<>(), roles = new TreeMap<>();
+    for (var group : editor.path("groups"))
+      for (var field : group.path("fields")) {
+        if (field.has("unit")) units.put(text(field, "id"), text(field, "unit"));
+        if (field.has("role")) roles.put(text(field, "id"), text(field, "role"));
+      }
+    assertEquals(
+        Map.of("rental.total_area", "м²", "rental.living_area", "м²", "rental.kitchen_area", "м²"),
+        units);
+    assertEquals(Map.of("rental.monthly_price", "price"), roles);
+    assertEquals(
+        List.of(
+            "location.settlement",
+            "location.street",
+            "location.house_number",
+            "location.latitude",
+            "location.longitude"),
+        list(editor.path("card").path("addressFields")).stream().map(JsonNode::asText).toList());
   }
 
   @Test
