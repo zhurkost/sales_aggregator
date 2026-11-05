@@ -127,6 +127,11 @@
       "label": "Комнат"
     },
     {
+      "field": "realt.separate_rooms",
+      "action": "text",
+      "selector": "[id=\"apartment.separateRooms\"]"
+    },
+    {
       "field": "realt.repair",
       "action": "choices",
       "selector": "[id=\"apartment\"]",

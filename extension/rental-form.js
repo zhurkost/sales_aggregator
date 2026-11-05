@@ -4,7 +4,8 @@
     String(v ?? "")
       .replace(/\s+/g, " ")
       .trim()
-      .toLocaleLowerCase("ru");
+      .toLocaleLowerCase("ru")
+      .replace(/ё/g, "е");
   const visible = (e) =>
     !!e &&
     !e.closest('[hidden],[aria-hidden="true"]') &&
@@ -16,7 +17,7 @@
     !e.disabled &&
     e.getAttribute("aria-disabled") !== "true" &&
     !/\b\S*[_-]disabled\b/.test(e.className || "");
-  const label = (e) => e.labels?.[0] || e.closest("label") || e;
+  const label = (e) => e.labels?.[0] || e.closest('label,[role="checkbox"],[role="radio"]') || e;
   function query(selector, scope = document) {
     try {
       return [...scope.querySelectorAll(selector)].filter(
@@ -63,6 +64,7 @@
       e.checked === true ||
       ["true"].includes(e.getAttribute("aria-pressed")) ||
       e.getAttribute("aria-selected") === "true" ||
+      e.getAttribute("aria-checked") === "true" ||
       e.getAttribute("data-state") === "checked" ||
       /(?:^|[\s_\-])(?:selected|active|checked)(?:[\s_\-]|$)/i.test(
         e.className || "",
@@ -204,6 +206,27 @@
           });
           return;
         }
+        if (c.action === "text" && /phone/.test(c.field)) {
+          const digits = (v) => String(v ?? "").replace(/\D/g, "");
+          const national = (v) => digits(v).replace(/^375(?=\d{9}$)/, "");
+          const existing = digits(current);
+          // A country-code mask is an empty phone, not a user-entered number.
+          if (existing && existing !== "375" && national(current) !== national(value)) {
+            this.protected.add(c.field);
+            return;
+          }
+          if (existing !== "375" && existing && national(current) === national(value)) {
+            this.done.add(c.field);
+            return;
+          }
+          const fixedPrefix = [...(e.parentElement?.children || [])].some(
+            (n) => n !== e && norm(n.textContent) === "+375",
+          );
+          const target = fixedPrefix ? national(value) : value;
+          setText(e, target);
+          if (national(e.value) === national(value)) this.done.add(c.field);
+          return;
+        }
         if (current && norm(current) !== norm(value)) {
           this.protected.add(c.field);
           return;
@@ -241,17 +264,16 @@
           const inputs = scope.matches("input")
             ? [scope]
             : query('input[type="radio"],input[type="checkbox"]', scope);
-          candidates.push(
-            ...inputs.filter(
+          const matchingInputs = inputs.filter(
               (e) =>
-                String(e.value) === String(v) ||
-                norm(label(e).textContent) === want,
-            ),
-          );
-          if (!inputs.length)
+                (String(e.value) === String(v) || norm(label(e).textContent) === want) &&
+                enabled(e) && (visible(e) || visible(label(e))),
+            );
+          candidates.push(...matchingInputs);
+          if (!matchingInputs.length)
             candidates.push(
               ...query(
-                'button,[role="button"],[role="option"],label',
+                'button,[role="button"],[role="option"],[role="checkbox"],[role="radio"],label',
                 scope,
               ).filter((e) => norm(e.textContent) === want),
             );
@@ -259,6 +281,10 @@
         candidates = [...new Set(candidates)].filter(
           (e) => enabled(e) && (visible(e) || visible(label(e))),
         );
+        // A label nested in a clickable chip is one choice, not two matches.
+        candidates = candidates.filter((e) => !candidates.some(
+          (other) => other !== e && other.contains(e),
+        ));
         if (!candidates.length && c.action === "dropdown") {
           const options = query(c.optionsSelector || '[role="option"]').filter(
             (e) => visible(e) && norm(e.textContent) === want,

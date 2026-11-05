@@ -54,19 +54,20 @@
       "selector": "input[name=\"area_living\"]"
     },
     {
-      "field": "domovita.storey",
-      "action": "text",
-      "selector": "input[name=\"storey\"]"
-    },
-    {
       "field": "domovita.storeys",
       "action": "text",
       "selector": "input[name=\"storeys\"]"
     },
     {
+      "field": "domovita.storey",
+      "action": "text",
+      "selector": "input[name=\"storey\"]"
+    },
+    {
       "field": "domovita.monthly_price",
       "action": "text",
-      "selector": "input[name=\"price\"]"
+      "selector": "input[name=\"price\"]",
+      "after": "domovita.currency"
     },
     {
       "field": "domovita.rooms",
@@ -102,8 +103,10 @@
     {
       "field": "domovita.currency",
       "action": "dropdown",
-      "selector": "input[role=\"combobox\"]",
-      "index": 3
+      "selector": "div:has(> input[name=\"price_currency_text\"])",
+      "triggerSelector": ".custom-select__control",
+      "displaySelector": ".custom-select__single-value",
+      "optionsSelector": "[role=\"option\"]"
     },
     {
       "field": "domovita.town",

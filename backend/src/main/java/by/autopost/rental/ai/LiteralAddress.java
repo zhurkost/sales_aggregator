@@ -10,6 +10,27 @@ import java.util.regex.Pattern;
 
 /** Literal components only: no geocoding, invented location or AI-provided identifiers. */
 public final class LiteralAddress {
+  public static String cleanComponent(String value, String part) {
+    String prefix = switch (part) {
+      case "settlement" -> "городской поселок|городской посёлок|г\\.?\\s*п|рабочий поселок|рабочий посёлок|р\\.?\\s*п|город|г|агрогородок|аг|деревня|дер|д|поселок|посёлок|пос|п|село|с";
+      case "street" -> "улица|ул|переулок|пер|проспект|пр-т|просп|бульвар|бул|б-р|площадь|пл|проезд|пр-д|шоссе|ш|набережная|наб|тупик|туп";
+      case "house" -> "дом|д";
+      case "block" -> "корпус|корп|к";
+      default -> "(?!)";
+    };
+    return value.strip().replaceFirst("(?iu)^(?:" + prefix + ")(?:\\.\\s*|\\s+)", "").strip();
+  }
+
+  public static void cleanComponents(ObjectNode address) {
+    for (String part : List.of("settlement", "street", "house", "block")) {
+      if (!address.has(part)) continue;
+      String original = text(address, part), clean = cleanComponent(original, part);
+      if (!original.equals(clean) && (part.equals("settlement") || part.equals("street")))
+        address.put(part + "WithType", original);
+      address.put(part, clean);
+    }
+  }
+
   private static final String CITY =
       "(?:город|г\\.?|агрогородок|аг\\.?|деревня|дер\\.?|д\\.?|поселок|посёлок|пос\\.?)";
   private static final String STREET =

@@ -34,6 +34,8 @@ public class RentalAiService {
     var parsed = ai.serverJson(identity, RentalAiPolicy.prompt(editor), source);
     ObjectNode result = RentalAiPolicy.sanitize(editor, source, parsed);
     addresses.resolve(workspace, result);
+    // Keep type information during provider matching; expose clean components to the editor.
+    if (result.get("address") instanceof ObjectNode address) LiteralAddress.cleanComponents(address);
     result.put("schemaVersion", text(editor, "version"));
     result.put("model", ai.model());
     return result;

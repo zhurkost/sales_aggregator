@@ -96,6 +96,23 @@ test("ambiguous street names never choose a lane or the add-new action", async (
   assert.equal(clicks, 0);
   assert.equal(f.form.done.has("realt.street"), false);
 });
+
+test("clean address input retains original street type for matching", async (t) => {
+  const f = await setup();
+  t.after(() => f.window.happyDOM.abort());
+  f.form.done.add("realt.settlement");
+  f.street.disabled = false;
+  Object.assign(f.form.recipe.controls[1], {value: "Ольшевского", matchValue: "ул Ольшевского"});
+  let correct = 0, wrong = 0;
+  const buttons = f.document.querySelectorAll('#street-wrap [role="button"]');
+  buttons[0].onclick = () => wrong++;
+  buttons[1].onclick = () => correct++;
+  buttons[2].onclick = () => wrong++;
+  for (let i = 0; i < 4; i++) await f.form.tick();
+  assert.equal(f.street.value, "ольшевского");
+  assert.equal(correct, 1);
+  assert.equal(wrong, 0);
+});
 test("duplicate settlement names need matching region and district; loading results are ignored", async (t) => {
   const row =
     '<li><div role="button"><p>д. Лесная</p><p>Ивацевичский р-н, Брестская область</p></div></li>';

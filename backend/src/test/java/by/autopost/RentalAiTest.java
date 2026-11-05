@@ -134,8 +134,8 @@ class RentalAiTest {
   }
 
   @Test
-  void rublesWithoutCurrencyRemainUnknown() {
-    assertFalse(RentalAiPolicy.currencyGrounded("BYN", "1500 рублей"));
+  void rublesDefaultToBynUnlessExplicitlyRussian() {
+    assertTrue(RentalAiPolicy.currencyGrounded("BYN", "1500 рублей"));
     assertTrue(RentalAiPolicy.currencyGrounded("BYN", "1500 бел. руб."));
     assertTrue(RentalAiPolicy.currencyGrounded("USD", "500 долларов"));
     assertFalse(RentalAiPolicy.currencyGrounded("EUR", "500 долларов"));

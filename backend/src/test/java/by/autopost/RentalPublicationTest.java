@@ -86,7 +86,8 @@ class RentalPublicationTest {
             .filter(c -> text(c, "field").equals("realt.settlement"))
             .findFirst()
             .orElseThrow();
-    assertEquals("г Минск", text(city, "value"));
+    assertEquals("Минск", text(city, "value"));
+    assertEquals("г Минск", text(city, "matchValue"));
     assertEquals("Минская обл", city.path("matchContext").get(0).asText());
     assertEquals("Минский р-н", city.path("matchContext").get(1).asText());
     assertEquals("value-and-closed", text(city.path("autocomplete"), "confirm"));
@@ -144,13 +145,14 @@ class RentalPublicationTest {
               .findFirst()
               .orElseThrow();
       assertFalse(city.has("matchContext"), "City-region is already checked against primary label");
-      assertEquals("г Минск", text(city, "value"));
+      assertEquals("Минск", text(city, "value"));
       assertTrue(
           controls.stream()
               .anyMatch(
                   c ->
                       text(c, "field").equals("realt.street")
-                          && text(c, "value").equals("ул Брикета")));
+                          && text(c, "value").equals("Брикета")
+                          && text(c, "matchValue").equals("ул Брикета")));
       assertTrue(
           controls.stream()
               .anyMatch(
@@ -159,6 +161,20 @@ class RentalPublicationTest {
                           && text(c, "value").equals("18")));
       assertEquals(addressBefore, draft.path("address"));
     }
+  }
+
+  @Test
+  void manualStreetCorrectionDoesNotReuseStaleType() {
+    var draft = partial();
+    ((ObjectNode) draft.path("address"))
+        .put("street", "пер Брикета")
+        .put("streetWithType", "ул Брикета");
+    var job = list(catalog.browser(draft).path("jobs")).stream()
+        .filter(j -> text(j, "platform").equals("realt")).findFirst().orElseThrow();
+    var street = list(job.path("controls")).stream()
+        .filter(c -> text(c, "field").equals("realt.street")).findFirst().orElseThrow();
+    assertEquals("Брикета", text(street, "value"));
+    assertEquals("пер Брикета", text(street, "matchValue"));
   }
 
   @Test

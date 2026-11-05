@@ -3,6 +3,7 @@ package by.autopost.rental.application;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.rental.catalog.ReferenceSnapshot;
+import by.autopost.rental.ai.LiteralAddress;
 import by.autopost.rental.model.SchemaFields;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -22,8 +23,12 @@ final class RentalBrowserPreparation {
         String id = text(source, "field");
         supported.add(id);
         JsonNode value = result.path("values").get(id);
-        if (source.has("addressPart"))
+        if (source.has("addressPart")) {
           value = draft.path("address").get(text(source, "addressPart"));
+          if (value != null && value.isTextual())
+            value = com.fasterxml.jackson.databind.node.TextNode.valueOf(
+                LiteralAddress.cleanComponent(value.asText(), text(source, "addressPart")));
+        }
         if (!text(source, "action").equals("files")
             && (value == null
                 || value.isNull()
@@ -31,6 +36,15 @@ final class RentalBrowserPreparation {
                 || value.isArray() && value.isEmpty())) continue;
         ObjectNode control = source.deepCopy();
         control.set("value", value == null ? array() : value.deepCopy());
+        if (source.has("addressPart")) {
+          String part = text(source, "addressPart");
+          String current = text(draft.path("address"), part);
+          String original = text(draft.path("address"), part + "WithType");
+          if (original.isBlank() || !LiteralAddress.cleanComponent(current, part).equals(current))
+            original = current;
+          if (value != null && LiteralAddress.cleanComponent(original, part).equals(value.asText()))
+            control.put("matchValue", original);
+        }
         var matchContext = array();
         for (var part : source.path("autocomplete").path("contextParts")) {
           String context = text(draft.path("address"), part.asText());

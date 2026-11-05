@@ -58,6 +58,8 @@ public final class RentalAiPolicy {
                         id,
                         "name",
                         text(field, "name"),
+                        "description",
+                        text(field, "description"),
                         "type",
                         text(field, "type"),
                         "choices",
@@ -77,14 +79,22 @@ public final class RentalAiPolicy {
 В label не включай телефон, имя контактного лица, ориентиры и описание квартиры.
 Если текст не про сдачу квартиры, верни пустые suggestions и address:null.
 Числа — обычная десятичная строка без единиц. «3/9 этаж» = этаж 3 и этажность 9.
+«Этаж 3 из 9» также означает rental.floor=3, building.total_floors=9.
+rental.room_configuration — ВСЕ комнаты, rental.separate_rooms — раздельные комнаты внутри этого числа.
+«Всего 3 комнаты, из них 2 комнаты раздельные» = room_configuration="3", separate_rooms="2".
+Если указано только одно точное количество комнат, предложи его для обоих полей.
+Не приравнивай studio и 5+ к точному количеству. Раздельных комнат не может быть больше всех.
 Не смешивай залог, комиссию, предоплату и ежемесячную цену. Не пересчитывай валюты.
-«Рублей» без явного указания валюты — уточнение, не BYN по умолчанию.
+«Рубли», «рублей», «руб.» без указания страны означают BYN. Российские рубли и RUB — RUB.
 Boolean — только true/false, не строки. Не упомянутый факт отсутствует, а не false.
 Enum — только точный код из choices; multi_enum — массив этих кодов.
 Для неоднозначных/противоречивых сведений не заполняй поле, добавь короткий вопрос
 (до 3 вопросов только про неоднозначности, не перечисляй все незаполненные поля).
 Не создавай поля вне списка. Не заполняй за пользователя описание или ссылки на фото.
-Заголовок можно предложить по явно описанным фактам, до 100 символов, с цитатой-основанием.
+Составь listing.title до 100 символов: привлекательный заголовок по преимуществам из текста,
+а не перечень технических характеристик. Не выдумывай преимущества.
+Составь listing.short_description до 500 символов: отдельное краткое описание преимуществ,
+не копию всего объявления. Для обоих текстов приложи точную цитату-основание.
 Список полей и значения:
 """
         + fields
@@ -129,6 +139,7 @@ Enum — только точный код из choices; multi_enum — масс�
       accepted.remove(id);
       ignored++;
     }
+    RentalAiFacts.reconcile(editor, source, accepted, conflicts);
     JsonNode address = parsed.path("address");
     ObjectNode candidateAddress = null;
     String label = text(address, "label"), quote = text(address, "quote");
@@ -143,6 +154,8 @@ Enum — только точный код из choices; multi_enum — масс�
       if (q.isTextual() && !q.asText().isBlank() && questions.size() < 3)
         questions.add(clean(q, 180));
     }
+    if (conflicts.contains("rental.separate_rooms") && questions.size() < 3)
+      questions.add("Уточните общее число комнат и число раздельных комнат: они противоречат друг другу.");
     return object(
         "suggestions",
         accepted.values(),
@@ -189,6 +202,9 @@ Enum — только точный код из choices; multi_enum — масс�
           if (new BigDecimal(matcher.group().replaceAll("[\\u00a0 ]", "").replace(',', '.'))
                   .compareTo(number)
               == 0) found = true;
+        if (text(field, "id").equals("rental.separate_rooms")
+            && RentalAiFacts.spelledRoomCount(number.stripTrailingZeros().toPlainString(), quote))
+          found = true;
         return found && number.signum() >= 0
             ? TextNode.valueOf(number.stripTrailingZeros().toPlainString())
             : null;
@@ -198,6 +214,7 @@ Enum — только точный код из choices; multi_enum — масс�
     }
     if (!value.isTextual() || value.asText().length() > 500) return null;
     String id = text(field, "id");
+    if (id.equals("listing.title") && value.asText().length() > 100) return null;
     if (id.contains("phone")) {
       String digits = value.asText().replaceAll("\\D", "");
       if (!value.asText().matches("[+()\\d\\s-]{7,30}")
@@ -213,8 +230,9 @@ Enum — только точный код из choices; multi_enum — масс�
         return null;
       }
     }
-    // Free text must be copied from the source. Only a headline may be composed.
-    if (!id.equals("listing.title") && !normalized(quote).contains(normalized(value.asText())))
+    // Marketing copy may be composed; factual free text must still come from the source.
+    if (!Set.of("listing.title", "listing.short_description").contains(id)
+        && !normalized(quote).contains(normalized(value.asText())))
       return null;
     return TextNode.valueOf(value.asText().strip());
   }
@@ -224,7 +242,9 @@ Enum — только точный код из choices; multi_enum — масс�
     return switch (code) {
       case "USD" -> q.matches("(?s).*(usd|\\$|доллар).*");
       case "EUR" -> q.matches("(?s).*(eur|€|евро).*");
-      case "BYN" -> q.matches("(?s).*(byn|белорус|бел\\.?\\s*руб).*");
+      case "BYN" -> q.matches("(?s).*(byn|белорус|бел\\.?\\s*руб).*")
+          || q.matches("(?s).*\\bруб(?:лей|ля|ли|ль|\\.)?(?![\\p{L}]).*")
+              && !currencyGrounded("RUB", quote);
       case "RUB" -> q.matches("(?s).*(rub|россий|рос\\.?\\s*руб).*");
       default -> false;
     };

@@ -123,7 +123,7 @@
       return;
     }
     const candidates = options().filter((e) => {
-      if (!matches(label(e), control.value, config.kind)) return false;
+      if (!matches(label(e), control.matchValue || control.value, config.kind)) return false;
       const context = config.contextSelector
         ? query(config.contextSelector, e)
             .flatMap((n) => n.textContent.split(","))

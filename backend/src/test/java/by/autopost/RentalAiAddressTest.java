@@ -104,8 +104,8 @@ class RentalAiAddressTest {
     var address = result.path("address");
     assertEquals("matched", text(address, "resolution"));
     assertEquals("г Минск, ул Брикета, д 18", text(address, "label"));
-    assertEquals("г Минск", text(address, "settlement"));
-    assertEquals("ул Брикета", text(address, "street"));
+    assertEquals("Минск", text(address, "settlement"));
+    assertEquals("Брикета", text(address, "street"));
     assertEquals("18", text(address, "house"));
     assertEquals("27.4150416", text(address, "longitude"));
     assertTrue(address.path("confirmed").asBoolean());
@@ -130,9 +130,9 @@ class RentalAiAddressTest {
     for (var pair :
         Map.of(
                 "realt.settlement",
-                "г Минск",
+                "Минск",
                 "realt.street",
-                "ул Брикета",
+                "Брикета",
                 "realt.house_number",
                 "18")
             .entrySet())
@@ -155,8 +155,8 @@ class RentalAiAddressTest {
       var address = result.path("address");
       assertEquals(status == 0 ? "not_found" : "unavailable", text(address, "resolution"));
       assertEquals("manual", text(address, "provider"));
-      assertEquals("город Минск", text(address, "settlement"));
-      assertEquals("ул. Брикета", text(address, "street"));
+      assertEquals("Минск", text(address, "settlement"));
+      assertEquals("Брикета", text(address, "street"));
       assertEquals("18", text(address, "house"));
       assertFalse(address.path("confirmed").asBoolean());
       assertFalse(address.has("sourceId"));
