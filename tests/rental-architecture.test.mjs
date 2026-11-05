@@ -9,7 +9,7 @@ test('rental presentation and projections do not own persistence or AI requests'
   for (const name of ['rental-editor.component.ts', 'rental-fields.component.ts',
     'rental-saved-list.component.ts', 'rental-ai-review.component.ts', 'rental-view.model.ts']) {
     const source = read(name);
-    assert.doesNotMatch(source, /\bfetch\s*\(|\brentalApi\s*(?:<[^>]*>)?\s*\(|localStorage|sessionStorage/, name);
+    assert.doesNotMatch(source, /\bfetch\s*\(|\bapi\.request\s*(?:<[^>]*>)?\s*\(|HttpClient|localStorage|sessionStorage/, name);
   }
   for (const name of ['rental-draft.store.ts', 'rental-ai.assistant.ts']) {
     assert.doesNotMatch(read(name), /\bdocument\.|\bwindow\.|@Component|\.component["']/, name);
@@ -36,4 +36,11 @@ test('the card field IDs the editor reads come from the server model', () => {
     assert.doesNotMatch(source, /["'](?:listing|location|rental|building)\.[a-z_]+["']|group\.(?:main|address_projection)/, name);
     assert.doesNotMatch(source, /id\.includes\(/, name);
   }
+});
+
+test('rental requests go through HttpClient with the workspace interceptor', () => {
+  for (const name of readdirSync(new URL('../frontend/src/app/rental/', import.meta.url)))
+    if (/\.ts$/.test(name) && !/\.spec\.ts$/.test(name)) assert.doesNotMatch(read(name), /\bfetch\s*\(/, name);
+  const main = readFileSync(new URL('../frontend/src/main.ts', import.meta.url), 'utf8');
+  assert.match(main, /provideHttpClient\(withFetch\(\), withInterceptors\(\[rentalInterceptor\]\)\)/);
 });

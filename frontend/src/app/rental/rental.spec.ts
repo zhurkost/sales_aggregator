@@ -1,8 +1,12 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
+import { rentalInterceptor } from "./rental-api";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { TestBed } from "@angular/core/testing";
 import type { EditorSchema, Field, FieldState } from "./rental-models";
+// The application's HTTP client: the fetch backend and the rental interceptor.
+beforeEach(() => TestBed.configureTestingModule({ providers: [provideHttpClient(withFetch(), withInterceptors([rentalInterceptor]))] }));
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -21,7 +25,7 @@ const body = (init?: RequestInit) => (init?.body ? JSON.parse(String(init.body))
 
 describe("rental preparation editor", () => {
   it("locks input during opening and rejects an unexpected late edit without losing it", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     let resolve!: (r: Response) => void;
     vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
     const opening = c.store.open("another");
@@ -39,7 +43,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("editing nearby landmarks never clears the apartment address", () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.store.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
     for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
       c.setValue(field(id), "Example");
@@ -47,12 +51,12 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("clearing a manual address updates the visible input too", () => {
-    const c = new AddressInputComponent();
+    const c = TestBed.runInInjectionContext(() => new AddressInputComponent());
     c.search("Manual query"); c.value = null;
     expect(c.query).toBe(""); expect(c.selected).toBeNull(); c.ngOnDestroy();
   });
   it("persists an unselected address query and rejects a late selection while navigating", async () => {
-    const c = new AddressInputComponent();
+    const c = TestBed.runInInjectionContext(() => new AddressInputComponent());
     const emit = vi.spyOn(c.addressChange, "emit");
     c.search("Тестовый город, дом 7А");
     expect(emit).toHaveBeenLastCalledWith(expect.objectContaining({label:"Тестовый город, дом 7А", confirmed:false}));
@@ -66,7 +70,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.store.schema = {card:card(["location.metro"], addressFields), groups:[],cardVersion:"2",addressSuggestions:false,photoLimit:12,
       platforms:{example:{name:"example",labels:{}}}};
     c.store.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
@@ -80,7 +84,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("recovers revision conflicts by saving a separate card without overwriting the original", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     const original = c.store.id; c.store.revision = 7; c.store.dirty = true;
     c.store.draft.values["listing.title"] = "Keep my edits";
     const calls: {url:string, body:any}[] = [];
@@ -181,7 +185,7 @@ describe("rental preparation editor", () => {
     fixture.destroy();
   });
   it("groups different native required labels into one canonical correction", () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.store.schema = {cardVersion:"2",card:card(),groups:[{id:"group.main",name:"Main",fields:[field("rental.area","Жилая площадь")]}],addressSuggestions:false,photoLimit:12,platforms:{}};
     c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},checksPassed:false,form:[],manual:[],issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
     expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
@@ -232,7 +236,7 @@ describe("rental preparation editor", () => {
     } finally { fixture.destroy(); }
   });
   it("requires confirmation before removing a saved apartment", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     const fetch = vi.fn();
     vi.stubGlobal("fetch", fetch);
     await c.store.remove(c.store.id);
@@ -242,7 +246,7 @@ describe("rental preparation editor", () => {
   });
   it("waits for an in-flight save and never recreates the deleted active card", async () => {
     vi.useFakeTimers();
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.workspaceId = "owner";
     const id = c.store.id;
     c.store.revision = 1;
@@ -278,7 +282,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("keeps another open apartment intact when removing an item from the list", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     const current = c.store.id;
     c.store.draft.values["listing.title"] = "Keep edits";
     c.store.dirty = true;
@@ -293,7 +297,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("preserves the card and unsaved edits if deletion fails or conflicts", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     const id = c.store.id;
     c.store.revision = 3;
     c.store.draft.values["listing.title"] = "Keep";
@@ -312,7 +316,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("flushes edits made during an in-flight save before leaving", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.workspaceId = "a";
     c.store.changed();
     let writes = 0;
@@ -334,7 +338,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("keeps the new query when clearing a previous address and resets on another draft", () => {
-    const c = new AddressInputComponent();
+    const c = TestBed.runInInjectionContext(() => new AddressInputComponent());
     c.draftId = "one";
     c.value = {
       provider: "dadata",
@@ -353,7 +357,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("ignores a stale address response after the query changes", async () => {
-    const c = new AddressInputComponent();
+    const c = TestBed.runInInjectionContext(() => new AddressInputComponent());
     c.workspaceId = "owner";
     let finish!: (r: Response) => void;
     vi.stubGlobal(
@@ -369,7 +373,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("does not select the first address automatically", async () => {
-    const c = new AddressInputComponent();
+    const c = TestBed.runInInjectionContext(() => new AddressInputComponent());
     c.workspaceId = "owner";
     const emit = vi.spyOn(c.addressChange, "emit");
     vi.stubGlobal(
@@ -397,14 +401,14 @@ describe("rental preparation editor", () => {
     expect(fixture.componentInstance.manual).toBe(false);fixture.destroy();
   });
   it("drops provider identity and coordinates after manual address editing", () => {
-    const c = new AddressInputComponent();
+    const c = TestBed.runInInjectionContext(() => new AddressInputComponent());
     c.value = {provider:"dadata",countryIso:"BY",label:"Минск, Брикета, 18",settlement:"Минск",street:"Брикета",house:"18",confirmed:true,resolution:"matched",sourceId:"way:25439815",confirmedAt:"2026-11-03",latitude:"53.9",longitude:"27.4"};
     c.manual = true;c.setPart("house", "19");
     expect(c.selected?.provider).toBe("manual");expect(c.selected?.confirmed).toBe(false);
     expect(c.selected?.sourceId).toBeUndefined();expect(c.selected?.latitude).toBe("");c.ngOnDestroy();
   });
   it("invalidates coordinates when the confirmed address changes", () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.store.schema = {card:card([], addressFields), groups:[], cardVersion:"2", addressSuggestions:false, photoLimit:12, platforms:{}};
     c.store.draft.address = {
       provider: "dadata",
@@ -422,7 +426,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("does not lose edits made during a save and pins workspace", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.workspaceId = "original";
     c.store.changed();
     let finish!: (r: Response) => void;
@@ -449,7 +453,7 @@ describe("rental preparation editor", () => {
     c.ngOnDestroy();
   });
   it("keeps conflicting edits instead of resetting the form", async () => {
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.workspaceId = "a";
     c.store.draft.values["listing.title"] = "Keep";
     c.store.changed();
@@ -471,7 +475,7 @@ describe("rental preparation editor", () => {
       settlement:"Минск", street:"ул Брикета", house:String(n), confirmed, latitude:"53.9", longitude:"27.5"});
     const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
     function editor() {
-      const c = new RentalEditorComponent();
+      const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
       c.store.schema = {card:card(facts, addressFields), cardVersion:"2", addressSuggestions:true,photoLimit:12,
         groups:[{id:"group.near",name:"Рядом с домом",fields:[field(facts[0], "Метро"), field(facts[1], "Жилой комплекс")]}],
         platforms:{example:{name:"example",labels:{}}}};

@@ -7,7 +7,8 @@ import type {
   RentalPhotos,
   RentalPublication,
 } from "./rental-models";
-import { RentalApiError, rentalApi } from "./rental-api";
+import { inject } from "@angular/core";
+import { RentalApi, RentalApiError } from "./rental-api";
 import { TITLE } from "./card-fields.generated";
 import { RentalCardCheck } from "./rental-card-check";
 import { RentalFieldStates } from "./rental-field-states";
@@ -25,6 +26,8 @@ export class RentalDraftStore {
     private onTransition: () => void,
     private profile: () => RentalProfile = () => ({}),
   ) {}
+  /** The server's rental API, shared with the parts of this session. */
+  readonly api = inject(RentalApi);
   schema: EditorSchema | null = null;
   draft: RentalDraft = {
     cardVersion: "",
@@ -45,7 +48,7 @@ export class RentalDraftStore {
   pendingDelete: string | null = null;
   deletingId: string | null = null;
   drafts: RentalListedDraft[] = [];
-  readonly check = new RentalCardCheck(() => ({
+  readonly check = new RentalCardCheck(this.api, () => ({
     workspace: this.workspaceId(),
     id: this.id,
     version: this.editVersion,
@@ -54,6 +57,7 @@ export class RentalDraftStore {
   }));
   /** The card fields to show, as the server answers for this card. */
   readonly fields = new RentalFieldStates(
+    this.api,
     () => ({ workspace: this.workspaceId(), draft: this.draft, destroyed: this.destroyed }),
     (message) => (this.error = message),
   );
@@ -69,7 +73,7 @@ export class RentalDraftStore {
   destroyed = false;
   async load() {
     try {
-      this.schema = await rentalApi<EditorSchema>(this.workspaceId(), "editor");
+      this.schema = await this.api.request<EditorSchema>(this.workspaceId(), "editor");
       this.draft.cardVersion = this.schema.cardVersion;
       this.draft.modelVersion = this.schema.card.version;
       this.draft.platforms = this.platforms;
@@ -95,7 +99,7 @@ export class RentalDraftStore {
   async refresh() {
     await this.queue.catch(() => {});
     this.drafts = (
-      await rentalApi<{ drafts: RentalDraftStore["drafts"] }>(
+      await this.api.request<{ drafts: RentalDraftStore["drafts"] }>(
         this.workspaceId(),
         "drafts",
       )
@@ -117,7 +121,7 @@ export class RentalDraftStore {
   async setLink(publication: string, url: string) {
     this.error = "";
     try {
-      const saved = await rentalApi<RentalPublication>(
+      const saved = await this.api.request<RentalPublication>(
         this.workspaceId(),
         "publications/" + publication + "/link",
         { url },
@@ -160,11 +164,11 @@ export class RentalDraftStore {
     this.busy = true;
     try {
       await this.flush();
-      const schema = await rentalApi<EditorSchema>(
+      const schema = await this.api.request<EditorSchema>(
         this.workspaceId(),
         "editor",
       );
-      const migrated = await rentalApi<RentalDraft>(
+      const migrated = await this.api.request<RentalDraft>(
         this.workspaceId(),
         "normalize",
         this.draft,
@@ -216,7 +220,7 @@ export class RentalDraftStore {
       id = this.id,
       snapshot = structuredClone(this.draft);
     this.status = "Сохраняем…";
-    const result = await rentalApi<{ revision: number }>(
+    const result = await this.api.request<{ revision: number }>(
       this.workspaceId(),
       "drafts/" + id,
       { revision: this.revision, draft: snapshot },
@@ -269,7 +273,7 @@ export class RentalDraftStore {
           await this.write();
         }
         if (this.id !== id) return;
-        const result = await rentalApi<RentalPhotos>(
+        const result = await this.api.request<RentalPhotos>(
           this.workspaceId(),
           "drafts/" + id + "/" + path,
           body(this.revision),
@@ -326,7 +330,7 @@ export class RentalDraftStore {
   }
   private async read(id: string, status: string) {
     const beforeLoad = this.editVersion;
-    const result = await rentalApi<{
+    const result = await this.api.request<{
       id: string;
       revision: number;
       draft: RentalDraft;
@@ -401,7 +405,7 @@ export class RentalDraftStore {
         const item = this.drafts.find((draft) => draft.id === id);
         if (!item) throw new Error("Квартира не найдена. Обновите список.");
         const revision = this.id === id ? this.revision : item.revision;
-        await rentalApi(this.workspaceId(), "drafts/" + id + "/delete", {
+        await this.api.request(this.workspaceId(), "drafts/" + id + "/delete", {
           revision,
         });
         // Copies an older release kept in this browser go with the card.

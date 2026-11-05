@@ -1,6 +1,5 @@
 import { DESCRIPTION } from "./card-fields.generated";
 import type { Address, RentalAiResult } from "./rental-models";
-import { rentalApi } from "./rental-api";
 import { RentalDraftStore } from "./rental-draft.store";
 import { hasValue } from "./rental-values";
 /** Applies server-verified proposals while preserving manual edits and address conflicts. */
@@ -22,7 +21,7 @@ export class RentalAiAssistant {
     const id = this.store.id, version = this.store.editVersion, cardVersion = this.store.schema.cardVersion;
     try {
       await this.store.flush();
-      const result = await rentalApi<RentalAiResult>(this.workspaceId(), "analyze", {text:this.description(), cardVersion});
+      const result = await this.store.api.request<RentalAiResult>(this.workspaceId(), "analyze", {text:this.description(), cardVersion});
       if (this.store.destroyed || this.store.id !== id || this.store.editVersion !== version || this.store.schema?.cardVersion !== result.cardVersion) return;
       let count = 0;
       let appliedAddress = false;

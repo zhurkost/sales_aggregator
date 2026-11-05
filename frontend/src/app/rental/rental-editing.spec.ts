@@ -1,9 +1,13 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
+import { rentalInterceptor } from "./rental-api";
+import { afterEach, describe, expect, it, vi, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { RentalDraftStore } from "./rental-draft.store";
-import { rentalApi } from "./rental-api";
+import { RentalApi, RentalApiError } from "./rental-api";
 import type { EditorSchema, Prepared } from "./rental-models";
+// The application's HTTP client: the fetch backend and the rental interceptor.
+beforeEach(() => TestBed.configureTestingModule({ providers: [provideHttpClient(withFetch(), withInterceptors([rentalInterceptor]))] }));
 
 const schema: EditorSchema = {
   cardVersion: "test",
@@ -356,10 +360,10 @@ describe("rental editing and validation", () => {
 
   it("ignores a late validation response after editing and after changing apartments", async () => {
     vi.useFakeTimers();
-    const store = new RentalDraftStore(
+    const store = TestBed.runInInjectionContext(() => new RentalDraftStore(
       () => "owner",
       () => {},
-    );
+    ));
     store.results = structuredClone(report);
     let finish!: (response: Response) => void;
     vi.stubGlobal(
@@ -390,7 +394,7 @@ describe("rental editing and validation", () => {
 
   it("retains the report on validation failure and retries without blocking input", async () => {
     mockApi();
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     await c.store.prepare();
     vi.stubGlobal(
       "fetch",
@@ -410,7 +414,7 @@ describe("rental editing and validation", () => {
 
   it("keeps validation separate from a failed save", async () => {
     vi.useFakeTimers();
-    const c = new RentalEditorComponent();
+    const c = TestBed.runInInjectionContext(() => new RentalEditorComponent());
     c.store.changed();
     vi.stubGlobal(
       "fetch",
@@ -438,11 +442,11 @@ describe("rental contacts from the active profile", () => {
       company: "Тестовая компания",
       city: "Минск",
     };
-    const store = new RentalDraftStore(
+    const store = TestBed.runInInjectionContext(() => new RentalDraftStore(
       () => "owner",
       () => {},
       () => profile,
-    );
+    ));
     await store.load();
     expect(store.draft.values).toEqual({
       "contact.phone": "+375290000000",
@@ -469,7 +473,7 @@ describe("rental contacts from the active profile", () => {
   });
 
   it("fills only absent fields in saved cards, respecting custom and cleared contacts", async () => {
-    const store = new RentalDraftStore(
+    const store = TestBed.runInInjectionContext(() => new RentalDraftStore(
       () => "owner",
       () => {},
       () => ({
@@ -477,7 +481,7 @@ describe("rental contacts from the active profile", () => {
         contactPerson: "Профиль",
         company: "Компания",
       }),
-    );
+    ));
     store.schema = schema;
     vi.stubGlobal(
       "fetch",
@@ -508,6 +512,8 @@ describe("rental contacts from the active profile", () => {
 
 describe("rental API errors", () => {
   it("explains a proxy error page or an empty body instead of a JSON parse error", async () => {
+    const api = TestBed.inject(RentalApi);
+    const rentalApi = (workspace: string, path: string) => api.request(workspace, path);
     for (const [status, body] of [
       [502, "<html><body><h1>502 Bad Gateway</h1></body></html>"],
       [504, ""],
@@ -524,17 +530,17 @@ describe("rental API errors", () => {
       "fetch",
       vi.fn(async () => response({ error: "Карточка изменена" }, 409)),
     );
-    await expect(rentalApi("owner", "drafts")).rejects.toThrow(
-      "Карточка изменена",
-    );
+    const conflict = await rentalApi("owner", "drafts").catch((e: unknown) => e);
+    expect(conflict).toBeInstanceOf(RentalApiError);
+    expect(conflict).toMatchObject({ message: "Карточка изменена", status: 409 });
   });
 
   it("keeps unsaved edits and shows the outage message after a failed autosave", async () => {
     vi.useFakeTimers();
-    const store = new RentalDraftStore(
+    const store = TestBed.runInInjectionContext(() => new RentalDraftStore(
       () => "owner",
       () => {},
-    );
+    ));
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => new Response("<html>502</html>", { status: 502 })),
@@ -556,10 +562,10 @@ describe("rental revision conflicts", () => {
   };
   it("stops autosaving after 409 until the edits are saved as a copy", async () => {
     vi.useFakeTimers();
-    const store = new RentalDraftStore(
+    const store = TestBed.runInInjectionContext(() => new RentalDraftStore(
       () => "owner",
       () => {},
-    );
+    ));
     const original = store.id,
       calls: { url: string; body: any }[] = [];
     vi.stubGlobal(

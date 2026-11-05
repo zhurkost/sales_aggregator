@@ -1,4 +1,4 @@
-import { rentalApi } from "./rental-api";
+import type { RentalApi } from "./rental-api";
 import type { FieldState, RentalDraft } from "./rental-models";
 
 type Context = { workspace: string; draft: RentalDraft; destroyed: boolean };
@@ -13,6 +13,7 @@ export class RentalFieldStates {
   private sequence = 0;
   private timer?: ReturnType<typeof setTimeout>;
   constructor(
+    private api: RentalApi,
     private context: () => Context,
     private failed: (message: string) => void,
   ) {}
@@ -27,7 +28,7 @@ export class RentalFieldStates {
     if (before.destroyed) return;
     const request = ++this.sequence;
     try {
-      const result = await rentalApi<{ fields: FieldState[] }>(before.workspace, "fields", {
+      const result = await this.api.request<{ fields: FieldState[] }>(before.workspace, "fields", {
         draft: structuredClone(before.draft),
       });
       if (request === this.sequence && !this.context().destroyed)

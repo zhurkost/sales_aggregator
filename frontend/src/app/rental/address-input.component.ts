@@ -4,9 +4,10 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
+  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Address, rentalApi } from "./rental-api";
+import { Address, RentalApi } from "./rental-api";
 
 @Component({
   selector: "app-address-input",
@@ -98,6 +99,7 @@ import { Address, rentalApi } from "./rental-api";
   ],
 })
 export class AddressInputComponent implements OnDestroy {
+  private readonly api = inject(RentalApi);
   @Input({ required: true }) workspaceId = "";
   @Input() compact = false;
   @Input() set draftId(id: string) {
@@ -180,7 +182,7 @@ export class AddressInputComponent implements OnDestroy {
   async load(query: string, generation: number) {
     this.busy = true;
     try {
-      const result = await rentalApi<{
+      const result = await this.api.request<{
         suggestions: { id: string; label: string }[];
       }>(this.workspaceId, "address/suggest", { query });
       if (generation !== this.generation) return;
@@ -222,7 +224,7 @@ export class AddressInputComponent implements OnDestroy {
     this.choosing = true;
     this.error = "";
     try {
-      const { address } = await rentalApi<{ address: Address }>(
+      const { address } = await this.api.request<{ address: Address }>(
         this.workspaceId,
         "address/select",
         { id },

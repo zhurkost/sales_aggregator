@@ -1,4 +1,4 @@
-import { rentalApi } from "./rental-api";
+import type { RentalApi } from "./rental-api";
 import type { Prepared, RentalDraft } from "./rental-models";
 
 type Context = {
@@ -17,7 +17,10 @@ export class RentalCardCheck {
   checking = false;
   error = "";
   private sequence = 0;
-  constructor(private context: () => Context) {}
+  constructor(
+    private api: RentalApi,
+    private context: () => Context,
+  ) {}
 
   invalidate() {
     if (this.checked || this.results.length) this.stale = true;
@@ -50,7 +53,7 @@ export class RentalCardCheck {
     };
     try {
       // The server adds the photos stored with this card.
-      const result = await rentalApi<{ platforms: Prepared[] }>(
+      const result = await this.api.request<{ platforms: Prepared[] }>(
         before.workspace,
         "prepare",
         { id: before.id, draft: structuredClone(before.draft) },

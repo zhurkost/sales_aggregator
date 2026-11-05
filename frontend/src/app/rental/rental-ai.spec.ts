@@ -1,7 +1,11 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
+import { rentalInterceptor } from "./rental-api";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { EditorSchema, Field, RentalAiResult } from "./rental-api";
+// The application's HTTP client: the fetch backend and the rental interceptor.
+beforeEach(() => TestBed.configureTestingModule({ providers: [provideHttpClient(withFetch(), withInterceptors([rentalInterceptor]))] }));
 
 const field = (id:string,type="text"):Field => ({id,name:id,type});
 const schema:EditorSchema = {cardVersion:"2",groups:[
@@ -15,7 +19,7 @@ const result:RentalAiResult = {cardVersion:"2",model:"test",questions:[],address
 ]};
 const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status});
 function setup(data:RentalAiResult=result) {
-  const c = new RentalEditorComponent(); c.store.schema=structuredClone(schema); c.store.draft.cardVersion="2"; c.store.draft.platforms=["one"];
+  const c = TestBed.runInInjectionContext(() => new RentalEditorComponent()); c.store.schema=structuredClone(schema); c.store.draft.cardVersion="2"; c.store.draft.platforms=["one"];
   c.store.draft.values["listing.description"]="Сдам квартиру, 1500 BYN, без Wi-Fi, есть стиральная машина.";
   const fetch=vi.fn(async (url:string)=>response(url.endsWith("/analyze")?data:url.endsWith("/drafts")?{drafts:[]}:url.endsWith("/fields")?{fields:[]}:{revision:1}));
   vi.stubGlobal("fetch",fetch); return {c,fetch};
@@ -23,7 +27,7 @@ function setup(data:RentalAiResult=result) {
 afterEach(()=>{vi.unstubAllGlobals();vi.useRealTimers();});
 describe("compact rental editor with AI",()=>{
   it("warns before leaving a dirty draft after splitting editor state",()=>{
-    const c=new RentalEditorComponent();
+    const c=TestBed.runInInjectionContext(() => new RentalEditorComponent());
     const event={preventDefault:vi.fn(),returnValue:"unchanged"} as unknown as BeforeUnloadEvent;
     c.unload(event);expect(event.preventDefault).not.toHaveBeenCalled();
     c.store.dirty=true;c.unload(event);expect(event.preventDefault).toHaveBeenCalledOnce();expect(event.returnValue).toBe("");
@@ -32,7 +36,7 @@ describe("compact rental editor with AI",()=>{
   it("traps reverse Tab from the dialog title without hijacking Tab inside a field group",()=>{
     const panel=document.createElement("section");panel.className="rental-drawer";
     panel.innerHTML='<h2 tabindex="-1">Title</h2><button>Close</button><div tabindex="-1"><input /></div><button>Done</button>';
-    document.body.append(panel);const c=new RentalEditorComponent();
+    document.body.append(panel);const c=TestBed.runInInjectionContext(() => new RentalEditorComponent());
     try {
       panel.querySelector("h2")!.focus();
       const back=new KeyboardEvent("keydown",{key:"Tab",shiftKey:true,cancelable:true});c.panelKeys(back);

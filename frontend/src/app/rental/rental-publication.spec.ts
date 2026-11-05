@@ -1,4 +1,6 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
+import { rentalInterceptor } from "./rental-api";
+import { afterEach, describe, expect, it, vi, beforeEach } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import {
   REQUIRED_EXTENSION_VERSION,
@@ -7,6 +9,8 @@ import {
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 import type { Photo } from "../../../../lib/workspace";
+// The application's HTTP client: the fetch backend and the rental interceptor.
+beforeEach(() => TestBed.configureTestingModule({ providers: [provideHttpClient(withFetch(), withInterceptors([rentalInterceptor]))] }));
 const extension = vi.fn(async () => ({
   capabilities: [
     "rental-publishing",
@@ -69,7 +73,7 @@ function photoServer() {
 describe("publication of incomplete rental cards", () => {
   it("asks to update older extensions without address suggestion support", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["realt"];
@@ -83,7 +87,7 @@ describe("publication of incomplete rental cards", () => {
   });
   it("does not launch with a 0.9.2 extension that would auto-submit without the server check", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["kufar"];
@@ -97,7 +101,7 @@ describe("publication of incomplete rental cards", () => {
   });
   it("does not launch with a 0.9.3 extension that would submit a form filled under replaced rules", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["kufar"];
@@ -114,7 +118,7 @@ describe("publication of incomplete rental cards", () => {
   });
   it("does not launch with a 0.9.4 extension that rejects the Realt description editor", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["realt"];
@@ -136,7 +140,7 @@ describe("publication of incomplete rental cards", () => {
   });
   it("does not launch with an extension that still waits for dataReady before the final click", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["kufar"];
@@ -162,10 +166,10 @@ describe("publication of incomplete rental cards", () => {
       providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
     });
     const fixture = TestBed.createComponent(RentalPublicationComponent),
-      store = new RentalDraftStore(
+      store = TestBed.runInInjectionContext(() => new RentalDraftStore(
         () => "owner",
         () => {},
-      );
+      ));
     extension.mockRejectedValueOnce(new Error("no extension"));
     fixture.componentRef.setInput("store", store);
     fixture.componentRef.setInput("workspaceId", "owner");
@@ -185,7 +189,7 @@ describe("publication of incomplete rental cards", () => {
   });
   it("does not launch with a 0.9.5 extension that uploads the photos the page sends", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["kufar"];
@@ -208,7 +212,7 @@ describe("publication of incomplete rental cards", () => {
   });
   it("does not launch with an extension that keeps publications only in the browser", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     c.store.draft.platforms = ["kufar"];
@@ -233,7 +237,7 @@ describe("publication of incomplete rental cards", () => {
   it("stores photos with the card on the server: each change is a revision, the card is untouched", async () => {
     const requests = photoServer();
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.store.schema = { photoLimit: 12 } as never;
     c.workspaceId = "owner";
     c.draftId = c.store.id;
@@ -284,7 +288,7 @@ describe("publication of incomplete rental cards", () => {
     ];
     gateway.localPhotos.mockResolvedValue(local);
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.store.revision = 3;
     c.workspaceId = "owner";
     c.draftId = c.store.id;
@@ -322,7 +326,7 @@ describe("publication of incomplete rental cards", () => {
       { id: "l1", name: "old.jpg", type: "image/jpeg", dataUrl: "data:image/jpeg;base64,/9j/AA" },
     ]);
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.workspaceId = "owner";
     c.draftId = c.store.id;
     await c.ngOnChanges();
@@ -338,7 +342,7 @@ describe("publication of incomplete rental cards", () => {
   it("checks the card again after a photo change, as photos are part of the check", async () => {
     const requests = photoServer();
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.store.revision = 1;
     c.store.check.checked = true;
     const refresh = vi.spyOn(c.store.check, "refresh").mockResolvedValue();
@@ -352,7 +356,7 @@ describe("publication of incomplete rental cards", () => {
   it("shows the server's photo limit and does not compress a batch beyond it", async () => {
     const requests = photoServer();
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(() => "owner", () => {});
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(() => "owner", () => {}));
     c.store.schema = { photoLimit: 2 } as never;
     c.store.revision = 1;
     await c.add([new File(["a"], "1.jpg"), new File(["b"], "2.jpg"), new File(["c"], "3.jpg")]);
@@ -367,10 +371,10 @@ describe("publication of incomplete rental cards", () => {
       providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
     });
     const fixture = TestBed.createComponent(RentalPublicationComponent),
-      store = new RentalDraftStore(
+      store = TestBed.runInInjectionContext(() => new RentalDraftStore(
         () => "owner",
         () => {},
-      );
+      ));
     store.draft.platforms = ["kufar", "onliner", "realt", "domovita"];
     store.draft.values = { "listing.description": "Сдам квартиру" };
     store.check.checked = true;
@@ -425,10 +429,10 @@ describe("publication of incomplete rental cards", () => {
       providers: [{ provide: RentalPublicationGateway, useValue: gateway }],
     });
     const fixture = TestBed.createComponent(RentalPublicationComponent),
-      store = new RentalDraftStore(
+      store = TestBed.runInInjectionContext(() => new RentalDraftStore(
         () => "owner",
         () => {},
-      );
+      ));
     store.draft.platforms = ["kufar"];
     extension.mockRejectedValueOnce(new Error("no extension"));
     fixture.componentRef.setInput("store", store);
@@ -472,10 +476,10 @@ describe("publication of incomplete rental cards", () => {
   });
   it("assist mode is explicitly passed and unsupported extension cannot launch", async () => {
     const c = new RentalPublicationComponent(gateway);
-    c.store = new RentalDraftStore(
+    c.store = TestBed.runInInjectionContext(() => new RentalDraftStore(
       () => "owner",
       () => {},
-    );
+    ));
     c.store.draft.platforms = ["realt"];
     c.workspaceId = "owner";
     c.draftId = c.store.id;
