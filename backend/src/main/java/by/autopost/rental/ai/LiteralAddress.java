@@ -11,14 +11,35 @@ import java.util.regex.Pattern;
 /** Literal components only: no geocoding, invented location or AI-provided identifiers. */
 public final class LiteralAddress {
   public static String cleanComponent(String value, String part) {
-    String prefix = switch (part) {
+    return value.strip().replaceFirst("(?iu)^(?:" + typePrefix(part) + ")(?:\\.\\s*|\\s+)", "").strip();
+  }
+
+  private static String typePrefix(String part) {
+    return switch (part) {
       case "settlement" -> "городской поселок|городской посёлок|г\\.?\\s*п|рабочий поселок|рабочий посёлок|р\\.?\\s*п|город|г|агрогородок|аг|деревня|дер|д|поселок|посёлок|пос|п|село|с";
-      case "street" -> "улица|ул|переулок|пер|проспект|пр-т|просп|бульвар|бул|б-р|площадь|пл|проезд|пр-д|шоссе|ш|набережная|наб|тупик|туп";
+      case "street" -> "улица|ул|переулок|пер|проспект|пр-т|просп|бульвар|бул|б-р|площадь|пл|проезд|пр-д|шоссе|ш|набережная|наб|тупик|туп|тракт";
       case "house" -> "дом|д";
       case "block" -> "корпус|корп|к";
       default -> "(?!)";
     };
-    return value.strip().replaceFirst("(?iu)^(?:" + prefix + ")(?:\\.\\s*|\\s+)", "").strip();
+  }
+
+  /** Text typed into a single address search box; the canonical address stays intact. */
+  public static String searchText(JsonNode address) {
+    var parts = List.of("settlement", "street", "house", "block");
+    String query;
+    if (!text(address, "settlement").isBlank() && !text(address, "street").isBlank()) {
+      query = parts.stream().map(p -> cleanComponent(text(address, p), p))
+          .filter(v -> !v.isBlank()).collect(java.util.stream.Collectors.joining(" "));
+    } else {
+      String prefixes = parts.stream().map(LiteralAddress::typePrefix)
+          .collect(java.util.stream.Collectors.joining("|"));
+      query = text(address, "label").replace(',', ' ')
+          .replaceAll("(?iu)(?<![\\p{L}\\d])(?:" + prefixes + ")(?:\\.\\s*|\\s+)", "");
+    }
+    query = query.replace(',', ' ').replaceAll("\\s+", " ").strip().toLowerCase(Locale.ROOT);
+    return Pattern.compile("(?<!\\p{L})\\p{L}").matcher(query)
+        .replaceAll(m -> m.group().toUpperCase(Locale.ROOT));
   }
 
   public static void cleanComponents(ObjectNode address) {

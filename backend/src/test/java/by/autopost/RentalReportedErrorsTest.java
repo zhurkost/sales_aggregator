@@ -163,5 +163,9 @@ class RentalReportedErrorsTest {
     assertEquals("18А", LiteralAddress.cleanComponent("д.18А", "house"));
     assertEquals("Гагарина", LiteralAddress.cleanComponent("Гагарина", "street"));
     assertEquals("Ульяновская", LiteralAddress.cleanComponent("Ульяновская", "street"));
+    assertEquals("Минск Брикета 18", LiteralAddress.searchText(
+        object("label", "г. минск, ул. брикета, д. 18")));
+    assertEquals("Зеленый Бор Карла Маркса 18А", LiteralAddress.searchText(
+        object("label", "пос. зеленый бор, ул. карла маркса, дом 18а")));
   }
 }

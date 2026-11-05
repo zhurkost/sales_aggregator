@@ -27,7 +27,9 @@ final class RentalBrowserPreparation {
           value = draft.path("address").get(text(source, "addressPart"));
           if (value != null && value.isTextual())
             value = com.fasterxml.jackson.databind.node.TextNode.valueOf(
-                LiteralAddress.cleanComponent(value.asText(), text(source, "addressPart")));
+                text(source, "addressPart").equals("label")
+                    ? LiteralAddress.searchText(draft.path("address"))
+                    : LiteralAddress.cleanComponent(value.asText(), text(source, "addressPart")));
         }
         if (!text(source, "action").equals("files")
             && (value == null
@@ -42,7 +44,10 @@ final class RentalBrowserPreparation {
           String original = text(draft.path("address"), part + "WithType");
           if (original.isBlank() || !LiteralAddress.cleanComponent(current, part).equals(current))
             original = current;
-          if (value != null && LiteralAddress.cleanComponent(original, part).equals(value.asText()))
+          boolean sameAddress = value != null && (part.equals("label")
+              ? LiteralAddress.searchText(object("label", original)).equals(value.asText())
+              : LiteralAddress.cleanComponent(original, part).equals(value.asText()));
+          if (sameAddress)
             control.put("matchValue", original);
         }
         var matchContext = array();

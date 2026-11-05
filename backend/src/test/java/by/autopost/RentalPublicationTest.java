@@ -178,6 +178,44 @@ class RentalPublicationTest {
   }
 
   @Test
+  void singleAddressBoxesUseCapitalizedWordsWithoutTypesOrCommas() {
+    for (var input : List.of(
+        object("settlement", "г. минск", "street", "ул. брикета", "house", "д. 18", "block", ""),
+        object("settlement", "пос. зеленый бор", "street", "ул. карла маркса", "house", "дом 18а", "block", "корп. 2"))) {
+      var draft = partial();
+      var address = (ObjectNode) draft.path("address");
+      address.setAll(input);
+      address.put("label", text(input, "settlement") + ", " + text(input, "street") + ", "
+          + text(input, "house") + " " + text(input, "block"));
+      var before = address.deepCopy();
+      String expected = text(input, "settlement").contains("минск")
+          ? "Минск Брикета 18" : "Зеленый Бор Карла Маркса 18А 2";
+      var jobs = list(catalog.browser(draft).path("jobs"));
+      for (String site : List.of("kufar", "onliner")) {
+        var job = jobs.stream().filter(j -> text(j, "platform").equals(site)).findFirst().orElseThrow();
+        var control = list(job.path("controls")).stream()
+            .filter(c -> text(c, "addressPart").equals("label")).findFirst().orElseThrow();
+        assertEquals(expected, text(control, "value"), site);
+        assertEquals(text(before, "label"), text(control, "matchValue"));
+      }
+      assertEquals(before, draft.path("address"));
+    }
+  }
+
+  @Test
+  void singleAddressQueryDoesNotMatchAStaleLabelAfterManualCorrection() {
+    var draft = partial();
+    ((ObjectNode) draft.path("address")).put("street", "Брикета").put("house", "18");
+    for (var job : catalog.browser(draft).path("jobs")) {
+      for (var control : job.path("controls")) {
+        if (!text(control, "addressPart").equals("label")) continue;
+        assertEquals("Минск Брикета 18", text(control, "value"));
+        assertFalse(control.has("matchValue"));
+      }
+    }
+  }
+
+  @Test
   void onlySavedSnapshotInOwnWorkspaceCanBeLaunched() {
     var drafts = mock(RentalDraftService.class);
     var service = new RentalPublicationService(drafts, catalog);
