@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalEditorComponent } from "./rental-editor.component";
-import { applicable } from "./conditions";
 import { TestBed } from "@angular/core/testing";
+import type { EditorSchema, Field, FieldState } from "./rental-models";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -10,6 +10,14 @@ afterEach(() => {
 });
 const response = (body: unknown) =>
   new Response(JSON.stringify(body), { status: 200 });
+const card = (addressDependentFacts: string[] = [], addressFields: string[] = []): EditorSchema["card"] =>
+  ({ version: 2, valueLabels: {}, addressDependentFacts, addressFields, profileDefaults: [] });
+const field = (id: string, name = id, type = "text"): Field => ({ id, name, type });
+const state = (id: string, transferred = true): FieldState => ({ id, required: false, transferred, choices: [] });
+/** The card fields derived from the address in the committed card model. */
+const addressFields = ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"];
+/** The body of a request the editor sent. */
+const body = (init?: RequestInit) => (init?.body ? JSON.parse(String(init.body)) : null);
 
 describe("rental preparation editor", () => {
   it("locks input during opening and rejects an unexpected late edit without losing it", async () => {
@@ -18,15 +26,15 @@ describe("rental preparation editor", () => {
     vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
     const opening = c.store.open("another");
     await vi.waitFor(() => expect(resolve).toBeDefined());
-    const field = {id:"listing.title", type:"text", name:"Title", description:"", options:[], fill_rule:{}};
-    c.setValue(field, "Must not accept locked input");
-    expect(c.store.draft.values[field.id]).toBeUndefined();
-    c.store.draft.values[field.id] = "Unexpected asynchronous edit";
+    const title = field("listing.title", "Title");
+    c.setValue(title, "Must not accept locked input");
+    expect(c.store.draft.values[title.id]).toBeUndefined();
+    c.store.draft.values[title.id] = "Unexpected asynchronous edit";
     c.store.changed();
     resolve(response({id:"another", revision:1, draft:{cardVersion:"1",values:{},platforms:[],address:null}, photos:[]}));
     await opening;
     expect(c.store.id).not.toBe("another");
-    expect(c.store.draft.values[field.id]).toBe("Unexpected asynchronous edit");
+    expect(c.store.draft.values[title.id]).toBe("Unexpected asynchronous edit");
     expect(c.store.dirty).toBe(true);
     c.ngOnDestroy();
   });
@@ -34,7 +42,7 @@ describe("rental preparation editor", () => {
     const c = new RentalEditorComponent();
     c.store.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
     for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
-      c.setValue({id, name:id, type:"text", options:[], fill_rule:{}, description:""}, "Example");
+      c.setValue(field(id), "Example");
     expect(c.store.draft.address.settlement).toBe("Минск");
     c.ngOnDestroy();
   });
@@ -59,8 +67,8 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},cardVersion:"2",addressSuggestions:false,photoLimit:12,
-      platforms:{example:{labels:{},choiceLabels:{},constants:{},bindings:[]}}};
+    c.store.schema = {card:card(["location.metro"], addressFields), groups:[],cardVersion:"2",addressSuggestions:false,photoLimit:12,
+      platforms:{example:{name:"example",labels:{}}}};
     c.store.draft.address = {provider:"dadata",label:"Old",countryIso:"BY",settlement:"Old",street:"Old",house:"1",confirmed:true};
     c.store.draft.values["location.metro"] = "Old metro";
     c.store.draft.values["location.latitude"] = "53.9";
@@ -89,65 +97,90 @@ describe("rental preparation editor", () => {
   });
 
   it("renders a fifth marketplace with the same one-field form and preserves data when toggled", async () => {
-    const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area",transferred:true}]};
-    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{},choiceLabels:{},constants:{},bindings:[]}]));
-    vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
-      cardVersion:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
-    } : {drafts:[]})));
+    const area = field("rental.test", "Площадь тест");
+    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{}}]));
+    // Only the fifth platform maps the field: the server shows it while that platform is chosen.
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => response(url.endsWith("/editor") ? {
+      cardVersion:"2",card:card(), groups:[{id:"group.main",name:"Главное",fields:[area]}],addressSuggestions:false,photoLimit:12,platforms,
+    } : url.endsWith("/fields") ? {fields: body(init).draft.platforms.includes("fifth") ? [state(area.id)] : []} : {drafts:[]})));
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
-    await vi.waitFor(() => {fixture.detectChanges(); expect(fixture.nativeElement.textContent).toContain("Пятая площадка");});
+    const shown = () => { fixture.detectChanges(); return fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]').length; };
+    await vi.waitFor(() => {expect(shown()).toBe(1); expect(fixture.nativeElement.textContent).toContain("Пятая площадка");});
     const c = fixture.componentInstance;
     expect(c.store.draft.platforms).toHaveLength(5);
-    c.setValue(field,"42,5"); c.togglePlatform("fifth",false); fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('[id="rental-rental.test"]')).toBeNull();
-    c.togglePlatform("fifth",true); fixture.detectChanges();
-    expect(fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]')).toHaveLength(1);
-    expect(c.store.draft.values[field.id]).toBe("42,5"); fixture.destroy();
+    c.setValue(area,"42,5"); c.store.setPlatform("fifth",false);
+    await vi.waitFor(() => expect(shown()).toBe(0));
+    c.store.setPlatform("fifth",true);
+    await vi.waitFor(() => expect(shown()).toBe(1));
+    expect(c.store.draft.values[area.id]).toBe("42,5"); fixture.destroy();
   });
   it("marks a card field no selected platform receives as not transferred yet", async () => {
-    const field = (id: string, uses: {platform: string; target: string; transferred: boolean}[]) =>
-      ({id, name: id, type: "text", options: [], fill_rule: {}, description: "", uses});
-    const fields = [
-      field("listing.title", [{platform: "one", target: "title", transferred: true}, {platform: "two", target: "title", transferred: true}]),
-      field("rental.kitchen_area", [{platform: "one", target: "kitchen", transferred: true}, {platform: "two", target: "kitchen", transferred: false}]),
-      field("location.metro", [{platform: "one", target: "metro", transferred: false}, {platform: "two", target: "metro", transferred: false}]),
-    ];
-    const platforms = Object.fromEntries(["one", "two"].map(p => [p, {name: p, labels: {}, choiceLabels: {}, constants: {}, bindings: []}]));
-    vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
-      cardVersion: "2", card: {version: 2, addressDependentFacts: []}, canonicalValues: {}, addressSuggestions: false, platforms,
-      category: {options: [{id: "group.main", name: "Главное", type: "group", options: fields, fill_rule: {}, description: ""}]},
-    } : {drafts: []})));
+    // Which platform's form needs each field, as the server knows it from the coverage.
+    const forms: Record<string, string[]> = {"listing.title": ["one", "two"], "rental.kitchen_area": ["one"], "location.metro": []};
+    const platforms = Object.fromEntries(["one", "two"].map(p => [p, {name: p, labels: {}}]));
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => response(url.endsWith("/editor") ? {
+      cardVersion: "2", card: card(), addressSuggestions: false, photoLimit: 12, platforms,
+      groups: [{id: "group.main", name: "Главное", fields: Object.keys(forms).map(id => field(id))}],
+    } : url.endsWith("/fields") ? {fields: Object.entries(forms).map(([id, to]) =>
+      state(id, to.some(p => body(init).draft.platforms.includes(p))))} : {drafts: []})));
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId", "test"); fixture.detectChanges();
     const c = fixture.componentInstance;
-    await vi.waitFor(() => { fixture.detectChanges(); expect(c.store.schema).not.toBeNull(); });
     const marked = () => {
       fixture.detectChanges();
       return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll(".field"))
         .filter(f => f.querySelector(".not-transferred")?.textContent?.includes("пока не переносится"))
         .map(f => f.querySelector("input")!.id);
     };
-    expect(marked()).toEqual(["rental-location.metro"]);
-    c.togglePlatform("one", false);
-    expect(marked()).toEqual(["rental-rental.kitchen_area", "rental-location.metro"]);
+    await vi.waitFor(() => expect(marked()).toEqual(["rental-location.metro"]));
+    c.store.setPlatform("one", false);
+    await vi.waitFor(() => expect(marked()).toEqual(["rental-rental.kitchen_area", "rental-location.metro"]));
+    fixture.destroy();
+  });
+  it("shows a field that depends on a number exactly when the server does", async () => {
+    // The server's answer: separate rooms apply to two rooms and more.
+    const rooms = field("rental.room_configuration", "Комнат", "enum"), separate = field("rental.separate_rooms", "Раздельных");
+    const requests: Record<string, unknown>[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.endsWith("/fields")) {
+        const values = body(init).draft.values;
+        requests.push(values);
+        return response({fields: [{...state(rooms.id), choices: ["1", "2"]},
+          ...(values[rooms.id] === "1" ? [] : [state(separate.id)])]});
+      }
+      return response(url.endsWith("/editor") ? {cardVersion: "2", card: card(), addressSuggestions: false, photoLimit: 12,
+        platforms: {realt: {name: "Realt", labels: {}}}, groups: [{id: "group.main", name: "Главное", fields: [rooms, separate]}]}
+        : url.endsWith("/drafts") ? {drafts: []} : {revision: 1});
+    }));
+    const fixture = TestBed.createComponent(RentalEditorComponent);
+    fixture.componentRef.setInput("workspaceId", "test"); fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const shown = () => { fixture.detectChanges(); return !!el.querySelector('[id="rental-rental.separate_rooms"]'); };
+    await vi.waitFor(() => expect(shown()).toBe(true));
+    const select = el.querySelector<HTMLSelectElement>('[id="rental-rental.room_configuration"]')!;
+    expect(Array.from(select.options).map(o => o.value)).toEqual(["", "1", "2"]);
+    select.value = "1"; select.dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(shown()).toBe(false), {timeout: 3000});
+    expect(requests.at(-1)).toEqual({"rental.room_configuration": "1"});
     fixture.destroy();
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
-    c.store.schema = {cardVersion:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,photoLimit:12,platforms:{}};
-    c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},checksPassed:false,form:[],manual:[],publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
+    c.store.schema = {cardVersion:"2",card:card(),groups:[{id:"group.main",name:"Main",fields:[field("rental.area","Жилая площадь")]}],addressSuggestions:false,photoLimit:12,platforms:{}};
+    c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},checksPassed:false,form:[],manual:[],issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
     expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
   });
   it("renders delete confirmation, supports cancellation and updates the saved list", async () => {
     const fetch = vi.fn(async (url: string) => {
       if (url.endsWith("/editor")) return response({
-        cardVersion: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
+        cardVersion: "1", card: card(), groups: [], addressSuggestions: false, photoLimit: 12,
         platforms: Object.fromEntries(["kufar", "onliner", "realt", "domovita"].map((name) => [name, {
-          labels: {}, choiceLabels: {}, constants: {}, bindings: [],
+          name, labels: {},
         }])),
       });
+      if (url.endsWith("/fields")) return response({ fields: [] });
       if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1, publications: [] }] });
       return response({ deleted: true });
     });
@@ -219,7 +252,7 @@ describe("rental preparation editor", () => {
     finish(response({ revision: 2 }));
     await Promise.all([saving, queuedSave, deleting]);
     await vi.advanceTimersByTimeAsync(2000);
-    expect(calls.filter((call) => call.body?.draft)).toHaveLength(1);
+    expect(calls.filter((call) => call.url.includes("/drafts/") && call.body?.draft)).toHaveLength(1);
     expect(calls.find((call) => call.url.endsWith("/delete"))?.body).toEqual({ revision: 2 });
     expect(c.store.drafts).toEqual([]);
     expect(c.store.id).not.toBe(id);
@@ -304,25 +337,6 @@ describe("rental preparation editor", () => {
     expect(c.query).toBe("");
     c.ngOnDestroy();
   });
-  it("keeps dependent choices unknown until their typed prerequisite is chosen", () => {
-    const condition = {
-      not: { option_id: "owner", operator: "equals", value: true },
-    };
-    expect(applicable(condition, {})).toBeNull();
-    expect(applicable(condition, { owner: false })).toBe(true);
-    expect(
-      applicable(
-        { option_id: "town", operator: "equals", value: 5 },
-        { town: "5" },
-      ),
-    ).toBe(false);
-    expect(
-      applicable(
-        { option_id: "town", operator: "equals", value: 5 },
-        { town: 5 },
-      ),
-    ).toBe(true);
-  });
   it("ignores a stale address response after the query changes", async () => {
     const c = new AddressInputComponent();
     c.workspaceId = "owner";
@@ -376,6 +390,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates coordinates when the confirmed address changes", () => {
     const c = new RentalEditorComponent();
+    c.store.schema = {card:card([], addressFields), groups:[], cardVersion:"2", addressSuggestions:false, photoLimit:12, platforms:{}};
     c.store.draft.address = {
       provider: "dadata",
       label: "Old",
@@ -442,11 +457,9 @@ describe("rental preparation editor", () => {
     const typed = (label: string) => ({provider:"manual", label, countryIso:"BY", settlement:"", street:"", house:"", confirmed:false});
     function editor() {
       const c = new RentalEditorComponent();
-      c.store.schema = {card:{version:2,addressDependentFacts:facts}, canonicalValues:{}, cardVersion:"2", addressSuggestions:true,photoLimit:12,
-        category:{options:[{id:"group.near",name:"Рядом с домом",type:"group",description:"",fill_rule:{},options:[
-          {id:facts[0],name:"Метро",type:"text",description:"",fill_rule:{},options:[]},
-          {id:facts[1],name:"Жилой комплекс",type:"text",description:"",fill_rule:{},options:[]}]}]},
-        platforms:{example:{labels:{},choiceLabels:{},constants:{},bindings:[]}}};
+      c.store.schema = {card:card(facts, addressFields), cardVersion:"2", addressSuggestions:true,photoLimit:12,
+        groups:[{id:"group.near",name:"Рядом с домом",fields:[field(facts[0], "Метро"), field(facts[1], "Жилой комплекс")]}],
+        platforms:{example:{name:"example",labels:{}}}};
       c.store.draft.address = house(18);
       c.store.draft.values = {[facts[0]]:"Немига", [facts[1]]:"Новая Боровая", "location.latitude":"53.9"};
       c.store.draft.aiEvidence = {[facts[0]]:"рядом метро Немига"};
@@ -506,7 +519,7 @@ describe("rental preparation editor", () => {
     it("shows what was reset with a Вернуть button", async () => {
       const prepared = editor();
       prepared.ngOnDestroy();
-      vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? prepared.store.schema : {drafts: []})));
+      vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? prepared.store.schema : url.endsWith("/fields") ? {fields: []} : {drafts: []})));
       const fixture = TestBed.createComponent(RentalEditorComponent);
       fixture.componentRef.setInput("workspaceId", "owner");
       fixture.detectChanges();

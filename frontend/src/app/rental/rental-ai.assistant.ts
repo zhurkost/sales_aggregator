@@ -35,10 +35,10 @@ export class RentalAiAssistant {
         this.replaceAddress(result.address); count++; appliedAddress = true;
       } else if (result.address && (result.address.label !== current?.label ||
         (!current?.confirmed && JSON.stringify(result.address) !== JSON.stringify(current)))) this.address = result.address;
-      const fields = this.store.schema.category.options.flatMap(g => g.options);
+      const fields = this.store.schema.groups.flatMap(g => g.fields);
       for (const item of result.suggestions) {
         if (!fields.some(f => f.id === item.field)) continue;
-        if (this.address && this.store.schema.card?.addressDependentFacts.includes(item.field)) { this.addressFacts.push(item); continue; }
+        if (this.address && this.store.schema.card.addressDependentFacts.includes(item.field)) { this.addressFacts.push(item); continue; }
         const existing = this.store.draft.values[item.field];
         if (!hasValue(existing)) {
           this.store.draft.values[item.field] = item.value;

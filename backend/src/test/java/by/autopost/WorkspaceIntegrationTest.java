@@ -61,6 +61,8 @@ class WorkspaceIntegrationTest {
     getJson("rental/drafts", "", 401);
     postJson("rental/address/suggest", "", object("query", "Минск"), 401);
     postJson("rental/prepare", "", object(), 401);
+    postJson("rental/fields", "", object(), 401);
+    postJson("rental/normalize", "", object(), 401);
     postJson("rental/extension-config", "", object(), 401);
     postJson("rental/analyze", "", object("text", "Сдам квартиру"), 401);
     var account = register();
@@ -86,6 +88,7 @@ class WorkspaceIntegrationTest {
     requests.put("rental/drafts/" + id, object("revision", 0, "draft", oversized));
     requests.put("rental/normalize", oversized);
     requests.put("rental/prepare", object("id", id, "draft", oversized));
+    requests.put("rental/fields", object("draft", oversized));
     requests.put("rental/extension-config", object("id", id, "draft", oversized));
     for (var request : requests.entrySet()) {
       var response = postJson(request.getKey(), account.cookie(), request.getValue(), 413);
@@ -97,6 +100,50 @@ class WorkspaceIntegrationTest {
     // A card just under the limit passes the size check.
     var fits = object("values", object("listing.description", "x".repeat(249_000)));
     postJson("rental/drafts/" + id, account.cookie(), object("revision", 0, "draft", fits), 200);
+  }
+
+  @Test
+  void updatingTheCardFieldsKeepsTheDocumentAndTheEditorGetsFieldStates() throws Exception {
+    var account = register();
+    String version = text(getJson("rental/editor", account.cookie(), 200), "cardVersion");
+    var card =
+        object(
+            "modelVersion",
+            2,
+            "cardVersion",
+            "before",
+            "values",
+            object("rental.room_configuration", "1"),
+            "aiEvidence",
+            object("rental.room_configuration", "1 комната"),
+            "platforms",
+            List.of("realt"),
+            "address",
+            object("label", "Минск", "provider", "manual", "confirmed", false));
+    var accepted =
+        parse(
+            postJson("rental/normalize", account.cookie(), card, 200)
+                .getResponse()
+                .getContentAsString());
+    // Every key of the editor's document stays; only the card version moves.
+    assertEquals(version, text(accepted, "cardVersion"));
+    ((com.fasterxml.jackson.databind.node.ObjectNode) accepted).put("cardVersion", "before");
+    assertEquals(card, accepted);
+    var states =
+        parse(
+            postJson("rental/fields", account.cookie(), object("draft", card), 200)
+                .getResponse()
+                .getContentAsString());
+    var shown = new java.util.HashSet<String>();
+    for (var state : states.path("fields")) shown.add(text(state, "id"));
+    assertTrue(shown.contains("rental.room_configuration"));
+    assertFalse(shown.contains("rental.separate_rooms"));
+    postJson("rental/fields", account.cookie(), object("draft", "not a card"), 400);
+    postJson(
+        "rental/fields",
+        account.cookie(),
+        object("draft", object("values", object("x", object("nested", true)))),
+        400);
   }
 
   @Test

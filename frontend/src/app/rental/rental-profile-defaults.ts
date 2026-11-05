@@ -14,11 +14,9 @@ export function applyProfileDefaults(
 ): boolean {
   let changed = false;
   const fields = new Set(
-    schema?.category.options.flatMap((group) =>
-      group.options.map((field) => field.id),
-    ),
+    schema?.groups.flatMap((group) => group.fields.map((field) => field.id)),
   );
-  for (const rule of schema?.card?.profileDefaults || []) {
+  for (const rule of schema?.card.profileDefaults || []) {
     if (!fields.has(rule.field) || Object.hasOwn(draft.values, rule.field))
       continue;
     const value = profile[rule.setting]?.trim();

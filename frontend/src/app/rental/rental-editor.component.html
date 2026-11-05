@@ -42,7 +42,7 @@
         }
       </section>
       <section class="main-section" aria-label="Основные характеристики">
-        <app-rental-fields class="main-fields" [fields]="view.mainFields" [values]="store.draft.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.draft.aiEvidence || {}" [untransferred]="view.untransferred" [disabled]="store.busy" (edit)="editField($event)" />
+        <app-rental-fields class="main-fields" [fields]="view.mainFields" [values]="store.draft.values" [states]="store.fields.fields" [labels]="store.schema.card.valueLabels" [evidence]="store.draft.aiEvidence || {}" [untransferred]="view.untransferred" [disabled]="store.busy" (edit)="editField($event)" />
       </section>
       <section class="extra-section">
         <div class="extra-heading"><h2>Дополнительно</h2><button type="button" class="text-button" (click)="openPanel('parameters')">Все параметры @if (view.additionalFilled.length) { · {{ view.additionalFilled.length }} }</button></div>
@@ -57,7 +57,7 @@
       </section>
       <div class="platform-row" role="group" aria-label="Площадки">
         @for (p of store.platforms; track p) {
-          <label [class.selected]="store.draft.platforms.includes(p)"><input type="checkbox" [checked]="store.draft.platforms.includes(p)" (change)="togglePlatform(p, $any($event.target).checked)" />{{ view.platformName(p) }}</label>
+          <label [class.selected]="store.draft.platforms.includes(p)"><input type="checkbox" [checked]="store.draft.platforms.includes(p)" (change)="store.setPlatform(p, $any($event.target).checked)" />{{ view.platformName(p) }}</label>
         }
       </div>
     </fieldset>
@@ -96,7 +96,7 @@
         <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="view.parameterSearch" (ngModelChange)="view.parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="view.filledOnly" />Заполненные</label></div>
         <div class="drawer-body">
           @for (group of view.additionalGroups; track group.id) {
-            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.options" [values]="store.draft.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.draft.aiEvidence || {}" [untransferred]="view.untransferred" [disabled]="store.busy" (edit)="editField($event)" /></section>
+            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.fields" [values]="store.draft.values" [states]="store.fields.fields" [labels]="store.schema.card.valueLabels" [evidence]="store.draft.aiEvidence || {}" [untransferred]="view.untransferred" [disabled]="store.busy" (edit)="editField($event)" /></section>
           } @empty { <p class="empty-state">Параметры не найдены</p> }
         </div>
       } @else if (panel === 'saved') {
@@ -106,8 +106,8 @@
       } @else {
         @if (store.check.stale) { <p role="status">Данные изменены. Показан результат предыдущей проверки.</p> }
         <div class="drawer-body">@for (result of store.results; track result.platform) { <section class="prepared-platform"><h3>{{ view.platformName(result.platform) }}</h3>
-          <h4>Уйдёт в форму</h4>@if (result.form.length) { <dl>@for (field of view.formValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl> } @else { <p class="empty-state">Нет заполненных полей</p> }
-          @if (result.manual.length) { <h4>Вручную на площадке</h4><dl>@for (field of view.manualValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }} <small>{{ field.reason }}</small></dd> }</dl> }
+          <h4>Уйдёт в форму</h4>@if (result.form.length) { <dl>@for (field of result.form; track field.field) { <dt>{{ field.name }}</dt><dd>{{ field.text }}</dd> }</dl> } @else { <p class="empty-state">Нет заполненных полей</p> }
+          @if (result.manual.length) { <h4>Вручную на площадке</h4><dl>@for (field of result.manual; track field.field) { <dt>{{ field.name }}</dt><dd>{{ field.text }} <small>{{ field.reason }}</small></dd> }</dl> }
         </section> }</div>
       }
       <footer class="drawer-footer"><span role="status">{{ store.status }}</span><button type="button" class="primary" (click)="closePanel()">Готово</button></footer>

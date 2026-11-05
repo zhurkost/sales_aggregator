@@ -9,48 +9,35 @@ const schema: EditorSchema = {
   cardVersion: "test",
   addressSuggestions: false,
   photoLimit: 12,
-  canonicalValues: {},
   card: {
     version: 2,
+    valueLabels: {},
     addressDependentFacts: [],
+    addressFields: [],
     profileDefaults: [
       { setting: "phone", field: "contact.phone" },
       { setting: "contactPerson", field: "contact.name" },
       { setting: "company", field: "contact.organization_name" },
     ],
   },
-  category: {
-    options: [
-      {
-        id: "group.contact",
-        name: "Контакты",
-        type: "group",
-        description: "",
-        fill_rule: {},
-        options: [
-          "contact.phone",
-          "contact.name",
-          "contact.organization_name",
-        ].map((id) => ({
-          id,
-          name: id,
-          type: "text",
-          description: "",
-          fill_rule: {},
-          options: [],
-        })),
-      },
-    ],
-  },
-  platforms: {
-    kufar: {
-      name: "Kufar",
-      labels: {},
-      choiceLabels: {},
-      constants: {},
-      bindings: [],
+  groups: [
+    {
+      id: "group.contact",
+      name: "Контакты",
+      fields: ["contact.phone", "contact.name", "contact.organization_name"].map((id) => ({
+        id,
+        name: id,
+        type: "text",
+      })),
     },
-  },
+  ],
+  platforms: { kufar: { name: "Kufar", labels: {} } },
+};
+/** The server's answer for this schema: every field is shown. */
+const shown = {
+  fields: schema.groups.flatMap((g) =>
+    g.fields.map((f) => ({ id: f.id, required: false, transferred: true, choices: [] })),
+  ),
 };
 const report: Prepared[] = [
   {
@@ -59,7 +46,6 @@ const report: Prepared[] = [
     checksPassed: false,
     form: [],
     manual: [],
-    publicationReady: false,
     issues: [
       {
         field: "description",
@@ -81,7 +67,9 @@ function mockApi() {
           ? { drafts: [] }
           : url.endsWith("/prepare")
             ? { platforms: report }
-            : { revision: 1 },
+            : url.endsWith("/fields")
+              ? shown
+              : { revision: 1 },
     ),
   );
   vi.stubGlobal("fetch", fetch);
@@ -104,7 +92,7 @@ describe("rental editing and validation", () => {
         fixture.detectChanges();
         expect(c.store.schema).not.toBeNull();
       });
-      c.store.schema!.platforms["onliner"] = { name: "Onliner", labels: {}, choiceLabels: {}, constants: {}, bindings: [] };
+      c.store.schema!.platforms["onliner"] = { name: "Onliner", labels: {} };
       const reason = "Ссылка на YouTube на Kufar доступна партнёрам площадки; перенос ссылки не настроен.";
       c.store.results = [
         {
@@ -112,21 +100,19 @@ describe("rental editing and validation", () => {
           values: {},
           // The server turns automatic submission off while values are entered by hand.
           checksPassed: false,
-          publicationReady: false,
           issues: [{ field: "", source: "", code: "manual_fields", message: "Часть заполненных полей нужно ввести на площадке вручную — автоматическая подача выключена." }],
           form: [
-            { field: "kufar.title", name: "Название объявления", value: "Квартира у парка" },
-            { field: "kufar.price", name: "Цена", value: 900 },
+            { field: "kufar.title", name: "Название объявления", text: "Квартира у парка" },
+            { field: "kufar.price", name: "Цена", text: "900" },
           ],
-          manual: [{ field: "kufar.video", name: "Видео на YouTube", value: ["https://youtu.be/x"], reason }],
+          manual: [{ field: "kufar.video", name: "Видео на YouTube", text: "https://youtu.be/x", reason }],
         },
         {
           platform: "onliner",
           values: {},
           checksPassed: true,
-          publicationReady: false,
           issues: [],
-          form: [{ field: "onliner.description", name: "Описание", value: "Текст" }],
+          form: [{ field: "onliner.description", name: "Описание", text: "Текст" }],
           manual: [],
         },
       ];
@@ -308,7 +294,9 @@ describe("rental editing and validation", () => {
           ? schema
           : url.endsWith("/drafts")
             ? { drafts: [other] }
-            : { revision: ++revision },
+            : url.endsWith("/fields")
+              ? shown
+              : { revision: ++revision },
       ),
     );
     vi.stubGlobal("fetch", fetch);
@@ -336,8 +324,11 @@ describe("rental editing and validation", () => {
         confirmed: false,
       });
       await vi.advanceTimersByTimeAsync(1300);
+      // Saves and the fields the server shows; the list is not read again.
       expect(
-        fetch.mock.calls.map(([url, init]) => `${init?.method} ${url}`),
+        fetch.mock.calls
+          .map(([url, init]) => `${init?.method} ${url}`)
+          .filter((call) => !call.endsWith("/fields")),
       ).toEqual(Array(4).fill(`POST /api/workspace/rental/drafts/${c.store.id}`));
       expect(c.store.drafts).toEqual([
         {
@@ -460,13 +451,13 @@ describe("rental contacts from the active profile", () => {
     });
     expect(store.draft.address).toBeNull();
     expect(store.dirty).toBe(false);
-    expect(fetch.mock.calls.some(([, init]) => init?.method === "POST")).toBe(
-      false,
-    );
+    const saves = () =>
+      fetch.mock.calls.filter(([url, init]) => init?.method === "POST" && url.includes("/drafts/"));
+    expect(saves()).toEqual([]);
     store.draft.values["listing.description"] = "Квартира";
     store.changed();
     await store.save();
-    const write = fetch.mock.calls.find(([, init]) => init?.method === "POST")!;
+    const write = saves()[0];
     expect(
       JSON.parse(String(write[1]?.body)).draft.values["contact.phone"],
     ).toBe("+375290000000");
@@ -574,6 +565,8 @@ describe("rental revision conflicts", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async (url: string, init?: RequestInit) => {
+        // The fields the server shows come with every pause too; saves are what this is about.
+        if (url.endsWith("/fields")) return response(shown);
         calls.push({ url, body: init?.body ? JSON.parse(String(init.body)) : null });
         return url.endsWith("/drafts/" + original)
           ? response(conflictBody, 409)
@@ -626,6 +619,7 @@ describe("rental revision conflicts", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async (url: string, init?: RequestInit) => {
+        if (url.endsWith("/fields")) return response(shown);
         const body = init?.body ? JSON.parse(String(init.body)) : null;
         calls.push({ method: init?.method, url, body });
         if (url.endsWith("/editor")) return response(schema);

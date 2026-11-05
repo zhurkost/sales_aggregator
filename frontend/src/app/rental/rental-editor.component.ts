@@ -67,7 +67,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     if (this.store.busy) return;
     this.replaceAddress(address);
     this.ai.address = null; this.ai.addressFacts = [];
-    const dependent = this.store.schema?.card?.addressDependentFacts || [];
+    const dependent = this.store.schema?.card.addressDependentFacts || [];
     this.ai.conflicts = this.ai.conflicts.filter(item => !dependent.includes(item.field));
     this.store.changed();
   }
@@ -77,8 +77,8 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     const previous = this.house.address, cleared = blankAddress(address);
     this.store.draft.address = address;
     this.resetFacts = null;
-    // Coordinates and native address parts belong to any address text.
-    for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
+    // The values derived from the address (parts, coordinates) belong to any address text.
+    for (const key of this.store.schema?.card.addressFields || [])
       delete this.store.draft.values[key];
     // Nearby facts belong to a confirmed house: typing and manual parts keep them.
     if (cleared || (address?.confirmed && previous && houseKey(previous) !== houseKey(address))) this.dropFacts();
@@ -86,7 +86,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   }
   private dropFacts() {
     const values: Record<string, JsonValue> = {}, evidence: Record<string, string> = {};
-    for (const key of this.store.schema?.card?.addressDependentFacts || []) {
+    for (const key of this.store.schema?.card.addressDependentFacts || []) {
       if (hasValue(this.store.draft.values[key])) {
         values[key] = this.store.draft.values[key];
         const quote = this.store.draft.aiEvidence?.[key];
@@ -171,13 +171,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     }
     (this.store.draft.resolvedLegacy ||= []).push(item);
     this.store.draft.legacy!.splice(index, 1);
-    this.store.changed();
-  }
-  togglePlatform(p: string, checked: boolean) {
-    if (this.store.busy) return;
-    this.store.draft.platforms = checked
-      ? [...new Set([...this.store.draft.platforms, p])]
-      : this.store.draft.platforms.filter((x) => x !== p);
     this.store.changed();
   }
   @HostListener("window:beforeunload", ["$event"])

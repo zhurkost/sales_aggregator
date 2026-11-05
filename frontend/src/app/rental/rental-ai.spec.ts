@@ -3,11 +3,13 @@ import { TestBed } from "@angular/core/testing";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { EditorSchema, Field, RentalAiResult } from "./rental-api";
 
-const field = (id:string,type="text"):Field => ({id,name:id,description:"",type,options:[],fill_rule:{}});
-const schema:EditorSchema = {cardVersion:"2",category:{options:[
-  { ...field("group.main","group"),options:[field("price"),field("rooms","enum")] },
-  { ...field("group.amenities","group"),name:"Удобства", options:[field("wifi","boolean"),field("washing","boolean")] },
-]},canonicalValues:{rooms:["1","2"]},platforms:{one:{name:"Площадка",labels:{},choiceLabels:{},constants:{},bindings:[]}},addressSuggestions:false,photoLimit:12};
+const field = (id:string,type="text"):Field => ({id,name:id,type});
+const schema:EditorSchema = {cardVersion:"2",groups:[
+  { id:"group.main",name:"group.main",fields:[field("price"),field("rooms","enum")] },
+  { id:"group.amenities",name:"Удобства",fields:[field("wifi","boolean"),field("washing","boolean")] },
+],card:{version:2,valueLabels:{},addressDependentFacts:[],addressFields:[],profileDefaults:[]},platforms:{one:{name:"Площадка",labels:{}}},addressSuggestions:false,photoLimit:12};
+/** The server's answer for this schema: every field is shown. */
+const shown = {fields: schema.groups.flatMap(g => g.fields.map(f => ({id:f.id, required:false, transferred:true, choices:f.id === "rooms" ? ["1","2"] : []})))};
 const result:RentalAiResult = {cardVersion:"2",model:"test",questions:[],address:null,ignored:0,suggestions:[
   {field:"price",value:"1500",quote:"1500 BYN"},{field:"wifi",value:false,quote:"без Wi-Fi"},{field:"washing",value:true,quote:"стиральная машина"},
 ]};
@@ -15,7 +17,7 @@ const response=(data:unknown,status=200)=>new Response(JSON.stringify(data),{sta
 function setup(data:RentalAiResult=result) {
   const c = new RentalEditorComponent(); c.store.schema=structuredClone(schema); c.store.draft.cardVersion="2"; c.store.draft.platforms=["one"];
   c.store.draft.values["listing.description"]="Сдам квартиру, 1500 BYN, без Wi-Fi, есть стиральная машина.";
-  const fetch=vi.fn(async (url:string)=>response(url.endsWith("/analyze")?data:url.endsWith("/drafts")?{drafts:[]}:{revision:1}));
+  const fetch=vi.fn(async (url:string)=>response(url.endsWith("/analyze")?data:url.endsWith("/drafts")?{drafts:[]}:url.endsWith("/fields")?{fields:[]}:{revision:1}));
   vi.stubGlobal("fetch",fetch); return {c,fetch};
 }
 afterEach(()=>{vi.unstubAllGlobals();vi.useRealTimers();});
@@ -53,7 +55,7 @@ describe("compact rental editor with AI",()=>{
   it("preserves a confirmed address and clears stale dependencies only when replacement is accepted",async()=>{
     const address={provider:"dadata",countryIso:"BY",label:"Новый адрес",settlement:"Минск",street:"Новая",house:"2",confirmed:true};
     const {c}=setup({...result,address});
-    c.store.schema!.card={version:2,addressDependentFacts:["metro"]};
+    c.store.schema!.card={...c.store.schema!.card,addressDependentFacts:["metro"]};
     c.store.draft.address={...address,label:"Старый адрес",street:"Старая",house:"1",latitude:"53.9"}; c.store.draft.values.metro="old";
     await c.ai.fillFromDescription();expect(c.store.draft.address.label).toBe("Старый адрес");expect(c.ai.address?.label).toBe("Новый адрес");expect(c.store.draft.values.metro).toBe("old");
     c.ai.acceptAiAddress();expect(c.store.draft.address.label).toBe("Новый адрес");expect(c.store.draft.values.metro).toBeUndefined();
@@ -62,7 +64,7 @@ describe("compact rental editor with AI",()=>{
   it("accepting an unconfirmed AI address follows the typing rule and keeps nearby facts",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Новый адрес",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address});
-    c.store.schema!.card={version:2,addressDependentFacts:["metro"]};
+    c.store.schema!.card={...c.store.schema!.card,addressDependentFacts:["metro"]};
     c.store.draft.address={...address,label:"Старый адрес",confirmed:true,latitude:"53.9"}; c.store.draft.values.metro="old";
     await c.ai.fillFromDescription();c.ai.acceptAiAddress();
     expect(c.store.draft.address.label).toBe("Новый адрес");expect(c.store.draft.address.confirmed).toBe(false);
@@ -101,8 +103,8 @@ describe("compact rental editor with AI",()=>{
   it("keeps address-dependent suggestions together and discards them after a manual address change",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Адрес B",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address,suggestions:[{field:"metro",value:"Метро B",quote:"Метро B"}]});
-    c.store.schema!.card={version:2,addressDependentFacts:["metro"]};
-    c.store.schema!.category.options[1].options.push(field("metro"));
+    c.store.schema!.card={...c.store.schema!.card,addressDependentFacts:["metro"]};
+    c.store.schema!.groups[1].fields.push(field("metro"));
     c.store.draft.address={...address,label:"Адрес A"};
     await c.ai.fillFromDescription();expect(c.store.draft.values.metro).toBeUndefined();
     c.ai.acceptAiAddress();expect(c.store.draft.address.label).toBe("Адрес B");expect(c.store.draft.values.metro).toBe("Метро B");
@@ -118,9 +120,9 @@ describe("compact rental editor with AI",()=>{
     await c.ai.fillFromDescription();expect(c.store.error).toBe("ИИ недоступен");expect(c.description).toContain("1500 BYN");expect(c.store.draft.values.price).toBe("1600");expect(c.store.busy).toBe(false);c.ngOnDestroy();
   });
   it("has no accordions, hides rare inputs, and lets users find and edit them once",async()=>{
-    vi.stubGlobal("fetch",vi.fn(async(url:string)=>response(url.endsWith("/editor")?schema:{drafts:[]})));
+    vi.stubGlobal("fetch",vi.fn(async(url:string)=>response(url.endsWith("/editor")?schema:url.endsWith("/fields")?shown:{drafts:[]})));
     const fixture=TestBed.createComponent(RentalEditorComponent);fixture.componentRef.setInput("workspaceId","test");fixture.detectChanges();
-    await vi.waitFor(()=>{fixture.detectChanges();expect(fixture.componentInstance.store.schema).not.toBeNull();});
+    await vi.waitFor(()=>{fixture.detectChanges();expect(fixture.componentInstance.store.fields.fields.size).toBe(4);});
     const c=fixture.componentInstance, el=fixture.nativeElement as HTMLElement;
     expect(el.querySelectorAll("details, .fine-print, .field-platforms")).toHaveLength(0);
     expect(el.querySelector('[id="rental-wifi"]')).toBeNull();

@@ -9,6 +9,7 @@ import type {
 } from "./rental-models";
 import { RentalApiError, rentalApi } from "./rental-api";
 import { RentalCardCheck } from "./rental-card-check";
+import { RentalFieldStates } from "./rental-field-states";
 import {
   applyProfileDefaults,
   type RentalProfile,
@@ -50,6 +51,11 @@ export class RentalDraftStore {
     draft: this.draft,
     destroyed: this.destroyed,
   }));
+  /** The card fields to show, as the server answers for this card. */
+  readonly fields = new RentalFieldStates(
+    () => ({ workspace: this.workspaceId(), draft: this.draft, destroyed: this.destroyed }),
+    (message) => (this.error = message),
+  );
   get results() {
     return this.check.results;
   }
@@ -64,16 +70,25 @@ export class RentalDraftStore {
     try {
       this.schema = await rentalApi<EditorSchema>(this.workspaceId(), "editor");
       this.draft.cardVersion = this.schema.cardVersion;
-      this.draft.modelVersion = this.schema.card?.version;
+      this.draft.modelVersion = this.schema.card.version;
       this.draft.platforms = this.platforms;
       applyProfileDefaults(this.draft, this.schema, this.profile());
-      await this.refresh();
+      await Promise.all([this.refresh(), this.fields.refresh()]);
     } catch (e) {
       this.error = (e as Error).message;
     }
   }
   get platforms() {
     return Object.keys(this.schema?.platforms || {});
+  }
+  /** Chooses a platform or leaves it out; the fields it shows come at once. */
+  setPlatform(platform: string, chosen: boolean) {
+    if (this.busy) return;
+    this.draft.platforms = chosen
+      ? [...new Set([...this.draft.platforms, platform])]
+      : this.draft.platforms.filter((p) => p !== platform);
+    this.changed();
+    void this.fields.refresh();
   }
   /** Full list from the server: on editor load and when «Мои квартиры» opens. */
   async refresh() {
@@ -120,6 +135,7 @@ export class RentalDraftStore {
     this.editVersion++;
     this.dirty = true;
     this.check.invalidate();
+    this.fields.schedule();
     this.status = "Есть изменения";
     clearTimeout(this.timer);
     this.timer = setTimeout(async () => {
@@ -155,6 +171,7 @@ export class RentalDraftStore {
       this.schema = schema;
       this.draft = migrated;
       this.check.clear();
+      void this.fields.refresh();
       this.onTransition();
       this.changed();
       this.error = "";
@@ -329,6 +346,7 @@ export class RentalDraftStore {
     this.status = status;
     if (applyProfileDefaults(this.draft, this.schema, this.profile()))
       this.changed();
+    void this.fields.refresh();
     if (this.schema && this.draft.cardVersion !== this.schema.cardVersion)
       this.error =
         "Правила обновились. Нажмите «Обновить поля карточки» — введённые сведения сохранятся.";
@@ -356,7 +374,7 @@ export class RentalDraftStore {
     this.photos = [];
     this.check.clear();
     this.draft = {
-      modelVersion: this.schema?.card?.version,
+      modelVersion: this.schema?.card.version,
       cardVersion: this.schema?.cardVersion || "",
       values: {},
         platforms: this.platforms,
@@ -366,6 +384,7 @@ export class RentalDraftStore {
     this.dirty = false;
     this.conflict = false;
     this.pendingDelete = null;
+    void this.fields.refresh();
   }
   async remove(id: string) {
     if (this.busy || this.pendingDelete !== id) return;
@@ -415,5 +434,6 @@ export class RentalDraftStore {
     this.destroyed = true;
     clearTimeout(this.timer);
     this.check.clear();
+    this.fields.clear();
   }
 }

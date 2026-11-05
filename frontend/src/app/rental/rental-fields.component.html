@@ -13,14 +13,14 @@
         </div>
       } @else if (field.type === 'multi_enum') {
         <div class="choices" [id]="'rental-' + field.id" tabindex="-1" role="group" [attr.aria-label]="name(field)">
-          @for (choice of choices[field.id] || []; track choice) {
+          @for (choice of choices(field); track choice) {
             <label><input type="checkbox" [disabled]="disabled" [checked]="checked(field, choice)" (change)="toggle(field, choice, $any($event.target).checked)" />{{ label(choice) }}</label>
           }
         </div>
-      } @else if (choices[field.id]?.length) {
+      } @else if (choices(field).length) {
         <select [id]="'rental-' + field.id" [disabled]="disabled" [ngModel]="value(field)" (ngModelChange)="set(field, $event)">
           <option value="">Не указано</option>
-          @for (choice of choices[field.id]; track choice) { <option [value]="choice">{{ label(choice) }}</option> }
+          @for (choice of choices(field); track choice) { <option [value]="choice">{{ label(choice) }}</option> }
         </select>
       } @else if (field.type === 'files') {
         <textarea [id]="'rental-' + field.id" [disabled]="disabled" rows="3" placeholder="Ссылки на файлы, каждая с новой строки" [ngModel]="value(field)" (ngModelChange)="set(field, $event)"></textarea>

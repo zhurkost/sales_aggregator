@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Field, JsonValue } from "./rental-api";
+import type { Field, FieldState, JsonValue } from "./rental-api";
 
 @Component({
   selector: "app-rental-fields",
@@ -12,7 +12,8 @@ import { Field, JsonValue } from "./rental-api";
 export class RentalFieldsComponent {
   @Input() fields: Field[] = [];
   @Input() values: Record<string, JsonValue> = {};
-  @Input() choices: Record<string, string[]> = {};
+  /** What the server says of each shown field: its options among others. */
+  @Input() states = new Map<string, FieldState>();
   @Input() labels: Record<string, string> = {};
   @Input() evidence: Record<string, string> = {};
   /** Ids of fields no selected platform receives yet. */
@@ -23,6 +24,7 @@ export class RentalFieldsComponent {
     return field.id.includes("area") && !field.name.includes("м²") ? field.name + ", м²" : field.name;
   }
   label(value: string) { return this.labels[value] || value; }
+  choices(field: Field) { return this.states.get(field.id)?.choices || []; }
   value(field: Field) {
     const value = this.values[field.id];
     return Array.isArray(value) ? value.join("\n") : String(value ?? "");

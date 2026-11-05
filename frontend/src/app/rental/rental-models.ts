@@ -1,23 +1,32 @@
 export type JsonScalar = string | number | boolean | null;
 export type JsonValue = JsonScalar | JsonScalar[];
-export interface Condition {
-  all?: Condition[];
-  any?: Condition[];
-  not?: Condition;
-  option_id?: string;
-  operator?: string;
-  value?: JsonValue;
-}
+/** A card field as the editor draws it; which fields apply is a {@link FieldState}. */
 export interface Field {
   id: string;
   name: string;
-  description: string;
   type: string;
-  options: Field[];
-  fill_rule: Record<string, any>;
-  uiWhen?: Condition;
-  /** Platform rows fed by this field; `transferred`: that platform's form needs the value. */
-  uses?: { platform: string; target: string; when?: Condition; transferred: boolean }[];
+  /** Added to the label, such as «м²». */
+  unit?: string;
+  /** How the editor styles the field: `price`. */
+  role?: string;
+}
+export interface FieldGroup {
+  id: string;
+  name: string;
+  fields: Field[];
+}
+/**
+ * A card field the server shows for the current card and its chosen platforms. Fields without a
+ * state are not shown.
+ */
+export interface FieldState {
+  id: string;
+  /** A chosen platform requires the value. */
+  required: boolean;
+  /** False: no chosen platform's form receives the value yet. */
+  transferred: boolean;
+  /** The options of the field; empty for a field without options. */
+  choices: string[];
 }
 export interface Address {
   provider: string;
@@ -60,25 +69,17 @@ export interface RentalAiResult {
   ignored: number;
 }
 export interface EditorSchema {
-  card?: {valueLabels?: Record<string, string>; version: number; addressDependentFacts: string[]; profileDefaults?: {setting: "phone" | "contactPerson" | "company"; field: string}[]};
-  category: { options: Field[] };
-  canonicalValues: Record<string, string[]>;
-  platforms: Record<
-    string,
-    {
-      name?: string;
-      rules?: any[];
-      deferred?: Record<string, string>;
-      labels: Record<string, string>;
-      choiceLabels: Record<string, Record<string, string>>;
-      constants: Record<string, JsonValue>;
-      bindings: {
-        source: string;
-        target: string;
-        pairs: { from: JsonValue; to: JsonValue }[];
-      }[];
-    }
-  >;
+  card: {
+    version: number;
+    valueLabels: Record<string, string>;
+    addressDependentFacts: string[];
+    /** Card fields derived from the address: any change of the address drops them. */
+    addressFields: string[];
+    profileDefaults: {setting: "phone" | "contactPerson" | "company"; field: string}[];
+  };
+  groups: FieldGroup[];
+  /** Names of the platforms and of their form fields; no rule of a platform. */
+  platforms: Record<string, { name: string; labels: Record<string, string> }>;
   /** Version of the card model (common and card.json); selectors and plans do not change it. */
   cardVersion: string;
   addressSuggestions: boolean;
@@ -114,11 +115,11 @@ export interface RentalPhotos {
   revision: number;
   photos: RentalPhoto[];
 }
-/** A value the extension fills in the platform's form. */
+/** A value the extension fills in the platform's form, as the server words it. */
 export interface FormValue {
   field: string;
   name: string;
-  value: JsonValue;
+  text: string;
 }
 /** A prepared value the form does not receive: the user enters it on the platform. */
 export interface ManualValue extends FormValue {
@@ -134,5 +135,4 @@ export interface Prepared {
   form: FormValue[];
   /** What the user enters on the platform by hand, with the reason. */
   manual: ManualValue[];
-  publicationReady: boolean;
 }

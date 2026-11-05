@@ -382,7 +382,6 @@ describe("publication of incomplete rental cards", () => {
         checksPassed: false,
         form: [],
         manual: [],
-        publicationReady: false,
         issues: [
           { code: "required", field: "phone", message: "Добавьте телефон" },
         ],
