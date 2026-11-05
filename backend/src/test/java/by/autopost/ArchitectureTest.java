@@ -33,7 +33,7 @@ class ArchitectureTest {
                   || source.contains("java.nio.file")
                   || source.contains("rental.persistence"),
               name);
-        if (name.startsWith("model/") || name.startsWith("preparation/")) {
+        if (name.startsWith("model/") || name.startsWith("engine/")) {
           assertFalse(
               source.contains("org.springframework")
                   || source.contains("java.nio.file")
