@@ -1,3 +1,4 @@
+import { EXTENSION_VERSION } from "../../../../lib/workspace";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { RentalPublicationComponent } from "./rental-publication.component";
@@ -24,7 +25,7 @@ describe("publication of incomplete rental cards", () => {
     await c.ngOnChanges();
     expect(c.ready).toBe(false);
     await c.publish();
-    expect(c.error).toContain("0.9.7");
+    expect(c.error).toContain(EXTENSION_VERSION);
     expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
     c.ngOnDestroy(); c.store.destroy();
   });
@@ -119,7 +120,7 @@ describe("publication of incomplete rental cards", () => {
     c.draftId = c.store.id;
     await c.publish();
     expect(extension).not.toHaveBeenCalled();
-    expect(c.error).toContain("0.9.7");
+    expect(c.error).toContain(EXTENSION_VERSION);
     c.ready = true;
     c.mode = "assist";
     vi.spyOn(c.store, "flush").mockResolvedValue();

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { type Photo } from "../../../../lib/workspace";
+import { EXTENSION_VERSION, type Photo } from "../../../../lib/workspace";
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 
@@ -26,6 +26,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) workspaceId = "";
   @Input({ required: true }) draftId = "";
   mode: "automatic" | "assist" = "automatic";
+  readonly extensionVersion = EXTENSION_VERSION;
   busy = false;
   photosBusy = false;
   error = "";
@@ -84,7 +85,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     if (this.busy || this.store.busy || !this.store.draft.platforms.length)
       return;
     if (!this.ready) {
-      this.error = "Установите расширение 0.9.7 и обновите вкладку Автопоста.";
+      this.error = `Установите расширение ${this.extensionVersion} и обновите вкладку Автопоста.`;
       return;
     }
     this.busy = true;

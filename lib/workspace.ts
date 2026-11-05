@@ -1,3 +1,4 @@
+import extensionManifest from "../extension/manifest.json" with { type: "json" };
 export type Photo = { id: string; name: string; type: string; dataUrl: string };
 export type Profile = { id: string; accountId?:string; login: string; name: string };
 let workspaceContext='';
@@ -29,7 +30,7 @@ export async function api<T = Record<string, unknown>>(
     );
   return result as T;
 }
-export const EXTENSION_VERSION = "0.9.8";
+export const EXTENSION_VERSION = extensionManifest.version;
 export function extensionError(detail: unknown, code?: unknown): Error & {code: string} {
   const message = String(detail || 'Не удалось связаться с расширением.');
   // Older installed bridges expose a raw TypeError when their extension has
