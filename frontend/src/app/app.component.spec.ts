@@ -1,5 +1,8 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { TestBed } from "@angular/core/testing";
+import { provideRouter } from "@angular/router";
 import { AppComponent } from "./app.component";
+import { routes } from "./app.routes";
 import { newRecord } from "../../../lib/workspace";
 import { emptyListing } from "../../../lib/listing";
 
@@ -10,8 +13,9 @@ describe("Angular workspace migration", () => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
+  beforeEach(() => TestBed.configureTestingModule({ providers: [provideRouter(routes)] }));
   const setup = () => {
-    app = new AppComponent();
+    app = TestBed.runInInjectionContext(() => new AppComponent());
     app.profile = { id: "owner", name: "Owner", login: "owner" };
     return app;
   };

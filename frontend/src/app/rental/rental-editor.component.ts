@@ -4,6 +4,7 @@ import {
   OnInit,
   OnDestroy,
   HostListener,
+  inject,
 } from "@angular/core";
 import { RentalSavedListComponent } from "./rental-saved-list.component";
 import { RentalAiReviewComponent } from "./rental-ai-review.component";
@@ -17,6 +18,7 @@ import { RentalViewModel } from "./rental-view.model";
 import { hasValue } from "./rental-values";
 import type { RentalProfile } from "./rental-profile-defaults";
 import { RentalPublicationComponent } from "./rental-publication.component";
+import { RentalSession } from "./rental-session";
 import { Address, Field, JsonValue } from "./rental-models";
 import { DESCRIPTION } from "./card-fields.generated";
 
@@ -50,7 +52,8 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   private house: { id: string; address: Address | null } = { id: "", address: null };
   private panelTrigger: HTMLElement | null = null;
   private focusTimer?: ReturnType<typeof setTimeout>;
-  ngOnInit() { return this.store.load(); }
+  private readonly session = inject(RentalSession);
+  ngOnInit() { this.session.attach(this.store); return this.store.load(); }
   loadSaved() { this.confirmLoadSaved = false; return this.store.loadSaved(); }
   setValue(field: Field, value: string) {
     if (this.store.busy) return;
@@ -179,5 +182,5 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   unload(event: BeforeUnloadEvent) {
     if (this.store.dirty) { event.preventDefault(); event.returnValue = ""; }
   }
-  ngOnDestroy() { this.store.destroy(); clearTimeout(this.focusTimer); }
+  ngOnDestroy() { this.session.detach(this.store); this.store.destroy(); clearTimeout(this.focusTimer); }
 }

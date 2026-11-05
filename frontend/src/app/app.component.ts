@@ -4,12 +4,14 @@ import {
   OnDestroy,
   HostListener,
   ChangeDetectionStrategy,
-  ViewChild,
+  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { IconComponent } from "./icon.component";
-import { RentalEditorComponent } from "./rental/rental-editor.component";
+import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
+import { RentalSession } from "./rental/rental-session";
+import { RENTAL_PATH } from "./app.routes";
 import {
   emptyListing,
   fields,
@@ -141,12 +143,19 @@ type PriceResult = {
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, RentalEditorComponent],
+  imports: [CommonModule, FormsModule, IconComponent, RouterOutlet],
   templateUrl: "./app.component.html",
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class AppComponent implements OnInit, OnDestroy {
-  @ViewChild(RentalEditorComponent) rentalEditor?: RentalEditorComponent;
+  private readonly router = inject(Router);
+  private readonly rental = inject(RentalSession);
+  private readonly routes = this.router.events.subscribe((event) => {
+    // The back button and a link reach the route without navigate(): the section follows the URL.
+    if (!(event instanceof NavigationEnd)) return;
+    if (event.urlAfterRedirects.startsWith(RENTAL_PATH)) this.section = "rental";
+    else if (this.section === "rental") this.section = "editor";
+  });
   ready = false;
   unavailable = false;
   profile: Profile | null = null;
@@ -157,7 +166,17 @@ export class AppComponent implements OnInit, OnDestroy {
   name = "";
   busy = "";
   toast = "";
-  view = "editor";
+  private section = "editor";
+  /** The section shown; the rental section is the route /rental, the others are not routed. */
+  get view() {
+    return this.section;
+  }
+  set view(next: string) {
+    this.section = next;
+    const routed = this.router.url.startsWith(RENTAL_PATH);
+    if (next === "rental" && !routed) void this.router.navigateByUrl(RENTAL_PATH);
+    if (next !== "rental" && routed) void this.router.navigateByUrl("/");
+  }
   ad = newRecord({ ...emptyListing });
   ads: AdSummary[] = [];
   dirty = false;
@@ -261,6 +280,7 @@ export class AppComponent implements OnInit, OnDestroy {
     window.addEventListener("focus", this.onFocus);
   }
   ngOnDestroy() {
+    this.routes.unsubscribe();
     this.alive = false;
     this.epoch++;
     clearTimeout(this.autosave);
@@ -323,7 +343,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.revisions.clear();
     this.received.clear();
     this.dirty = false;
-    this.view = "editor";
+    // A reload of the rental route stays on it.
+    this.view = this.router.url.startsWith(RENTAL_PATH) ? "rental" : "editor";
+    this.rental.workspaceId.set(profile.id);
     this.selectedIds.clear();
     const [settings] = await Promise.all([
       api<{ settings: Settings }>("workspace/settings"),
@@ -332,6 +354,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.loadNotifications(),
     ]);
     this.settings = settings.settings;
+    this.rental.profile.set(this.settings);
     this.ad = newRecord(withSellerContacts({ ...emptyListing }, this.settings));
     this.categoryId = "";
     this.pendingOverrides = {};
@@ -347,7 +370,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async logout() {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.store.flush();
+      await this.rental.flush();
       if (this.ext) await extension("PAUSE", { profileId: this.profile!.id });
       if (this.dirty) await this.persist();
       await api("workspace/logout", {});
@@ -355,6 +378,7 @@ export class AppComponent implements OnInit, OnDestroy {
       clearTimeout(this.autosave);
       setWorkspaceContext("");
       this.profile = null;
+      this.rental.workspaceId.set("");
       this.epoch++;
       await this.session();
     }, "Выходим…");
@@ -450,7 +474,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async navigate(view: string) {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.store.flush();
+      await this.rental.flush();
       if (this.dirty) await this.persist();
       this.view = view;
       if (["cabinet", "queue", "edit-many"].includes(view))
@@ -461,7 +485,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async fresh() {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.store.flush();
+      await this.rental.flush();
       if (this.dirty) await this.persist();
       this.resetEditor(
         newRecord(withSellerContacts({ ...emptyListing }, this.settings)),
@@ -1152,7 +1176,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async switchWorkspace(workspaceId: string) {
     await this.guard(async () => {
-      if (this.rentalEditor) await this.rentalEditor.store.flush();
+      await this.rental.flush();
       if (this.dirty) await this.persist();
       if (this.ext) await extension("PAUSE", { profileId: this.profile!.id });
       await api("workspace/team", { action: "switch", workspaceId });
@@ -1180,6 +1204,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.settings = (
         await api<{ settings: Settings }>("workspace/settings", this.settings)
       ).settings;
+      this.rental.profile.set(this.settings);
       this.notify("Настройки сохранены.");
     }, "Сохраняем настройки…");
   }

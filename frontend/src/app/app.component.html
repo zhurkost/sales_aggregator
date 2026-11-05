@@ -176,9 +176,7 @@
         }
       </div>
       <main>
-        @if (view === "rental") {
-          <app-rental-editor [workspaceId]="profile.id" [profileDefaults]="settings" />
-        }
+        <router-outlet />
         @if (view === "editor") {
           <div class="heading-row">
             <div>

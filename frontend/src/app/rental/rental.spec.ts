@@ -5,6 +5,10 @@ import { AddressInputComponent } from "./address-input.component";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { TestBed } from "@angular/core/testing";
 import type { EditorSchema, Field, FieldState } from "./rental-models";
+import { provideRouter, Router } from "@angular/router";
+import { RouterTestingHarness } from "@angular/router/testing";
+import { routes } from "../app.routes";
+import { RentalSession } from "./rental-session";
 // The application's HTTP client: the fetch backend and the rental interceptor.
 beforeEach(() => TestBed.configureTestingModule({ providers: [provideHttpClient(withFetch(), withInterceptors([rentalInterceptor]))] }));
 
@@ -22,6 +26,34 @@ const state = (id: string, transferred = true): FieldState => ({ id, required: f
 const addressFields = ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"];
 /** The body of a request the editor sent. */
 const body = (init?: RequestInit) => (init?.body ? JSON.parse(String(init.body)) : null);
+
+describe("the rental route", () => {
+  it("opens the editor of the signed-in cabinet at /rental and saves typed edits before leaving", async () => {
+    TestBed.configureTestingModule({ providers: [provideRouter(routes)] });
+    const session = TestBed.inject(RentalSession);
+    session.workspaceId.set("owner");
+    session.profile.set({ phone: "+375290000000" });
+    const calls: { method?: string; url: string; workspace: string }[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      calls.push({ method: init?.method, url, workspace: (init?.headers as Record<string, string>)["X-Autopost-Workspace"] });
+      return response(url.endsWith("/editor") ? {cardVersion: "2", card: {...card(), profileDefaults: [{setting: "phone", field: "contact.phone"}]},
+        addressSuggestions: false, photoLimit: 12, platforms: {one: {name: "Площадка", labels: {}}},
+        groups: [{id: "group.contact", name: "Контакты", fields: [field("contact.phone")]}]}
+        : url.endsWith("/fields") ? {fields: []} : url.endsWith("/drafts") ? {drafts: []} : {revision: 1});
+    }));
+    const harness = await RouterTestingHarness.create("/rental");
+    const editor = () => harness.routeDebugElement?.query((e) => e.name === "app-rental-editor")?.componentInstance as RentalEditorComponent | undefined;
+    await vi.waitFor(() => { harness.detectChanges(); expect(editor()?.store.schema).not.toBeNull(); });
+    expect(calls.every((call) => call.workspace === "owner")).toBe(true);
+    // The profile of the cabinet reaches a new card.
+    expect(editor()!.store.draft.values["contact.phone"]).toBe("+375290000000");
+    editor()!.store.draft.values["contact.phone"] = "+375291111111";
+    editor()!.store.changed();
+    await TestBed.inject(Router).navigateByUrl("/");
+    expect(calls.filter((call) => call.method === "POST" && call.url.includes("/drafts/"))).toHaveLength(1);
+    expect(harness.routeDebugElement?.query((e) => e.name === "app-rental-editor")).toBeFalsy();
+  });
+});
 
 describe("rental preparation editor", () => {
   it("locks input during opening and rejects an unexpected late edit without losing it", async () => {
