@@ -119,6 +119,25 @@ class RentalReportedErrorsTest {
     }
   }
 
+  @Test void spacedBynRentReachesDomovitaPriceAndCurrencyControls() {
+    String source = "Стоимость — 1 300 BYN в месяц, коммунальные платежи отдельно. Залог — за один месяц.";
+    var analyzed = analyze(source,
+        suggestion("rental.monthly_price", "1300", "1 300 BYN в месяц"),
+        suggestion("rental.currency", "BYN", "1 300 BYN"));
+    assertEquals("1300", value(analyzed, "rental.monthly_price"));
+    assertEquals("BYN", value(analyzed, "rental.currency"));
+    var draft = object("schemaVersion", catalog.version(), "modelVersion", 2,
+        "values", object("rental.monthly_price", value(analyzed, "rental.monthly_price"),
+            "rental.currency", value(analyzed, "rental.currency")),
+        "extras", object(), "platforms", List.of("domovita"));
+    var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
+    var price = controls.stream().filter(c -> text(c, "field").equals("domovita.monthly_price")).findFirst().orElseThrow();
+    var currency = controls.stream().filter(c -> text(c, "field").equals("domovita.currency")).findFirst().orElseThrow();
+    assertEquals("1300", text(price, "value"));
+    assertEquals("BYN", text(currency, "value"));
+    assertEquals("mousedown", text(currency, "triggerEvent"));
+  }
+
   @Test void domovitaBrowserRecipePreservesAddressContextAndPhotoGate() {
     var draft = object("schemaVersion", catalog.version(), "modelVersion", 2,
         "values", object(), "extras", object(), "platforms", List.of("domovita"),

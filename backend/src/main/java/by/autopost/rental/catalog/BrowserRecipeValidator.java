@@ -51,6 +51,9 @@ public final class BrowserRecipeValidator {
               .contains(text(control, "action")),
           "действие browser");
       selector(control);
+      if (control.has("triggerEvent"))
+        check(text(control, "action").equals("dropdown") &&
+            text(control, "triggerEvent").equals("mousedown"), "событие dropdown");
       if (control.has("blockedSelector")) {
         selectorValue(text(control, "blockedSelector"));
         check(!text(control, "blockedMessage").isBlank() && text(control, "blockedMessage").length() <= 400,

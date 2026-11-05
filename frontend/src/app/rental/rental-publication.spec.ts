@@ -24,7 +24,7 @@ describe("publication of incomplete rental cards", () => {
     await c.ngOnChanges();
     expect(c.ready).toBe(false);
     await c.publish();
-    expect(c.error).toContain("0.9.4");
+    expect(c.error).toContain("0.9.5");
     expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
     c.ngOnDestroy(); c.store.destroy();
   });
@@ -119,7 +119,7 @@ describe("publication of incomplete rental cards", () => {
     c.draftId = c.store.id;
     await c.publish();
     expect(extension).not.toHaveBeenCalled();
-    expect(c.error).toContain("0.9.4");
+    expect(c.error).toContain("0.9.5");
     c.ready = true;
     c.mode = "assist";
     vi.spyOn(c.store, "flush").mockResolvedValue();

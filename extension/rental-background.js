@@ -64,6 +64,7 @@
           });
           j.tabId = tab.id;
           root.AutopostCore.armFill(j);
+          j.photoSent = false;
           if (j.status !== "stopped") j.status = "running";
           await save(rows);
         }
@@ -84,12 +85,18 @@
       const old = own.find((b) => b.revision === data.revision);
       // Retrying a click or a timed-out response must not open/publish duplicates.
       if (old) {
-        if (old.jobs.every((j) => j.status === "stopped") || old.jobs.some((j) => j.fillBlocked)) {
+        const restart = old.jobs.every((j) => j.status === "stopped");
+        if (restart || old.jobs.some((j) => j.fillBlocked)) {
           old.sourceTabId = sender.tab.id;
           old.mode = data.mode;
           for (const j of old.jobs) {
             j.status = "running";
             j.message = "Возобновляем заполнение";
+            // A deliberate Stop -> Publish starts a fresh form. Never reuse
+            // per-document completion flags or let the previous tab keep filling.
+            if (restart) j.fillBlocked = true;
+            const recipe = data.jobs.find(r => r.platform === j.recipe.platform);
+            if (recipe) j.recipe = recipe;
           }
           await save(rows);
           for (const j of old.jobs) {
@@ -103,6 +110,9 @@
               });
               j.tabId = tab.id;
               root.AutopostCore.armFill(j);
+              j.photoSent = false;
+              j.filled = 0;
+              j.remaining = [];
               await save(rows);
               continue;
             }

@@ -43,11 +43,13 @@ test('Domovita building height is filled before storey can auto-populate it', as
   f.window.happyDOM.abort();
 });
 
-test('Domovita currency opens through visible control and price waits for confirmed BYN', async () => {
+test('Domovita React Select currency opens on mousedown and price waits for confirmed BYN', async () => {
   const controls = recipe('domovita').controls.filter(c => ['domovita.currency','domovita.monthly_price'].includes(c.field))
-    .map(c => ({...c,value:c.field==='domovita.currency' ? 'BYN' : '1500'}));
+    .map(c => ({...c,value:c.field==='domovita.currency' ? 'BYN' : '1300'}));
   const f = await fixture('<input name="price"><div id="currency"><div class="custom-select__control"><div class="custom-select__single-value">USD</div><input role="combobox" style="visibility:hidden"></div><input type="hidden" name="price_currency_text"></div>', controls);
-  f.document.querySelector('.custom-select__control').onclick = () => {
+  // React Select attaches onControlMouseDown; HTMLElement.click() alone never opens it.
+  f.document.querySelector('.custom-select__control').onmousedown = (event) => {
+    assert.equal(event.button,0);
     if(f.document.querySelector('[role="option"]')) return;
     const option=f.document.createElement('div'); option.setAttribute('role','option');option.textContent='BYN';
     option.onclick=()=>{f.document.querySelector('.custom-select__single-value').textContent='BYN';option.remove();};
@@ -57,7 +59,7 @@ test('Domovita currency opens through visible control and price waits for confir
   assert.equal(f.document.querySelector('[name="price"]').value,'');
   for(let i=0;i<4;i++) await f.form.tick();
   assert.equal(f.document.querySelector('.custom-select__single-value').textContent,'BYN');
-  assert.equal(f.document.querySelector('[name="price"]').value,'1500');
+  assert.equal(f.document.querySelector('[name="price"]').value,'1300');
   assert.equal(f.form.done.size,2);
   f.window.happyDOM.abort();
 });

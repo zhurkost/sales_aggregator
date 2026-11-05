@@ -142,7 +142,7 @@ test("rental worker opens every selected site once and isolates profile, origin 
     ).task,
     null,
   );
-  const sender = { url: core.starts.kufar, tab: { id: 10 } };
+  let sender = { url: core.starts.kufar, tab: { id: 10 } };
   assert.equal(
     (await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender)).task.recipe
       .platform,
@@ -182,8 +182,17 @@ test("rental worker opens every selected site once and isolates profile, origin 
     (await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender)).task,
     null,
   );
+  const stoppedSender = sender;
   await run();
-  assert.equal(created.length, 4);
+  assert.equal(created.length, 8, 'Stop -> Publish starts fresh forms');
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'GET'},stoppedSender)).task,null,
+    'the old document cannot resume alongside the new form');
+  sender = {url:core.starts.kufar,tab:{id:14}};
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'GET'},sender)).task.photoSent,false);
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},sender)).ok,true);
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},sender)).ok,false);
+  await run();
+  assert.equal(created.length,8,'double Publish is still idempotent');
   assert.equal(
     (await handle({ kind: "RENTAL_PAGE", type: "GET" }, sender)).task.submitted,
     true,
@@ -202,6 +211,9 @@ test("rental worker opens every selected site once and isolates profile, origin 
   const reopened = {...sender,tab:{id:created.at(-1).id},documentId:"reopened"};
   assert.notEqual(reopened.tab.id,sender.tab.id);
   assert.ok((await handle({kind:"RENTAL_PAGE",type:"GET"},reopened)).task);
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'GET'},reopened)).task.photoSent,false);
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},reopened)).ok,true);
+  assert.equal((await handle({kind:'RENTAL_PAGE',type:'CLAIM_PHOTOS'},reopened)).ok,false);
   assert.equal((await handle({kind:"RENTAL_PAGE",type:"GET"},refreshed)).task,null);
   // The explicit open must preserve the one-shot submission guard.
   assert.equal((await handle({kind:"RENTAL_PAGE",type:"BEFORE_SUBMIT"},reopened)).ok,false);

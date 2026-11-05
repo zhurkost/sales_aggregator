@@ -107,6 +107,7 @@
       "action": "dropdown",
       "selector": "div:has(> input[name=\"price_currency_text\"])",
       "triggerSelector": ".custom-select__control",
+      "triggerEvent": "mousedown",
       "displaySelector": ".custom-select__single-value",
       "optionsSelector": "[role=\"option\"]"
     },

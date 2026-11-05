@@ -302,7 +302,14 @@
                   'input,button,[role="button"],[role="combobox"]',
                 elements[0],
               )[0] || elements[0];
-            trigger.click();
+            if (c.triggerEvent === "mousedown") {
+              trigger.dispatchEvent(new MouseEvent("mousedown", {
+                bubbles: true, cancelable: true, button: 0, buttons: 1,
+              }));
+              trigger.dispatchEvent(new MouseEvent("mouseup", {
+                bubbles: true, cancelable: true, button: 0,
+              }));
+            } else trigger.click();
             this.tried.add(key + ":open");
             this.waiting = { field: c.field, tries: 0 };
           }
