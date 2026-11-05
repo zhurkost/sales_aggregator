@@ -194,9 +194,17 @@ class RentalPublicationTest {
       for (String site : List.of("kufar", "onliner")) {
         var job = jobs.stream().filter(j -> text(j, "platform").equals(site)).findFirst().orElseThrow();
         var control = list(job.path("controls")).stream()
-            .filter(c -> text(c, "addressPart").equals("label")).findFirst().orElseThrow();
-        assertEquals(expected, text(control, "value"), site);
-        assertEquals(text(before, "label"), text(control, "matchValue"));
+            .filter(c -> text(c, "field").equals(site.equals("kufar") ? "kufar.address_text" : "onliner.address_query"))
+            .findFirst().orElseThrow();
+        if (site.equals("kufar")) {
+          assertEquals(expected, text(control, "value"));
+          assertEquals(text(before, "label"), text(control, "matchValue"));
+        } else {
+          assertEquals(expected.startsWith("Минск") ? "Минск" : "Зеленый Бор", text(control, "value"));
+          assertEquals("settlement", text(control, "addressPart"));
+          assertEquals("single-or-exact", text(control.path("autocomplete"), "selection"));
+          assertEquals("keyup", text(control.path("autocomplete"), "queryEvent"));
+        }
       }
       assertEquals(before, draft.path("address"));
     }

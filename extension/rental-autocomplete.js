@@ -117,6 +117,8 @@
       ).set.call(input, search);
       input.dispatchEvent(new Event("input", { bubbles: true }));
       input.dispatchEvent(new Event("change", { bubbles: true }));
+      if (config.queryEvent === "keyup")
+        input.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
       form.pending.set(control.field, { phase: "query", search });
       form.waiting = { field: control.field, tries: 0 };
       return;
@@ -141,7 +143,12 @@
       pending.signature = null;
       return;
     }
-    const candidates = config.selection === "first" ? options().slice(0, 1) : options().filter((e) => {
+    const available = options();
+    // Full label equality ignores case and whitespace, but not punctuation or ё/е.
+    const exactName = (v) => String(v ?? "").trim().replace(/\s+/g, " ").toLocaleLowerCase("ru");
+    const candidates = config.selection === "single-or-exact"
+      ? available.length === 1 ? available : available.filter(e => exactName(label(e)) === exactName(control.value))
+      : config.selection === "first" ? available.slice(0, 1) : available.filter((e) => {
       if (!matches(label(e), control.matchValue || control.value, config.kind)) return false;
       const context = config.contextSelector
         ? query(config.contextSelector, e)
@@ -158,7 +165,8 @@
     }
     const option = candidates[0];
     if (config.confirm) {
-      const signature = norm(option.textContent);
+      const signature = config.selection === "single-or-exact"
+        ? JSON.stringify(available.map(e => exactName(e.textContent))) : norm(option.textContent);
       // Debounced searches briefly display results from the previous query.
       if (pending.signature !== signature) {
         pending.signature = signature;

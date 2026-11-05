@@ -68,8 +68,11 @@ public final class BrowserRecipeValidator {
         check(text(control, "action").equals("autocomplete") && config.isObject(), "autocomplete");
         check(Set.of("settlement", "street", "house", "address").contains(text(config, "kind")), "тип autocomplete");
         if (config.has("selection"))
-          check(text(config, "kind").equals("address") && text(config, "selection").equals("first"),
+          check(text(config, "kind").equals("address") &&
+              Set.of("first", "single-or-exact").contains(text(config, "selection")),
               "выбор подсказки autocomplete");
+        if (config.has("queryEvent"))
+          check(text(config, "queryEvent").equals("keyup"), "событие поиска autocomplete");
         check(Set.of("value-and-closed", "display-and-closed").contains(text(config, "confirm")), "подтверждение autocomplete");
         if (text(config, "confirm").equals("display-and-closed"))
           selectorValue(text(config, "selectedValueSelector"));

@@ -36,7 +36,15 @@
       "field": "onliner.address_query",
       "action": "autocomplete",
       "selector": "input[data-bind*=\"value: $root.data.location.user_address\"]",
-      "addressPart": "label"
+      "addressPart": "settlement",
+      "autocomplete": {
+        "kind": "address",
+        "scopeSelector": "body",
+        "optionSelector": "[role=\"option\"]",
+        "selection": "single-or-exact",
+        "confirm": "value-and-closed",
+        "queryEvent": "keyup"
+      }
     },
     {
       "field": "onliner.description",

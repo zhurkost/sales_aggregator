@@ -29,6 +29,9 @@ final class RentalBrowserPreparation {
             value = com.fasterxml.jackson.databind.node.TextNode.valueOf(
                 text(source, "addressPart").equals("label")
                     ? LiteralAddress.searchText(draft.path("address"))
+                    : text(source, "addressPart").equals("settlement") &&
+                        text(source.path("autocomplete"), "kind").equals("address")
+                    ? LiteralAddress.searchText(object("label", value.asText()))
                     : LiteralAddress.cleanComponent(value.asText(), text(source, "addressPart")));
         }
         if (!text(source, "action").equals("files")
