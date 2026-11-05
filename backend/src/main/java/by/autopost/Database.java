@@ -22,24 +22,11 @@ class Database {
             "CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,profile_id TEXT NOT NULL"
                 + " REFERENCES profiles(id),expires INTEGER NOT NULL,workspace_id TEXT NOT NULL"
                 + " DEFAULT '')",
-            "CREATE TABLE IF NOT EXISTS ads(id TEXT NOT NULL,profile_id TEXT NOT NULL REFERENCES"
-                + " profiles(id),data TEXT NOT NULL,updated TEXT NOT NULL,summary TEXT NOT"
-                + " NULL,PRIMARY KEY(profile_id,id))",
             "CREATE TABLE IF NOT EXISTS settings(profile_id TEXT PRIMARY KEY REFERENCES"
                 + " profiles(id),data TEXT NOT NULL)",
-            "CREATE TABLE IF NOT EXISTS launches(profile_id TEXT NOT NULL,record_id TEXT NOT"
-                + " NULL,platform_id TEXT NOT NULL,batch_id TEXT NOT NULL,created TEXT NOT"
-                + " NULL,PRIMARY KEY(profile_id,record_id,platform_id))",
-            "CREATE TABLE IF NOT EXISTS versions(profile_id TEXT NOT NULL,record_id TEXT NOT"
-                + " NULL,version INTEGER NOT NULL,data TEXT NOT NULL,created TEXT NOT NULL,PRIMARY"
-                + " KEY(profile_id,record_id,version))",
             "CREATE TABLE IF NOT EXISTS members(owner_id TEXT NOT NULL REFERENCES"
                 + " profiles(id),member_id TEXT NOT NULL REFERENCES profiles(id),PRIMARY"
-                + " KEY(owner_id,member_id))",
-            "CREATE TABLE IF NOT EXISTS notifications(id INTEGER PRIMARY KEY"
-                + " AUTOINCREMENT,profile_id TEXT NOT NULL,record_id TEXT NOT NULL,platform_id TEXT"
-                + " NOT NULL,message TEXT NOT NULL,created TEXT NOT NULL,seen INTEGER NOT NULL"
-                + " DEFAULT 0)")) jdbc.execute(sql);
+                + " KEY(owner_id,member_id))")) jdbc.execute(sql);
     if (rows("PRAGMA table_info(sessions)").stream()
         .noneMatch(r -> "workspace_id".equals(r.get("name"))))
       jdbc.execute("ALTER TABLE sessions ADD COLUMN workspace_id TEXT NOT NULL DEFAULT ''");

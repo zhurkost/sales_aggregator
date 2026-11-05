@@ -10,6 +10,16 @@ import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
 class ApiErrors {
+  @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+  ResponseEntity<ObjectNode> missing() {
+    return ResponseEntity.status(404).body(object("error", "Раздел не найден."));
+  }
+
+  @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+  ResponseEntity<ObjectNode> method() {
+    return ResponseEntity.status(405).body(object("error", "Метод не поддерживается."));
+  }
+
   @ExceptionHandler(ApiException.class)
   ResponseEntity<ObjectNode> api(ApiException e) {
     var body = object("error", e.getMessage());

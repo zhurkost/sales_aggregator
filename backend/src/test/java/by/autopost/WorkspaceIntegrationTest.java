@@ -125,7 +125,48 @@ class WorkspaceIntegrationTest {
 
   @Autowired MockMvc mvc;
   @Autowired Database db;
-  @Autowired Domain domain;
+
+  @Test
+  void retiredWorkspaceEndpointsAreNotAvailable() throws Exception {
+    var account = register();
+    for (String path : List.of("ads", "ads/old", "notifications", "team"))
+      getJson(path, account.cookie(), 404);
+    for (String path : List.of("ads", "batch-edit", "import", "feed", "team", "extension-config", "notifications"))
+      postJson(path, account.cookie(), object(), 404);
+    postJson("settings", account.cookie(), object(), 405);
+    assertEquals(404, mvc.perform(get("/api/ai-settings")).andReturn().getResponse().getStatus());
+    assertEquals(404, mvc.perform(post("/api/analyze").header("Origin", "http://localhost:4200")
+        .header("Cookie", account.cookie()).contentType("application/json").content("{}"))
+        .andReturn().getResponse().getStatus());
+  }
+
+  @Test
+  void contactDefaultsStayPrivateAndDoNotExposeRetiredSettings() throws Exception {
+    var owner = register(); var other = register();
+    db.run("INSERT INTO settings VALUES(?,?)", owner.id(), object("phone", "+375291234567",
+        "contactPerson", "Owner", "company", "Company", "templates", List.of("old"),
+        "integrations", object("kufar", object("notes", "private"))).toString());
+    var defaults = getJson("settings", owner.cookie(), 200).path("settings");
+    assertEquals("+375291234567", text(defaults, "phone"));
+    assertEquals(3, defaults.size());
+    assertEquals("", text(getJson("settings", other.cookie(), 200).path("settings"), "phone"));
+    getJson("settings", "", 401);
+    assertTrue(db.one("SELECT data FROM settings WHERE profile_id=?", owner.id()).get("data")
+        .toString().contains("integrations"), "Persisted data is not deleted during cleanup");
+  }
+
+  @Test
+  void logoutAndOriginProtectionStillApplyToRental() throws Exception {
+    var account = register(); var other = register();
+    assertEquals(403, mvc.perform(post("/api/workspace/rental/prepare")
+        .header("Origin", "https://evil.example").header("Cookie", account.cookie())
+        .contentType("application/json").content("{}")) .andReturn().getResponse().getStatus());
+    assertEquals(409, mvc.perform(get("/api/workspace/rental/drafts")
+        .header("Cookie", account.cookie()).header("X-Autopost-Workspace", other.id()))
+        .andReturn().getResponse().getStatus());
+    postJson("logout", account.cookie(), object(), 200);
+    getJson("rental/drafts", account.cookie(), 401);
+  }
 
   record Account(String id, String login, String cookie) {}
 
@@ -165,90 +206,6 @@ class WorkspaceIntegrationTest {
     return parse(result.getResponse().getContentAsString());
   }
 
-  ObjectNode record(String id) {
-    ObjectNode listing =
-        domain.listing(
-            object(
-                "category",
-                "cars",
-                "taxonomyId",
-                "auto.cars",
-                "brand",
-                "Volkswagen",
-                "model",
-                "Passat",
-                "year",
-                "2018",
-                "title",
-                "Car",
-                "description",
-                "Original description",
-                "price",
-                "100",
-                "currency",
-                "BYN",
-                "city",
-                "Минск",
-                "phone",
-                "+375291234567"));
-    return object(
-        "id",
-        id,
-        "revision",
-        0,
-        "text",
-        "Original description",
-        "listing",
-        listing,
-        "photos",
-        array(),
-        "selected",
-        array(List.of("kufar")),
-        "prepared",
-        true,
-        "categoryConfirmed",
-        true,
-        "categoryOverrides",
-        object(),
-        "attributes",
-        object(),
-        "platformText",
-        object(),
-        "jobs",
-        array());
-  }
-
-  ObjectNode save(Account user, JsonNode record) throws Exception {
-    return (ObjectNode)
-        parse(postJson("ads", user.cookie, record, 200).getResponse().getContentAsString())
-            .path("ad");
-  }
-
-  @Test
-  void protectsOriginRequiresSessionAndKeepsAccountsIsolated() throws Exception {
-    Account owner = register(), other = register();
-    ObjectNode saved = save(owner, record("isolation"));
-    getJson("ads/isolation", other.cookie, 404);
-    getJson("ads", "", 401);
-    var cross =
-        mvc.perform(
-                post("/api/workspace/ads")
-                    .header("Origin", "https://evil.example")
-                    .header("Cookie", owner.cookie)
-                    .contentType("application/json")
-                    .content(saved.toString()))
-            .andReturn();
-    assertEquals(403, cross.getResponse().getStatus());
-    var changed =
-        mvc.perform(
-                get("/api/workspace/ads")
-                    .header("Cookie", owner.cookie)
-                    .header("X-Autopost-Workspace", other.id))
-            .andReturn();
-    assertEquals(409, changed.getResponse().getStatus());
-    postJson("logout", owner.cookie, object(), 200);
-    getJson("ads", owner.cookie, 401);
-  }
 
   @Test
   void preservesLegacyScryptHashesAndExistingSessionTokens() throws Exception {
@@ -285,161 +242,4 @@ class WorkspaceIntegrationTest {
         401);
   }
 
-  @Test
-  void detectsRevisionConflictsAndRestoresHistoryWithoutLosingPhotos() throws Exception {
-    Account user = register();
-    ObjectNode first = save(user, record("history"));
-    ObjectNode changed = first.deepCopy();
-    ((ObjectNode) changed.path("listing")).put("description", "Updated description");
-    changed.set(
-        "photos",
-        array(
-            List.of(
-                object(
-                    "id",
-                    "photo-1",
-                    "name",
-                    "photo.jpg",
-                    "dataUrl",
-                    "data:image/jpeg;base64,AAAA"))));
-    ObjectNode second = save(user, changed);
-    postJson("ads", user.cookie, first, 409);
-    assertEquals(2, second.path("revision").asInt());
-    JsonNode versions = getJson("ads/history/versions", user.cookie, 200).path("versions");
-    assertEquals(1, versions.size());
-    ObjectNode restored =
-        (ObjectNode)
-            parse(
-                    postJson(
-                            "ads/history/versions",
-                            user.cookie,
-                            object("version", 1, "revision", second.path("revision")),
-                            200)
-                        .getResponse()
-                        .getContentAsString())
-                .path("ad");
-    assertEquals("Original description", text(restored.path("listing"), "description"));
-    assertEquals(1, restored.path("photos").size());
-  }
-
-  @Test
-  void rollsBackWholeBatchOnConflictAndSupportsIdempotentImport() throws Exception {
-    Account user = register();
-    ObjectNode a = save(user, record("batch-a")), b = save(user, record("batch-b"));
-    ObjectNode edit =
-        object(
-            "priceMode", "fixed", "priceValue", "200", "city", "", "phone", "", "availability", "");
-    postJson(
-        "batch-edit",
-        user.cookie,
-        object(
-            "items",
-            array(
-                List.of(
-                    object("id", "batch-a", "revision", 1),
-                    object("id", "batch-b", "revision", 99))),
-            "edit",
-            edit),
-        409);
-    assertEquals(
-        "100", text(getJson("ads/batch-a", user.cookie, 200).path("ad").path("listing"), "price"));
-    postJson(
-        "batch-edit",
-        user.cookie,
-        object(
-            "items",
-            array(
-                List.of(
-                    object("id", "batch-a", "revision", 1),
-                    object("id", "batch-b", "revision", 1))),
-            "edit",
-            edit),
-        200);
-    assertEquals(
-        "200", text(getJson("ads/batch-a", user.cookie, 200).path("ad").path("listing"), "price"));
-    ObjectNode payload =
-        object(
-            "sourceId",
-            "catalog",
-            "record",
-            record("incoming"),
-            "fields",
-            array(List.of("title", "price")));
-    JsonNode first =
-        parse(postJson("import", user.cookie, payload, 200).getResponse().getContentAsString());
-    JsonNode second =
-        parse(postJson("import", user.cookie, payload, 200).getResponse().getContentAsString());
-    assertEquals("created", text(first, "action"));
-    assertEquals("unchanged", text(second, "action"));
-    assertEquals(first.path("ad").path("id"), second.path("ad").path("id"));
-  }
-
-  @Test
-  void supportsSharedWorkspacesAndRevokesMembershipImmediately() throws Exception {
-    Account owner = register(), member = register();
-    save(owner, record("team-ad"));
-    postJson("team", owner.cookie, object("action", "add", "login", member.login), 200);
-    postJson("team", member.cookie, object("action", "switch", "workspaceId", owner.id), 200);
-    getJson("ads/team-ad", member.cookie, 200);
-    postJson("team", member.cookie, object("action", "add", "login", owner.login), 403);
-    postJson("team", owner.cookie, object("action", "remove", "memberId", member.id), 200);
-    getJson("ads/team-ad", member.cookie, 404);
-  }
-
-  @Test
-  void reservesLaunchOnlyOnceAndRejectsChangedContent() throws Exception {
-    Account user = register();
-    ObjectNode ad = record("launch");
-    ad.put("batchId", "batch-1");
-    ad.set(
-        "jobs",
-        array(
-            List.of(
-                object(
-                    "platformId",
-                    "kufar",
-                    "batchId",
-                    "batch-1",
-                    "status",
-                    "opening",
-                    "message",
-                    "Opening"))));
-    ad = save(user, ad);
-    ObjectNode listing = ad.path("listing").deepCopy();
-    listing.put("title", domain.title(listing));
-    listing.put(
-        "description",
-        domain.description(listing, ad.path("attributes"), ad.path("categoryOverrides")));
-    ObjectNode item =
-        object(
-            "recordId",
-            "launch",
-            "batchId",
-            "batch-1",
-            "listing",
-            listing,
-            "photoIds",
-            array(),
-            "platforms",
-            array(List.of(object("id", "kufar"))),
-            "platformText",
-            ad.path("platformText"),
-            "attributes",
-            ad.path("attributes"),
-            "categoryOverrides",
-            ad.path("categoryOverrides"));
-    ObjectNode reserve =
-        object("items", array(List.of(item)), "reserve", true, "profileId", user.id);
-    postJson("extension-config", user.cookie, reserve, 200);
-    postJson("extension-config", user.cookie, reserve, 400);
-    reserve.remove("reserve");
-    reserve.put("verify", true);
-    postJson("extension-config", user.cookie, reserve, 200);
-    ((ObjectNode) item.path("listing")).put("price", "999");
-    postJson(
-        "extension-config",
-        user.cookie,
-        object("items", array(List.of(item)), "verify", true),
-        400);
-  }
 }

@@ -17,12 +17,9 @@
     "typecheck": "npm --prefix frontend run build",
     "test": "node --experimental-strip-types --test tests/*.test.mjs extension/tests/*.test.cjs",
     "build:frontend": "node scripts/prepare-angular.mjs && npm --prefix frontend run build",
-    "build:backend": "node scripts/export-java-domain.mjs && node scripts/maven.mjs -B package",
+    "build:backend": "node scripts/maven.mjs -B clean package",
     "test:frontend": "npm --prefix frontend test",
     "test:backend": "node scripts/maven.mjs -B test"
-  },
-  "dependencies": {
-    "exceljs": "^4.4.0"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.6",

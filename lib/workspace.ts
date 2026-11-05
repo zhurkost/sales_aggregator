@@ -1,41 +1,7 @@
-import type { Listing } from "./listing.ts";
-import type { Job } from "./platforms.ts";
 export type Photo = { id: string; name: string; type: string; dataUrl: string };
 export type Profile = { id: string; accountId?:string; login: string; name: string };
 let workspaceContext='';
 export function setWorkspaceContext(id:string){workspaceContext=id;}
-export type SellerContacts = { phone?: string; city?: string };
-export function withSellerContacts(listing: Listing, contacts: SellerContacts): Listing {
-  return { ...listing, phone: listing.phone || contacts.phone || "", city: listing.city || contacts.city || "" };
-}
-export type AdRecord = {
-  id: string;
-  revision: number;
-  contentVersion?: number;
-  createdAt: string;
-  updatedAt: string;
-  text: string;
-  listing: Listing;
-  photos: Photo[];
-  selected: string[];
-  prepared: boolean;
-  categoryConfirmed: boolean;
-  categoryOverrides?: import('./taxonomy.ts').CategoryOverrides;
-  attributes?: import('./field-rules.ts').AttributeValues;
-  archived: boolean;
-  sold?: boolean;
-  assigneeId?:string;
-  jobs: Job[];
-  batchId?: string;
-  externalId?: string;
-  sourceId?: string;
-  platformText?: Record<string,string>;
-  photoRefs?: string[];
-  events: { at: string; message: string; actor?:string }[];
-};
-export type AdSummary = Omit<AdRecord, "photos" | "text"> & {
-  photoCount: number;
-};
 export async function api<T = Record<string, unknown>>(
   path: string,
   body?: unknown,
@@ -62,23 +28,6 @@ export async function api<T = Record<string, unknown>>(
       (result as { error?: string }).error || "Не удалось выполнить действие.",
     );
   return result as T;
-}
-export function newRecord(listing: Listing, text = ""): AdRecord {
-  return {
-    id: crypto.randomUUID(),
-    revision: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    text,
-    listing,
-    photos: [],
-    selected: [],
-    prepared: false,
-    categoryConfirmed: false,
-    archived: false,
-    jobs: [],
-    events: [],
-  };
 }
 export const EXTENSION_VERSION = "0.9.7";
 export function extensionError(detail: unknown, code?: unknown): Error & {code: string} {
@@ -150,18 +99,6 @@ export function extension(
     if (type === "PING") retry = setInterval(send, 500);
     send();
   });
-}
-export function download(
-  name: string,
-  content: BlobPart,
-  type = "text/plain;charset=utf-8",
-) {
-  const url = URL.createObjectURL(new Blob([content], { type }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 export async function optimizePhoto(file: File): Promise<Photo> {
   if (

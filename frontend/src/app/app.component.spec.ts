@@ -1,106 +1,69 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { Component, Input } from "@angular/core";
+import { TestBed } from "@angular/core/testing";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { AppComponent } from "./app.component";
-import { newRecord } from "../../../lib/workspace";
-import { emptyListing } from "../../../lib/listing";
+import { RentalEditorComponent } from "./rental/rental-editor.component";
 
-describe("Angular workspace migration", () => {
+@Component({selector:"app-rental-editor", standalone:true, template:"<p>Rental editor</p>"})
+class RentalStub {
+  @Input() workspaceId = "";
+  @Input() profileDefaults = {};
+}
+const profile = {id:"owner",name:"Owner",login:"owner"};
+const response = (body: unknown) => new Response(JSON.stringify(body),{status:200});
+describe("Rental-only workspace",()=>{
   let app: AppComponent;
-  afterEach(() => {
-    app?.ngOnDestroy();
-    vi.unstubAllGlobals();
-    vi.restoreAllMocks();
-  });
-  const setup = () => {
-    app = new AppComponent();
-    app.profile = { id: "owner", name: "Owner", login: "owner" };
-    return app;
-  };
-  it("does not discard edits typed while an autosave response is in flight", async () => {
-    setup();
-    app.ad = newRecord({ ...emptyListing, title: "First" });
-    let finish!: (response: Response) => void;
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() => new Promise<Response>((resolve) => (finish = resolve))),
-    );
-    const snapshot = app.ad,
-      save = app.persist(snapshot);
-    await Promise.resolve();
-    app.change({
-      ...snapshot,
-      listing: { ...snapshot.listing, title: "Newer edit" },
+  afterEach(()=>{app?.ngOnDestroy();vi.unstubAllGlobals();vi.restoreAllMocks();});
+  it("opens rental directly and never requests removed workspace APIs",async()=>{
+    const fetcher=vi.fn(async(url:unknown)=>{
+      if(url==="/api/workspace/session")return response({profile,profiles:[profile]});
+      if(url==="/api/workspace/settings")return response({settings:{phone:"+375291234567"}});
+      throw new Error("Unexpected request: "+url);
     });
-    finish(
-      new Response(
-        JSON.stringify({
-          ad: {
-            ...snapshot,
-            revision: 1,
-            contentVersion: 1,
-            events: [],
-            updatedAt: "2026-10-31T00:00:00Z",
-          },
-        }),
-        { status: 200 },
-      ),
-    );
-    await save;
-    expect(app.ad.listing.title).toBe("Newer edit");
-    expect(app.ad.revision).toBe(1);
-    expect(app.dirty).toBe(true);
+    vi.stubGlobal("fetch",fetcher);
+    TestBed.configureTestingModule({imports:[AppComponent]}).overrideComponent(AppComponent,{
+      remove:{imports:[RentalEditorComponent]},add:{imports:[RentalStub]},
+    });
+    const fixture=TestBed.createComponent(AppComponent);app=fixture.componentInstance;
+    vi.spyOn(app,"checkExtension").mockResolvedValue();
+    const load=vi.spyOn(app,"session");
+    fixture.detectChanges();await load.mock.results[0].value;fixture.detectChanges();
+    const nav=fixture.nativeElement.querySelector('nav');
+    expect(nav.querySelectorAll('button')).toHaveLength(1);
+    expect(nav.textContent.trim()).toBe("Аренда квартир");
+    expect(fixture.nativeElement.querySelector('app-rental-editor')).not.toBeNull();
+    for(const label of ["Новое объявление","Очередь и уведомления","Команда","Массовая загрузка","Справочник площадок","Интеграции"])
+      expect(fixture.nativeElement.textContent).not.toContain(label);
+    expect(fetcher.mock.calls.map(c=>c[0])).toEqual(["/api/workspace/session","/api/workspace/settings"]);
   });
-  it("serializes writes and uses the revision returned by the previous save", async () => {
-    setup();
-    const record = app.ad;
-    const revisions: number[] = [];
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async (_url: unknown, init: RequestInit) => {
-        const input = JSON.parse(init.body as string);
-        revisions.push(input.revision);
-        return new Response(
-          JSON.stringify({
-            ad: { ...input, revision: input.revision + 1, events: [] },
-          }),
-          { status: 200 },
-        );
-      }),
-    );
-    await Promise.all([
-      app.persist(record),
-      app.persist({ ...record, text: "Second write" }),
-    ]);
-    expect(revisions).toEqual([0, 1]);
+  it("keeps the profile and rental editor when saving before logout fails",async()=>{
+    app=new AppComponent();app.profile=profile;
+    app.rentalEditor={flush:vi.fn().mockRejectedValue(new Error("Не удалось сохранить"))} as unknown as RentalEditorComponent;
+    const fetcher=vi.fn();vi.stubGlobal("fetch",fetcher);
+    await app.logout();
+    expect(app.profile).toEqual(profile);expect(app.toast).toBe("Не удалось сохранить");expect(fetcher).not.toHaveBeenCalled();
   });
-  it("keeps a conflicting local draft available to the user", async () => {
-    setup();
-    app.change({ ...app.ad, text: "Do not lose this" });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(
-        async () =>
-          new Response(JSON.stringify({ error: "Карточка изменена" }), {
-            status: 409,
-          }),
-      ),
-    );
-    await expect(app.persist()).rejects.toThrow("Карточка изменена");
-    expect(app.ad.text).toBe("Do not lose this");
-    expect(app.dirty).toBe(true);
+  it("flushes the rental draft before ending the session",async()=>{
+    app=new AppComponent();app.profile=profile;
+    const steps:string[]=[];
+    app.rentalEditor={flush:async()=>{steps.push("save");}} as unknown as RentalEditorComponent;
+    vi.stubGlobal("fetch",vi.fn(async(url:unknown)=>{
+      steps.push(String(url));return response(url==="/api/workspace/session"?{profile:null,profiles:[profile]}:{ok:true});
+    }));
+    await app.logout();
+    expect(steps).toEqual(["save","/api/workspace/logout","/api/workspace/session"]);
+    expect(app.profile).toBeNull();expect(app.settings).toEqual({});
   });
-  it("uses the existing automatic-mode extension protocol", () => {
-    setup();
-    app.publishMode = "automatic";
-    expect((app as any).launchPayload(app.ad).publishMode).toBe("automatic");
+  it("keeps login and registration available without exposing removed views",async()=>{
+    app=new AppComponent();app.authMode="register";app.login="new";app.password="secret-password";
+    vi.spyOn(app,"checkExtension").mockResolvedValue();
+    const fetcher=vi.fn(async(url:unknown)=>response(url==="/api/workspace/register"?{profile}:{settings:{}}));
+    vi.stubGlobal("fetch",fetcher);await app.authenticate();
+    expect(app.profile).toEqual(profile);expect(app.password).toBe("");
+    expect(fetcher.mock.calls.map(c=>c[0])).toEqual(["/api/workspace/register","/api/workspace/settings"]);
   });
-  it("does not launch a sold record or skip user confirmation", async () => {
-    setup();
-    app.ad = { ...app.ad, sold: true };
-    app.ext = true;
-    await app.start();
-    expect(app.errors).toContain("Подтвердите проверку данных");
-    expect(app.errors).toContain(
-      "Товар продан, в архиве или отсутствует в наличии",
-    );
+  it("shows a retry screen when the session cannot be loaded",async()=>{
+    app=new AppComponent();vi.stubGlobal("fetch",vi.fn().mockRejectedValue(new Error("offline")));
+    await app.session();expect(app.ready).toBe(true);expect(app.unavailable).toBe(true);
   });
 });

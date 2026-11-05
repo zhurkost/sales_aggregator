@@ -70,7 +70,7 @@ public class Access extends OncePerRequestFilter {
           reject(res, 415, "Нужен JSON.");
           return;
         }
-        int limit = req.getRequestURI().equals("/api/analyze") ? 1_200_000 : 5 * 1024 * 1024;
+        int limit = 5 * 1024 * 1024;
         if (req.getContentLengthLong() > limit) {
           reject(res, 413, "Слишком большой запрос.");
           return;
