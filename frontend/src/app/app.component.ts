@@ -3,7 +3,8 @@ import { FormsModule } from "@angular/forms";
 import { IconComponent } from "./icon.component";
 import { RentalEditorComponent } from "./rental/rental-editor.component";
 import type { RentalProfile } from "./rental/rental-profile-defaults";
-import { api, setWorkspaceContext, extension, EXTENSION_VERSION, extensionVersionOK, type Profile } from "../../../lib/workspace";
+import { EXTENSION_VERSION, extensionVersionOK, type Profile } from "../../../lib/workspace";
+import { WorkspaceGateway } from "./workspace.gateway";
 
 @Component({
   selector: "app-root",
@@ -13,6 +14,7 @@ import { api, setWorkspaceContext, extension, EXTENSION_VERSION, extensionVersio
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class AppComponent implements OnInit, OnDestroy {
+  constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
   @ViewChild(RentalEditorComponent) rentalEditor?: RentalEditorComponent;
   ready = false;
   unavailable = false;
@@ -42,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     clearTimeout(this.toastTimer);
     window.removeEventListener("message", this.onMessage);
     window.removeEventListener("focus", this.onFocus);
-    setWorkspaceContext("");
+    this.workspace.clearContext();
   }
   notify(message: string) {
     this.toast = message;
@@ -58,20 +60,20 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async session() {
     try {
-      const result = await api<{ profile: Profile | null; profiles: Profile[] }>("workspace/session");
+      const result = await this.workspace.session();
       if (!this.alive) return;
       this.profiles = result.profiles;
       this.login = result.profiles[0]?.login || "";
       this.authMode = result.profiles.length ? "login" : "register";
       if (result.profile) await this.enter(result.profile);
-      else { this.profile = null; this.settings = {}; setWorkspaceContext(""); }
+      else { this.profile = null; this.settings = {}; this.workspace.clearContext(); }
       this.unavailable = false;
     } catch { this.unavailable = true; }
     finally { this.ready = true; }
   }
   async authenticate() {
     await this.guard(async () => {
-      const result = await api<{ profile: Profile }>("workspace/" + this.authMode, {
+      const result = await this.workspace.authenticate(this.authMode, {
         login: this.login, password: this.password, name: this.name,
       });
       this.password = "";
@@ -79,10 +81,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }, "Входим…");
   }
   private async enter(profile: Profile) {
-    setWorkspaceContext(profile.id);
-    const result = await api<{ settings: RentalProfile }>("workspace/settings");
+    const settings = await this.workspace.settings(profile);
     if (!this.alive) return;
-    this.settings = result.settings;
+    this.settings = settings;
     this.profile = profile;
     void this.checkExtension();
   }
@@ -90,8 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
     await this.guard(async () => {
       // Failed saves must keep the editor and session available to the user.
       if (this.rentalEditor) await this.rentalEditor.flush();
-      await api("workspace/logout", {});
-      setWorkspaceContext("");
+      await this.workspace.logout();
       this.profile = null;
       this.settings = {};
       this.ext = false;
@@ -100,7 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   async checkExtension() {
     try {
-      const result = await extension("PING");
+      const result = await this.workspace.pingExtension();
       if (!this.alive) return;
       this.ext = extensionVersionOK(result.version);
       this.extensionStatus = this.ext

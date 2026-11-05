@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Field, JsonValue } from "./rental-api";
+import type { Field, JsonValue } from "./rental-models";
 
 @Component({
   selector: "app-rental-fields",

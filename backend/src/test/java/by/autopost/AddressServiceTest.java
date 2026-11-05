@@ -3,6 +3,7 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import by.autopost.address.infrastructure.DadataAddressGateway;
 import by.autopost.rental.card.*;
 import by.autopost.rental.catalog.*;
 import by.autopost.rental.model.*;
@@ -49,7 +50,7 @@ class AddressServiceTest {
     JsonNode response = array(List.of(item("BY", "way:example", "1")));
 
     Fake() {
-      super("not-a-real-key", "", "");
+      super(new DadataAddressGateway("not-a-real-key", "", ""));
     }
 
     @Override
@@ -109,14 +110,15 @@ class AddressServiceTest {
   @Test
   void relayUsesItsOwnCredentialAndWorksWithoutProviderKey() {
     String token = "relay-test-token-".repeat(3);
-    var service = new AddressService("", "https://relay.example/suggest", token);
+    var service = new DadataAddressGateway("", "https://relay.example/suggest", token);
     assertTrue(service.configured());
     var request = service.buildRequest("Минск Примерная 1", 8);
     assertEquals("https://relay.example/suggest", request.uri().toString());
     assertEquals("Bearer " + token, request.headers().firstValue("Authorization").orElseThrow());
-    var withKey = new AddressService("provider-secret", "https://relay.example/suggest", token);
+    var withKey =
+        new DadataAddressGateway("provider-secret", "https://relay.example/suggest", token);
     assertFalse(withKey.buildRequest("Минск", 1).headers().toString().contains("provider-secret"));
-    var direct = new AddressService("provider-secret", "", "");
+    var direct = new DadataAddressGateway("provider-secret", "", "");
     assertEquals(
         "Token provider-secret",
         direct.buildRequest("Минск", 1).headers().firstValue("Authorization").orElseThrow());
@@ -131,10 +133,11 @@ class AddressServiceTest {
             "https://relay.example/suggest?key=value",
             "https://relay.example/suggest#key"))
       assertThrows(
-          IllegalArgumentException.class, () -> new AddressService("key", url, "x".repeat(48)));
+          IllegalArgumentException.class,
+          () -> new DadataAddressGateway("key", url, "x".repeat(48)));
     assertThrows(
         IllegalArgumentException.class,
-        () -> new AddressService("key", "https://relay.example/suggest", "short"));
-    assertFalse(new AddressService("", "", "").configured());
+        () -> new DadataAddressGateway("key", "https://relay.example/suggest", "short"));
+    assertFalse(new DadataAddressGateway("", "", "").configured());
   }
 }

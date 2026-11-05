@@ -6,7 +6,8 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Address, rentalApi } from "./rental-api";
+import type { Address } from "./rental-models";
+import { RentalAddressGateway } from "./rental-address.gateway";
 
 @Component({
   selector: "app-address-input",
@@ -93,6 +94,7 @@ import { Address, rentalApi } from "./rental-api";
   ],
 })
 export class AddressInputComponent implements OnDestroy {
+  constructor(private addresses: RentalAddressGateway = new RentalAddressGateway()) {}
   @Input({ required: true }) workspaceId = "";
   @Input() compact = false;
   @Input() set draftId(id: string) {
@@ -171,9 +173,7 @@ export class AddressInputComponent implements OnDestroy {
   async load(query: string, generation: number) {
     this.busy = true;
     try {
-      const result = await rentalApi<{
-        suggestions: { id: string; label: string }[];
-      }>(this.workspaceId, "address/suggest", { query });
+      const result = await this.addresses.suggest(this.workspaceId, query);
       if (generation !== this.generation) return;
       this.suggestions = result.suggestions;
       if (!result.suggestions.length)
@@ -192,11 +192,7 @@ export class AddressInputComponent implements OnDestroy {
     this.choosing = true;
     this.error = "";
     try {
-      const { address } = await rentalApi<{ address: Address }>(
-        this.workspaceId,
-        "address/select",
-        { id },
-      );
+      const { address } = await this.addresses.select(this.workspaceId, id);
       if (generation !== this.generation) return;
       this.selected = address;
       this.query = address.label;

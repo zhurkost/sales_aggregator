@@ -4,6 +4,7 @@ import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import by.autopost.address.infrastructure.DadataAddressGateway;
 import by.autopost.ai.AiGateway;
 import by.autopost.rental.ai.*;
 import by.autopost.rental.application.RentalCatalog;
@@ -59,7 +60,7 @@ class RentalAiAddressTest {
     ApiException failure;
 
     Provider() {
-      super("test", "", "");
+      super(new DadataAddressGateway("test", "", ""));
     }
 
     @Override
@@ -128,13 +129,7 @@ class RentalAiAddressTest {
             address);
     var controls = list(catalog.browser(draft).path("jobs").get(0).path("controls"));
     for (var pair :
-        Map.of(
-                "realt.settlement",
-                "Минск",
-                "realt.street",
-                "Брикета",
-                "realt.house_number",
-                "18")
+        Map.of("realt.settlement", "Минск", "realt.street", "Брикета", "realt.house_number", "18")
             .entrySet())
       assertTrue(
           controls.stream()

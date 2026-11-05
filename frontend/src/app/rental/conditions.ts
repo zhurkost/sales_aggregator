@@ -1,4 +1,4 @@
-import { Condition, JsonValue } from "./rental-api";
+import type { Condition, JsonValue } from "./rental-models";
 
 // null means unknown, including through negation. Never coerce codes to strings.
 export function applicable(

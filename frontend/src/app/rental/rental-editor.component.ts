@@ -11,6 +11,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalFieldsComponent } from "./rental-fields.component";
+import { RentalDraftEditor } from "./rental-draft.editor";
 import { RentalDraftStore } from "./rental-draft.store";
 import { RentalAiAssistant } from "./rental-ai.assistant";
 import { RentalViewModel } from "./rental-view.model";
@@ -38,6 +39,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
   @Input() profileDefaults: RentalProfile = {};
   readonly store = new RentalDraftStore(() => this.workspaceId, () => { this.ai.clear(); this.closePanel(false); }, () => this.profileDefaults);
+  readonly editing = new RentalDraftEditor(this.store, address => this.addressChanged(address));
   readonly ai = new RentalAiAssistant(this.store, () => this.workspaceId, address => this.replaceAddress(address), address => this.addressChanged(address));
   readonly view = new RentalViewModel(this.store);
   panel: "parameters" | "saved" | "result" | null = null;
@@ -127,18 +129,7 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   set parameterSearch(value: RentalViewModel["parameterSearch"]) { this.view.parameterSearch = value; }
   get filledOnly() { return this.view.filledOnly; }
   set filledOnly(value: RentalViewModel["filledOnly"]) { this.view.filledOnly = value; }
-  setValue(field: Field, value: string) {
-    if (this.busy) return;
-    delete this.draft.aiEvidence?.[field.id];
-    this.draft.values[field.id] =
-      field.type === "files"
-        ? value
-            .split(/\r?\n/)
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : value;
-    this.changed();
-  }
+  setValue = (...args: Parameters<RentalDraftEditor["setValue"]>) => this.editing.setValue(...args);
   addressChanged(address: Address | null) {
     if (this.busy) return;
     this.replaceAddress(address);
@@ -147,25 +138,9 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     this.aiConflicts = this.aiConflicts.filter(item => !dependent.includes(item.field));
     this.changed();
   }
-  private replaceAddress(address: Address | null) {
-    this.draft.address = address;
-    for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
-      delete this.draft.values[key];
-    for (const key of this.schema?.card?.addressDependentFacts || []) { delete this.draft.values[key]; delete this.draft.aiEvidence?.[key]; }
-    for (const p of this.platforms)
-      for (const key of this.schema?.platforms[p].addressBoundFields || []) delete this.draft.extras[p]?.[key];
-  }
-  setTyped(field: Field, value: JsonValue) {
-    if (this.busy) return;
-    delete this.draft.aiEvidence?.[field.id];
-    this.draft.values[field.id] = value;
-    this.changed();
-  }
-  toggleChoice(field: Field, choice: string, selected: boolean) {
-    const old = this.draft.values[field.id];
-    const values = Array.isArray(old) ? old : [];
-    this.setTyped(field, (selected ? [...new Set([...values, choice])] : values.filter(x => x !== choice)) as string[]);
-  }
+  replaceAddress = (...args: Parameters<RentalDraftEditor["replaceAddress"]>) => this.editing.replaceAddress(...args);
+  setTyped = (...args: Parameters<RentalDraftEditor["setTyped"]>) => this.editing.setTyped(...args);
+  toggleChoice = (...args: Parameters<RentalDraftEditor["toggleChoice"]>) => this.editing.toggleChoice(...args);
   focusField(id: string) {
     const basic = id === "address" || id === "legacy" || this.mainFields.some(f => f.id === id) || id === "listing.description";
     if (!basic) { this.openPanel("parameters"); this.parameterSearch = ""; this.filledOnly = false; }
@@ -210,56 +185,11 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
     if (event.shiftKey && (active === first || outside || beforeFirst)) { event.preventDefault(); last.focus(); }
     else if (!event.shiftKey && (active === last || outside || afterLast)) { event.preventDefault(); first.focus(); }
   }
-  resolveLegacy(index: number, useOld: boolean) {
-    if (this.busy) return;
-    const item = this.draft.legacy?.[index];
-    if (!item) return;
-    if (useOld && item.source && item.candidate !== undefined && item.candidate !== null) {
-      if (item.source.startsWith("address.")) {
-        const part = item.source.slice(8);
-        const address = {...this.draft.address, [part]: item.candidate, confirmed: false, provider: "manual", latitude: "", longitude: ""} as Address;
-        address.label = [address.region, address.district, address.settlement, address.street, address.house, address.block].filter(Boolean).join(", ");
-        this.addressChanged(address);
-      } else this.draft.values[item.source] = item.candidate;
-    }
-    (this.draft.resolvedLegacy ||= []).push(item);
-    this.draft.legacy!.splice(index, 1);
-    this.changed();
-  }
-  togglePlatform(p: string, checked: boolean) {
-    if (this.busy) return;
-    this.draft.platforms = checked
-      ? [...new Set([...this.draft.platforms, p])]
-      : this.draft.platforms.filter((x) => x !== p);
-    this.changed();
-  }
-  setExtra(p: string, f: Field, raw: JsonValue) {
-    // Keep typed decimal text intact until the server's exact BigDecimal conversion.
-    this.draft.extras[p] ||= {};
-    this.draft.extras[p][f.id] = raw;
-    this.changed();
-  }
-  extraFiles(p: string, field: Field, text: string) {
-    this.setExtra(
-      p,
-      field,
-      text
-        .split(/\r?\n/)
-        .map((s) => s.trim())
-        .filter(Boolean),
-    );
-  }
-  toggleExtra(p: string, f: Field, value: JsonValue, checked: boolean) {
-    const old = this.extra(p, f.id);
-    const values = Array.isArray(old) ? old : [];
-    this.setExtra(
-      p,
-      f,
-      (checked
-        ? [...values, value]
-        : values.filter((x) => x !== value)) as string[],
-    );
-  }
+  resolveLegacy = (...args: Parameters<RentalDraftEditor["resolveLegacy"]>) => this.editing.resolveLegacy(...args);
+  togglePlatform = (...args: Parameters<RentalDraftEditor["togglePlatform"]>) => this.editing.togglePlatform(...args);
+  setExtra = (...args: Parameters<RentalDraftEditor["setExtra"]>) => this.editing.setExtra(...args);
+  extraFiles = (...args: Parameters<RentalDraftEditor["extraFiles"]>) => this.editing.extraFiles(...args);
+  toggleExtra = (...args: Parameters<RentalDraftEditor["toggleExtra"]>) => this.editing.toggleExtra(...args);
   @HostListener("window:beforeunload", ["$event"])
   unload(event: BeforeUnloadEvent) {
     if (this.dirty) { event.preventDefault(); event.returnValue = ""; }

@@ -3,8 +3,8 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.shared.ApiException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import by.autopost.workspace.application.WorkspaceService;
+import by.autopost.workspace.application.WorkspaceService.Actor;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
@@ -12,25 +12,21 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
-import org.bouncycastle.crypto.generators.SCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class Access extends OncePerRequestFilter {
-  final Database db;
+  private final WorkspaceService workspaceService;
   final String origin, proxySecret;
-  private final SecureRandom random = new SecureRandom();
-  private final Map<String, long[]> attempts = new ConcurrentHashMap<>();
 
   Access(
-      Database db,
+      WorkspaceService workspaceService,
       @Value("${autopost.origin}") String origin,
       @Value("${autopost.proxy-secret}") String secret) {
-    this.db = db;
+    this.workspaceService = workspaceService;
     this.origin = origin.replaceAll("/$", "");
     this.proxySecret = secret;
     URI uri = URI.create(this.origin);
@@ -92,22 +88,6 @@ public class Access extends OncePerRequestFilter {
     res.getWriter().write(object("error", message).toString());
   }
 
-  static String hash(String value) {
-    try {
-      return HexFormat.of()
-          .formatHex(
-              MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8)));
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-  }
-
-  private String random(int bytes) {
-    byte[] data = new byte[bytes];
-    random.nextBytes(data);
-    return HexFormat.of().formatHex(data);
-  }
-
   static String token(HttpServletRequest req) {
     var m =
         Pattern.compile("(?:^|;\\s*)autopost_session=([a-f0-9]{64})(?:;|$)")
@@ -115,36 +95,15 @@ public class Access extends OncePerRequestFilter {
     return m.find() ? m.group(1) : "";
   }
 
-  public record Actor(String id, String workspace, String name, String login) {
-    ObjectNode profile() {
-      return object("id", workspace, "accountId", id, "name", name, "login", login);
-    }
-  }
-
   Actor user(HttpServletRequest req) {
-    String token = token(req);
-    if (token.isEmpty()) return null;
-    var p =
-        db.one(
-            "SELECT p.*,s.workspace_id FROM profiles p JOIN sessions s ON s.profile_id=p.id WHERE"
-                + " s.token=? AND s.expires>?",
-            hash(token),
-            System.currentTimeMillis());
-    if (p == null) return null;
-    String id = p.get("id").toString(), workspace = Objects.toString(p.get("workspace_id"), "");
-    if (workspace.isEmpty()
-        || !workspace.equals(id)
-            && db.one("SELECT 1 FROM members WHERE owner_id=? AND member_id=?", workspace, id)
-                == null) workspace = id;
-    var owner = db.one("SELECT name FROM profiles WHERE id=?", workspace);
-    return new Actor(id, workspace, owner.get("name").toString(), p.get("login").toString());
+    return workspaceService.user(token(req));
   }
 
   public Actor require(HttpServletRequest req) {
     Actor actor = user(req);
     if (actor == null) throw new ApiException(401, "Выберите профиль и войдите.");
     String workspace = req.getHeader("X-Autopost-Workspace");
-    if (workspace != null && !workspace.equals(actor.workspace))
+    if (workspace != null && !workspace.equals(actor.workspace()))
       throw new ApiException(409, "Кабинет изменился в другой вкладке. Обновите страницу.");
     return actor;
   }
@@ -155,75 +114,6 @@ public class Access extends OncePerRequestFilter {
         + "; Path=/; HttpOnly; SameSite=Strict; Max-Age="
         + age
         + (origin.startsWith("https:") ? "; Secure" : "");
-  }
-
-  synchronized ObjectNode login(JsonNode input, boolean register, HttpServletResponse response) {
-    String login = clean(input, "login", 40).toLowerCase(Locale.ROOT),
-        password = text(input, "password");
-    if (!login.matches("[\\p{L}\\p{N}_.-]{2,40}")
-        || !input.path("password").isTextual()
-        || password.length() < 6
-        || password.length() > 128)
-      throw new ApiException(400, "Логин: 2–40 букв или цифр. Пароль: 6–128 символов.");
-    long now = System.currentTimeMillis();
-    attempts.entrySet().removeIf(e -> e.getValue()[1] < now);
-    long[] bucket = attempts.computeIfAbsent(login, k -> new long[] {0, now + 600000});
-    if (bucket[0] >= 10 || attempts.size() > 1000)
-      throw new ApiException(429, "Слишком много попыток. Подождите 10 минут.");
-    bucket[0]++;
-    var p = db.one("SELECT * FROM profiles WHERE login=?", login);
-    if (register) {
-      if (p != null)
-        throw new ApiException(400, "Такой логин уже есть. Выберите профиль и войдите.");
-      if (db.count("SELECT count(*) FROM profiles") >= 100)
-        throw new ApiException(400, "Лимит профилей MVP достигнут.");
-      String salt = random(16), id = UUID.randomUUID().toString();
-      String name = clean(input, "name", 80);
-      if (name.isEmpty()) name = login;
-      db.run(
-          "INSERT INTO profiles VALUES(?,?,?,?,?)", id, login, name, salt, derive(password, salt));
-      p = db.one("SELECT * FROM profiles WHERE id=?", id);
-    } else {
-      String derived =
-          derive(password, p == null ? "dummy-account-salt" : p.get("salt").toString());
-      if (p == null
-          || !MessageDigest.isEqual(
-              derived.getBytes(StandardCharsets.US_ASCII),
-              p.get("password").toString().getBytes(StandardCharsets.US_ASCII)))
-        throw new ApiException(401, "Неверный логин или пароль.");
-    }
-    attempts.remove(login);
-    String token = random(32);
-    db.run("DELETE FROM sessions WHERE expires<=?", now);
-    db.run(
-        "INSERT INTO sessions(token,profile_id,expires) VALUES(?,?,?)",
-        hash(token),
-        p.get("id"),
-        now + 604800000);
-    response.setHeader("Set-Cookie", cookie(token, 604800));
-    return object(
-        "profile",
-        object(
-            "id",
-            p.get("id"),
-            "accountId",
-            p.get("id"),
-            "login",
-            p.get("login"),
-            "name",
-            p.get("name")));
-  }
-
-  static String derive(String password, String salt) {
-    return HexFormat.of()
-        .formatHex(
-            SCrypt.generate(
-                password.getBytes(StandardCharsets.UTF_8),
-                salt.getBytes(StandardCharsets.UTF_8),
-                16384,
-                8,
-                1,
-                64));
   }
 
   private static class BodyRequest extends HttpServletRequestWrapper {

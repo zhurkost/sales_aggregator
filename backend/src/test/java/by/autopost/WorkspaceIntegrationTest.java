@@ -125,45 +125,122 @@ class WorkspaceIntegrationTest {
 
   @Autowired MockMvc mvc;
   @Autowired Database db;
+  @Autowired by.autopost.workspace.application.WorkspaceService workspaceService;
+
+  @Test
+  void registrationRollsBackWhenIssuingTheSessionFails() {
+    String login = "rollback-" + UUID.randomUUID().toString().substring(0, 8);
+    long sessions = db.count("SELECT count(*) FROM sessions");
+    db.run(
+        "CREATE TRIGGER fail_session BEFORE INSERT ON sessions BEGIN SELECT RAISE(ABORT, 'test"
+            + " failure'); END");
+    try {
+      assertThrows(
+          org.springframework.dao.DataAccessException.class,
+          () ->
+              workspaceService.login(object("login", login, "password", "correct-password"), true));
+      assertEquals(0, db.count("SELECT count(*) FROM profiles WHERE login=?", login));
+      assertEquals(sessions, db.count("SELECT count(*) FROM sessions"));
+    } finally {
+      db.run("DROP TRIGGER fail_session");
+    }
+  }
+
+  @Test
+  void existingSharedSessionsLoseWorkspaceAccessWhenMembershipIsRemoved() throws Exception {
+    var owner = register();
+    var member = register();
+    String hash = by.autopost.shared.Hashing.sha256(member.cookie().split("=", 2)[1]);
+    db.run("INSERT INTO members VALUES(?,?)", owner.id(), member.id());
+    db.run("UPDATE sessions SET workspace_id=? WHERE token=?", owner.id(), hash);
+    var profile = getJson("session", member.cookie(), 200).path("profile");
+    assertEquals(owner.id(), text(profile, "id"));
+    assertEquals(member.id(), text(profile, "accountId"));
+    db.run("DELETE FROM members WHERE owner_id=? AND member_id=?", owner.id(), member.id());
+    assertEquals(member.id(), text(getJson("session", member.cookie(), 200).path("profile"), "id"));
+    db.run("UPDATE sessions SET expires=0 WHERE token=?", hash);
+    assertTrue(getJson("session", member.cookie(), 200).path("profile").isNull());
+  }
 
   @Test
   void retiredWorkspaceEndpointsAreNotAvailable() throws Exception {
     var account = register();
     for (String path : List.of("ads", "ads/old", "notifications", "team"))
       getJson(path, account.cookie(), 404);
-    for (String path : List.of("ads", "batch-edit", "import", "feed", "team", "extension-config", "notifications"))
+    for (String path :
+        List.of("ads", "batch-edit", "import", "feed", "team", "extension-config", "notifications"))
       postJson(path, account.cookie(), object(), 404);
     postJson("settings", account.cookie(), object(), 405);
     assertEquals(404, mvc.perform(get("/api/ai-settings")).andReturn().getResponse().getStatus());
-    assertEquals(404, mvc.perform(post("/api/analyze").header("Origin", "http://localhost:4200")
-        .header("Cookie", account.cookie()).contentType("application/json").content("{}"))
-        .andReturn().getResponse().getStatus());
+    assertEquals(
+        404,
+        mvc.perform(
+                post("/api/analyze")
+                    .header("Origin", "http://localhost:4200")
+                    .header("Cookie", account.cookie())
+                    .contentType("application/json")
+                    .content("{}"))
+            .andReturn()
+            .getResponse()
+            .getStatus());
   }
 
   @Test
   void contactDefaultsStayPrivateAndDoNotExposeRetiredSettings() throws Exception {
-    var owner = register(); var other = register();
-    db.run("INSERT INTO settings VALUES(?,?)", owner.id(), object("phone", "+375291234567",
-        "contactPerson", "Owner", "company", "Company", "templates", List.of("old"),
-        "integrations", object("kufar", object("notes", "private"))).toString());
+    var owner = register();
+    var other = register();
+    db.run(
+        "INSERT INTO settings VALUES(?,?)",
+        owner.id(),
+        object(
+                "phone",
+                "+375291234567",
+                "contactPerson",
+                "Owner",
+                "company",
+                "Company",
+                "templates",
+                List.of("old"),
+                "integrations",
+                object("kufar", object("notes", "private")))
+            .toString());
     var defaults = getJson("settings", owner.cookie(), 200).path("settings");
     assertEquals("+375291234567", text(defaults, "phone"));
     assertEquals(3, defaults.size());
     assertEquals("", text(getJson("settings", other.cookie(), 200).path("settings"), "phone"));
     getJson("settings", "", 401);
-    assertTrue(db.one("SELECT data FROM settings WHERE profile_id=?", owner.id()).get("data")
-        .toString().contains("integrations"), "Persisted data is not deleted during cleanup");
+    assertTrue(
+        db.one("SELECT data FROM settings WHERE profile_id=?", owner.id())
+            .get("data")
+            .toString()
+            .contains("integrations"),
+        "Persisted data is not deleted during cleanup");
   }
 
   @Test
   void logoutAndOriginProtectionStillApplyToRental() throws Exception {
-    var account = register(); var other = register();
-    assertEquals(403, mvc.perform(post("/api/workspace/rental/prepare")
-        .header("Origin", "https://evil.example").header("Cookie", account.cookie())
-        .contentType("application/json").content("{}")) .andReturn().getResponse().getStatus());
-    assertEquals(409, mvc.perform(get("/api/workspace/rental/drafts")
-        .header("Cookie", account.cookie()).header("X-Autopost-Workspace", other.id()))
-        .andReturn().getResponse().getStatus());
+    var account = register();
+    var other = register();
+    assertEquals(
+        403,
+        mvc.perform(
+                post("/api/workspace/rental/prepare")
+                    .header("Origin", "https://evil.example")
+                    .header("Cookie", account.cookie())
+                    .contentType("application/json")
+                    .content("{}"))
+            .andReturn()
+            .getResponse()
+            .getStatus());
+    assertEquals(
+        409,
+        mvc.perform(
+                get("/api/workspace/rental/drafts")
+                    .header("Cookie", account.cookie())
+                    .header("X-Autopost-Workspace", other.id()))
+            .andReturn()
+            .getResponse()
+            .getStatus());
     postJson("logout", account.cookie(), object(), 200);
     getJson("rental/drafts", account.cookie(), 401);
   }
@@ -206,7 +283,6 @@ class WorkspaceIntegrationTest {
     return parse(result.getResponse().getContentAsString());
   }
 
-
   @Test
   void preservesLegacyScryptHashesAndExistingSessionTokens() throws Exception {
     // A profile/session written using exactly the original Node scrypt parameters.
@@ -215,7 +291,10 @@ class WorkspaceIntegrationTest {
         salt = "d81362ffce1186bb71cc5d12a1baebde";
     String hash =
         "2fc1c162939c32461d866ca6a72d219dd217a2347f954bddeece027c4877a840c5bc4359510faa2f9ec602a4b4406a0ca4477bb046f1a391dd87403d0f5c22db";
-    assertEquals(hash, Access.derive("legacy-password", salt), "Node scrypt compatibility");
+    assertEquals(
+        hash,
+        by.autopost.workspace.application.Passwords.derive("legacy-password", salt),
+        "Node scrypt compatibility");
     db.run(
         "INSERT INTO profiles VALUES(?,?,?,?,?)",
         id,
@@ -225,7 +304,7 @@ class WorkspaceIntegrationTest {
         hash);
     db.run(
         "INSERT INTO sessions(token,profile_id,expires) VALUES(?,?,?)",
-        Access.hash(token),
+        by.autopost.shared.Hashing.sha256(token),
         id,
         System.currentTimeMillis() + 60000);
     assertEquals(
@@ -241,5 +320,4 @@ class WorkspaceIntegrationTest {
         object("login", "legacy-" + id.substring(0, 8), "password", "wrong-password"),
         401);
   }
-
 }
