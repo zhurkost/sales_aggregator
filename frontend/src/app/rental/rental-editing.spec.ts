@@ -10,7 +10,6 @@ const schema: EditorSchema = {
   canonicalValues: {},
   card: {
     version: 2,
-    expandedGroups: [],
     addressDependentFacts: [],
     profileDefaults: [
       { setting: "phone", field: "contact.phone" },
@@ -25,7 +24,6 @@ const schema: EditorSchema = {
         name: "Контакты",
         type: "group",
         description: "",
-        fill_rule: {},
         options: [
           "contact.phone",
           "contact.name",
@@ -35,7 +33,6 @@ const schema: EditorSchema = {
           name: id,
           type: "text",
           description: "",
-          fill_rule: {},
           options: [],
         })),
       },
@@ -44,12 +41,9 @@ const schema: EditorSchema = {
   platforms: {
     kufar: {
       name: "Kufar",
-      extras: [],
       labels: {},
       choiceLabels: {},
-      constants: {},
-      bindings: [],
-    },
+      },
   },
 };
 const report: Prepared[] = [

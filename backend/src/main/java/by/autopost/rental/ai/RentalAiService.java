@@ -27,7 +27,7 @@ public class RentalAiService {
     String source = input.path("text").asText().trim();
     if (source.length() < 10 || source.length() > 8000)
       throw new ApiException(400, "Описание должно содержать от 10 до 8000 символов.");
-    ObjectNode editor = catalog.editor();
+    ObjectNode editor = catalog.analysisSchema();
     if (!text(input, "schemaVersion").equals(text(editor, "version")))
       throw new ApiException(
           409, "Правила обновились. Обновите поля карточки и повторите заполнение.");
@@ -35,7 +35,8 @@ public class RentalAiService {
     ObjectNode result = RentalAiPolicy.sanitize(editor, source, parsed);
     addresses.resolve(workspace, result);
     // Keep type information during provider matching; expose clean components to the editor.
-    if (result.get("address") instanceof ObjectNode address) LiteralAddress.cleanComponents(address);
+    if (result.get("address") instanceof ObjectNode address)
+      LiteralAddress.cleanComponents(address);
     result.put("schemaVersion", text(editor, "version"));
     result.put("model", ai.model());
     return result;

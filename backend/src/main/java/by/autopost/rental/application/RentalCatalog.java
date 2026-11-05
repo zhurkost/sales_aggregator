@@ -23,7 +23,26 @@ public class RentalCatalog {
   }
 
   public ObjectNode editor() {
-    return new EditorSchemaBuilder().build(references.snapshot());
+    return new EditorContract().project(new EditorSchemaBuilder().build(references.snapshot()));
+  }
+
+  public ObjectNode analysisSchema() {
+    return new AnalysisSchemaBuilder().build(references.snapshot());
+  }
+
+  public ObjectNode applicability(JsonNode input) {
+    ReferenceSnapshot snapshot = references.snapshot();
+    if (!input.isObject() || input.toString().length() > 250000)
+      throw new ApiException(400, "Некорректная карточка.");
+    var fields = object();
+    // Applicability also needs a valid schema when the user deselects all platforms.
+    if (!text(input, "schemaVersion").equals(snapshot.version()))
+      throw new ApiException(409, "Правила обновились. Обновите поля карточки.");
+    if (input.path("platforms").isArray() && input.path("platforms").isEmpty())
+      return object("platforms", fields, "schemaVersion", snapshot.version());
+    for (var platform : prepare(snapshot, input).path("platforms"))
+      fields.set(text(platform, "platform"), platform.path("applicability"));
+    return object("platforms", fields, "schemaVersion", snapshot.version());
   }
 
   public String version() {

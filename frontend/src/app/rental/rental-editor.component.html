@@ -81,6 +81,7 @@
     <section class="rental-drawer" role="dialog" aria-modal="true" aria-labelledby="rental-panel-title" (click)="$event.stopPropagation()" (keydown)="panelKeys($event)">
       <header class="drawer-heading"><h2 id="rental-panel-title" tabindex="-1">{{ panel === 'parameters' ? 'Параметры квартиры' : panel === 'saved' ? 'Мои квартиры' : 'Подготовленные данные' }}</h2><button type="button" class="icon-button" aria-label="Закрыть панель" (click)="closePanel()">×</button></header>
       @if (panel === 'parameters') {
+        @if (store.applicability.error) { <p role="status">{{ store.applicability.error }} <button type="button" class="text-button" [disabled]="store.applicability.loading" (click)="store.applicability.refresh()">Повторить</button></p> }
         <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="parameterSearch" (ngModelChange)="parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="filledOnly" />Заполненные</label></div>
         <div class="drawer-body">
           @for (group of additionalGroups; track group.id) {

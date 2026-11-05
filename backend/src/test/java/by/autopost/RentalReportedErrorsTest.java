@@ -20,7 +20,7 @@ class RentalReportedErrorsTest {
   }
 
   ObjectNode analyze(String source, ObjectNode... suggestions) {
-    return RentalAiPolicy.sanitize(catalog.editor(), source,
+    return RentalAiPolicy.sanitize(catalog.analysisSchema(), source,
         object("suggestions", List.of(suggestions)));
   }
 

@@ -1,22 +1,12 @@
 export type JsonScalar = string | number | boolean | null;
 export type JsonValue = JsonScalar | JsonScalar[];
-export interface Condition {
-  all?: Condition[];
-  any?: Condition[];
-  not?: Condition;
-  option_id?: string;
-  operator?: string;
-  value?: JsonValue;
-}
 export interface Field {
   id: string;
   name: string;
   description: string;
   type: string;
   options: Field[];
-  fill_rule: Record<string, any>;
-  uiWhen?: Condition;
-  uses?: { platform: string; target: string; when?: Condition }[];
+  uses?: { platform: string; target: string }[];
 }
 export interface Address {
   provider: string;
@@ -60,28 +50,20 @@ export interface RentalAiResult {
   ignored: number;
 }
 export interface EditorSchema {
-  card?: {valueLabels?: Record<string, string>; version: number; expandedGroups: string[]; addressDependentFacts: string[]; profileDefaults?: {setting: "phone" | "contactPerson" | "company"; field: string}[]};
+  card?: {valueLabels?: Record<string, string>; version: number; addressDependentFacts: string[]; profileDefaults?: {setting: "phone" | "contactPerson" | "company"; field: string}[]};
   category: { options: Field[] };
   canonicalValues: Record<string, string[]>;
   platforms: Record<
     string,
     {
       name?: string;
-      rules?: any[];
       addressBoundFields?: string[];
-      deferred?: Record<string, string>;
-      extras: Field[];
       labels: Record<string, string>;
       choiceLabels: Record<string, Record<string, string>>;
-      constants: Record<string, JsonValue>;
-      bindings: {
-        source: string;
-        target: string;
-        pairs: { from: JsonValue; to: JsonValue }[];
-      }[];
     }
   >;
   version: string;
+  serverApplicability?: boolean;
   addressSuggestions: boolean;
 }
 export interface Prepared {

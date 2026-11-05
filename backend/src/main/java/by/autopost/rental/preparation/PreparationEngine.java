@@ -85,6 +85,8 @@ public final class PreparationEngine {
         issue(issues, id, "adapter_review", text(block, "message"));
     }
     return object(
+        "applicability",
+        new FieldApplicability().evaluate(schema, values),
         "platform",
         text(plan, "platform"),
         "values",

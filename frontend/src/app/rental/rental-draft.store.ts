@@ -1,6 +1,7 @@
 import type { EditorSchema, Prepared, RentalDraft } from "./rental-models";
 import { rentalApi } from "./rental-api";
 import { RentalCardCheck } from "./rental-card-check";
+import { RentalApplicability } from "./rental-applicability";
 import {
   applyProfileDefaults,
   type RentalProfile,
@@ -38,6 +39,11 @@ export class RentalDraftStore {
     draft: this.draft,
     destroyed: this.destroyed,
   }));
+  readonly applicability = new RentalApplicability(() => ({
+    workspace: this.workspaceId(), id: this.id, version: this.editVersion,
+    schemaVersion: this.schema?.version, enabled: !!this.schema?.serverApplicability,
+    draft: this.draft, destroyed: this.destroyed,
+  }));
   get results() {
     return this.check.results;
   }
@@ -55,6 +61,7 @@ export class RentalDraftStore {
       this.draft.modelVersion = this.schema.card?.version;
       this.draft.platforms = this.platforms;
       applyProfileDefaults(this.draft, this.schema, this.profile());
+      this.applicability.schedule();
       await this.refresh();
     } catch (e) {
       this.error = (e as Error).message;
@@ -75,6 +82,7 @@ export class RentalDraftStore {
     this.editVersion++;
     this.dirty = true;
     this.check.invalidate();
+    this.applicability.schedule();
     this.status = "Есть изменения";
     clearTimeout(this.timer);
     this.timer = setTimeout(async () => {
@@ -188,6 +196,8 @@ export class RentalDraftStore {
       this.id = result.id;
       this.revision = result.revision;
       this.draft = result.draft;
+      this.applicability.clear();
+      this.applicability.schedule();
       this.onTransition();
       this.check.clear();
       this.dirty = false;
@@ -218,6 +228,7 @@ export class RentalDraftStore {
     }
   }
   private resetDraft() {
+    this.applicability.clear();
     this.onTransition();
     clearTimeout(this.timer);
     this.editVersion++;
@@ -235,6 +246,7 @@ export class RentalDraftStore {
     applyProfileDefaults(this.draft, this.schema, this.profile());
     this.dirty = false;
     this.pendingDelete = null;
+    this.applicability.schedule();
   }
   async remove(id: string) {
     if (this.busy || this.pendingDelete !== id) return;
@@ -288,6 +300,7 @@ export class RentalDraftStore {
   }
   destroy() {
     this.destroyed = true;
+    this.applicability.clear();
     clearTimeout(this.timer);
     this.check.clear();
   }

@@ -59,3 +59,12 @@ test('frontend imports have no dependency cycles', () => {
   }
   for (const file of files) visit(file);
 });
+
+test('web editor does not execute or import marketplace preparation rules', () => {
+  for (const file of files) {
+    const source = readFileSync(file, 'utf8');
+    for (const {module} of imports.get(file))
+      assert.doesNotMatch(module, /(?:^|\/)(?:backend|data\/rental|conditions|field-rules|attributes|taxonomy|extension-config)(?:\/|$)/, file);
+    assert.doesNotMatch(source, /common_option_id|platform_option_id|\.conversion\b|\.bindings\b|\buiWhen\b|\bfill_rule\b/, file);
+  }
+});

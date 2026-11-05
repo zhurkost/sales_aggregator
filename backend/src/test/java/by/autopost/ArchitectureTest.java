@@ -10,6 +10,23 @@ import java.nio.file.*;
 import org.junit.jupiter.api.Test;
 
 class ArchitectureTest {
+  @Test
+  void aiDoesNotUseThePublicEditorContract() {
+    noClasses()
+        .that()
+        .resideInAPackage("..rental.ai..")
+        .should()
+        .callMethod(by.autopost.rental.application.RentalCatalog.class, "editor")
+        .check(CLASSES);
+    noClasses()
+        .that()
+        .resideInAPackage("..rental.ai..")
+        .should()
+        .dependOnClassesThat()
+        .haveSimpleNameStartingWith("Editor")
+        .check(CLASSES);
+  }
+
   private static final JavaClasses CLASSES =
       new ClassFileImporter()
           .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)

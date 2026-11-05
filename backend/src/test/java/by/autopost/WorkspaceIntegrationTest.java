@@ -60,6 +60,7 @@ class WorkspaceIntegrationTest {
     getJson("rental/drafts", "", 401);
     postJson("rental/address/suggest", "", object("query", "Минск"), 401);
     postJson("rental/prepare", "", object(), 401);
+    postJson("rental/applicability", "", object(), 401);
     postJson("rental/extension-config", "", object(), 401);
     postJson("rental/analyze", "", object("text", "Сдам квартиру"), 401);
     var account = register();

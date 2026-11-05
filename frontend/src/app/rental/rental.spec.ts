@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalEditorComponent } from "./rental-editor.component";
-import { applicable } from "./conditions";
 import { TestBed } from "@angular/core/testing";
 
 afterEach(() => {
@@ -18,7 +17,7 @@ describe("rental preparation editor", () => {
     vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(r => resolve = r)));
     const opening = c.open("another");
     await vi.waitFor(() => expect(resolve).toBeDefined());
-    const field = {id:"listing.title", type:"text", name:"Title", description:"", options:[], fill_rule:{}};
+    const field = {id:"listing.title", type:"text", name:"Title", description:"", options:[], };
     c.setValue(field, "Must not accept locked input");
     expect(c.draft.values[field.id]).toBeUndefined();
     c.draft.values[field.id] = "Unexpected asynchronous edit";
@@ -34,7 +33,7 @@ describe("rental preparation editor", () => {
     const c = new RentalEditorComponent();
     c.draft.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
     for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
-      c.setValue({id, name:id, type:"text", options:[], fill_rule:{}, description:""}, "Example");
+      c.setValue({id, name:id, type:"text", options:[], description:""}, "Example");
     expect(c.draft.address.settlement).toBe("Минск");
     c.ngOnDestroy();
   });
@@ -59,8 +58,8 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.schema = {card:{version:2,expandedGroups:[],addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
-      platforms:{example:{extras:[],labels:{},choiceLabels:{},constants:{},bindings:[],addressBoundFields:["nativeAddress","coordinates"]}}};
+    c.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
+      platforms:{example:{labels:{},choiceLabels:{},addressBoundFields:["nativeAddress","coordinates"]}}};
     c.draft.values["location.metro"] = "Old metro";
     c.draft.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
     c.addressChanged({provider:"manual",label:"New",countryIso:"BY",settlement:"New",street:"",house:"",confirmed:false});
@@ -86,10 +85,10 @@ describe("rental preparation editor", () => {
   });
 
   it("renders a fifth marketplace with the same one-field form and preserves data when toggled", async () => {
-    const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], fill_rule:{}, description:"", uses:[{platform:"fifth",target:"area"}]};
-    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,extras:[],labels:{},choiceLabels:{},constants:{},bindings:[]}]));
+    const field = {id:"rental.test", name:"Площадь тест", type:"text", options:[], description:"", uses:[{platform:"fifth",target:"area"}]};
+    const platforms = Object.fromEntries(["one","two","three","four","fifth"].map(p => [p, {name:p === "fifth" ? "Пятая площадка" : p,labels:{},choiceLabels:{},}]));
     vi.stubGlobal("fetch", vi.fn(async (url: string) => response(url.endsWith("/editor") ? {
-      version:"2",card:{version:2,expandedGroups:["group.main"],addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],fill_rule:{},description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
+      version:"2",card:{version:2,addressDependentFacts:[]}, category:{options:[{id:"group.main",name:"Главное",type:"group",options:[field],description:""}]},canonicalValues:{},addressSuggestions:false,platforms,
     } : {drafts:[]})));
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
@@ -104,7 +103,7 @@ describe("rental preparation editor", () => {
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
-    c.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",fill_rule:{},options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",fill_rule:{}}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
+    c.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
     c.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
     expect(c.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
@@ -114,8 +113,7 @@ describe("rental preparation editor", () => {
       if (url.endsWith("/editor")) return response({
         version: "1", category: { options: [] }, canonicalValues: {}, addressSuggestions: false,
         platforms: Object.fromEntries(["kufar", "onliner", "realt", "domovita"].map((name) => [name, {
-          extras: [], labels: {}, choiceLabels: {}, constants: {}, bindings: [],
-        }])),
+          labels: {}, choiceLabels: {}, }])),
       });
       if (url.endsWith("/drafts")) return response({ drafts: [{ id: "saved", title: "Тестовая квартира", address: "", revision: 1 }] });
       return response({ deleted: true });
@@ -273,67 +271,6 @@ describe("rental preparation editor", () => {
     expect(c.query).toBe("");
     c.ngOnDestroy();
   });
-  it("keeps dependent choices unknown until their typed prerequisite is chosen", () => {
-    const condition = {
-      not: { option_id: "owner", operator: "equals", value: true },
-    };
-    expect(applicable(condition, {})).toBeNull();
-    expect(applicable(condition, { owner: false })).toBe(true);
-    expect(
-      applicable(
-        { option_id: "town", operator: "equals", value: 5 },
-        { town: "5" },
-      ),
-    ).toBe(false);
-    expect(
-      applicable(
-        { option_id: "town", operator: "equals", value: 5 },
-        { town: 5 },
-      ),
-    ).toBe(true);
-  });
-  it("shows only the address fields for the chosen region", () => {
-    const c = new RentalEditorComponent();
-    c.schema = {
-      category: { options: [] },
-      canonicalValues: {},
-      version: "1",
-      addressSuggestions: true,
-      platforms: {
-        example: {
-          labels: {},
-          choiceLabels: {},
-          constants: { route: "rent" },
-          bindings: [],
-          extras: [
-            {
-              id: "area-a",
-              name: "A",
-              description: "",
-              type: "enum",
-              options: [],
-              fill_rule: {},
-              uiWhen: { option_id: "region", operator: "equals", value: "a" },
-            },
-            {
-              id: "area-b",
-              name: "B",
-              description: "",
-              type: "enum",
-              options: [],
-              fill_rule: {},
-              uiWhen: { option_id: "region", operator: "equals", value: "b" },
-            },
-          ],
-        },
-      },
-    };
-    expect(c.availableExtras("example")).toHaveLength(0);
-    expect(c.waitingExtras("example")).toBe(true);
-    c.draft.extras["example"] = { region: "b" };
-    expect(c.availableExtras("example").map((f) => f.id)).toEqual(["area-b"]);
-    c.ngOnDestroy();
-  });
   it("ignores a stale address response after the query changes", async () => {
     const c = new AddressInputComponent();
     c.workspaceId = "owner";
@@ -409,11 +346,10 @@ describe("rental preparation editor", () => {
       name: "Amount",
       description: "",
       type: "number",
-      fill_rule: {},
       options: [],
     };
     c.setExtra("example", field, "1,123456789012345678");
-    expect(c.extra("example", "amount")).toBe("1,123456789012345678");
+    expect(c.draft.extras["example"]["amount"]).toBe("1,123456789012345678");
     c.ngOnDestroy();
   });
   it("does not lose edits made during a save and pins workspace", async () => {

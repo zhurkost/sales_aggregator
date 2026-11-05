@@ -3,11 +3,11 @@ import { TestBed } from "@angular/core/testing";
 import { RentalEditorComponent } from "./rental-editor.component";
 import { EditorSchema, Field, RentalAiResult } from "./rental-api";
 
-const field = (id:string,type="text"):Field => ({id,name:id,description:"",type,options:[],fill_rule:{}});
+const field = (id:string,type="text"):Field => ({id,name:id,description:"",type,options:[],});
 const schema:EditorSchema = {version:"2",category:{options:[
   { ...field("group.main","group"),options:[field("price"),field("rooms","enum")] },
   { ...field("group.amenities","group"),name:"Удобства", options:[field("wifi","boolean"),field("washing","boolean")] },
-]},canonicalValues:{rooms:["1","2"]},platforms:{one:{name:"Площадка",extras:[],labels:{},choiceLabels:{},constants:{},bindings:[]}},addressSuggestions:false};
+]},canonicalValues:{rooms:["1","2"]},platforms:{one:{name:"Площадка",labels:{},choiceLabels:{},}},addressSuggestions:false};
 const result:RentalAiResult = {schemaVersion:"2",model:"test",questions:[],address:null,ignored:0,suggestions:[
   {field:"price",value:"1500",quote:"1500 BYN"},{field:"wifi",value:false,quote:"без Wi-Fi"},{field:"washing",value:true,quote:"стиральная машина"},
 ]};
@@ -53,7 +53,7 @@ describe("compact rental editor with AI",()=>{
   it("preserves a confirmed address and clears stale dependencies only when replacement is accepted",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Новый адрес",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address});
-    c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
+    c.schema!.card={version:2,addressDependentFacts:["metro"]};
     c.draft.address={...address,label:"Старый адрес",confirmed:true,latitude:"53.9"}; c.draft.values.metro="old";
     await c.fillFromDescription();expect(c.draft.address.confirmed).toBe(true);expect(c.aiAddress?.label).toBe("Новый адрес");
     c.acceptAiAddress();expect(c.draft.address.label).toBe("Новый адрес");expect(c.draft.address.confirmed).toBe(false);expect(c.draft.values.metro).toBeUndefined();c.ngOnDestroy();
@@ -91,7 +91,7 @@ describe("compact rental editor with AI",()=>{
   it("keeps address-dependent suggestions together and discards them after a manual address change",async()=>{
     const address={provider:"manual",countryIso:"BY",label:"Адрес B",settlement:"",street:"",house:"",confirmed:false};
     const {c}=setup({...result,address,suggestions:[{field:"metro",value:"Метро B",quote:"Метро B"}]});
-    c.schema!.card={version:2,expandedGroups:[],addressDependentFacts:["metro"]};
+    c.schema!.card={version:2,addressDependentFacts:["metro"]};
     c.schema!.category.options[1].options.push(field("metro"));
     c.draft.address={...address,label:"Адрес A"};
     await c.fillFromDescription();expect(c.draft.values.metro).toBeUndefined();

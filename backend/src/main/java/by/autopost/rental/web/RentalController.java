@@ -67,6 +67,12 @@ class RentalController {
     return catalog.prepare(input);
   }
 
+  @PostMapping("/applicability")
+  ObjectNode applicability(HttpServletRequest req, @RequestBody JsonNode input) {
+    access.require(req);
+    return catalog.applicability(input);
+  }
+
   @GetMapping("/drafts")
   ObjectNode drafts(HttpServletRequest req) {
     return drafts.list(access.require(req).workspace());

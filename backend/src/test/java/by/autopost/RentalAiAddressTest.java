@@ -214,7 +214,7 @@ class RentalAiAddressTest {
     var provider = new Provider();
     var result =
         RentalAiPolicy.sanitize(
-            catalog.editor(),
+            catalog.analysisSchema(),
             "Сдам квартиру",
             object("address", object("label", LABEL, "quote", LABEL)));
     new RentalAiAddressResolver(provider).resolve("workspace", result);

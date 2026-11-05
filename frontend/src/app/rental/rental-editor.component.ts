@@ -115,13 +115,6 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   fieldName = (...args: Parameters<RentalViewModel["fieldName"]>) => this.view.fieldName(...args);
   valueLabel = (...args: Parameters<RentalViewModel["valueLabel"]>) => this.view.valueLabel(...args);
   legacyLabel = (...args: Parameters<RentalViewModel["legacyLabel"]>) => this.view.legacyLabel(...args);
-  extra = (...args: Parameters<RentalViewModel["extra"]>) => this.view.extra(...args);
-  selected = (...args: Parameters<RentalViewModel["selected"]>) => this.view.selected(...args);
-  context = (...args: Parameters<RentalViewModel["context"]>) => this.view.context(...args);
-  availableExtras = (...args: Parameters<RentalViewModel["availableExtras"]>) => this.view.availableExtras(...args);
-  waitingExtras = (...args: Parameters<RentalViewModel["waitingExtras"]>) => this.view.waitingExtras(...args);
-  nativeChoices = (...args: Parameters<RentalViewModel["nativeChoices"]>) => this.view.nativeChoices(...args);
-  extraFileText = (...args: Parameters<RentalViewModel["extraFileText"]>) => this.view.extraFileText(...args);
   issueMessages = (...args: Parameters<RentalViewModel["issueMessages"]>) => this.view.issueMessages(...args);
   display = (...args: Parameters<RentalViewModel["display"]>) => this.view.display(...args);
   preparedValues = (...args: Parameters<RentalViewModel["preparedValues"]>) => this.view.preparedValues(...args);

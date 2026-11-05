@@ -17,6 +17,53 @@ import org.junit.jupiter.api.Test;
 
 class PreparationEngineTest {
   @Test
+  void applicabilityUsesServerConversionsWithoutLosingDecimalPrecision() {
+    var threshold = new java.math.BigDecimal("1.000000000000000001");
+    var schema =
+        schema(
+            option("amount", "number", object()),
+            option(
+                "dependent",
+                "text",
+                object(
+                    "when", object("option_id", "amount", "operator", "gt", "value", threshold))));
+    var mapping = plan(row("area", "amount", object("kind", "decimal", "target", "number")));
+    var above = run(schema, mapping, object("area", "1,000000000000000002"), object());
+    assertTrue(above.path("applicability").path("dependent").asBoolean());
+    var equal = run(schema, mapping, object("area", "1,000000000000000001"), object());
+    assertFalse(equal.path("applicability").path("dependent").asBoolean());
+    var missing = run(schema, mapping, object(), object());
+    assertTrue(missing.path("applicability").path("dependent").isNull());
+  }
+
+  @Test
+  void applicabilityPreservesInheritedAndNegatedUnknownConditions() {
+    var schema =
+        schema(
+            option("owner", "boolean", object()),
+            option(
+                "branch",
+                "group",
+                object(
+                    "when",
+                    object(
+                        "not", object("option_id", "owner", "operator", "equals", "value", true))),
+                option("child", "text", object())));
+    assertTrue(
+        run(schema, plan(), object(), object()).path("applicability").path("child").isNull());
+    assertTrue(
+        run(schema, plan(), object(), object("owner", false))
+            .path("applicability")
+            .path("child")
+            .asBoolean());
+    assertFalse(
+        run(schema, plan(), object(), object("owner", true))
+            .path("applicability")
+            .path("child")
+            .asBoolean());
+  }
+
+  @Test
   void suppliedButUnmappableRequiredValueDoesNotAskForTheSameFactAgain() {
     var schema = schema(option("currency", "enum", object("required", true), choice("USD")));
     var result =

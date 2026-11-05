@@ -1,7 +1,6 @@
 import type { Field, JsonValue, Prepared, RentalDraft } from "./rental-models";
 import { hasValue } from "./rental-values";
 import { RentalDraftStore } from "./rental-draft.store";
-import { applicable } from "./conditions";
 
 /** Read-only projection of the current draft for presentation. Never saves or calls APIs. */
 export class RentalViewModel {
@@ -18,7 +17,7 @@ export class RentalViewModel {
   label(value: string) { return this.store.schema?.card?.valueLabels?.[value] || value; }
   platformName(p: string) { return this.store.schema?.platforms[p]?.name || p; }
   groupFields(group: Field) {
-    return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.draft.platforms.includes(u.platform) && applicable(u.when, this.context(u.platform)) !== false));
+    return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.draft.platforms.includes(u.platform) && this.store.applicability.field(u.platform, u.target) !== false));
   }
   usedBy(field: Field) {
     return [...new Set(field.uses?.map(u => u.platform).filter(p => this.store.draft.platforms.includes(p)) || [])];
@@ -79,58 +78,6 @@ export class RentalViewModel {
     return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === item.source)?.name ||
       this.store.schema?.platforms[item.platform]?.labels[item.field] || "Сохранённое значение";
   }
-  extra(p: string, id: string) {
-    return this.store.draft.extras[p]?.[id] ?? "";
-  }
-  selected(p: string, f: Field, value: JsonValue) {
-    const xs = this.extra(p, f.id);
-    return Array.isArray(xs) && xs.some((x) => x === value);
-  }
-  context(p: string) {
-    const schema = this.store.schema?.platforms[p];
-    const values = { ...this.store.draft.extras[p], ...schema?.constants };
-    for (const binding of schema?.bindings || []) {
-      const pair = binding.pairs.find(
-        (pair) => pair.from === this.store.draft.values[binding.source],
-      );
-      if (pair && values[binding.target] == null)
-        values[binding.target] = pair.to;
-      else if (pair && values[binding.target] === "")
-        values[binding.target] = pair.to;
-    }
-    for (const row of schema?.rules || []) {
-      const input = this.store.draft.values[row.common_option_id];
-      if (input === undefined || input === null || input === "") continue;
-      const cv = row.conversion;
-      if (cv.kind === "identity") values[row.platform_option_id] = input;
-      if (cv.kind === "decimal" && typeof input === "string" && /^-?\d+([,.]\d+)?$/.test(input)) values[row.platform_option_id] = Number(input.replace(",", "."));
-    }
-    return values;
-  }
-  availableExtras(p: string) {
-    const values = this.context(p);
-    return (
-      this.store.schema?.platforms[p].extras.filter(
-        (f) => applicable(f.uiWhen, values) === true,
-      ) || []
-    );
-  }
-  waitingExtras(p: string) {
-    const values = this.context(p);
-    return this.store.schema?.platforms[p].extras.some(
-      (f) => applicable(f.uiWhen, values) === null,
-    );
-  }
-  nativeChoices(p: string, field: Field) {
-    const values = this.context(p);
-    return field.options.filter(
-      (option) => applicable(option.fill_rule["when"], values) === true,
-    );
-  }
-  extraFileText(p: string, field: Field) {
-    const value = this.extra(p, field.id);
-    return Array.isArray(value) ? value.join("\n") : String(value);
-  }
   issueMessages(result: Prepared) {
     return [...new Set(result.issues.map((issue) => issue.message))];
   }
@@ -151,9 +98,7 @@ export class RentalViewModel {
             )
             .join(", ")
         : schema?.choiceLabels[id]?.[JSON.stringify(value)] ||
-          (id.endsWith(".description")
-            ? String(this.store.draft.values["listing.description"] || value)
-            : this.display(value)),
+          this.display(value),
     }));
   }
 }
