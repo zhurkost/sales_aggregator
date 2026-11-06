@@ -75,7 +75,7 @@
         "scopeSelector": "body",
         "optionSelector": "[data-name^=\"autocomplete-option-\"]",
         "confirm": "value-and-closed",
-        "selection": "first-or-street-type"
+        "selection": "first"
       }
     },
     {

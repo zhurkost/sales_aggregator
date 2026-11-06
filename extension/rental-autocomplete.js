@@ -47,25 +47,6 @@
     }
     return { name, type: "" };
   }
-  const escapePattern = s => s.replace(/[.*+?^$()|[\]\\]/g, "\\$&");
-  function typedStreetInAddress(label, name, code) {
-    const aliases = types.street.filter(([type]) => type.startsWith(code))
-      .flatMap(([, words]) => words).map(escapePattern).join("|");
-    if (!aliases) return false;
-    const marker = "(?:" + aliases + ")(?:\\.\\s*|\\s+)";
-    const street = escapePattern(norm(name));
-    return new RegExp("(?<![\\p{L}\\d])(?:" + marker + street + "|" + street +
-      "\\s+(?:" + aliases + ")\\.?)(?![\\p{L}\\d])", "u").test(norm(label));
-  }
-  function fullAddressOptions(options, label, control) {
-    if (options.length <= 1 || !control.streetName) return options.slice(0, 1);
-    if (control.streetType)
-      return options.filter(e => typedStreetInAddress(label(e), control.streetName, control.streetType));
-    // With no source type, don't guess between two explicitly typed namesakes.
-    const typed = options.filter(e => types.street.some(([type]) =>
-      typedStreetInAddress(label(e), control.streetName, type.slice(0, 2))));
-    return typed.length > 1 ? [] : options.slice(0, 1);
-  }
   function matches(label, value, kind, code, single = false) {
     const actual = addressName(label, kind),
       wanted = addressName(value, kind);
@@ -92,7 +73,7 @@
     if (!scope) return;
     const options = () =>
       query(config.optionSelector || '[role="option"]', scope).filter(
-        (e) => visible(e) && enabled(e),
+        (e) => visible(e) && enabled(e) && !/^\s*Добавить\s*:/iu.test(e.textContent),
       );
     const rawLabel = (e) =>
       config.labelSelector
@@ -169,8 +150,8 @@
     const exactName = (v) => String(v ?? "").trim().replace(/\s+/g, " ").toLocaleLowerCase("ru");
     const candidates = config.selection === "single-or-exact"
       ? available.length === 1 ? available : available.filter(e => exactName(label(e)) === exactName(control.value))
-      : config.selection === "first-or-street-type"
-        ? fullAddressOptions(available, label, control)
+      : config.selection === "first"
+        ? available.slice(0, 1)
         : available.filter((e) => {
       if (!matches(label(e), control.matchValue || control.value, config.kind, control.streetType, available.length === 1)) return false;
       const context = config.contextSelector
@@ -188,7 +169,7 @@
     }
     const option = candidates[0];
     if (config.confirm) {
-      const signature = config.selection === "single-or-exact" || config.selection === "first-or-street-type"
+      const signature = config.selection === "single-or-exact"
         ? JSON.stringify(available.map(e => exactName(e.textContent))) : norm(option.textContent);
       // Debounced searches briefly display results from the previous query.
       if (pending.signature !== signature) {

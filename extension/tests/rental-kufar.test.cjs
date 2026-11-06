@@ -137,13 +137,11 @@ test('page waits for delayed uploads and ignores next, submit and promotion even
   assert.equal(reports.at(-1).remaining.includes(c.field),false);
 });
 
-for (const [labels,expected] of [
-  [['Минск, ул. Мира, 18','Минск, Мира пр-т, 18'],1],
-  [['Прилуки, ул. Мира, 18','Минск, пр. Мира, 18'],1],
-  [['Минск, пр-д Мира, 18','Минск, пр-кт Мира, 18'],-1],
-  [['Минск, ул. Мира, 18','Минск, проспект Мирный, 18'],-1],
-  [['Минск, Мира, 18'],0],
-]) test('Kufar typed suggestions: '+labels.join(' / '), async t=>{
+for (const labels of [
+  ['Минск, ул. Мира, 18','Минск, Мира пр-т, 18'],
+  ['Минск, пр-д Мира, 18','Минск, пр-кт Мира, 18'],
+  ['Минск, Мира, 18'],
+]) test('Kufar selects first address: '+labels.join(' / '), async t=>{
   const c=control('address_text',{value:'Минск Мира 18',streetName:'Мира',streetType:'пр'});
   const f=await fixture(t,'<input id="geocoder"><div id="rows"></div>',[c]);
   await f.form.tick();
@@ -155,6 +153,6 @@ for (const [labels,expected] of [
     row.onclick=()=>{clicked.push(i);f.doc.querySelector('input').value=label;f.doc.querySelector('#rows').replaceChildren();};
   }
   for(let i=0;i<5;i++)await f.form.tick();
-  assert.deepEqual(clicked,expected<0?[]:[expected]);
-  assert.equal(f.form.done.has(c.field),expected>=0);
+  assert.deepEqual(clicked,[0]);
+  assert.equal(f.form.done.has(c.field),true);
 });

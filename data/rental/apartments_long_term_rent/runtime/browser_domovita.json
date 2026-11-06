@@ -121,6 +121,7 @@
       "selector": "div:has(> input[name=\"town_id\"]) input[role=\"combobox\"]",
       "addressPart": "settlement",
       "autocomplete": {
+        "selection": "first",
         "kind": "settlement",
         "scopeSelector": "div:has(> .custom-select__control)",
         "optionSelector": "[role=\"option\"]",
@@ -141,6 +142,7 @@
       "addressPart": "street",
       "after": "domovita.town",
       "autocomplete": {
+        "selection": "first",
         "kind": "street",
         "scopeSelector": "div:has(> .custom-select__control)",
         "optionSelector": "[role=\"option\"]",
@@ -156,6 +158,7 @@
       "addressPart": "house",
       "after": "domovita.street",
       "autocomplete": {
+        "selection": "first",
         "kind": "house",
         "scopeSelector": "div:has(> .custom-select__control)",
         "optionSelector": "[role=\"option\"]",

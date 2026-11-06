@@ -44,7 +44,7 @@ async function setup(rows = cityRows, city = field("settlement", "г Минск"
     house: document.getElementById("location.houseNumber"),
   };
 }
-test("Realt selects scoped city and typed street, waits for confirmation, then fills house", async (t) => {
+test("Realt selects first city and first street, waits for confirmation, then fills house", async (t) => {
   const f = await setup();
   t.after(() => f.window.happyDOM.abort());
   let cityClicks = 0,
@@ -60,10 +60,10 @@ test("Realt selects scoped city and typed street, waits for confirmation, then f
     f.street.disabled = false;
     f.house.disabled = false;
   };
-  f.document.querySelectorAll('#street-wrap [role="button"]')[1].onclick =
+  f.document.querySelectorAll('#street-wrap [role="button"]')[0].onclick =
     () => {
       streetClicks++;
-      f.street.value = "Ольшевского ул.";
+      f.street.value = "Ольшевского пер.";
       f.document.querySelector("#street-wrap ul").remove();
     };
   await f.form.tick();
@@ -83,12 +83,13 @@ test("Realt selects scoped city and typed street, waits for confirmation, then f
   assert.equal(f.house.value, "27");
   assert.equal(f.form.done.size, 3);
 });
-test("ambiguous street names never choose a lane or the add-new action", async (t) => {
+test("an add-new action alone is not an address suggestion", async (t) => {
   const f = await setup();
   t.after(() => f.window.happyDOM.abort());
   f.form.done.add("realt.settlement");
   f.street.disabled = false;
   f.form.recipe.controls[1].value = "Ольшевского";
+  for (const row of [...f.document.querySelectorAll("#street-wrap li")].slice(0, 2)) row.remove();
   let clicks = 0;
   for (const b of f.document.querySelectorAll('[role="button"]'))
     b.onclick = () => clicks++;
@@ -97,7 +98,7 @@ test("ambiguous street names never choose a lane or the add-new action", async (
   assert.equal(f.form.done.has("realt.street"), false);
 });
 
-test("clean address input retains original street type for matching", async (t) => {
+test("a later matching type does not outrank the first suggestion", async (t) => {
   const f = await setup();
   t.after(() => f.window.happyDOM.abort());
   f.form.done.add("realt.settlement");
@@ -105,15 +106,15 @@ test("clean address input retains original street type for matching", async (t) 
   Object.assign(f.form.recipe.controls[1], {value: "Ольшевского", streetType: "ул"});
   let correct = 0, wrong = 0;
   const buttons = f.document.querySelectorAll('#street-wrap [role="button"]');
-  buttons[0].onclick = () => wrong++;
-  buttons[1].onclick = () => correct++;
+  buttons[0].onclick = () => correct++;
+  buttons[1].onclick = () => wrong++;
   buttons[2].onclick = () => wrong++;
   for (let i = 0; i < 4; i++) await f.form.tick();
   assert.equal(f.street.value, "ольшевского");
   assert.equal(correct, 1);
   assert.equal(wrong, 0);
 });
-test("duplicate settlement names need matching region and district; loading results are ignored", async (t) => {
+test("duplicate settlements use the first row after loading", async (t) => {
   const row =
     '<li><div role="button"><p>д. Лесная</p><p>Ивацевичский р-н, Брестская область</p></div></li>';
   const f = await setup(
@@ -124,12 +125,10 @@ test("duplicate settlement names need matching region and district; loading resu
   t.after(() => f.window.happyDOM.abort());
   let clicks = 0;
   for (const b of f.document.querySelectorAll('#city-wrap [role="button"]'))
-    b.onclick = () => clicks++;
-  for (let i = 0; i < 3; i++) await f.form.tick();
-  assert.equal(clicks, 0);
+    b.onclick = () => { assert.match(b.textContent, /Брестская/); clicks++; };
   f.form.recipe.controls[0].matchContext = [
-    "Брестская обл",
-    "Ивацевичский район",
+    "Минская обл",
+    "Минский район",
   ];
   const spinner = f.document.createElement("svg");
   spinner.classList.add("animate-spin");
