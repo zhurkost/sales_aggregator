@@ -40,7 +40,7 @@ class ArchitectureTest {
   }
 
   @Test
-  void httpLayerCannotAccessPersistence() {
+  void httpLayerCannotAccessInfrastructureDirectly() {
     noClasses()
         .that()
         .haveSimpleNameEndingWith("Controller")
@@ -48,7 +48,8 @@ class ArchitectureTest {
         .haveSimpleName("Access")
         .should()
         .dependOnClassesThat()
-        .resideInAnyPackage("..persistence..", "org.springframework.jdbc..", "java.sql..")
+        .resideInAnyPackage("..persistence..", "org.springframework.jdbc..", "java.sql..",
+            "java.net.http..", "java.nio.file..")
         .check(CLASSES);
     noClasses()
         .that()
@@ -155,12 +156,6 @@ class ArchitectureTest {
               source.contains("jdbc")
                   || source.contains("SELECT ")
                   || source.contains("CREATE TABLE"),
-              name);
-        if (name.startsWith("web/"))
-          assertFalse(
-              source.contains("java.net.http")
-                  || source.contains("java.nio.file")
-                  || source.contains("rental.persistence"),
               name);
         if (name.startsWith("model/") || name.startsWith("preparation/")) {
           assertFalse(

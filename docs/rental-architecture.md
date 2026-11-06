@@ -6,10 +6,11 @@
 
 | Область | HTTP | Прикладная логика | Данные / внешний адаптер |
 |---|---|---|---|
-| Учётная запись | WorkspaceController, Access | WorkspaceService | WorkspaceRepository → JdbcWorkspaceRepository |
-| Аренда | RentalController | RentalCatalog, RentalPublicationService | ReferenceRepository → FileReferenceRepository |
-| Адреса | RentalController | AddressService | AddressProvider → DadataAddressGateway |
-| ИИ | RentalAiController | RentalAiService, RentalAiPolicy | AiGateway → HttpAiGateway, адресный сервис |
+| Учётная запись | SessionController, WorkspaceSettingsController, Access | WorkspaceService | WorkspaceRepository → JdbcWorkspaceRepository |
+| Редактор и подготовка карточки | ListingEditorController, ListingPreparationController | RentalCatalog | ReferenceRepository → FileReferenceRepository |
+| Публикация | ListingPublicationController | RentalPublicationService | ReferenceRepository → FileReferenceRepository |
+| Адреса | ListingAddressController | AddressService | AddressProvider → DadataAddressGateway |
+| ИИ | ListingAnalysisController | RentalAiService, RentalAiPolicy | AiGateway → HttpAiGateway, адресный сервис |
 
 Access проверяет cookie, Origin и права на кабинет. Контроллеры не обращаются к SQL. Регистрация и выдача сессии выполняются в транзакции; cookie выставляется после успешного завершения. Обработка формы аренды не обращается к SQLite. Исторические записи базы при обновлении приложения не затрагиваются.
 

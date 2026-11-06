@@ -88,7 +88,7 @@ public class Access extends OncePerRequestFilter {
     res.getWriter().write(object("error", message).toString());
   }
 
-  static String token(HttpServletRequest req) {
+  public static String token(HttpServletRequest req) {
     var m =
         Pattern.compile("(?:^|;\\s*)autopost_session=([a-f0-9]{64})(?:;|$)")
             .matcher(Objects.toString(req.getHeader("Cookie"), ""));
@@ -108,7 +108,7 @@ public class Access extends OncePerRequestFilter {
     return actor;
   }
 
-  String cookie(String token, int age) {
+  public String cookie(String token, int age) {
     return "autopost_session="
         + token
         + "; Path=/; HttpOnly; SameSite=Strict; Max-Age="
