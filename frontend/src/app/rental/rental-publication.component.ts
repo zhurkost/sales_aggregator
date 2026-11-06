@@ -25,6 +25,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) store!: RentalFormStore;
   @Input({ required: true }) workspaceId = "";
   @Input({ required: true }) sessionId = "";
+  @Input() deal: "rent" | "sale" = "rent";
   mode: "automatic" | "assist" = "automatic";
   readonly extensionVersion = EXTENSION_VERSION;
   busy = false;
@@ -42,7 +43,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     this.jobs = [];
     this.photos = [];
     this.error = "";
-    if (!this.workspaceId || !this.sessionId) return;
+    if (this.deal === "sale" || !this.workspaceId || !this.sessionId) return;
     try {
       const ping = await this.gateway.request("PING", undefined, 4000);
       if (generation !== this.generation) return;
@@ -79,7 +80,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     }
   }
   async publish() {
-    if (this.busy || this.store.busy || !this.store.card.platforms.length)
+    if (this.deal === "sale" || this.busy || this.store.busy || !this.store.card.platforms.length)
       return;
     if (!this.ready) {
       this.error = `Установите расширение ${this.extensionVersion} и обновите вкладку Автопоста.`;

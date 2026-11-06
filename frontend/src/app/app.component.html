@@ -108,20 +108,31 @@
       <span class="brand"><span class="brand-icon"><app-icon name="layers" /></span>Автопост<span class="brand-period">.</span></span>
       <div class="workspace-label">КАБИНЕТ ПРОДАВЦА</div>
       <nav aria-label="Разделы кабинета">
-        <button type="button" class="nav-item active" aria-current="page"><app-icon name="file" />Аренда квартир</button>
+        <button type="button" class="nav-item active" aria-current="page"><app-icon name="file" />Недвижимость</button>
       </nav>
-      <div class="sidebar-note"><b>Автопост · MVP</b><p>Карточки квартир хранятся в вашем профиле на сервере.</p></div>
+      <div class="sidebar-note"><b>Автопост · MVP</b><p>Карточки остаются в открытой вкладке до обновления страницы.</p></div>
       <div class="sidebar-bottom">
         <div class="profile"><span class="avatar"><app-icon name="user" /></span><span><b>{{ profile.name }}</b><small>{{ profile.login }}</small></span><button title="Выйти из профиля" aria-label="Выйти из профиля" (click)="logout()" [disabled]="!!busy"><app-icon name="logout" /></button></div>
       </div>
     </aside>
     <div class="main-shell">
       <header class="topbar">
-        <div class="breadcrumbs">{{ profile.name }} <span>/</span> Аренда квартир</div>
+        <div class="breadcrumbs">{{ profile.name }} <span>/</span> Недвижимость</div>
         <div class="top-actions"><span class="country">🇧🇾 Беларусь</span><button class="text-button" (click)="showExtension = true">{{ ext ? "Помощник подключён" : "Расширение " + version }}</button><button class="mobile-logout" aria-label="Выйти из профиля" (click)="logout()" [disabled]="!!busy"><app-icon name="logout" /></button></div>
       </header>
       <main>
-        <app-rental-editor [workspaceId]="profile.id" [profileDefaults]="settings" />
+        <div class="property-tabs" role="tablist" aria-label="Вид объявления">
+          @for (tab of deals; track tab.id; let i = $index) {
+            <button type="button" role="tab" [id]="'tab-' + tab.id" [attr.aria-controls]="'panel-' + tab.id"
+              [attr.aria-selected]="deal === tab.id" [tabIndex]="deal === tab.id ? 0 : -1"
+              (click)="deal = tab.id" (keydown)="tabKey($event, i)">{{ tab.label }}</button>
+          }
+        </div>
+        @for (tab of deals; track tab.id) {
+          <section role="tabpanel" [id]="'panel-' + tab.id" [attr.aria-labelledby]="'tab-' + tab.id" [hidden]="deal !== tab.id">
+            <app-rental-editor *retainedPanel="deal === tab.id" [deal]="tab.id" [workspaceId]="profile.id" [profileDefaults]="settings" />
+          </section>
+        }
         <footer><span class="brand">Автопост<span class="brand-period">.</span></span><button (click)="showExtension = true">Помощь с расширением</button></footer>
       </main>
     </div>

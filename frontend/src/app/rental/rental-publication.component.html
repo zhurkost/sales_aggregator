@@ -34,6 +34,9 @@
       </div>
     }
   </div>
+  @if (deal === "sale") {
+    <p class="hint">Карточку можно заполнить сейчас. Публикация продажи на площадках пока недоступна.</p>
+  } @else {
   <div class="launch">
     <label
       ><input
@@ -82,5 +85,6 @@
     <button type="button" class="stop" (click)="stop()">
       Остановить задания
     </button>
+  }
   }
 </section>

@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { RetainedPanelDirective } from "./retained-panel.directive";
 import { IconComponent } from "./icon.component";
 import { RentalEditorComponent } from "./rental/rental-editor.component";
 import type { RentalProfile } from "./rental/rental-profile-defaults";
@@ -9,12 +10,22 @@ import { WorkspaceGateway } from "./workspace.gateway";
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [FormsModule, IconComponent, RentalEditorComponent],
+  imports: [FormsModule, IconComponent, RentalEditorComponent, RetainedPanelDirective],
   templateUrl: "./app.component.html",
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class AppComponent implements OnInit, OnDestroy {
   constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
+  readonly deals = [{ id: "rent", label: "Аренда квартир" }, { id: "sale", label: "Продажа квартир" }] as const;
+  deal: "rent" | "sale" = "rent";
+  tabKey(event: KeyboardEvent, index: number) {
+    const next = event.key === "Home" ? 0 : event.key === "End" ? 1 :
+      ["ArrowLeft", "ArrowRight"].includes(event.key) ? 1 - index : -1;
+    if (next < 0) return;
+    event.preventDefault();
+    this.deal = this.deals[next].id;
+    (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
+  }
   ready = false;
   unavailable = false;
   profile: Profile | null = null;
@@ -83,6 +94,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const settings = await this.workspace.settings(profile);
     if (!this.alive) return;
     this.settings = settings;
+    this.deal = "rent";
     this.profile = profile;
     void this.checkExtension();
   }

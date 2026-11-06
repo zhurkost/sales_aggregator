@@ -6,12 +6,13 @@ import { RentalEditorComponent } from "./rental/rental-editor.component";
 
 @Component({selector:"app-rental-editor", standalone:true, template:"<p>Rental editor</p>"})
 class RentalStub {
+  @Input() deal: "rent" | "sale" = "rent";
   @Input() workspaceId = "";
   @Input() profileDefaults = {};
 }
 const profile = {id:"owner",name:"Owner",login:"owner"};
 const response = (body: unknown) => new Response(JSON.stringify(body),{status:200});
-describe("Rental-only workspace",()=>{
+describe("Real estate workspace",()=>{
   let app: AppComponent;
   afterEach(()=>{app?.ngOnDestroy();vi.unstubAllGlobals();vi.restoreAllMocks();});
   it("opens rental directly and never requests removed workspace APIs",async()=>{
@@ -30,11 +31,44 @@ describe("Rental-only workspace",()=>{
     fixture.detectChanges();await load.mock.results[0].value;fixture.detectChanges();
     const nav=fixture.nativeElement.querySelector('nav');
     expect(nav.querySelectorAll('button')).toHaveLength(1);
-    expect(nav.textContent.trim()).toBe("Аренда квартир");
+    expect(nav.textContent.trim()).toBe("Недвижимость");
     expect(fixture.nativeElement.querySelector('app-rental-editor')).not.toBeNull();
     for(const label of ["Новое объявление","Очередь и уведомления","Команда","Массовая загрузка","Справочник площадок","Интеграции"])
       expect(fixture.nativeElement.textContent).not.toContain(label);
     expect(fetcher.mock.calls.map(c=>c[0])).toEqual(["/api/workspace/session","/api/workspace/settings"]);
+  });
+  it("keeps two independent copies of the apartment form when switching tabs", async () => {
+    const schema = {version:"1", category:{options:[]}, canonicalValues:{}, platforms:{one:{name:"Площадка", labels:{}, choiceLabels:{}}}};
+    const fetcher = vi.fn(async (url: unknown) => {
+      if (url === "/api/workspace/session") return response({profile, profiles:[profile]});
+      if (url === "/api/workspace/settings") return response({settings:{}});
+      if (url === "/api/workspace/rental/editor") return response(schema);
+      throw new Error("Unexpected request: " + url);
+    });
+    vi.stubGlobal("fetch",fetcher);
+    const fixture = TestBed.createComponent(AppComponent);
+    app = fixture.componentInstance;
+    vi.spyOn(app,"checkExtension").mockResolvedValue();
+    const root = fixture.nativeElement as HTMLElement;
+    const textarea = () => root.querySelector<HTMLTextAreaElement>("textarea.source-description");
+    const select = (index: number) => { root.querySelectorAll<HTMLButtonElement>('[role="tab"]')[index].click(); fixture.detectChanges(); };
+    const enter = (value: string) => { const input = textarea()!; input.value = value; input.dispatchEvent(new Event("input")); fixture.detectChanges(); };
+    fixture.detectChanges();
+    try {
+      await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
+      expect(Array.from(root.querySelectorAll('[role="tab"]'), t => t.textContent?.trim())).toEqual(["Аренда квартир", "Продажа квартир"]);
+      expect(root.querySelector("button.publish")).not.toBeNull();
+      enter("Первое объявление");
+      select(1);
+      await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
+      expect(textarea()!.value).toBe("");
+      expect(root.querySelector("button.publish")).toBeNull();
+      enter("Второе объявление");
+      select(0); expect(textarea()!.value).toBe("Первое объявление");
+      select(1); expect(textarea()!.value).toBe("Второе объявление");
+      expect(root.querySelectorAll("textarea.source-description")).toHaveLength(1);
+      expect(fetcher.mock.calls.filter(([url]) => url === "/api/workspace/rental/editor")).toHaveLength(2);
+    } finally { fixture.destroy(); }
   });
   it("ends the session without storing the form",async()=>{
     app=new AppComponent();app.profile=profile;

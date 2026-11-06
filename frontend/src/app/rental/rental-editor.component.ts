@@ -29,6 +29,7 @@ import {
 })
 export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
+  @Input() deal: "rent" | "sale" = "rent";
   @Input() profileDefaults: RentalProfile = {};
   readonly store = new RentalFormStore(() => this.workspaceId, () => this.profileDefaults);
   readonly editing = new RentalFormEditor(this.store, address => this.addressChanged(address));
