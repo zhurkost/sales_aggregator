@@ -1,0 +1,232 @@
+{
+  "startUrl": "https://realt.by/podat-obyavlenie/",
+  "setup": [
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Продать"
+    },
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Жилая"
+    },
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Квартира"
+    }
+  ],
+  "controls": [
+    {
+      "field": "realt.location.settlement",
+      "action": "autocomplete",
+      "selector": "[id=\"location.settlement\"]",
+      "addressPart": "settlement",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "settlement",
+        "scopeSelector": "div.relative:has(> div > input[id=\"location.settlement\"])",
+        "optionSelector": "ul > li > [role=\"button\"]",
+        "busySelector": "svg.animate-spin",
+        "confirm": "value-and-closed",
+        "labelSelector": "p:first-child",
+        "contextSelector": "p:not(:first-child)",
+        "contextParts": [
+          "region",
+          "district"
+        ]
+      }
+    },
+    {
+      "field": "realt.location.street",
+      "action": "autocomplete",
+      "selector": "[id=\"location.street\"]",
+      "addressPart": "street",
+      "after": "realt.location.settlement",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "street",
+        "scopeSelector": "div.relative:has(> div > input[id=\"location.street\"])",
+        "optionSelector": "ul > li > [role=\"button\"]",
+        "busySelector": "svg.animate-spin",
+        "confirm": "value-and-closed"
+      }
+    },
+    {
+      "field": "realt.location.houseNumber",
+      "action": "text",
+      "selector": "[id=\"location.houseNumber\"]",
+      "addressPart": "house",
+      "after": "realt.location.settlement"
+    },
+    {
+      "field": "realt.location.buildingNumber",
+      "action": "text",
+      "selector": "[id=\"location.buildingNumber\"]",
+      "after": "realt.location.settlement",
+      "addressPart": "block"
+    },
+    {
+      "field": "realt.apartment.storey",
+      "action": "text",
+      "selector": "[id=\"apartment.storey\"]"
+    },
+    {
+      "field": "realt.area.total",
+      "action": "text",
+      "selector": "[id=\"area.total\"]"
+    },
+    {
+      "field": "realt.area.living",
+      "action": "text",
+      "selector": "[id=\"area.living\"]"
+    },
+    {
+      "field": "realt.house.storeys",
+      "action": "text",
+      "selector": "[id=\"house.storeys\"]"
+    },
+    {
+      "field": "realt.house.buildingYear",
+      "action": "text",
+      "selector": "[id=\"house.buildingYear\"]"
+    },
+    {
+      "field": "realt.termsOfDeal.price",
+      "action": "text",
+      "selector": "[id=\"termsOfDeal.price\"]"
+    },
+    {
+      "field": "realt.description.shortDescription",
+      "action": "text",
+      "selector": "[id=\"description.shortDescription\"]"
+    },
+    {
+      "field": "realt.termsOfDeal.bargain",
+      "action": "check",
+      "selector": "[id=\"termsOfDeal.bargain\"]"
+    },
+    {
+      "field": "realt.apartment.rooms",
+      "action": "choices",
+      "selector": "[id=\"apartment\"]",
+      "label": "Комнат"
+    },
+    {
+      "field": "realt.apartment.separateRooms",
+      "action": "text",
+      "selector": "[id=\"apartment.separateRooms\"]"
+    },
+    {
+      "field": "realt.apartment.repair",
+      "action": "choices",
+      "selector": "[id=\"apartment\"]",
+      "label": "Ремонт"
+    },
+    {
+      "field": "realt.apartment.balcony",
+      "action": "choices",
+      "selector": "[id=\"apartment\"]",
+      "label": "Балконов / лоджий"
+    },
+    {
+      "field": "realt.termsOfDeal.currency",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Цена"
+    },
+    {
+      "field": "realt.media.photos",
+      "action": "files",
+      "selector": "input[type=\"file\"]",
+      "index": 0
+    },
+    {
+      "field": "realt.description.title",
+      "action": "text",
+      "selector": "[id=\"description.title\"]"
+    },
+    {
+      "field": "realt.description.description",
+      "action": "richtext",
+      "selector": "iframe[id=\"description.description_ifr\"]"
+    },
+    {
+      "field": "realt.area.kitchen",
+      "action": "text",
+      "selector": "[id=\"area.kitchen\"]",
+      "expandSection": "area"
+    },
+    {
+      "field": "realt.house.houseType",
+      "action": "choices",
+      "selector": "#house",
+      "label": "Тип дома",
+      "expandSection": "house"
+    },
+    {
+      "field": "realt.apartment.toilet",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Санузел",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.inventoryNumber",
+      "action": "text",
+      "selector": "input[name=\"apartment.inventoryNumber\"]",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.levels",
+      "action": "text",
+      "selector": "input[name=\"apartment.levels\"]",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.area.balcony",
+      "action": "text",
+      "selector": "input[name=\"area.balcony\"]",
+      "expandSection": "area"
+    },
+    {
+      "field": "realt.area.snb",
+      "action": "text",
+      "selector": "input[name=\"area.snb\"]",
+      "expandSection": "area"
+    },
+    {
+      "field": "realt.house.repairYear",
+      "action": "text",
+      "selector": "input[name=\"house.repairYear\"]",
+      "expandSection": "house"
+    },
+    {
+      "field": "realt.termsOfDeal.ownerShip",
+      "action": "choices",
+      "selector": "#termsOfDeal",
+      "label": "Собственность"
+    },
+    {
+      "field": "realt.termsOfDeal.termsOfDeal",
+      "action": "choices",
+      "selector": "#termsOfDeal",
+      "label": "Условия сделки"
+    }
+  ],
+  "next": [],
+  "submit": [],
+  "format": 1,
+  "platform": "realt",
+  "observedAt": "2026-11-06",
+  "ready": [
+    {
+      "selector": "#apartment"
+    },
+    {
+      "selector": "p",
+      "text": "Продажа квартиры"
+    }
+  ]
+}

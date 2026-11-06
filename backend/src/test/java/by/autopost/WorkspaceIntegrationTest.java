@@ -64,7 +64,7 @@ class WorkspaceIntegrationTest {
         object("card", rentalCard, "revision", 1, "id", "example"), 200);
     assertEquals("apartments_long_term_rent", text(parse(config.getResponse().getContentAsString()), "categoryId"));
     postJson(rent + "prepare", cookie, card, 409);
-    postJson(sale + "extension-config", cookie, object(), 409);
+    postJson(sale + "extension-config", cookie, object(), 400);
     getJson("categories/unknown/editor", cookie, 404);
     getJson(sale + "editor", "", 401);
   }
@@ -80,6 +80,17 @@ class WorkspaceIntegrationTest {
         "apartment.floor", "3", "building.floors", "9", "apartment.total_area", "54.5");
     var card = object("schemaVersion", text(editor, "version"), "categoryId", "apartments_sale",
         "platforms", List.of("realt", "kufar", "domovita", "onliner"), "values", values);
+    assertTrue(editor.path("publicationEnabled").asBoolean());
+    var launch = postJson(path + "extension-config", cookie,
+        object("card", card, "id", "sale-example", "revision", 1), 200);
+    var jobs = parse(launch.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8)).path("jobs");
+    assertEquals(4, jobs.size());
+    for (var job : jobs) {
+      assertTrue(job.path("next").isEmpty() && job.path("submit").isEmpty());
+      assertTrue(job.path("controls").findValuesAsText("action").contains("files"));
+      if (text(job, "platform").equals("onliner"))
+        assertEquals("https://r.onliner.by/pk/apartments/create", text(job, "startUrl"));
+    }
     var prices = Map.of("realt", "realt.termsOfDeal.price", "kufar", "kufar.price",
         "domovita", "domovita.price", "onliner", "onliner.price.amount");
     var currencies = Map.of("realt", "realt.termsOfDeal.currency", "kufar", "kufar.currency",

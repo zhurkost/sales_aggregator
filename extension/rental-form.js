@@ -117,6 +117,7 @@
       this.waiting = null;
     }
     ready() {
+      if (this.recipe.formPath && location.pathname.replace(/\/$/, "") !== this.recipe.formPath) return false;
       return (this.recipe.ready || []).every((r) => {
         const exists = query(r.selector).some(
           (e) =>
@@ -189,7 +190,7 @@
       if (c.action === "files") {
         if (!this.photos.length || this.photoSent) return;
         // Existing uploads belong to the user; do not append duplicates or claim success.
-        if (c.field === "onliner.images" && c.previewSelector) {
+        if (["onliner.images", "onliner.file"].includes(c.field) && c.previewSelector) {
           // Replace restored thumbnails only once all the incoming uploads appeared.
           this.oldPreviews = new Set(query(c.previewSelector).map(photo => photo.querySelector("img").src));
           this.removedPreviews = new Set();
@@ -304,7 +305,7 @@
           if (national(e.value) === national(value)) this.done.add(c.field);
           return;
         }
-        const onlinerPrice = c.field === "onliner.price_amount";
+        const onlinerPrice = ["onliner.price_amount", "onliner.price.amount"].includes(c.field);
         const equivalent = (a, b) => {
           if (!onlinerPrice) return norm(a) === norm(b);
           const number = v => Number(String(v).replace(/\s/g, "").replace(",", "."));
@@ -320,7 +321,7 @@
           ? String(value).replace(".", ",") : value;
         setText(e, inputValue);
         if (equivalent(e.value, value)) this.done.add(c.field);
-        else if (c.field === "realt.house_number" && e.value !== current) {
+        else if (["realt.house_number", "realt.location.houseNumber"].includes(c.field) && e.value !== current) {
           // Realt may strip a house suffix. Leave the original value for manual review.
           setText(e, current);
           this.protected.add(c.field);
@@ -520,6 +521,14 @@
       const beforeProgress = this.progress;
       // Choose category before touching any values in a potentially unrelated form.
       if (!this.ready()) {
+        // In the sale flow Kufar may ask for the apartment address before showing the deal selector.
+        if (this.recipe.addressBeforeDeal && this.recipe.platform === "kufar" &&
+            query('[data-testid="name_selected_category"]').some(e => visible(e) && norm(e.textContent).includes("квартиры")) &&
+            !query('[data-testid="kufar-chose-category-popup"],[data-name="type"]').some(visible)) {
+          const address = this.recipe.controls.find(c => c.field === "kufar.address");
+          if (address) await this.fill(address);
+          return this.progress !== beforeProgress;
+        }
         if (this.clickStep("setup")) return true;
         return false;
       }

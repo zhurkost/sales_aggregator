@@ -13,7 +13,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (message.kind === "APP_REQUEST" && message.type === "PING") {
     if (!core.isAppOrigin(core.originOf(sender.url || sender.tab.url))) return false;
     // Health checks must not wait for photo storage or cleanup.
-    respond({version: core.VERSION, capabilities: ["rental-publishing", "rental-address-suggestions", "rental-form-session", "rental-field-transfer-v2", "rental-address-type-then-first", "rental-onliner-city-menu", "rental-localized-price", "listing-category-path"]});
+    respond({version: core.VERSION, capabilities: ["rental-publishing", "rental-address-suggestions", "rental-form-session", "rental-field-transfer-v2", "rental-address-type-then-first", "rental-onliner-city-menu", "rental-localized-price", "listing-category-path", "apartment-sale-publishing"]});
     return true;
   }
   if (!["RENTAL_REQUEST", "RENTAL_PAGE"].includes(message.kind)) return false;

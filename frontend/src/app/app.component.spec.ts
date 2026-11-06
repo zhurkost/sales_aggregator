@@ -44,7 +44,7 @@ describe("Real estate workspace",()=>{
       if (url === "/api/workspace/session") return response({profile, profiles:[profile]});
       if (url === "/api/workspace/settings") return response({settings:{}});
       if (url === "/api/workspace/categories/apartments_long_term_rent/editor") return response({...schema, publicationEnabled:true});
-      if (url === "/api/workspace/categories/apartments_sale/editor") return response({...schema, publicationEnabled:false,
+      if (url === "/api/workspace/categories/apartments_sale/editor") return response({...schema, publicationEnabled:true,
         category:{options:[{id:"group.sale", name:"Сделка", options:[{id:"sale.price", name:"Цена квартиры", type:"number", options:[]}]}]},
         card:{version:2, addressDependentFacts:[], mainFields:["sale.price"]}});
       if (url === "/api/workspace/categories/apartments_sale/analyze") return response({schemaVersion:"1",
@@ -68,7 +68,7 @@ describe("Real estate workspace",()=>{
       select(1);
       await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
       expect(textarea()!.value).toBe("");
-      expect(root.querySelector("button.publish")).toBeNull();
+      expect(root.querySelector("button.publish")).not.toBeNull();
       enter("Продам квартиру за 85 000 USD");
       const price = () => root.querySelector<HTMLInputElement>('[id="rental-sale.price"]');
       root.querySelector<HTMLButtonElement>("button.ai-button")!.click();

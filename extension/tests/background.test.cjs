@@ -65,6 +65,19 @@ test('real worker registration routes rental jobs to all four sites without lega
  const frame=await w.request({kind:'RENTAL_PAGE',type:'GET'},input.jobs[2].startUrl,12,1);assert.equal(frame,undefined);
 });
 
+test('sale launch opens the four selected sites and uses the Onliner sale form', async () => {
+  const worker = createWorker();
+  const jobs = ['kufar', 'onliner', 'realt', 'domovita'].map(site =>
+    JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/rental/apartments_sale/runtime/browser_' + site + '.json'), 'utf8')));
+  const payload = { ...rentalPayload(), categoryId:'apartments_sale', jobs };
+  const run = await worker.request({kind:'RENTAL_REQUEST', type:'RENTAL_RUN', payload, userGesture:true});
+  assert.equal(run.jobs.length, 4);
+  assert.deepEqual(worker.created.map(tab => tab.url), jobs.map(job => job.startUrl));
+  assert.equal(worker.created[1].url, 'https://r.onliner.by/pk/apartments/create');
+  const ping = await worker.request({kind:'APP_REQUEST', type:'PING'});
+  assert.ok(ping.capabilities.includes('apartment-sale-publishing'));
+});
+
 function rentalPayload(photos = []) {
   return {id:'card',profileId:'owner',revision:1,mode:'assist',card:{values:{}},photos,
     jobs:[{...JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/apartments_long_term_rent/runtime/browser_realt.json'),'utf8')),controls:[]}]};

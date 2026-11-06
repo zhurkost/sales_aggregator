@@ -1,0 +1,195 @@
+{
+  "startUrl": "https://www.kufar.by/ain/create",
+  "setup": [
+    {
+      "action": "click",
+      "selector": "[data-testid=\"ain-show-all-categories\"]",
+      "text": "Изменить категорию",
+      "matchText": false
+    },
+    {
+      "action": "click",
+      "selector": "[data-testid=\"kufar-chose-category-popup\"] li",
+      "text": "Недвижимость"
+    },
+    {
+      "action": "click",
+      "selector": "[data-testid=\"sub-category-1010\"]",
+      "text": "Квартиры"
+    },
+    {
+      "action": "click",
+      "selector": "[data-name=\"type\"] [role=\"button\"]",
+      "text": "Продажа"
+    }
+  ],
+  "controls": [
+    {
+      "field": "kufar.subject",
+      "action": "text",
+      "selector": "input[name=\"subject\"]"
+    },
+    {
+      "field": "kufar.size",
+      "action": "text",
+      "selector": "input[name=\"size\"]"
+    },
+    {
+      "field": "kufar.size_living_space",
+      "action": "text",
+      "selector": "input[name=\"size_living_space\"]"
+    },
+    {
+      "field": "kufar.size_kitchen",
+      "action": "text",
+      "selector": "input[name=\"size_kitchen\"]"
+    },
+    {
+      "field": "kufar.price",
+      "action": "text",
+      "selector": "input[name=\"price\"]",
+      "after": "kufar.currency"
+    },
+    {
+      "field": "kufar.contact_person",
+      "action": "text",
+      "selector": "input[name=\"name\"]"
+    },
+    {
+      "field": "kufar.phone",
+      "action": "text",
+      "selector": "input[name=\"phone_0\"]"
+    },
+    {
+      "field": "kufar.body",
+      "action": "text",
+      "selector": "textarea[name=\"body\"]"
+    },
+    {
+      "field": "kufar.address",
+      "action": "autocomplete",
+      "selector": "input#geocoder",
+      "addressPart": "label",
+      "autocomplete": {
+        "kind": "address",
+        "scopeSelector": "body",
+        "optionSelector": "[data-name^=\"autocomplete-option-\"]",
+        "confirm": "value-and-closed",
+        "selection": "type-then-first"
+      }
+    },
+    {
+      "field": "kufar.rooms",
+      "action": "choices",
+      "selector": "[data-name=\"rooms\"]"
+    },
+    {
+      "field": "kufar.bathroom",
+      "action": "choices",
+      "selector": "[data-name=\"bathroom\"]"
+    },
+    {
+      "field": "kufar.balcony",
+      "action": "choices",
+      "selector": "[data-name=\"balcony\"]"
+    },
+    {
+      "field": "kufar.flat_repair",
+      "action": "choices",
+      "selector": "[data-name=\"flat_repair\"]"
+    },
+    {
+      "field": "kufar.house_type",
+      "action": "choices",
+      "selector": "[data-name=\"house_type\"]"
+    },
+    {
+      "field": "kufar.condition",
+      "action": "choices",
+      "selector": "[data-name=\"condition\"]"
+    },
+    {
+      "field": "kufar.floor",
+      "action": "dropdown",
+      "selector": "[data-name=\"floor\"]",
+      "optionsSelector": "[data-name=\"floor\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "displaySelector": "[class*=\"_value\"]",
+      "triggerSelector": "[data-testid=\"base-dropdown-ui\"]"
+    },
+    {
+      "field": "kufar.re_number_floors",
+      "action": "dropdown",
+      "selector": "[data-name=\"re_number_floors\"]",
+      "optionsSelector": "[data-name=\"re_number_floors\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "displaySelector": "[class*=\"_value\"]",
+      "triggerSelector": "[data-testid=\"base-dropdown-ui\"]"
+    },
+    {
+      "field": "kufar.year_built",
+      "action": "dropdown",
+      "selector": "[data-name=\"year_built\"]",
+      "optionsSelector": "[data-name=\"year_built\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "displaySelector": "[class*=\"_value\"]",
+      "triggerSelector": "[data-testid=\"base-dropdown-ui\"]"
+    },
+    {
+      "field": "kufar.flat_windows_side",
+      "action": "dropdown",
+      "selector": "[data-name=\"flat_windows_side\"]",
+      "optionsSelector": "[data-name=\"flat_windows_side\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "displaySelector": "[class*=\"_value\"]",
+      "triggerSelector": "[data-testid=\"base-dropdown-ui\"]"
+    },
+    {
+      "field": "kufar.flat_building_improvements",
+      "action": "dropdown",
+      "selector": "[data-name=\"flat_building_improvements\"]",
+      "optionsSelector": "[data-name=\"flat_building_improvements\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "displaySelector": "[class*=\"_value\"]",
+      "triggerSelector": "[data-testid=\"base-dropdown-ui\"]"
+    },
+    {
+      "field": "kufar.images",
+      "action": "files",
+      "selector": "#imageLoaderDropzone",
+      "uploadedCountSelector": "[data-name=\"images\"] [class*=\"_counter\"]"
+    },
+    {
+      "field": "kufar.currency",
+      "action": "dropdown",
+      "selector": "[data-name=\"price\"] [data-testid=\"base-dropdown-ui\"]",
+      "optionsSelector": "[data-name=\"price\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "displaySelector": "[class*=\"_value\"]",
+      "uiLabels": {
+        "BYR": "руб.",
+        "USD": "$",
+        "EUR": "€"
+      }
+    },
+    {
+      "field": "kufar.size_snb",
+      "action": "text",
+      "selector": "input[name=\"size_snb\"]"
+    }
+  ],
+  "next": [],
+  "submit": [],
+  "format": 1,
+  "platform": "kufar",
+  "observedAt": "2026-11-06",
+  "ready": [
+    {
+      "selector": "[data-testid=\"name_selected_category\"]",
+      "text": "Квартиры"
+    },
+    {
+      "selector": "[data-name=\"type\"] [class*=\"chip__filled-green\"]",
+      "text": "Продажа"
+    },
+    {
+      "selector": "[data-testid=\"kufar-chose-category-popup\"]",
+      "absent": true
+    }
+  ],
+  "addressBeforeDeal": true
+}

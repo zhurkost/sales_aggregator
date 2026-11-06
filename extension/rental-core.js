@@ -6,6 +6,7 @@
     realt: "https://realt.by/podat-obyavlenie/",
     domovita: "https://domovita.by/new/add",
   });
+  const saleStarts = Object.freeze({ ...starts, onliner: "https://r.onliner.by/pk/apartments/create" });
   const object = (v) => v && typeof v === "object" && !Array.isArray(v);
   const id = (v) => typeof v === "string" && /^[a-zA-Z0-9_.:-]{1,120}$/.test(v);
   function origin(platform, url) {
@@ -24,7 +25,7 @@
       payload.revision < 1 ||
       !["assist", "automatic"].includes(payload.mode)
     )
-      throw new Error("Неверная карточка аренды.");
+      throw new Error("Неверная карточка объявления.");
     if (
       !Array.isArray(payload.jobs) ||
       !payload.jobs.length ||
@@ -34,11 +35,12 @@
       throw new Error("Выберите площадки.");
     if (JSON.stringify(payload).length > 6000000)
       throw new Error("Слишком большой пакет фотографий.");
+    const allowedStarts = payload.categoryId === "apartments_sale" ? saleStarts : starts;
     for (const job of payload.jobs) {
       if (
         !object(job) ||
         !Object.hasOwn(starts, job.platform) ||
-        starts[job.platform] !== job.startUrl ||
+        allowedStarts[job.platform] !== job.startUrl ||
         job.format !== 1 ||
         !Array.isArray(job.controls) ||
         job.controls.length > 150 ||

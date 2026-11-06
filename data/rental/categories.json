@@ -7,6 +7,6 @@
   "apartments_sale": {
     "reference": "apartments_sale",
     "analysis": "apartment_sale",
-    "publication": false
+    "publication": true
   }
 }
