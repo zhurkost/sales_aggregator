@@ -50,6 +50,12 @@
   );
   document.addEventListener("click", e => {
     if (e.isTrusted && e.target.closest?.('[data-cy^="vas-"]')) form.promotionHandled = true;
+    if (task.recipe.platform === "onliner" && resumeWhenVisible && e.isTrusted &&
+        e.target.closest?.('a[href$="#progress"]')?.textContent.trim() === "Продолжить") {
+      paused = false;
+      resumeWhenVisible = false;
+      idle = cycles = 0;
+    }
   }, true);
   async function report(state, message) {
     status.textContent = message;

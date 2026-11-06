@@ -133,6 +133,33 @@ test('Onliner decimal price survives the Belarusian ruble mask and keeps kopecks
   assert.deepEqual(Array.from(form.remaining()),[]);
 });
 
+test('Onliner sale overwrites restored areas and floor but keeps a manual edit', async t => {
+  const f = await fixture('<input id="floor" value="4"><input id="total" value="56"><input id="living" value="34">', [
+    {field:'onliner.floor', action:'text', selector:'#floor', value:6},
+    {field:'onliner.area.total', action:'text', selector:'#total', value:72},
+    {field:'onliner.area.living', action:'text', selector:'#living', value:44}
+  ]);
+  t.after(() => f.window.close());
+  f.window.location.href = 'https://r.onliner.by/pk/apartments/create';
+  f.form.recipe.formPath = '/pk/apartments/create';
+  const living = f.document.querySelector('#living');
+  living.value = '45';
+  f.form.protect(living);
+  await f.form.tick();
+  assert.deepEqual([...f.document.querySelectorAll('input')].map(e => e.value), ['6', '72', '45']);
+});
+
+test('editing one Domovita row leaves unrelated rows available for filling', async t => {
+  const controls = ['Балкон', 'Тип стен'].map((heading, i) => ({
+    field: 'field'+i, action: 'choices', selector:'.row', headingSelector:'strong', heading, value:'yes'
+  }));
+  const f = await fixture(controls.map(c => '<div class="row"><strong>'+c.heading+'</strong><input type="checkbox" value="yes"></div>').join(''), controls);
+  t.after(() => f.window.close());
+  f.form.protect(f.document.querySelector('input'));
+  await f.form.tick();
+  assert.deepEqual([...f.document.querySelectorAll('input')].map(e => e.checked), [false, true]);
+});
+
 test('Realt opens the adjacent area section and rejects a truncated house number', async t=>{
   const controls=['realt.kitchen_area','realt.house_number'].map((field,i)=>({
     ...recipe('realt').controls.find(c=>c.field===field),after:undefined,value:[8.4,'12А'][i]}));

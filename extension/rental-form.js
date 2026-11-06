@@ -6,6 +6,10 @@
       .trim()
       .toLocaleLowerCase("ru")
       .replace(/ё/g, "е");
+  const restoredSaleNumbers = new Set([
+    "onliner.floor", "onliner.floors", "onliner.area.total", "onliner.area.living",
+    "onliner.area.kitchen", "onliner.wallHeight", "onliner.buildingYear",
+  ]);
   const visible = (e) =>
     !!e &&
     !e.closest('[hidden],[aria-hidden="true"]') &&
@@ -34,12 +38,15 @@
     return c.mountedChoice && wrapper && !wrapper.closest("[hidden]") &&
       wrapper.getBoundingClientRect().width > 0;
   }
-  function targets(c, scope = document) {
+  function controlRows(c, scope = document) {
     let rows = query(c.selector, scope);
     if (c.controlText) rows = rows.filter(e => norm((e.innerText || e.textContent).split("\n")[0]) === norm(c.controlText));
     if (c.headingSelector) rows = rows.filter(e => query(c.headingSelector, e).some(h => norm(h.textContent) === norm(c.heading)));
     if (c.index !== undefined) rows = rows[c.index] ? [rows[c.index]] : [];
-    return rows.filter(
+    return rows;
+  }
+  function targets(c, scope = document) {
+    return controlRows(c, scope).filter(
       (e) =>
         (visible(e) ||
           (c.action === "files" && e.type === "file") ||
@@ -138,7 +145,7 @@
       if (this.activating) return;
       for (const c of this.recipe.controls)
         if (
-          query(c.selector).some(
+          controlRows(c).some(
             (e) =>
               e === target || e.contains(target) || label(e).contains(target),
           )
@@ -314,7 +321,8 @@
           const number = v => Number(String(v).replace(/\s/g, "").replace(",", "."));
           return String(a).trim() !== "" && number(a) === number(b);
         };
-        const replaceRestored = c.field === "onliner.description" || onlinerPrice;
+        const replaceRestored = c.field === "onliner.description" || onlinerPrice ||
+          (this.recipe.formPath === "/pk/apartments/create" && restoredSaleNumbers.has(c.field));
         if (current && !equivalent(current, value) && !replaceRestored) {
           this.protected.add(c.field);
           return;
