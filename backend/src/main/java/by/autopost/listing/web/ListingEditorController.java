@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Возвращает схему полей и возможности категории при открытии формы. При обновлении схемы приводит введённую карточку к новой версии. */
 @RestController
 @RequestMapping({ListingRoutes.CATEGORY, ListingRoutes.LEGACY_RENTAL})
 class ListingEditorController {

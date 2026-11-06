@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Возвращает контактные данные кабинета для начального заполнения карточки. */
 @RestController
 @RequestMapping("/api/workspace")
 class WorkspaceSettingsController {

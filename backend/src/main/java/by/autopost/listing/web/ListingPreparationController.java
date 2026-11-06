@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Проверяет текущие значения карточки по правилам выбранных площадок. */
 @RestController
 @RequestMapping({ListingRoutes.CATEGORY, ListingRoutes.LEGACY_RENTAL})
 class ListingPreparationController {
@@ -22,6 +23,7 @@ class ListingPreparationController {
     this.catalogs = catalogs;
   }
 
+  /** Возвращает применимость полей для редактора после изменения значений или списка площадок. */
   @PostMapping("/applicability")
   ObjectNode applicability(
       HttpServletRequest req,
@@ -31,6 +33,7 @@ class ListingPreparationController {
     return catalogs.require(category).catalog().applicability(input);
   }
 
+  /** Формирует отчёт для пользователя с преобразованными значениями и замечаниями по каждой площадке. */
   @PostMapping("/prepare")
   ObjectNode prepare(
       HttpServletRequest req,

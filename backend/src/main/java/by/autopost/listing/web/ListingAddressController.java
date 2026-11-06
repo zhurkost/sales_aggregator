@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Ищет адрес для карточки. Для подтверждения принимает идентификатор подсказки, выданной текущему кабинету. */
 @RestController
 @RequestMapping({ListingRoutes.CATEGORY, ListingRoutes.LEGACY_RENTAL})
 class ListingAddressController {

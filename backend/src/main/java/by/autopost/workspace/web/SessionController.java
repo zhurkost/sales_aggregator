@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** Управляет сессией кабинета. При входе и регистрации выдаёт cookie, при выходе завершает сессию и очищает cookie. */
 @RestController
 @RequestMapping("/api/workspace")
 class SessionController {
