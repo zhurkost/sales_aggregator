@@ -13,10 +13,10 @@ const response = (body: unknown) =>
 describe("rental preparation editor", () => {
   it("editing nearby landmarks never clears the apartment address", () => {
     const c = new RentalEditorComponent();
-    c.card.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
+    c.store.card.address = {provider:"manual", label:"Минск", countryIso:"BY", settlement:"Минск", street:"", house:"", confirmed:false};
     for (const id of ["location.metro_1_station", "location.residential_complex", "location.town_distance"])
-      c.setValue({id, name:id, type:"text", options:[], description:""}, "Example");
-    expect(c.card.address.settlement).toBe("Минск");
+      c.editing.setTyped({id, name:id, type:"text", options:[], description:""}, "Example");
+    expect(c.store.card.address.settlement).toBe("Минск");
     c.ngOnDestroy();
   });
   it("clearing a manual address updates the visible input too", () => {
@@ -40,13 +40,13 @@ describe("rental preparation editor", () => {
   });
   it("invalidates native coordinates and local address dependencies as one operation", () => {
     const c = new RentalEditorComponent();
-    c.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
+    c.store.schema = {card:{version:2,addressDependentFacts:["location.metro"]}, category:{options:[]},canonicalValues:{},version:"2",addressSuggestions:false,
       platforms:{example:{labels:{},choiceLabels:{},addressBoundFields:["nativeAddress","coordinates"]}}};
-    c.card.values["location.metro"] = "Old metro";
-    c.card.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
+    c.store.card.values["location.metro"] = "Old metro";
+    c.store.card.extras.example = {nativeAddress:"Old",coordinates:"1,2",other:"Keep"};
     c.addressChanged({provider:"manual",label:"New",countryIso:"BY",settlement:"New",street:"",house:"",confirmed:false});
-    expect(c.card.extras.example).toEqual({other:"Keep"});
-    expect(c.card.values["location.metro"]).toBeUndefined();
+    expect(c.store.card.extras.example).toEqual({other:"Keep"});
+    expect(c.store.card.values["location.metro"]).toBeUndefined();
     c.ngOnDestroy();
   });
 
@@ -60,18 +60,18 @@ describe("rental preparation editor", () => {
     fixture.componentRef.setInput("workspaceId","test"); fixture.detectChanges();
     await vi.waitFor(() => {fixture.detectChanges(); expect(fixture.nativeElement.textContent).toContain("Пятая площадка");});
     const c = fixture.componentInstance;
-    expect(c.card.platforms).toHaveLength(5);
-    c.setValue(field,"42,5"); c.togglePlatform("fifth",false); fixture.detectChanges();
+    expect(c.store.card.platforms).toHaveLength(5);
+    c.editing.setTyped(field,"42,5"); c.editing.togglePlatform("fifth",false); fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[id="rental-rental.test"]')).toBeNull();
-    c.togglePlatform("fifth",true); fixture.detectChanges();
+    c.editing.togglePlatform("fifth",true); fixture.detectChanges();
     expect(fixture.nativeElement.querySelectorAll('[id="rental-rental.test"]')).toHaveLength(1);
-    expect(c.card.values[field.id]).toBe("42,5"); fixture.destroy();
+    expect(c.store.card.values[field.id]).toBe("42,5"); fixture.destroy();
   });
   it("groups different native required labels into one canonical correction", () => {
     const c = new RentalEditorComponent();
-    c.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
-    c.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
-    expect(c.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
+    c.store.schema = {version:"2",category:{options:[{id:"group.main",name:"Main",type:"group",description:"",options:[{id:"rental.area",name:"Жилая площадь",type:"text",options:[],description:"",}]}]},canonicalValues:{},addressSuggestions:false,platforms:{}};
+    c.store.results = ["one","two"].map((platform,i)=>({platform,values:{},dataReady:false,publicationReady:false,issues:[{field:platform+".area",source:"rental.area",code:"required",message:i ? "Площадь жилая, м²" : "Жилая площадь"}]}));
+    expect(c.view.groupedIssues).toEqual([{source:"rental.area",message:"Заполните «Жилая площадь».",platforms:["one","two"]}]);
     c.ngOnDestroy();
   });
   it("keeps the new query when clearing a previous address and resets on another card", () => {
@@ -146,7 +146,7 @@ describe("rental preparation editor", () => {
   });
   it("invalidates coordinates when the confirmed address changes", () => {
     const c = new RentalEditorComponent();
-    c.card.address = {
+    c.store.card.address = {
       provider: "dadata",
       label: "Old",
       countryIso: "BY",
@@ -155,10 +155,10 @@ describe("rental preparation editor", () => {
       house: "1",
       confirmed: true,
     };
-    c.card.values["location.latitude"] = "53.9";
+    c.store.card.values["location.latitude"] = "53.9";
     c.addressChanged(null);
-    expect(c.card.values["location.latitude"]).toBeUndefined();
-    expect(c.card.address).toBeNull();
+    expect(c.store.card.values["location.latitude"]).toBeUndefined();
+    expect(c.store.card.address).toBeNull();
     c.ngOnDestroy();
   });
   it("keeps typed numeric text exact until server conversion", () => {
@@ -170,8 +170,8 @@ describe("rental preparation editor", () => {
       type: "number",
       options: [],
     };
-    c.setValue(field, "1,123456789012345678");
-    expect(c.card.values["amount"]).toBe("1,123456789012345678");
+    c.editing.setTyped(field, "1,123456789012345678");
+    expect(c.store.card.values["amount"]).toBe("1,123456789012345678");
     c.ngOnDestroy();
   });
 });

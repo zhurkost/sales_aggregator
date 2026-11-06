@@ -9,18 +9,6 @@ export class RentalFormEditor {
   private get busy() { return this.store.busy; }
   private get platforms() { return this.store.platforms; }
   private changed() { this.store.changed(); }
-  setValue(field: Field, value: string) {
-    if (this.busy) return;
-    delete this.card.aiEvidence?.[field.id];
-    this.card.values[field.id] =
-      field.type === "files"
-        ? value
-            .split(/\r?\n/)
-            .map((s) => s.trim())
-            .filter(Boolean)
-        : value;
-    this.changed();
-  }
   replaceAddress(address: Address | null) {
     this.card.address = address;
     for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
@@ -34,11 +22,6 @@ export class RentalFormEditor {
     delete this.card.aiEvidence?.[field.id];
     this.card.values[field.id] = value;
     this.changed();
-  }
-  toggleChoice(field: Field, choice: string, selected: boolean) {
-    const old = this.card.values[field.id];
-    const values = Array.isArray(old) ? old : [];
-    this.setTyped(field, (selected ? [...new Set([...values, choice])] : values.filter(x => x !== choice)) as string[]);
   }
   resolveLegacy(index: number, useOld: boolean) {
     if (this.busy) return;

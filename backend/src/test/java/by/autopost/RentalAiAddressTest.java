@@ -1,5 +1,7 @@
 package by.autopost;
 
+import by.autopost.address.application.AddressText;
+
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -199,12 +201,12 @@ class RentalAiAddressTest {
     var address = (ObjectNode)result.path("address");
     assertTrue(address.path("confirmed").asBoolean());
     assertEquals("Минск проспект Независимости 18", provider.queries.get(0));
-    LiteralAddress.cleanComponents(address);
+    AddressText.cleanComponents(address);
     assertEquals("Независимости", text(address, "street"));
     assertEquals("пр", text(address, "streetType"));
     assertFalse(address.has("streetWithType"));
     var adjective = LiteralAddress.parse("на Садовой улице", object("street", "Садовой улице", "streetNominative", "Садовая"));
-    LiteralAddress.cleanComponents(adjective);
+    AddressText.cleanComponents(adjective);
     assertEquals("Садовая", text(adjective, "street"));
     assertEquals("ул", text(adjective, "streetType"));
     assertNotEquals("Московская", text(LiteralAddress.parse("на Садовой улице",

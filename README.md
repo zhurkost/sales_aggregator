@@ -42,4 +42,4 @@ node scripts/package-angular-spring.mjs
 
 Разделение слоёв и принятые ограничения описаны в архитектуре. ArchUnit и проверки импортов TypeScript контролируют границы при обычном запуске тестов и в CI.
 
-[Правила аренды](docs/rental-preparation.txt) · [Архитектура](docs/rental-architecture.md) · [Развёртывание](docs/deployment.md) · [История прежнего кабинета](docs/history-before-rental-only.md)
+[Правила аренды](docs/rental-preparation.txt) · [Архитектура](docs/rental-architecture.md) · [Развёртывание](docs/deployment.md)

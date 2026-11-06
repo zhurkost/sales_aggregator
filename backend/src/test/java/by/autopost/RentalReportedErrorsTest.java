@@ -1,5 +1,7 @@
 package by.autopost;
 
+import by.autopost.address.application.AddressText;
+
 import static by.autopost.shared.Json.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -142,7 +144,7 @@ class RentalReportedErrorsTest {
         "settlementNominative","Витебск","streetNominative","Ленина");
     var actual = RentalAiPolicy.sanitize(catalog.analysisSchema(), source, object("address", addr)).path("address");
     assertEquals("Витебск", text(actual, "settlement"));
-    assertEquals("Ленина", LiteralAddress.cleanComponent(text(actual,"street"),"street"));
+    assertEquals("Ленина", AddressText.cleanComponent(text(actual,"street"),"street"));
     assertEquals("12А", text(actual, "house"));
     var mogilev = LiteralAddress.parse("в Могилёве, проспект Мира, дом 10",
         object("settlement","в Могилёве","settlementNominative","Могилёв"));
@@ -159,7 +161,7 @@ class RentalReportedErrorsTest {
   @Test void bareCityStartingWithKIsNotABuildingBlock() {
     var parsed = LiteralAddress.parse("Кобрин, ул. Пушкина 7",
         object("settlement","Кобрин", "street","ул. Пушкина", "house","7"));
-    LiteralAddress.cleanComponents(parsed);
+    AddressText.cleanComponents(parsed);
     assertEquals("", text(parsed, "block"));
     assertEquals("Кобрин", text(parsed, "settlement"));
     assertEquals("Пушкина", text(parsed, "street"));
@@ -239,12 +241,12 @@ class RentalReportedErrorsTest {
     String intro = "Сдаю на длительный срок трёхкомнатную квартиру в Гродно по адресу: ул. Горького, дом 34.";
     var literal = analyze(intro, suggestion("rental.room_configuration","3","трёхкомнатную квартиру")).path("address");
     assertEquals("Гродно", text(literal, "settlement"));
-    assertEquals("Горького", LiteralAddress.cleanComponent(text(literal, "street"), "street"));
+    assertEquals("Горького", AddressText.cleanComponent(text(literal, "street"), "street"));
     assertEquals("34", text(literal, "house"));
     for (String raw : List.of("ул. Горького", "Горького")) {
       var address = LiteralAddress.parse("Гродно, ул. Горького, дом 34",
           object("street", raw, "streetNominative", "Горькая"));
-      assertEquals("Горького", LiteralAddress.cleanComponent(text(address, "street"), "street"));
+      assertEquals("Горького", AddressText.cleanComponent(text(address, "street"), "street"));
     }
   }
 
@@ -355,15 +357,15 @@ class RentalReportedErrorsTest {
 
   @Test void addressComponentsDoNotCarryTypePrefixes() {
     for (String prefix : List.of("г.", "г ", "город ", "пос.", "аг. "))
-      assertEquals("Минск", LiteralAddress.cleanComponent(prefix + "Минск", "settlement"));
+      assertEquals("Минск", AddressText.cleanComponent(prefix + "Минск", "settlement"));
     for (String prefix : List.of("ул.", "ул ", "улица ", "пер. ", "пр-т ", "наб. "))
-      assertEquals("Ленина", LiteralAddress.cleanComponent(prefix + "Ленина", "street"));
-    assertEquals("18А", LiteralAddress.cleanComponent("д.18А", "house"));
-    assertEquals("Гагарина", LiteralAddress.cleanComponent("Гагарина", "street"));
-    assertEquals("Ульяновская", LiteralAddress.cleanComponent("Ульяновская", "street"));
-    assertEquals("Минск Брикета 18", LiteralAddress.searchText(
+      assertEquals("Ленина", AddressText.cleanComponent(prefix + "Ленина", "street"));
+    assertEquals("18А", AddressText.cleanComponent("д.18А", "house"));
+    assertEquals("Гагарина", AddressText.cleanComponent("Гагарина", "street"));
+    assertEquals("Ульяновская", AddressText.cleanComponent("Ульяновская", "street"));
+    assertEquals("Минск Брикета 18", AddressText.searchText(
         object("label", "г. минск, ул. брикета, д. 18")));
-    assertEquals("Зеленый Бор Карла Маркса 18А", LiteralAddress.searchText(
+    assertEquals("Зеленый Бор Карла Маркса 18А", AddressText.searchText(
         object("label", "пос. зеленый бор, ул. карла маркса, дом 18а")));
   }
 }

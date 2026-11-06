@@ -2,94 +2,94 @@
   <header class="rental-heading">
     <h1>Сдать квартиру</h1>
     <div class="header-actions">
-      <button type="button" class="quiet-button" [disabled]="busy">Мои квартиры</button>
-      <button type="button" class="quiet-button" [disabled]="busy">＋ Новая</button>
+      <button type="button" class="quiet-button" [disabled]="store.busy">Мои квартиры</button>
+      <button type="button" class="quiet-button" [disabled]="store.busy">＋ Новая</button>
     </div>
   </header>
-  @if (error) {
-    <div class="error-banner" role="alert">{{ error }}
+  @if (store.error) {
+    <div class="error-banner" role="alert">{{ store.error }}
     </div>
   }
-  @if (!schema && !error) { <p role="status">Загружаем карточку…</p> }
-  @if (schema) {
-    @if (card.schemaVersion !== schema.version || error.includes('Правила обновились')) {
-      <button type="button" class="quiet-button" [disabled]="busy" (click)="updateFields()">Обновить поля карточки</button>
+  @if (!store.schema && !store.error) { <p role="status">Загружаем карточку…</p> }
+  @if (store.schema) {
+    @if (store.card.schemaVersion !== store.schema.version || store.error.includes('Правила обновились')) {
+      <button type="button" class="quiet-button" [disabled]="store.busy" (click)="store.updateFields()">Обновить поля карточки</button>
     }
-    <fieldset class="card" [disabled]="busy" [attr.aria-busy]="aiBusy">
+    <fieldset class="card" [disabled]="store.busy" [attr.aria-busy]="ai.busy">
       <section class="description-section">
         <label for="rental-listing.description">Описание квартиры</label>
         <textarea id="rental-listing.description" class="source-description" rows="4" maxlength="8000" [ngModel]="description" (ngModelChange)="setDescription($event)" placeholder="Например: сдам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9, 1500 BYN в месяц. Есть балкон и стиральная машина, можно с детьми."></textarea>
         <div class="description-actions">
-          <span class="ai-status" role="status">{{ aiBusy ? 'ИИ заполняет карточку…' : aiMessage }}</span>
-          <button type="button" class="ai-button" [disabled]="busy || description.trim().length < 10" (click)="fillFromDescription()">✦ {{ aiBusy ? 'Заполняем…' : 'Заполнить с ИИ' }}</button>
+          <span class="ai-status" role="status">{{ ai.busy ? 'ИИ заполняет карточку…' : ai.message }}</span>
+          <button type="button" class="ai-button" [disabled]="store.busy || description.trim().length < 10" (click)="ai.fillFromDescription()">✦ {{ ai.busy ? 'Заполняем…' : 'Заполнить с ИИ' }}</button>
         </div>
-        <app-rental-ai-review [aiQuestions]="aiQuestions" [aiConflicts]="aiConflicts" [aiAddress]="aiAddress" [currentAddress]="card.address" [values]="card.values" [view]="view" (applyAddress)="acceptAiAddress()" (dismissAddress)="aiAddress = null" (applyField)="acceptAiField($event)" (dismissField)="aiConflicts.splice($event, 1)" />
+        <app-rental-ai-review [aiQuestions]="ai.questions" [aiConflicts]="ai.conflicts" [aiAddress]="ai.address" [currentAddress]="store.card.address" [values]="store.card.values" [view]="view" (applyAddress)="ai.acceptAiAddress()" (dismissAddress)="ai.address = null" (applyField)="ai.acceptAiField($event)" (dismissField)="ai.conflicts.splice($event, 1)" />
       </section>
       <section class="address-section">
-        <app-address-input [workspaceId]="workspaceId" [sessionId]="id" [value]="card.address" [disabled]="busy" [compact]="true" (addressChange)="addressChanged($event)" />
+        <app-address-input [workspaceId]="workspaceId" [sessionId]="store.id" [value]="store.card.address" [disabled]="store.busy" [compact]="true" (addressChange)="addressChanged($event)" />
       </section>
       <section class="main-section" aria-label="Основные характеристики">
-        <app-rental-fields class="main-fields" [fields]="mainFields" [values]="card.values" [choices]="schema.canonicalValues" [labels]="schema.card?.valueLabels || {}" [evidence]="card.aiEvidence || {}" [disabled]="busy" (edit)="editField($event)" />
+        <app-rental-fields class="main-fields" [fields]="view.mainFields" [values]="store.card.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.card.aiEvidence || {}" [disabled]="store.busy" (edit)="editField($event)" />
       </section>
       <section class="extra-section">
-        <div class="extra-heading"><h2>Дополнительно</h2><button type="button" class="text-button" (click)="openPanel('parameters')">Все параметры @if (additionalFilled.length) { · {{ additionalFilled.length }} }</button></div>
-        @if (additionalFilled.length) {
+        <div class="extra-heading"><h2>Дополнительно</h2><button type="button" class="text-button" (click)="openPanel('parameters')">Все параметры @if (view.additionalFilled.length) { · {{ view.additionalFilled.length }} }</button></div>
+        @if (view.additionalFilled.length) {
           <div class="fact-chips">
-            @for (field of additionalFilled.slice(0, 6); track field.id) {
-              <button type="button" class="fact-chip" (click)="focusField(field.id)">{{ field.name }}: {{ valueLabel(card.values[field.id]) }}</button>
+            @for (field of view.additionalFilled.slice(0, 6); track field.id) {
+              <button type="button" class="fact-chip" (click)="focusField(field.id)">{{ field.name }}: {{ view.valueLabel(store.card.values[field.id]) }}</button>
             }
-            @if (additionalFilled.length > 6) { <button type="button" class="fact-chip" (click)="openPanel('parameters')">Ещё {{ additionalFilled.length - 6 }}</button> }
+            @if (view.additionalFilled.length > 6) { <button type="button" class="fact-chip" (click)="openPanel('parameters')">Ещё {{ view.additionalFilled.length - 6 }}</button> }
           </div>
         }
       </section>
       <div class="platform-row" role="group" aria-label="Площадки">
-        @for (p of platforms; track p) {
-          <label [class.selected]="card.platforms.includes(p)"><input type="checkbox" [checked]="card.platforms.includes(p)" (change)="togglePlatform(p, $any($event.target).checked)" />{{ platformName(p) }}</label>
+        @for (p of store.platforms; track p) {
+          <label [class.selected]="store.card.platforms.includes(p)"><input type="checkbox" [checked]="store.card.platforms.includes(p)" (change)="editing.togglePlatform(p, $any($event.target).checked)" />{{ view.platformName(p) }}</label>
         }
       </div>
     </fieldset>
-    @if (card.legacy?.length) {
+    @if (store.card.legacy?.length) {
       <section class="legacy-section" id="rental-legacy" tabindex="-1">
-        <h2>Сверьте прежние сведения · {{ card.legacy?.length }}</h2>
-        @for (item of card.legacy; track $index) {
-          <div class="legacy-item"><div><strong>{{ legacyLabel(item) }}</strong><p>{{ display(item.value) }}</p></div>
-            @if (item.source && item.candidate != null) { <button type="button" class="quiet-button" [disabled]="busy" (click)="resolveLegacy($index, true)">Использовать</button> }
-            <button type="button" class="quiet-button" [disabled]="busy" (click)="resolveLegacy($index, false)">Оставить в истории</button>
+        <h2>Сверьте прежние сведения · {{ store.card.legacy?.length }}</h2>
+        @for (item of store.card.legacy; track $index) {
+          <div class="legacy-item"><div><strong>{{ view.legacyLabel(item) }}</strong><p>{{ view.display(item.value) }}</p></div>
+            @if (item.source && item.candidate != null) { <button type="button" class="quiet-button" [disabled]="store.busy" (click)="editing.resolveLegacy($index, true)">Использовать</button> }
+            <button type="button" class="quiet-button" [disabled]="store.busy" (click)="editing.resolveLegacy($index, false)">Оставить в истории</button>
           </div>
         }
       </section>
     }
-    @if (store.check.checked || results.length) {
+    @if (store.check.checked || store.results.length) {
       <section class="results" [attr.aria-busy]="store.check.checking">
         <div class="extra-heading"><h2>Проверка карточки</h2><span role="status">{{ store.check.checking ? 'Обновляем проверку…' : store.check.stale ? 'Данные изменены — проверка неактуальна' : 'Ещё не опубликовано' }}</span></div>
-        @if (store.check.error) { <p class="error-banner" role="alert">{{ store.check.error }} <button type="button" class="text-button" [disabled]="store.check.checking" (click)="prepare()">Повторить проверку</button></p> }
-        <div class="result-platforms">@for (result of results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')">{{ platformName(result.platform) }} · {{ store.check.stale ? 'Ожидает проверки' : result.dataReady ? 'Подготовлено' : 'Нужна проверка' }}</button> }</div>
-        @if (groupedIssues.length) {
-          <ul class="issues">@for (issue of groupedIssues; track $index) {
-            <li><div><span>{{ issue.message }}</span><small>@for (p of issue.platforms; track p; let last = $last) { {{ platformName(p) }}{{ last ? '' : ', ' }} }</small></div>@if (canFocus(issue.source)) { <button type="button" class="text-button" (click)="focusField(issue.source)">Уточнить</button> }</li>
+        @if (store.check.error) { <p class="error-banner" role="alert">{{ store.check.error }} <button type="button" class="text-button" [disabled]="store.check.checking" (click)="store.prepare()">Повторить проверку</button></p> }
+        <div class="result-platforms">@for (result of store.results; track result.platform) { <button type="button" class="quiet-button" (click)="openPanel('result')">{{ view.platformName(result.platform) }} · {{ store.check.stale ? 'Ожидает проверки' : result.dataReady ? 'Подготовлено' : 'Нужна проверка' }}</button> }</div>
+        @if (view.groupedIssues.length) {
+          <ul class="issues">@for (issue of view.groupedIssues; track $index) {
+            <li><div><span>{{ issue.message }}</span><small>@for (p of issue.platforms; track p; let last = $last) { {{ view.platformName(p) }}{{ last ? '' : ', ' }} }</small></div>@if (view.canFocus(issue.source)) { <button type="button" class="text-button" (click)="focusField(issue.source)">Уточнить</button> }</li>
           }</ul>
         }
       </section>
     }
-    <div class="rental-actions"><button type="button" class="quiet-button" [disabled]="busy || store.check.checking || !card.platforms.length" (click)="prepare()">{{ store.check.checking ? 'Проверяем…' : 'Проверить карточку' }}</button></div>
-    <app-rental-publication [store]="store" [workspaceId]="workspaceId" [sessionId]="id" />
+    <div class="rental-actions"><button type="button" class="quiet-button" [disabled]="store.busy || store.check.checking || !store.card.platforms.length" (click)="store.prepare()">{{ store.check.checking ? 'Проверяем…' : 'Проверить карточку' }}</button></div>
+    <app-rental-publication [store]="store" [workspaceId]="workspaceId" [sessionId]="store.id" />
   }
 </div>
-@if (panel && schema) {
+@if (panel && store.schema) {
   <div class="drawer-overlay" (click)="closePanel()">
     <section class="rental-drawer" role="dialog" aria-modal="true" aria-labelledby="rental-panel-title" (click)="$event.stopPropagation()" (keydown)="panelKeys($event)">
       <header class="drawer-heading"><h2 id="rental-panel-title" tabindex="-1">{{ panel === 'parameters' ? 'Параметры квартиры' : 'Подготовленные данные' }}</h2><button type="button" class="icon-button" aria-label="Закрыть панель" (click)="closePanel()">×</button></header>
       @if (panel === 'parameters') {
         @if (store.applicability.error) { <p role="status">{{ store.applicability.error }} <button type="button" class="text-button" [disabled]="store.applicability.loading" (click)="store.applicability.refresh()">Повторить</button></p> }
-        <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="parameterSearch" (ngModelChange)="parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="filledOnly" />Заполненные</label></div>
+        <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="view.parameterSearch" (ngModelChange)="view.parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="view.filledOnly" />Заполненные</label></div>
         <div class="drawer-body">
-          @for (group of additionalGroups; track group.id) {
-            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.options" [values]="card.values" [choices]="schema.canonicalValues" [labels]="schema.card?.valueLabels || {}" [evidence]="card.aiEvidence || {}" [disabled]="busy" (edit)="editField($event)" /></section>
+          @for (group of view.additionalGroups; track group.id) {
+            <section class="parameter-group" [id]="'rental-' + group.id" tabindex="-1"><h3>{{ group.name }}</h3><app-rental-fields [fields]="group.options" [values]="store.card.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.card.aiEvidence || {}" [disabled]="store.busy" (edit)="editField($event)" /></section>
           } @empty { <p class="empty-state">Параметры не найдены</p> }
         </div>
       } @else {
         @if (store.check.stale) { <p role="status">Данные изменены. Показан результат предыдущей проверки.</p> }
-        <div class="drawer-body">@for (result of results; track result.platform) { <section class="prepared-platform"><h3>{{ platformName(result.platform) }}</h3><dl>@for (field of preparedValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl></section> }</div>
+        <div class="drawer-body">@for (result of store.results; track result.platform) { <section class="prepared-platform"><h3>{{ view.platformName(result.platform) }}</h3><dl>@for (field of view.preparedValues(result); track field.id) { <dt>{{ field.name }}</dt><dd>{{ field.value }}</dd> }</dl></section> }</div>
       }
       <footer class="drawer-footer"><button type="button" class="primary" (click)="closePanel()">Готово</button></footer>
     </section>

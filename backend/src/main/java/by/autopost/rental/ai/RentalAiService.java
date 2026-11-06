@@ -1,5 +1,7 @@
 package by.autopost.rental.ai;
 
+import by.autopost.address.application.AddressText;
+
 import static by.autopost.shared.Json.*;
 
 import by.autopost.ai.AiGateway;
@@ -36,7 +38,7 @@ public class RentalAiService {
     addresses.resolve(workspace, result);
     // Keep type information during provider matching; expose clean components to the editor.
     if (result.get("address") instanceof ObjectNode address)
-      LiteralAddress.cleanComponents(address);
+      AddressText.cleanComponents(address);
     result.put("schemaVersion", text(editor, "version"));
     result.put("model", ai.model());
     return result;

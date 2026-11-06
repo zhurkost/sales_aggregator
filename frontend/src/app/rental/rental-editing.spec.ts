@@ -92,9 +92,9 @@ describe("rental editing and validation", () => {
     try {
       await vi.waitFor(() => {
         fixture.detectChanges();
-        expect(c.schema).not.toBeNull();
+        expect(c.store.schema).not.toBeNull();
       });
-      await c.prepare();
+      await c.store.prepare();
       fixture.detectChanges();
       fetch.mockClear();
       vi.useFakeTimers();
@@ -165,18 +165,18 @@ describe("rental editing and validation", () => {
   it("retains the report on validation failure and retries without blocking input", async () => {
     mockApi();
     const c = new RentalEditorComponent();
-    await c.prepare();
+    await c.store.prepare();
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => response({ error: "Временно недоступно" }, 503)),
     );
     await c.store.check.refresh();
-    expect(c.results).toEqual(report);
+    expect(c.store.results).toEqual(report);
     expect(c.store.check.stale).toBe(true);
     expect(c.store.check.error).toBe("Временно недоступно");
-    expect(c.busy).toBe(false);
+    expect(c.store.busy).toBe(false);
     mockApi();
-    await c.prepare();
+    await c.store.prepare();
     expect(c.store.check.stale).toBe(false);
     expect(c.store.check.error).toBe("");
     c.ngOnDestroy();
@@ -191,10 +191,10 @@ describe("transient rental form", () => {
     const fixture = TestBed.createComponent(RentalEditorComponent);
     fixture.componentRef.setInput("workspaceId", "owner");
     fixture.detectChanges();
-    await vi.waitFor(() => expect(fixture.componentInstance.schema).not.toBeNull());
+    await vi.waitFor(() => expect(fixture.componentInstance.store.schema).not.toBeNull());
     const c = fixture.componentInstance;
-    c.card.values["listing.description"] = "Не терять введённый текст";
-    c.changed(); fixture.detectChanges();
+    c.store.card.values["listing.description"] = "Не терять введённый текст";
+    c.store.changed(); fixture.detectChanges();
     fetch.mockClear(); vi.useFakeTimers();
     const buttons = fixture.nativeElement.querySelectorAll(".header-actions button") as NodeListOf<HTMLButtonElement>;
     expect(buttons.length).toBe(2);
@@ -204,7 +204,7 @@ describe("transient rental form", () => {
     await vi.advanceTimersByTimeAsync(5000);
     expect(fetch).not.toHaveBeenCalled();
     expect(c.panel).toBeNull();
-    expect(c.card.values["listing.description"]).toBe("Не терять введённый текст");
+    expect(c.store.card.values["listing.description"]).toBe("Не терять введённый текст");
     expect(fixture.nativeElement.textContent).not.toContain("Сохранено");
     fixture.destroy();
   });

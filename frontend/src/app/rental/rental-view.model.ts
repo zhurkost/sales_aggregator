@@ -7,30 +7,10 @@ export class RentalViewModel {
   parameterSearch = "";
   filledOnly = false;
   constructor(private store: RentalFormStore) {}
-  value(field: Field) {
-    const v = this.store.card.values[field.id];
-    return Array.isArray(v) ? v.join("\n") : String(v ?? "");
-  }
-  choices(field: Field) {
-    return this.store.schema?.canonicalValues[field.id] || [];
-  }
   label(value: string) { return this.store.schema?.card?.valueLabels?.[value] || value; }
   platformName(p: string) { return this.store.schema?.platforms[p]?.name || p; }
   groupFields(group: Field) {
     return group.options.filter(f => !f.uses?.length || f.uses.some(u => this.store.card.platforms.includes(u.platform) && this.store.applicability.field(u.platform, u.target) !== false));
-  }
-  usedBy(field: Field) {
-    return [...new Set(field.uses?.map(u => u.platform).filter(p => this.store.card.platforms.includes(p)) || [])];
-  }
-  hasChoice(field: Field, choice: string) {
-    const value = this.store.card.values[field.id];
-    return Array.isArray(value) && value.includes(choice);
-  }
-  filled(group: Field) {
-    return this.groupFields(group).filter(f => {
-      const value = this.store.card.values[f.id];
-      return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
-    }).length;
   }
   get groupedIssues() {
     const groups = new Map<string, {source: string; message: string; platforms: string[]}>();
@@ -77,9 +57,6 @@ export class RentalViewModel {
   legacyLabel(item: NonNullable<RentalCard["legacy"]>[number]) {
     return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === item.source)?.name ||
       this.store.schema?.platforms[item.platform]?.labels[item.field] || "Сохранённое значение";
-  }
-  issueMessages(result: Prepared) {
-    return [...new Set(result.issues.map((issue) => issue.message))];
   }
   display(value: JsonValue) {
     return typeof value === "string" ? value : JSON.stringify(value);

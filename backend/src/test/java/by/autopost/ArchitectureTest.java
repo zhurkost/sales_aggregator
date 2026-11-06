@@ -33,6 +33,13 @@ class ArchitectureTest {
           .importPackages("by.autopost");
 
   @Test
+  void rentalPreparationDoesNotRequireAi() {
+    noClasses().that().resideInAPackage("..rental.application..")
+        .should().dependOnClassesThat().resideInAnyPackage("..rental.ai..", "by.autopost.ai..")
+        .check(CLASSES);
+  }
+
+  @Test
   void httpLayerCannotAccessPersistence() {
     noClasses()
         .that()

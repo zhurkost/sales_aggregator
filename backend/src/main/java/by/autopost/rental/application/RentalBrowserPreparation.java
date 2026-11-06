@@ -1,9 +1,10 @@
 package by.autopost.rental.application;
 
+import by.autopost.address.application.AddressText;
+
 import static by.autopost.shared.Json.*;
 
 import by.autopost.rental.catalog.ReferenceSnapshot;
-import by.autopost.rental.ai.LiteralAddress;
 import by.autopost.address.application.StreetKind;
 import by.autopost.rental.model.SchemaFields;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,11 +30,11 @@ final class RentalBrowserPreparation {
           if (value != null && value.isTextual())
             value = com.fasterxml.jackson.databind.node.TextNode.valueOf(
                 text(source, "addressPart").equals("label")
-                    ? LiteralAddress.searchText(card.path("address"))
+                    ? AddressText.searchText(card.path("address"))
                     : text(source, "addressPart").equals("settlement") &&
                         text(source.path("autocomplete"), "kind").equals("address")
-                    ? LiteralAddress.searchText(object("label", value.asText()))
-                    : LiteralAddress.cleanComponent(value.asText(), text(source, "addressPart")));
+                    ? AddressText.searchText(object("label", value.asText()))
+                    : AddressText.cleanComponent(value.asText(), text(source, "addressPart")));
         }
         if (!text(source, "action").equals("files")
             && (value == null
@@ -46,11 +47,11 @@ final class RentalBrowserPreparation {
           String part = text(source, "addressPart");
           String current = text(card.path("address"), part);
           String original = text(card.path("address"), part + "WithType");
-          if (original.isBlank() || !LiteralAddress.cleanComponent(current, part).equals(current))
+          if (original.isBlank() || !AddressText.cleanComponent(current, part).equals(current))
             original = current;
           boolean sameAddress = value != null && (part.equals("label")
-              ? LiteralAddress.searchText(object("label", original)).equals(value.asText())
-              : LiteralAddress.cleanComponent(original, part).equals(value.asText()));
+              ? AddressText.searchText(object("label", original)).equals(value.asText())
+              : AddressText.cleanComponent(original, part).equals(value.asText()));
           if (sameAddress)
             control.put("matchValue", original);
         }
@@ -89,12 +90,13 @@ final class RentalBrowserPreparation {
         control.set("labels", labels);
         controls.add(control);
       }
+      var constants = snapshot.plan(platform).path("constants");
       result
           .path("values")
           .fieldNames()
           .forEachRemaining(
               id -> {
-                if (!supported.contains(id) && !snapshot.plan(platform).path("constants").has(id))
+                if (!supported.contains(id) && !constants.has(id))
                   unsupported.add(fields.containsKey(id) ? text(fields.get(id), "name") : id);
               });
       recipe.set("controls", controls);
