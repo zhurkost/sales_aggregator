@@ -1,0 +1,45 @@
+Этап A — продажа квартир | onliner
+Наблюдение: 2026-11-06, Europe/Minsk. Сборка отчёта: 2026-11-06T12:30:50.328Z
+Задание пользователя: четыре формы продажи квартиры целиком в Беларуси. Ревизия правил 800a9d0, формат 2.1. Первая ревизия этой категории.
+Статус: partial. Точка входа / источник для нижеследующих строк: https://r.onliner.by/pk/apartments/create
+Из раздела продажи /pk штатная ссылка ведёт на /pk/apartments/create. Без сессии — переход на профиль входа; в авторизованном Chrome форма открылась. Изучены текст пяти шагов и исходная HTML-разметка этой же новой формы. Для radio проверены value и, когда он есть, типизированный checkedValue. «6+» передаёт число 6. У parking отрицательный вариант использует пустую строку; это наблюдаемый код, отличающийся от неизвестного null. «В любое время» сбрасывает оба часа через resetCallTime; это действие не отдельный скалярный ввод. Для контактов в HTML максимум 3 номера. Зафиксированы зависимые поля продавца и явные варианты валют. Объявления публикуются только с фотографиями; первая фотография — главная. Фото не загружались, прохождение шагов и фактическая установка на них не проверены. Запросы к /sdapi/ не выполнялись.
+Официальные правила площадки: https://blog.onliner.by/siterules. Условия модерации и свойства UI проверяются раздельно.
+Проверка ограничений: https://r.onliner.by/robots.txt; прочитан. Исследована новая форма через пользовательский интерфейс. Объявления и платные действия не отправлялись. Данные аккаунта в результатах отсутствуют.
+Поля: 32. Binding ready: 0, needs_review: 32, unsupported: 0.
+Ready: уникальный селектор в форме, тестовое значение установлено, пережило blur, повторно прочитано; поле очищено. Для прочих полей причина указана в binding.
+Полнота options_complete относится к набору вариантов данной ветви, известному из конфигурации или разметки. null в required/choice.value означает отсутствие подтверждения. Выполнение ограничений сервером не проверено.
+onliner.file | Фотографии | /pk/apartments/create → name=file; разметка формы; последующие шаги зависят от фотографий.
+onliner.location.user_address | Город, улица, номер дома | /pk/apartments/create → location.user_address; разметка формы; последующие шаги зависят от фотографий.
+onliner.resale | Какую квартиру продаете? | /pk/apartments/create → name=resale; код из Knockout checkedValue.
+onliner.walling | Материал стен | /pk/apartments/create → name=walling; код из HTML value.
+onliner.repaired | Отделка | /pk/apartments/create → name=repaired; код из Knockout checkedValue.
+onliner.rooms | Количество комнат | /pk/apartments/create → name=rooms; код из Knockout checkedValue.
+onliner.balcony | Балкон (лоджия) | /pk/apartments/create → name=balcony; код из Knockout checkedValue.
+onliner.parking | Выделенное парковочное место | /pk/apartments/create → name=parking; код из HTML value.
+onliner.floor | Этаж | /pk/apartments/create → floor; разметка формы; последующие шаги зависят от фотографий.
+onliner.floors | Этажей в доме | /pk/apartments/create → floors; разметка формы; последующие шаги зависят от фотографий.
+onliner.combinedKitchen | Кухня совмещена с жилой | /pk/apartments/create → name=combinedKitchen; код из Knockout checkedValue.
+onliner.area.total | Общая площадь | /pk/apartments/create → area.total; разметка формы; последующие шаги зависят от фотографий.
+onliner.area.living | Жилая площадь | /pk/apartments/create → area.living; разметка формы; последующие шаги зависят от фотографий.
+onliner.area.kitchen | Площадь кухни | /pk/apartments/create → area.kitchen; разметка формы; последующие шаги зависят от фотографий.
+onliner.wallHeight | Высота потолков | /pk/apartments/create → wallHeight; разметка формы; последующие шаги зависят от фотографий.
+onliner.buildingYear | Год постройки | /pk/apartments/create → buildingYear; разметка формы; последующие шаги зависят от фотографий.
+onliner.description | Описание | /pk/apartments/create → description; разметка формы; последующие шаги зависят от фотографий.
+onliner.price.amount | Цена продажи | /pk/apartments/create → price.amount; разметка формы; последующие шаги зависят от фотографий.
+onliner.price.currency | Валюта | /pk/apartments/create → price.currency; разметка формы; последующие шаги зависят от фотографий.
+onliner.seller.type | Кто продаёт | /pk/apartments/create → name=seller.type; код из HTML value.
+onliner.seller.name | Юридическое наименование | /pk/apartments/create → seller.name; разметка формы; последующие шаги зависят от фотографий.
+onliner.seller.legalInfo.unp | УНП | /pk/apartments/create → seller.legalInfo.unp; разметка формы; последующие шаги зависят от фотографий.
+onliner.seller.legalInfo.contract.number | Номер договора | /pk/apartments/create → seller.legalInfo.contract.number; разметка формы; последующие шаги зависят от фотографий.
+onliner.seller.legalInfo.contract.date | Дата заключения договора | /pk/apartments/create → seller.legalInfo.contract.date; разметка формы; последующие шаги зависят от фотографий.
+onliner.seller.legalInfo.licence.number | Номер лицензии | /pk/apartments/create → seller.legalInfo.licence.number; разметка формы; последующие шаги зависят от фотографий.
+onliner.seller.legalInfo.licence.date | Дата выдачи лицензии | /pk/apartments/create → seller.legalInfo.licence.date; разметка формы; последующие шаги зависят от фотографий.
+onliner.contact.name | Ваше имя | /pk/apartments/create → contact.name; разметка формы; последующие шаги зависят от фотографий.
+onliner.phone | Контактный телефон | /pk/apartments/create → phone; разметка формы; последующие шаги зависят от фотографий.
+onliner.call_from | Звонить с | /pk/apartments/create → call_from; числовые options 0…23 в data-bind.
+onliner.call_to | Звонить до | /pk/apartments/create → call_to; числовые options 0…23 в data-bind.
+onliner.additional_phone_1 | Дополнительный телефон 1 | Контакты: повторитель contact.phones, в HTML условие length < 3 для действия «Еще один номер».
+onliner.additional_phone_2 | Дополнительный телефон 2 | Контакты: повторитель contact.phones, в HTML условие length < 3 для действия «Еще один номер».
+SHA-256 файлов в UTF-8 с LF (как в Git):
+cca7eebcd04702404610f5fc9fb2d1d16ac65117e6747d60a628b33585b896f1  apartments_sale_onliner.json
+93166219cafdbb72d1f0a877056b51829ff2d188aedd68a327b2e1b1c037139d  binding_apartments_sale_onliner.json

@@ -1,0 +1,71 @@
+Этап A — продажа квартир | realt
+Наблюдение: 2026-11-06, Europe/Minsk. Сборка отчёта: 2026-11-06T12:30:50.328Z
+Задание пользователя: четыре формы продажи квартиры целиком в Беларуси. Ревизия правил 800a9d0, формат 2.1. Первая ревизия этой категории.
+Статус: partial. Точка входа / источник для нижеследующих строк: https://realt.by/podat-obyavlenie/
+Официальная форма → Продать → Жилая → Квартира. Раскрыты блоки «Все параметры». При 1 комнате скрыты поля раздельных комнат и числа комнат по техпаспорту, при 2, 3, 4 и 5+ оба появляются. Аукцион — отдельный переключатель с returnValue строкой «903». Пробный текст в инвентарном номере дал ошибку формата; его привязка отложена до уточнения шаблона. Настройки контролов и точные коды считаны из формы продажи, включая 0, строковые валюты и числовые идентификаторы. Вход требуется в блоке контактов. Дополнительные возможности Спецпредложения отмечены по форме, их включение и серверное принятие не проверены. В адресном диалоге отдельно применены Минск, Брест и Речица. Улицы меняются с выбором города. В Минске появились три группы метро, в двух других городах их нет. Варианты улиц сохранены с when, справочники подсказок частичные. Для уточнения остаются результаты выбора дома, другие населённые пункты и авторизованный контактный блок. Прямые запросы к /bff/graphql не выполнялись.
+Официальные правила площадки: https://realt.by/objects-rules/. Условия модерации и свойства UI проверяются раздельно.
+Проверка ограничений: https://realt.by/robots.txt; прочитан. Исследована новая форма через пользовательский интерфейс. Объявления и платные действия не отправлялись. Данные аккаунта в результатах отсутствуют.
+Поля: 58. Binding ready: 13, needs_review: 45, unsupported: 0.
+Ready: уникальный селектор в форме, тестовое значение установлено, пережило blur, повторно прочитано; поле очищено. Для прочих полей причина указана в binding.
+Полнота options_complete относится к набору вариантов данной ветви, известному из конфигурации или разметки. null в required/choice.value означает отсутствие подтверждения. Выполнение ограничений сервером не проверено.
+realt.location.settlement | Населенный пункт, район, область | Форма продажи → location.settlement; динамические стартовые подсказки, выдача меняется.
+realt.location.street | Улица | Форма продажи → location.street; динамические стартовые подсказки, выдача меняется.
+realt.location.houseNumber | Дом | Форма продажи → location.houseNumber; контрол и свойства в конфигурации формы.
+realt.location.buildingNumber | Корпус | Форма продажи → location.buildingNumber; контрол и свойства в конфигурации формы.
+realt.location.newBuildComplexUuid | Жилой комплекс | Форма продажи → location.newBuildComplexUuid; динамические стартовые подсказки, выдача меняется.
+realt.apartment.rooms | Комнат | Форма продажи → apartment.rooms; контрол и свойства в конфигурации формы.
+realt.apartment.inventoryNumber | Инвентарный номер | Форма продажи → apartment.inventoryNumber; контрол и свойства в конфигурации формы.
+realt.apartment.storey | Этаж | Форма продажи → apartment.storey; контрол и свойства в конфигурации формы.
+realt.apartment.repair | Ремонт | Форма продажи → apartment.repair; контрол и свойства в конфигурации формы.
+realt.apartment.balcony | Балконов / лоджий | Форма продажи → apartment.balcony; контрол и свойства в конфигурации формы.
+realt.apartment.toilet | Санузел | Форма продажи → apartment.toilet; контрол и свойства в конфигурации формы.
+realt.apartment.ceilingHeight | Высота потолков | Форма продажи → apartment.ceilingHeight; контрол и свойства в конфигурации формы.
+realt.apartment.levels | Уровней в квартире | Форма продажи → apartment.levels; контрол и свойства в конфигурации формы.
+realt.apartment.planning | Планировка | Форма продажи → apartment.planning; контрол и свойства в конфигурации формы.
+realt.apartment.viewFromWindow | Вид из окон | Форма продажи → apartment.viewFromWindow; контрол и свойства в конфигурации формы.
+realt.area.total | Площадь общая, м² | Форма продажи → area.total; контрол и свойства в конфигурации формы.
+realt.area.living | Площадь жилая, м² | Форма продажи → area.living; контрол и свойства в конфигурации формы.
+realt.area.kitchen | Площадь кухни, м² | Форма продажи → area.kitchen; контрол и свойства в конфигурации формы.
+realt.area.balcony | Площадь балконов / лоджий, м² | Форма продажи → area.balcony; контрол и свойства в конфигурации формы.
+realt.area.snb | Площадь по СНБ, м² | Форма продажи → area.snb; контрол и свойства в конфигурации формы.
+realt.house.storeys | Этажей в доме | Форма продажи → house.storeys; контрол и свойства в конфигурации формы.
+realt.house.buildingYear | Год постройки | Форма продажи → house.buildingYear; контрол и свойства в конфигурации формы.
+realt.house.isNotFinish | Сдан / Не сдан | Форма продажи → house.isNotFinish; контрол и свойства в конфигурации формы.
+realt.house.repairYear | Год капитального ремонта | Форма продажи → house.repairYear; контрол и свойства в конфигурации формы.
+realt.house.houseType | Тип дома | Форма продажи → house.houseType; контрол и свойства в конфигурации формы.
+realt.house.newBuilding | Новостройка | Форма продажи → house.newBuilding; контрол и свойства в конфигурации формы.
+realt.house.homeMaintenance | Обслуживание дома | Форма продажи → house.homeMaintenance; контрол и свойства в конфигурации формы.
+realt.additional.appliance | Удобства | Форма продажи → additional.appliance; контрол и свойства в конфигурации формы.
+realt.additional.facilitiesForDisabledPeople | Удобства для людей с ограниченными возможностями | Форма продажи → additional.facilitiesForDisabledPeople; контрол и свойства в конфигурации формы.
+realt.additional.yard | Благоустройство двора | Форма продажи → additional.yard; контрол и свойства в конфигурации формы.
+realt.additional.parking | Парковка | Форма продажи → additional.parking; контрол и свойства в конфигурации формы.
+realt.termsOfDeal.currency | Валюта цены | Форма продажи → termsOfDeal.currency; контрол и свойства в конфигурации формы.
+realt.termsOfDeal.price | Цена | Форма продажи → termsOfDeal.price; контрол и свойства в конфигурации формы.
+realt.termsOfDeal.bargain | Возможен торг | Форма продажи → termsOfDeal.bargain; контрол и свойства в конфигурации формы.
+realt.termsOfDeal.ownerShip | Собственность | Форма продажи → termsOfDeal.ownerShip; контрол и свойства в конфигурации формы.
+realt.termsOfDeal.termsOfDeal | Условия сделки | Форма продажи → termsOfDeal.termsOfDeal; контрол и свойства в конфигурации формы.
+realt.termsOfDeal.termsExtra | Конкурс / Аукцион | Форма продажи → termsOfDeal.termsExtra; контрол и свойства в конфигурации формы.
+realt.media.photos | Фото | Форма продажи → media.photos; обычный лимит 20 фото, до 20 МБ каждое; со Спецпредложением до 50.
+realt.media.planning | Фото планировки | Форма продажи → media.planning; контрол и свойства в конфигурации формы.
+realt.media.youtube | Ссылка на видео YouTube | Форма продажи → media.youtube; ввод внешней ссылки; Спецпредложение.
+realt.media.tour3d | 3D тур | Форма продажи → media.tour3d; ввод внешней ссылки; Спецпредложение.
+realt.description.title | Заголовок | Форма продажи → description.title; контрол и свойства в конфигурации формы.
+realt.description.shortDescription | Краткое описание | Форма продажи → description.shortDescription; контрол и свойства в конфигурации формы.
+realt.description.description | Подробное описание | Форма продажи → description.description; контрол и свойства в конфигурации формы.
+realt.location.metro_1_station | Ближайшее метро 1 | Расположение → location.nearestMetroStations[0].metroStation. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_1_mode | Способ передвижения 1 | Расположение → location.nearestMetroStations[0].metroTimeType. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_1_minutes | Минут в пути 1 | Расположение → location.nearestMetroStations[0].metroTime. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_2_station | Ближайшее метро 2 | Расположение → location.nearestMetroStations[1].metroStation. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_2_mode | Способ передвижения 2 | Расположение → location.nearestMetroStations[1].metroTimeType. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_2_minutes | Минут в пути 2 | Расположение → location.nearestMetroStations[1].metroTime. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_3_station | Ближайшее метро 3 | Расположение → location.nearestMetroStations[2].metroStation. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_3_mode | Способ передвижения 3 | Расположение → location.nearestMetroStations[2].metroTimeType. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.location.metro_3_minutes | Минут в пути 3 | Расположение → location.nearestMetroStations[2].metroTime. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.
+realt.apartment.registrationRooms | Комнат по техпаспорту | После выбора 2, 3, 4 или 5+ комнат, дополнительный блок «Квартира».
+realt.apartment.separateRooms | Раздельных комнат | Квартира → при выборе нескольких комнат появился input[name="apartment.separateRooms"].
+realt.deal | Продать | Путь формы: Продать → Жилая → Квартира. Выбрана указанная ветвь; код маршрута не проверен.
+realt.family | Жилая | Путь формы: Продать → Жилая → Квартира. Выбрана указанная ветвь; код маршрута не проверен.
+realt.kind | Квартира | Путь формы: Продать → Жилая → Квартира. Выбрана указанная ветвь; код маршрута не проверен.
+SHA-256 файлов в UTF-8 с LF (как в Git):
+0370c95c9fc0296aa2bcec5afd2e7a4921160641db42a5340d113455f58875e9  apartments_sale_realt.json
+6a32de0811c1569273fb068aa644aa3882041d011378f6d75d8040bb7b6b006e  binding_apartments_sale_realt.json

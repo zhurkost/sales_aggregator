@@ -1,0 +1,57 @@
+Этап A — продажа квартир | kufar
+Наблюдение: 2026-11-06, Europe/Minsk. Сборка отчёта: 2026-11-06T12:30:50.328Z
+Задание пользователя: четыре формы продажи квартиры целиком в Беларуси. Ревизия правил 800a9d0, формат 2.1. Первая ревизия этой категории.
+Статус: partial. Точка входа / источник для нижеследующих строк: https://www.kufar.by/ain/create
+Новая форма → Недвижимость → Квартиры → параметры продажи. Показаны «За м²», «Продажа через аукцион/конкурс», «Состояние». Основной источник кодов — справочник, который сама форма запросила для частного лица: https://api.kufar.by/insertion/v1/meta/bootstrap?application=ad_insertion&category=1010&company_ad=0&parent=1000&platform=web&routing=web_ad_insertion&taxonomy-version=2 . Взяты базовые пользовательские поля и refs для category 1010 / type sell; отдельно помечена ветвь region 7. Настройки профиля, служебные и транспортные параметры исключены. Частные значения для жилых комплексов и регионов берутся из соответствующей вариации. Городские поля помечены условиями. Открытый геокодер и служебная координата не задают статического сопоставления с городом другой площадки. Фото/контакты за входом; автоматический расчёт цены за м² отмечен в интерфейсе, серверное округление и дополнительные поля бизнес-профиля не проверены. Для загрузки нужны JPEG, JPG или PNG до 10 МБ каждый. Для географических и закрытых ветвей нужна проверка после выбора адреса и входа.
+Официальные правила площадки: https://helpcenter.kufar.by/knowledge_base/item/276423. Условия модерации и свойства UI проверяются раздельно.
+Проверка ограничений: https://www.kufar.by/robots.txt; текст недоступен через web-инструмент. Объявления и платные действия не отправлялись. Данные аккаунта в результатах отсутствуют.
+Поля: 44. Binding ready: 6, needs_review: 38, unsupported: 0.
+Ready: уникальный селектор в форме, тестовое значение установлено, пережило blur, повторно прочитано; поле очищено. Для прочих полей причина указана в binding.
+Полнота options_complete относится к набору вариантов данной ветви, известному из конфигурации или разметки. null в required/choice.value означает отсутствие подтверждения. Выполнение ограничений сервером не проверено.
+kufar.type | Тип сделки | bootstrap → ad_metadata.parameters.refs[1444]; {"category":"1010"}
+kufar.category | Категория | bootstrap → ad_metadata.parameters.refs[1591]; базовые метаданные категории 1010.
+kufar.subject | Название объявления | bootstrap → ad_metadata.parameters.refs[1512]; базовые метаданные категории 1010.
+kufar.address | Адрес | bootstrap → ad_metadata.parameters.refs[1595]; базовые метаданные категории 1010. Геокодер и выбор подсказки или перемещение метки. Открытый справочник.
+kufar.body | Описание | bootstrap → ad_metadata.parameters.refs[10911]; базовые метаданные категории 1010.
+kufar.images | Фотографии | bootstrap → ad_metadata.parameters.refs[1774]; базовые метаданные категории 1010. В форме указано до 10 МБ на файл; добавление требует входа. Метаданные помечают поле необязательным, правила модерации для вторичного жилья требуют реальное фото: https://helpcenter.kufar.by/knowledge_base/item/276423 .
+kufar.price | Цена | bootstrap → ad_metadata.parameters.refs[1592]; базовые метаданные категории 1010.
+kufar.currency | Валюта | bootstrap → ad_metadata.parameters.refs[1775]; базовые метаданные категории 1010.
+kufar.region | Регион | bootstrap → ad_metadata.parameters.refs[9121]; базовые метаданные категории 1010.
+kufar.content_video | Видео на YouTube | bootstrap → ad_metadata.parameters.refs[6007]; {"type":"sell"}
+kufar.re_contract | Номер и дата договора | bootstrap → ad_metadata.parameters.refs[7287]; {"type":"sell"}
+kufar.phone | Телефон | bootstrap → ad_metadata.parameters.refs[1515]; базовые метаданные категории 1010.
+kufar.contact_person | Контактное лицо | bootstrap → ad_metadata.parameters.refs[1519]; базовые метаданные категории 1010.
+kufar.email | E-mail | bootstrap → ad_metadata.parameters.refs[1514]; базовые метаданные категории 1010.
+kufar.coordinates | Координаты | bootstrap → ad_metadata.parameters.refs[809]; базовые метаданные категории 1010.
+kufar.rooms | Количество комнат | bootstrap → ad_metadata.parameters.refs[1464]; {"category":"1010","type":"sell"} В справочнике multi=true, валидатор v_single.
+kufar.re_number_floors | Количество этажей | bootstrap → ad_metadata.parameters.refs[4898]; {"category":"1010","type":"sell"}
+kufar.flat_storeys | Число уровней | bootstrap → ad_metadata.parameters.refs[4929]; {"category":"1010","type":"sell"}
+kufar.flat_open_room | Есть проходная комната | bootstrap → ad_metadata.parameters.refs[4889]; {"category":"1010","type":"sell"}
+kufar.house_type | Материал стен | bootstrap → ad_metadata.parameters.refs[1468]; {"category":"1010","type":"sell"}
+kufar.bathroom | Санузел | bootstrap → ad_metadata.parameters.refs[1479]; {"category":"1010","type":"sell"}
+kufar.balcony | Балкон | bootstrap → ad_metadata.parameters.refs[1480]; {"category":"1010","type":"sell"}
+kufar.floor | Этаж | bootstrap → ad_metadata.parameters.refs[1474]; {"category":"1010","type":"sell"}
+kufar.flat_new_building | В новостройке | bootstrap → ad_metadata.parameters.refs[4897]; {"category":"1010","type":"sell"}
+kufar.re_last_floor | Про этаж | bootstrap → ad_metadata.parameters.refs[10931]; {"category":"1010","type":"sell"}
+kufar.size_kitchen | Площадь кухни, м² | bootstrap → ad_metadata.parameters.refs[1450]; {"category":"1010","type":"sell"}
+kufar.flat_ceiling_height | Высота потолков | bootstrap → ad_metadata.parameters.refs[4926]; {"category":"1010","type":"sell"}
+kufar.re_auction_sale | Продажа через аукцион/конкурс | bootstrap → ad_metadata.parameters.refs[4892]; {"category":"1010","type":"sell"}
+kufar.flat_building_improvements | Обустройство дома | bootstrap → ad_metadata.parameters.refs[4974]; {"category":"1010","type":"sell"}
+kufar.new_buildings_apartment_complex | Жилой комплекс | bootstrap → ad_metadata.parameters.refs[5501]; {"category":"1010","type":"sell"}
+kufar.condition | Состояние | bootstrap → ad_metadata.parameters.refs[1506]; {"category":"1010","type":"sell"}
+kufar.square_meter | Цена за м² | bootstrap → ad_metadata.parameters.refs[5847]; {"category":"1010","type":"sell"}
+kufar.year_built | Год постройки | bootstrap → ad_metadata.parameters.refs[1471]; {"category":"1010","type":"sell"}
+kufar.flat_windows_side | Окна выходят | bootstrap → ad_metadata.parameters.refs[4965]; {"category":"1010","type":"sell"}
+kufar.size_living_space | Жилая площадь, м² | bootstrap → ad_metadata.parameters.refs[1440]; {"category":"1010","type":"sell"}
+kufar.size | Общая площадь, м² | bootstrap → ad_metadata.parameters.refs[1457]; {"category":"1010","type":"sell"}
+kufar.flat_repair | Ремонт | bootstrap → ad_metadata.parameters.refs[4921]; {"category":"1010","type":"sell"}
+kufar.size_snb | Площадь по СНБ, м² | bootstrap → ad_metadata.parameters.refs[10348]; {"category":"1010","type":"sell"}
+kufar.possible_exchange | Возможен обмен | bootstrap → ad_metadata.parameters.refs[2129]; {"category":"1010","company_ad":"0","type":"sell"}
+kufar.re_district | Микрорайон | bootstrap → ad_metadata.parameters.refs[5509]; регион 7.
+kufar.metro | Метро | bootstrap → ad_metadata.parameters.refs[1484]; регион 7.
+kufar.re_metro_afoot | Пешком до ближайшей станции | bootstrap → ad_metadata.parameters.refs[4906]; регион 7.
+kufar.re_metro_transport | До ближайшей станции на транспорте | bootstrap → ad_metadata.parameters.refs[4916]; регион 7.
+kufar.price_mode | Режим цены | Контрол формы цены: options и выбранное значение.
+SHA-256 файлов в UTF-8 с LF (как в Git):
+7217bb929ec4e0431176e8959e966318eb7e2b048f2491abd2b8af10fea0a5bf  apartments_sale_kufar.json
+3286516b9c179530fb77b6ab1b0c1a487b51121fcd5be6e0c528c8709e9c194a  binding_apartments_sale_kufar.json

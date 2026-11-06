@@ -1,0 +1,163 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "onliner",
+  "fields": [
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "onliner.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "onliner.price.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "BYN",
+            "to": "BYN"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.rooms",
+      "platform_option_id": "onliner.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5",
+            "to": 5
+          },
+          {
+            "from": "6+",
+            "to": 6
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall",
+      "platform_option_id": "onliner.walling",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Панельный",
+            "to": "panel"
+          },
+          {
+            "from": "Кирпичный",
+            "to": "brick"
+          },
+          {
+            "from": "Монолитный",
+            "to": "monolith"
+          },
+          {
+            "from": "Блочный",
+            "to": "block"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.balcony",
+      "platform_option_id": "onliner.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": true
+          },
+          {
+            "from": "Нет",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.repair",
+      "platform_option_id": "onliner.repaired",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "С ремонтом",
+            "to": true
+          },
+          {
+            "from": "Без отделки",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.market",
+      "platform_option_id": "onliner.resale",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Вторичка",
+            "to": true
+          },
+          {
+            "from": "Новостройка",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "onliner.file",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "onliner.contact.name",
+      "conversion": {
+        "kind": "identity"
+      }
+    }
+  ]
+}

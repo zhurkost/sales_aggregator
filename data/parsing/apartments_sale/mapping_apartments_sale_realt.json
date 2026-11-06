@@ -1,0 +1,319 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "realt",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "realt.description.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "realt.termsOfDeal.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "933"
+          },
+          {
+            "from": "USD",
+            "to": "840"
+          },
+          {
+            "from": "EUR",
+            "to": "978"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.auction",
+      "platform_option_id": "realt.termsOfDeal.termsExtra",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "903"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.terms",
+      "platform_option_id": "realt.termsOfDeal.termsOfDeal",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Чистая продажа",
+            "to": 1
+          },
+          {
+            "from": "Обмен",
+            "to": 2
+          },
+          {
+            "from": "Обмен - разъезд",
+            "to": 3
+          },
+          {
+            "from": "Обмен - съезд",
+            "to": 4
+          },
+          {
+            "from": "Подбираются варианты",
+            "to": 5
+          },
+          {
+            "from": "Съезд",
+            "to": 7
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.rooms",
+      "platform_option_id": "realt.apartment.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5+",
+            "to": 5
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall",
+      "platform_option_id": "realt.house.houseType",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Панельный",
+            "to": 1
+          },
+          {
+            "from": "Кирпичный",
+            "to": 0
+          },
+          {
+            "from": "Монолитный",
+            "to": 3
+          },
+          {
+            "from": "Силикатные блоки",
+            "to": 5
+          },
+          {
+            "from": "Каркасно-блочный",
+            "to": 11
+          },
+          {
+            "from": "Блок-комнаты",
+            "to": 2
+          },
+          {
+            "from": "Бревенчатый",
+            "to": 6
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.management",
+      "platform_option_id": "realt.house.homeMaintenance",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "ЖЭС",
+            "to": 1
+          },
+          {
+            "from": "Товарищество собственников",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.bathroom",
+      "platform_option_id": "realt.apartment.toilet",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Раздельный",
+            "to": 0
+          },
+          {
+            "from": "Совмещенный",
+            "to": 1
+          },
+          {
+            "from": "2 и более",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.balcony",
+      "platform_option_id": "realt.apartment.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Балкон",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Лоджия",
+            "to": 2
+          },
+          {
+            "from": "Балкон и лоджия",
+            "to": 25
+          },
+          {
+            "from": "Терраса",
+            "to": 19
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.repair",
+      "platform_option_id": "realt.apartment.repair",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Евро",
+            "to": 0
+          },
+          {
+            "from": "Отличный",
+            "to": 1
+          },
+          {
+            "from": "Хороший",
+            "to": 2
+          },
+          {
+            "from": "Нормальный",
+            "to": 3
+          },
+          {
+            "from": "Удовлетворительный",
+            "to": 4
+          },
+          {
+            "from": "Плохое состояние",
+            "to": 5
+          },
+          {
+            "from": "Аварийное состояние",
+            "to": 6
+          },
+          {
+            "from": "Без отделки",
+            "to": 7
+          },
+          {
+            "from": "Строительная отделка",
+            "to": 8
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.ceiling_min",
+      "platform_option_id": "realt.apartment.ceilingHeight",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "от 2.5 м",
+            "to": "2.5"
+          },
+          {
+            "from": "от 2.7 м",
+            "to": "2.7"
+          },
+          {
+            "from": "от 3 м",
+            "to": "3"
+          },
+          {
+            "from": "от 3.5 м",
+            "to": "3.5"
+          },
+          {
+            "from": "от 4 м",
+            "to": "4"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "realt.media.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.youtube_video",
+      "platform_option_id": "realt.media.youtube",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    }
+  ]
+}

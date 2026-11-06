@@ -1,0 +1,545 @@
+Этап B — Продажа квартиры целиком в Беларуси. Формат 2.1. 2026-11-06T12:30:50.328Z
+Задание и правила: 800a9d0; первый самостоятельный справочник apartments_sale. Сопоставлены файлы этапа A этой категории. Каталог аренды использовался как образец метода.
+Статус: partial. Ссылки и типы проверены по четырём схемам. Автозаполнение всех полей, публикация и активный серверный план требуют отдельной интеграции.
+Общих полей: 39. Поле включалось при совпадении назначения минимум на двух площадках, независимо от наличия исполняемой конвертации.
+Доказательства: общий ID | смысл | формат | исходные ID. URL, участок формы и происхождение исходных кодов — в соответствующем отчёте A.
+listing.title | Заголовок | Свободный текст | realt.description.title / kufar.subject
+listing.description | Подробное описание | Свободный текст; формат редактора зависит от площадки | realt.description.description / kufar.body / domovita.description / onliner.description
+sale.price | Полная цена квартиры | Десятичная строка без разделителя тысяч, в sale.currency; только режим полной цены | realt.termsOfDeal.price / kufar.price / domovita.price / onliner.price.amount
+sale.currency | Валюта полной цены | Код валюты BYN, USD, EUR или RUB по поддержке площадки | realt.termsOfDeal.currency / kufar.currency / domovita.price_currency_text / onliner.price.currency
+sale.auction | Конкурс или аукцион | Канонический флаг «Да» для явно выбранного аукциона или конкурса | realt.termsOfDeal.termsExtra / kufar.re_auction_sale
+contact.additional_phone_1 | Дополнительный телефон 1 | Международный номер, отдельно от основного | domovita.phones.1.contact_phone / onliner.additional_phone_1
+contact.additional_phone_2 | Дополнительный телефон 2 | Международный номер, отдельно от основного | domovita.phones.2.contact_phone / onliner.additional_phone_2
+sale.terms | Условия сделки | Именованное условие продажи квартиры | realt.termsOfDeal.termsOfDeal / domovita.terms
+apartment.rooms | Количество комнат | Точное целое или отдельная категория 5+, 6+, studio | realt.apartment.rooms / kufar.rooms / domovita.rooms / onliner.rooms
+apartment.separate_rooms | Раздельных комнат | Точное целое число отдельных комнат | realt.apartment.separateRooms / domovita.separate_rooms
+apartment.total_area | Общая площадь | Десятичная строка в м² | realt.area.total / kufar.size / domovita.area_total / onliner.area.total
+apartment.living_area | Жилая площадь | Десятичная строка в м² | realt.area.living / kufar.size_living_space / domovita.area_living / onliner.area.living
+apartment.kitchen_area | Площадь кухни | Десятичная строка в м² | realt.area.kitchen / kufar.size_kitchen / domovita.area_kitchen / onliner.area.kitchen
+apartment.snb_area | Площадь по СНБ | Десятичная строка в м² по СНБ | realt.area.snb / kufar.size_snb
+apartment.floor | Этаж квартиры | Целое или категория «больше 30» при такой точности источника | realt.apartment.storey / kufar.floor / domovita.storey / onliner.floor
+building.floors | Этажей в доме | Целое или категория «больше 30» при такой точности источника | realt.house.storeys / kufar.re_number_floors / domovita.storeys / onliner.floors
+apartment.levels | Число уровней квартиры | Целое число уровней внутри квартиры | realt.apartment.levels / kufar.flat_storeys
+building.year | Год постройки | Четыре цифры или подтверждённая площадкой граничная категория | realt.house.buildingYear / kufar.year_built / domovita.building_year / onliner.buildingYear
+building.repair_year | Год капитального ремонта | Год, четыре цифры | realt.house.repairYear / domovita.repair_year
+building.wall | Материал стен | Каноническая подпись материала | realt.house.houseType / kufar.house_type / domovita.house_type / onliner.walling
+building.management | Обслуживание дома | Вид организации, управляющей домом | realt.house.homeMaintenance / domovita.house_control_type
+apartment.bathroom | Санузел | Тип или подтверждённое количество; «два» и «два и более» различаются | realt.apartment.toilet / kufar.bathroom / domovita.lavatory
+apartment.balcony | Балкон или лоджия | Нативная детализация: наличие, вид или количество; использовать только подтверждённые значения | realt.apartment.balcony / kufar.balcony / domovita.balcony / onliner.balcony
+apartment.repair | Отделка и состояние | Подтверждённое состояние; сохранять различия между «хороший», «с ремонтом» и «косметический» | realt.apartment.repair / kufar.flat_repair / domovita.repair_state / onliner.repaired
+apartment.windows | Вид из окон | JSON-массив строк с названиями направлений / объектов | realt.apartment.viewFromWindow / kufar.flat_windows_side
+apartment.ceiling_min | Высота потолков от | Порог в метрах; сохранить квалификатор «от» | realt.apartment.ceilingHeight / kufar.flat_ceiling_height
+apartment.market | Первичный или вторичный рынок | Вторичка / Новостройка; признак рынка. У Kufar подтверждено однозначно только «Вторичное» | kufar.condition / onliner.resale
+building.amenities | Удобства дома | JSON-массив подтверждённых удобств; допустимые признаки зависят от площадки | realt.additional.appliance / kufar.flat_building_improvements / domovita.extra_info_comments
+location.metro_station | Ближайшая станция метро | Название подтверждённой станции, с учётом города; для нескольких станций проверяется кратность | realt.location.metro_1_station / kufar.metro
+location.address | Адрес квартиры | Строка для поиска; результатом должен быть адрес выбранного объекта | kufar.address / onliner.location.user_address
+location.settlement | Населённый пункт | Название; внешний код выбирается по подсказке площадки | realt.location.settlement / domovita.town_id
+location.street | Улица | Официальное название и тип улицы для адресного поиска | realt.location.street / domovita.street_name
+location.house | Номер дома | Строка с буквой или дробью, если применимо | realt.location.houseNumber / domovita.house_number
+location.complex | Жилой комплекс | Название ЖК с контекстом адреса; одинаковые названия могут обозначать разные объекты | realt.location.newBuildComplexUuid / kufar.new_buildings_apartment_complex
+media.images | Фотографии квартиры | Упорядоченная коллекция исходных изображений с сохранением обложки | realt.media.photos / kufar.images / domovita.photos / onliner.file
+media.youtube_video | Видео YouTube | Ссылка на видео YouTube, отдельно от коллекции изображений | realt.media.youtube / kufar.content_video / domovita.youtube_link
+contact.name | Имя контактного лица | Свободный текст | kufar.contact_person / domovita.contact_name / onliner.contact.name
+contact.phone | Телефон для связи | Международный номер с кодом страны; учесть маску ввода | kufar.phone / domovita.phones.0.contact_phone / onliner.phone
+contact.email | Электронная почта | Строка с адресом электронной почты | kufar.email / domovita.email
+
+Покрытие по входам:
+
+realt | https://realt.by/podat-obyavlenie/ | листьев 58 | mapping.fields 13 | bindings ready 13
+realt.location.settlement | кандидат location.settlement — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=true
+realt.location.street | кандидат location.street — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=null
+realt.location.houseNumber | кандидат location.house — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=null
+realt.location.buildingNumber | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.newBuildComplexUuid | кандидат location.complex — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=null
+realt.apartment.rooms | сопоставлено: apartment.rooms (lookup) | required=true
+realt.apartment.inventoryNumber | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.apartment.storey | кандидат apartment.floor — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое или категория «больше 30» при такой точности источника». | required=true
+realt.apartment.repair | сопоставлено: apartment.repair (lookup) | required=null
+realt.apartment.balcony | сопоставлено: apartment.balcony (lookup) | required=true
+realt.apartment.toilet | сопоставлено: apartment.bathroom (lookup) | required=null
+realt.apartment.ceilingHeight | сопоставлено: apartment.ceiling_min (lookup) | required=null
+realt.apartment.levels | кандидат apartment.levels — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое число уровней внутри квартиры». | required=null
+realt.apartment.planning | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.apartment.viewFromWindow | кандидат apartment.windows — Нужен обработчик списка кодов и проверка каждого элемента. Скалярный lookup неприменим. | required=null
+realt.area.total | кандидат apartment.total_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=true
+realt.area.living | кандидат apartment.living_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=true
+realt.area.kitchen | кандидат apartment.kitchen_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=null
+realt.area.balcony | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.area.snb | кандидат apartment.snb_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м² по СНБ». | required=null
+realt.house.storeys | кандидат building.floors — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое или категория «больше 30» при такой точности источника». | required=true
+realt.house.buildingYear | кандидат building.year — Нужен проверенный обработчик для преобразования строки в integer с единицей «Четыре цифры или подтверждённая площадкой граничная категория». | required=true
+realt.house.isNotFinish | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.house.repairYear | кандидат building.repair_year — Нужен проверенный обработчик для преобразования строки в integer с единицей «Год, четыре цифры». | required=null
+realt.house.houseType | сопоставлено: building.wall (lookup) | required=null
+realt.house.newBuilding | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.house.homeMaintenance | сопоставлено: building.management (lookup) | required=null
+realt.additional.appliance | кандидат building.amenities — Нужен обработчик списка кодов и проверка каждого элемента. Скалярный lookup неприменим. | required=null
+realt.additional.facilitiesForDisabledPeople | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.additional.yard | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.additional.parking | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.termsOfDeal.currency | сопоставлено: sale.currency (lookup) | required=true
+realt.termsOfDeal.price | кандидат sale.price — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка без разделителя тысяч, в sale.currency; только режим полной цены». | required=true
+realt.termsOfDeal.bargain | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+realt.termsOfDeal.ownerShip | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=true
+realt.termsOfDeal.termsOfDeal | сопоставлено: sale.terms (lookup) | required=true
+realt.termsOfDeal.termsExtra | сопоставлено: sale.auction (lookup) | required=null
+realt.media.photos | сопоставлено: media.images (files) | required=null
+realt.media.planning | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.media.youtube | сопоставлено: media.youtube_video (files) | required=null
+realt.media.tour3d | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.description.title | сопоставлено: listing.title (identity) | required=null
+realt.description.shortDescription | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=true
+realt.description.description | кандидат listing.description — Редактор форматированного текста: проверить преобразование plain text → формат редактора. | required=null
+realt.location.metro_1_station | кандидат location.metro_station — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=null
+realt.location.metro_1_mode | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_1_minutes | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_2_station | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_2_mode | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_2_minutes | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_3_station | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_3_mode | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.location.metro_3_minutes | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.apartment.registrationRooms | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+realt.apartment.separateRooms | кандидат apartment.separate_rooms — Нужен проверенный обработчик для преобразования строки в integer с единицей «Точное целое число отдельных комнат». | required=true
+realt.deal | константа выбранной ветви | required=null
+realt.family | константа выбранной ветви | required=null
+realt.kind | константа выбранной ветви | required=null
+Хеши SHA-256 (UTF-8 с LF, как в Git):
+0370c95c9fc0296aa2bcec5afd2e7a4921160641db42a5340d113455f58875e9  apartments_sale_realt.json
+6a32de0811c1569273fb068aa644aa3882041d011378f6d75d8040bb7b6b006e  binding_apartments_sale_realt.json
+38c8cfcf40cbbfab7431459bed91bbe4337466fa6a0eef6cdd44a43764e2f0f9  report_apartments_sale_realt.txt
+4565bf8ef6bad04c302f6f8817d24b7e208a4d67caf88e1583ae329d601536ea  mapping_apartments_sale_realt.json
+
+kufar | https://www.kufar.by/ain/create | листьев 44 | mapping.fields 19 | bindings ready 6
+kufar.type | константа выбранной ветви | required=true
+kufar.category | константа выбранной ветви | required=true
+kufar.subject | сопоставлено: listing.title (identity) | required=true
+kufar.address | кандидат location.address — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=true
+kufar.body | сопоставлено: listing.description (identity) | required=true
+kufar.images | сопоставлено: media.images (files) | required=false
+kufar.price | кандидат sale.price — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка без разделителя тысяч, в sale.currency; только режим полной цены». | required=false
+kufar.currency | сопоставлено: sale.currency (lookup) | required=true
+kufar.region | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=true
+kufar.content_video | сопоставлено: media.youtube_video (files) | required=false
+kufar.re_contract | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.phone | кандидат contact.phone — Проверить обработчик нормализации номера и префикс/маску площадки. | required=true
+kufar.contact_person | сопоставлено: contact.name (identity) | required=false
+kufar.email | сопоставлено: contact.email (identity) | required=true
+kufar.coordinates | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=true
+kufar.rooms | сопоставлено: apartment.rooms (lookup) | required=true
+kufar.re_number_floors | сопоставлено: building.floors (lookup) | required=false
+kufar.flat_storeys | сопоставлено: apartment.levels (lookup) | required=false
+kufar.flat_open_room | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.house_type | сопоставлено: building.wall (lookup) | required=false
+kufar.bathroom | сопоставлено: apartment.bathroom (lookup) | required=false
+kufar.balcony | сопоставлено: apartment.balcony (lookup) | required=false
+kufar.floor | сопоставлено: apartment.floor (lookup) | required=false
+kufar.flat_new_building | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.re_last_floor | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.size_kitchen | кандидат apartment.kitchen_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=false
+kufar.flat_ceiling_height | сопоставлено: apartment.ceiling_min (lookup) | required=false
+kufar.re_auction_sale | сопоставлено: sale.auction (lookup) | required=false
+kufar.flat_building_improvements | кандидат building.amenities — Нужен обработчик списка кодов и проверка каждого элемента. Скалярный lookup неприменим. | required=false
+kufar.new_buildings_apartment_complex | кандидат location.complex — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=false
+kufar.condition | сопоставлено: apartment.market (lookup) | required=true
+kufar.square_meter | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.year_built | сопоставлено: building.year (lookup) | required=false
+kufar.flat_windows_side | кандидат apartment.windows — Нужен обработчик списка кодов и проверка каждого элемента. Скалярный lookup неприменим. | required=false
+kufar.size_living_space | кандидат apartment.living_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=false
+kufar.size | кандидат apartment.total_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=true
+kufar.flat_repair | сопоставлено: apartment.repair (lookup) | required=false
+kufar.size_snb | кандидат apartment.snb_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м² по СНБ». | required=false
+kufar.possible_exchange | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.re_district | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.metro | кандидат location.metro_station — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=false
+kufar.re_metro_afoot | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.re_metro_transport | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+kufar.price_mode | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+Хеши SHA-256 (UTF-8 с LF, как в Git):
+7217bb929ec4e0431176e8959e966318eb7e2b048f2491abd2b8af10fea0a5bf  apartments_sale_kufar.json
+3286516b9c179530fb77b6ab1b0c1a487b51121fcd5be6e0c528c8709e9c194a  binding_apartments_sale_kufar.json
+d3b2d0a3f8f2e34e7c78a9968c910f6e0ddc6e14899d8d3706a9730cbca57b5a  report_apartments_sale_kufar.txt
+c128eec9a5f657309a4320499211fe011bc65f5373b064bb31f20434eb4e0d0b  mapping_apartments_sale_kufar.json
+
+domovita | https://domovita.by/new/add/flats/sale | листьев 35 | mapping.fields 13 | bindings ready 9
+domovita.town_id | кандидат location.settlement — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=true
+domovita.street_name | кандидат location.street — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=false
+domovita.house_number | кандидат location.house — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=false
+domovita.position_x | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=true
+domovita.position_y | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=true
+domovita.contact_name | сопоставлено: contact.name (identity) | required=false
+domovita.phones.0.contact_phone | кандидат contact.phone — Проверить обработчик нормализации номера и префикс/маску площадки. | required=null
+domovita.email | сопоставлено: contact.email (identity) | required=false
+domovita.rooms | сопоставлено: apartment.rooms (lookup) | required=true
+domovita.separate_rooms | сопоставлено: apartment.separate_rooms (lookup) | required=false
+domovita.area_total | кандидат apartment.total_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=true
+domovita.area_kitchen | кандидат apartment.kitchen_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=false
+domovita.area_living | кандидат apartment.living_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=true
+domovita.storey | кандидат apartment.floor — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое или категория «больше 30» при такой точности источника». | required=true
+domovita.storeys | кандидат building.floors — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое или категория «больше 30» при такой точности источника». | required=true
+domovita.balcony | сопоставлено: apartment.balcony (lookup) | required=false
+domovita.lavatory | сопоставлено: apartment.bathroom (lookup) | required=false
+domovita.repair_state | сопоставлено: apartment.repair (lookup) | required=false
+domovita.house_type | сопоставлено: building.wall (lookup) | required=false
+domovita.building_year | кандидат building.year — Нужен проверенный обработчик для преобразования строки в integer с единицей «Четыре цифры или подтверждённая площадкой граничная категория». | required=false
+domovita.repair_year | кандидат building.repair_year — Нужен проверенный обработчик для преобразования строки в integer с единицей «Год, четыре цифры». | required=false
+domovita.extra_info_comments | кандидат building.amenities — Нужен обработчик списка кодов и проверка каждого элемента. Скалярный lookup неприменим. | required=false
+domovita.house_control_type | сопоставлено: building.management (lookup) | required=false
+domovita.photos | сопоставлено: media.images (files) | required=null
+domovita.description | кандидат listing.description — Редактор форматированного текста: проверить преобразование plain text → формат редактора. | required=null
+domovita.youtube_link | сопоставлено: media.youtube_video (files) | required=false
+domovita.is_online_showing | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+domovita.price | кандидат sale.price — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка без разделителя тысяч, в sale.currency; только режим полной цены». | required=true
+domovita.price_currency_text | сопоставлено: sale.currency (lookup) | required=true
+domovita.terms | сопоставлено: sale.terms (lookup) | required=false
+domovita.action | константа выбранной ветви | required=null
+domovita.type | константа выбранной ветви | required=null
+domovita.phones.1.contact_phone | кандидат contact.additional_phone_1 — Проверить обработчик нормализации номера и префикс/маску площадки. | required=false
+domovita.phones.2.contact_phone | кандидат contact.additional_phone_2 — Проверить обработчик нормализации номера и префикс/маску площадки. | required=false
+domovita.phones.3.contact_phone | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=false
+Хеши SHA-256 (UTF-8 с LF, как в Git):
+57fccdd35b5e220b864d648ac86ab2f397617f10ef92339d7b72d5cb074c0e06  apartments_sale_domovita.json
+1480b7c594aa790ec1bbcacf5e26693c9c66432f5cfaf4389232d64ab6c39846  binding_apartments_sale_domovita.json
+479056e047fd05776aea785e442b071ab3f862249995d2d972fb75845b0ef3dc  report_apartments_sale_domovita.txt
+2a03d007118a3f42a99595ff4cad192163500766e65b95234442c950b7108d92  mapping_apartments_sale_domovita.json
+
+onliner | https://r.onliner.by/pk/apartments/create | листьев 32 | mapping.fields 9 | bindings ready 0
+onliner.file | сопоставлено: media.images (files) | required=true
+onliner.location.user_address | кандидат location.address — Адресный поиск и выбор нативного объекта/зависимого значения; статический lookup по названию недостаточен. | required=null
+onliner.resale | сопоставлено: apartment.market (lookup) | required=null
+onliner.walling | сопоставлено: building.wall (lookup) | required=null
+onliner.repaired | сопоставлено: apartment.repair (lookup) | required=null
+onliner.rooms | сопоставлено: apartment.rooms (lookup) | required=null
+onliner.balcony | сопоставлено: apartment.balcony (lookup) | required=null
+onliner.parking | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.floor | кандидат apartment.floor — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое или категория «больше 30» при такой точности источника». | required=null
+onliner.floors | кандидат building.floors — Нужен проверенный обработчик для преобразования строки в integer с единицей «Целое или категория «больше 30» при такой точности источника». | required=null
+onliner.combinedKitchen | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.area.total | кандидат apartment.total_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=null
+onliner.area.living | кандидат apartment.living_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=null
+onliner.area.kitchen | кандидат apartment.kitchen_area — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка в м²». | required=null
+onliner.wallHeight | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.buildingYear | кандидат building.year — Нужен проверенный обработчик для преобразования строки в integer с единицей «Четыре цифры или подтверждённая площадкой граничная категория». | required=null
+onliner.description | сопоставлено: listing.description (identity) | required=null
+onliner.price.amount | кандидат sale.price — Нужен проверенный обработчик для преобразования строки в number с единицей «Десятичная строка без разделителя тысяч, в sale.currency; только режим полной цены». | required=null
+onliner.price.currency | сопоставлено: sale.currency (lookup) | required=null
+onliner.seller.type | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.seller.name | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.seller.legalInfo.unp | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.seller.legalInfo.contract.number | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.seller.legalInfo.contract.date | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.seller.legalInfo.licence.number | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.seller.legalInfo.licence.date | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.contact.name | сопоставлено: contact.name (identity) | required=null
+onliner.phone | кандидат contact.phone — Проверить обработчик нормализации номера и префикс/маску площадки. | required=null
+onliner.call_from | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.call_to | отдельное поле или иной смысл/детализация; запросить отдельно при применимости | required=null
+onliner.additional_phone_1 | кандидат contact.additional_phone_1 — Проверить обработчик нормализации номера и префикс/маску площадки. | required=false
+onliner.additional_phone_2 | кандидат contact.additional_phone_2 — Проверить обработчик нормализации номера и префикс/маску площадки. | required=false
+Хеши SHA-256 (UTF-8 с LF, как в Git):
+cca7eebcd04702404610f5fc9fb2d1d16ac65117e6747d60a628b33585b896f1  apartments_sale_onliner.json
+93166219cafdbb72d1f0a877056b51829ff2d188aedd68a327b2e1b1c037139d  binding_apartments_sale_onliner.json
+1a83d3a8713fd61d76e92c87de1b3e1b2da36e7f729638b1d399b5b8bbbce4ba  report_apartments_sale_onliner.txt
+2a0f2b9a8f1df7154eedb0041d66944c8d3b7560ac1f1ead6433153f36cba136  mapping_apartments_sale_onliner.json
+
+Таблицы вариантов: общий ID | каноническое значение | исходный ID и подпись | нативный код (JSON, тип сохранён).
+sale.currency | BYN | realt.termsOfDeal.currency.v_1bde55acc88c («BYN») | "933"
+sale.currency | USD | realt.termsOfDeal.currency.v_8778db41776c («USD») | "840"
+sale.currency | EUR | realt.termsOfDeal.currency.v_9c22543842e7 («EUR») | "978"
+sale.auction | Да | realt.termsOfDeal.termsExtra.v_597a5065a955 («Конкурс / Аукцион») | "903"
+sale.terms | Чистая продажа | realt.termsOfDeal.termsOfDeal.v_5d61994ce558 («Чистая продажа») | 1
+sale.terms | Обмен | realt.termsOfDeal.termsOfDeal.v_ea9753513186 («Обмен») | 2
+sale.terms | Обмен - разъезд | realt.termsOfDeal.termsOfDeal.v_fc9d7eb4104a («Обмен - разъезд») | 3
+sale.terms | Обмен - съезд | realt.termsOfDeal.termsOfDeal.v_1c68ca07f2d7 («Обмен - съезд») | 4
+sale.terms | Подбираются варианты | realt.termsOfDeal.termsOfDeal.v_353d3af5fc87 («Подбираются варианты») | 5
+sale.terms | Съезд | realt.termsOfDeal.termsOfDeal.v_f81db69cc8df («Съезд») | 7
+apartment.rooms | 1 | realt.apartment.rooms.v_5d61994ce558 («1») | 1
+apartment.rooms | 2 | realt.apartment.rooms.v_ea9753513186 («2») | 2
+apartment.rooms | 3 | realt.apartment.rooms.v_fc9d7eb4104a («3») | 3
+apartment.rooms | 4 | realt.apartment.rooms.v_1c68ca07f2d7 («4») | 4
+apartment.rooms | 5+ | realt.apartment.rooms.v_353d3af5fc87 («5+») | 5
+building.wall | Панельный | realt.house.houseType.v_5d61994ce558 («Панельный») | 1
+building.wall | Кирпичный | realt.house.houseType.v_6db638fe4d2f («Кирпичный») | 0
+building.wall | Монолитный | realt.house.houseType.v_fc9d7eb4104a («Монолитный») | 3
+building.wall | Силикатные блоки | realt.house.houseType.v_353d3af5fc87 («Силикатные блоки») | 5
+building.wall | Каркасно-блочный | realt.house.houseType.v_0f2b09bf336d («Каркасно-блочный») | 11
+building.wall | Блок-комнаты | realt.house.houseType.v_ea9753513186 («Блок-комнаты») | 2
+building.wall | Бревенчатый | realt.house.houseType.v_5daa0980abe1 («Бревенчатый») | 6
+building.management | ЖЭС | realt.house.homeMaintenance.v_5d61994ce558 («ЖЭС») | 1
+building.management | Товарищество собственников | realt.house.homeMaintenance.v_ea9753513186 («ТС») | 2
+apartment.bathroom | Раздельный | realt.apartment.toilet.v_6db638fe4d2f («Раздельный») | 0
+apartment.bathroom | Совмещенный | realt.apartment.toilet.v_5d61994ce558 («Совмещенный») | 1
+apartment.bathroom | 2 и более | realt.apartment.toilet.v_ea9753513186 («2 и более») | 2
+apartment.balcony | Балкон | realt.apartment.balcony.v_5d61994ce558 («балкон») | 1
+apartment.balcony | Нет | realt.apartment.balcony.v_6db638fe4d2f («Нет») | 0
+apartment.balcony | Лоджия | realt.apartment.balcony.v_ea9753513186 («Лоджия») | 2
+apartment.balcony | Балкон и лоджия | realt.apartment.balcony.v_4651eeefa115 («балкон и лоджия») | 25
+apartment.balcony | Терраса | realt.apartment.balcony.v_a48f515d8d2a («терраса») | 19
+apartment.repair | Евро | realt.apartment.repair.v_6db638fe4d2f («евроремонт») | 0
+apartment.repair | Отличный | realt.apartment.repair.v_5d61994ce558 («отличный») | 1
+apartment.repair | Хороший | realt.apartment.repair.v_ea9753513186 («хороший») | 2
+apartment.repair | Нормальный | realt.apartment.repair.v_fc9d7eb4104a («нормальный») | 3
+apartment.repair | Удовлетворительный | realt.apartment.repair.v_1c68ca07f2d7 («удовлетворительный») | 4
+apartment.repair | Плохое состояние | realt.apartment.repair.v_353d3af5fc87 («плохое состояние») | 5
+apartment.repair | Аварийное состояние | realt.apartment.repair.v_5daa0980abe1 («аварийное состояние») | 6
+apartment.repair | Без отделки | realt.apartment.repair.v_f81db69cc8df («без отделки») | 7
+apartment.repair | Строительная отделка | realt.apartment.repair.v_aca4f4a652c9 («строительная отделка») | 8
+apartment.ceiling_min | от 2.5 м | realt.apartment.ceilingHeight.v_3a70522f60d4 («от 2,5 м») | "2.5"
+apartment.ceiling_min | от 2.7 м | realt.apartment.ceilingHeight.v_dd964e3fe5dc («от 2,7 м») | "2.7"
+apartment.ceiling_min | от 3 м | realt.apartment.ceilingHeight.v_d8122286f1ff («от 3 м») | "3"
+apartment.ceiling_min | от 3.5 м | realt.apartment.ceilingHeight.v_e78553a4590c («от 3,5 м») | "3.5"
+apartment.ceiling_min | от 4 м | realt.apartment.ceilingHeight.v_a2ccdff76bdd («от 4 м») | "4"
+sale.currency | BYN | kufar.currency.v_197c91b85380 («р.») | "BYR"
+sale.currency | USD | kufar.currency.v_7b2792c0dde8 («$») | "USD"
+sale.currency | EUR | kufar.currency.v_b072f5d57e05 («€») | "EUR"
+sale.auction | Да | kufar.re_auction_sale.v_e49c54607d45 («Да») | "1"
+sale.auction | Нет | kufar.re_auction_sale.v_99c9e7dd3890 («-») | "0"
+apartment.rooms | 1 | kufar.rooms.v_e49c54607d45 («1») | "1"
+apartment.rooms | 2 | kufar.rooms.v_196b9170727a («2») | "2"
+apartment.rooms | 3 | kufar.rooms.v_d8122286f1ff («3») | "3"
+apartment.rooms | 4 | kufar.rooms.v_a2ccdff76bdd («4») | "4"
+apartment.rooms | 5+ | kufar.rooms.v_cc80edb6227f («5 и более») | "5"
+apartment.floor | 1 | kufar.floor.v_e49c54607d45 («1») | "1"
+apartment.floor | 2 | kufar.floor.v_196b9170727a («2») | "2"
+apartment.floor | 3 | kufar.floor.v_d8122286f1ff («3») | "3"
+apartment.floor | 4 | kufar.floor.v_a2ccdff76bdd («4») | "4"
+apartment.floor | 5 | kufar.floor.v_cc80edb6227f («5») | "5"
+apartment.floor | 6 | kufar.floor.v_580e435b671d («6») | "6"
+apartment.floor | 7 | kufar.floor.v_6181ea9dd037 («7») | "7"
+apartment.floor | 8 | kufar.floor.v_fa4165c18fcd («8») | "8"
+apartment.floor | 9 | kufar.floor.v_c38d6751c9b0 («9») | "9"
+apartment.floor | 10 | kufar.floor.v_213256f1167c («10») | "10"
+apartment.floor | 11 | kufar.floor.v_14b28c7f15c1 («11») | "11"
+apartment.floor | 12 | kufar.floor.v_39f0843a988b («12») | "12"
+apartment.floor | 13 | kufar.floor.v_e19a50dd4b6d («13») | "13"
+apartment.floor | 14 | kufar.floor.v_c5b923a01e2c («14») | "14"
+apartment.floor | 15 | kufar.floor.v_7a1239e18075 («15») | "15"
+apartment.floor | 16 | kufar.floor.v_81248492d0b7 («16») | "16"
+apartment.floor | 17 | kufar.floor.v_c27831f07d06 («17») | "17"
+apartment.floor | 18 | kufar.floor.v_b2d0a5611b58 («18») | "18"
+apartment.floor | 19 | kufar.floor.v_058c58c38566 («19») | "19"
+apartment.floor | 20 | kufar.floor.v_bdbac52b4b51 («20») | "20"
+apartment.floor | 21 | kufar.floor.v_ce453a599829 («21») | "21"
+apartment.floor | 22 | kufar.floor.v_2386d438555d («22») | "22"
+apartment.floor | 23 | kufar.floor.v_c69846fbcc59 («23») | "23"
+apartment.floor | 24 | kufar.floor.v_8296df951a54 («24») | "24"
+apartment.floor | 25 | kufar.floor.v_239b24e386a9 («25») | "25"
+apartment.floor | 26 | kufar.floor.v_79b8501e3427 («26») | "26"
+apartment.floor | 27 | kufar.floor.v_7a4b07ec7c3e («27») | "27"
+apartment.floor | 28 | kufar.floor.v_cd0a508bcda8 («28») | "28"
+apartment.floor | 29 | kufar.floor.v_1c9c333e35ab («29») | "29"
+apartment.floor | Больше 30 | kufar.floor.v_fd269d9b570d («больше 30») | "30"
+building.floors | 1 | kufar.re_number_floors.v_e49c54607d45 («1») | "1"
+building.floors | 2 | kufar.re_number_floors.v_196b9170727a («2») | "2"
+building.floors | 3 | kufar.re_number_floors.v_d8122286f1ff («3») | "3"
+building.floors | 4 | kufar.re_number_floors.v_a2ccdff76bdd («4») | "4"
+building.floors | 5 | kufar.re_number_floors.v_cc80edb6227f («5») | "5"
+building.floors | 6 | kufar.re_number_floors.v_580e435b671d («6») | "6"
+building.floors | 7 | kufar.re_number_floors.v_6181ea9dd037 («7») | "7"
+building.floors | 8 | kufar.re_number_floors.v_fa4165c18fcd («8») | "8"
+building.floors | 9 | kufar.re_number_floors.v_c38d6751c9b0 («9») | "9"
+building.floors | 10 | kufar.re_number_floors.v_213256f1167c («10») | "10"
+building.floors | 11 | kufar.re_number_floors.v_14b28c7f15c1 («11») | "11"
+building.floors | 12 | kufar.re_number_floors.v_39f0843a988b («12») | "12"
+building.floors | 13 | kufar.re_number_floors.v_e19a50dd4b6d («13») | "13"
+building.floors | 14 | kufar.re_number_floors.v_c5b923a01e2c («14») | "14"
+building.floors | 15 | kufar.re_number_floors.v_7a1239e18075 («15») | "15"
+building.floors | 16 | kufar.re_number_floors.v_81248492d0b7 («16») | "16"
+building.floors | 17 | kufar.re_number_floors.v_c27831f07d06 («17») | "17"
+building.floors | 18 | kufar.re_number_floors.v_b2d0a5611b58 («18») | "18"
+building.floors | 19 | kufar.re_number_floors.v_058c58c38566 («19») | "19"
+building.floors | 20 | kufar.re_number_floors.v_bdbac52b4b51 («20») | "20"
+building.floors | 21 | kufar.re_number_floors.v_ce453a599829 («21») | "21"
+building.floors | 22 | kufar.re_number_floors.v_2386d438555d («22») | "22"
+building.floors | 23 | kufar.re_number_floors.v_c69846fbcc59 («23») | "23"
+building.floors | 24 | kufar.re_number_floors.v_8296df951a54 («24») | "24"
+building.floors | 25 | kufar.re_number_floors.v_239b24e386a9 («25») | "25"
+building.floors | 26 | kufar.re_number_floors.v_79b8501e3427 («26») | "26"
+building.floors | 27 | kufar.re_number_floors.v_7a4b07ec7c3e («27») | "27"
+building.floors | 28 | kufar.re_number_floors.v_cd0a508bcda8 («28») | "28"
+building.floors | 29 | kufar.re_number_floors.v_1c9c333e35ab («29») | "29"
+building.floors | Больше 30 | kufar.re_number_floors.v_fd269d9b570d («больше 30») | "30"
+apartment.levels | 1 | kufar.flat_storeys.v_e49c54607d45 («1») | "1"
+apartment.levels | 2 | kufar.flat_storeys.v_cc80edb6227f («2») | "5"
+apartment.levels | 3 | kufar.flat_storeys.v_213256f1167c («3») | "10"
+building.year | 2029 | kufar.year_built.v_2e885f92bf4e («2029») | "2029"
+building.year | 2028 | kufar.year_built.v_fa24accff9f5 («2028») | "2028"
+building.year | 2027 | kufar.year_built.v_98b46bee4a52 («2027») | "2027"
+building.year | 2026 | kufar.year_built.v_dcc4deb94f64 («2026») | "2026"
+building.year | 2025 | kufar.year_built.v_1f95224b14de («2025») | "2025"
+building.year | 2024 | kufar.year_built.v_b52e1f8b2cec («2024») | "2024"
+building.year | 2023 | kufar.year_built.v_123740f8a7a5 («2023») | "2023"
+building.year | 2022 | kufar.year_built.v_51b388823db8 («2022») | "2022"
+building.year | 2021 | kufar.year_built.v_6c8fe08bc212 («2021») | "2021"
+building.year | 2020 | kufar.year_built.v_476b68466ed7 («2020») | "2020"
+building.year | 2019 | kufar.year_built.v_593783b12a4b («2019») | "2019"
+building.year | 2018 | kufar.year_built.v_a923e11f69a9 («2018») | "2018"
+building.year | 2017 | kufar.year_built.v_a27eb48d623a («2017») | "2017"
+building.year | 2016 | kufar.year_built.v_15547a9d2c81 («2016») | "2016"
+building.year | 2015 | kufar.year_built.v_5a5dca2761fe («2015») | "2015"
+building.year | 2014 | kufar.year_built.v_bcc81da616d3 («2014») | "2014"
+building.year | 2013 | kufar.year_built.v_0aac1b6928b1 («2013») | "2013"
+building.year | 2012 | kufar.year_built.v_c6b6096ac0af («2012») | "2012"
+building.year | 2011 | kufar.year_built.v_301ec5c1fbaf («2011») | "2011"
+building.year | 2010 | kufar.year_built.v_f0aa3956e07b («2010») | "2010"
+building.year | 2009 | kufar.year_built.v_c935d767ccaa («2009») | "2009"
+building.year | 2008 | kufar.year_built.v_be5d9b1904ab («2008») | "2008"
+building.year | 2007 | kufar.year_built.v_921c62ea0592 («2007») | "2007"
+building.year | 2006 | kufar.year_built.v_8424325c1d33 («2006») | "2006"
+building.year | 2005 | kufar.year_built.v_b1cea7ce8169 («2005») | "2005"
+building.year | 2004 | kufar.year_built.v_db959a66bbe5 («2004») | "2004"
+building.year | 2003 | kufar.year_built.v_c07de5e88647 («2003») | "2003"
+building.year | 2002 | kufar.year_built.v_40c6143f90c2 («2002») | "2002"
+building.year | 2001 | kufar.year_built.v_909b0ac24742 («2001») | "2001"
+building.year | 2000 | kufar.year_built.v_11664bcb58f7 («2000») | "2000"
+building.year | 1999 | kufar.year_built.v_a0056b95069f («1999») | "1999"
+building.year | 1998 | kufar.year_built.v_4841e90e5aeb («1998») | "1998"
+building.year | 1997 | kufar.year_built.v_bbd8c6217903 («1997») | "1997"
+building.year | 1996 | kufar.year_built.v_39a42bbba735 («1996») | "1996"
+building.year | 1995 | kufar.year_built.v_f6cc55ceec46 («1995») | "1995"
+building.year | 1994 | kufar.year_built.v_471388b24837 («1994») | "1994"
+building.year | 1993 | kufar.year_built.v_9e43fe7e751f («1993») | "1993"
+building.year | 1992 | kufar.year_built.v_d5529c5fccad («1992») | "1992"
+building.year | 1991 | kufar.year_built.v_30540f78ebad («1991») | "1991"
+building.year | 1990 | kufar.year_built.v_92c8034492fb («1990») | "1990"
+building.year | 1989 | kufar.year_built.v_8eade007fc23 («1989») | "1989"
+building.year | 1988 | kufar.year_built.v_ea05ad6ff56d («1988») | "1988"
+building.year | 1987 | kufar.year_built.v_a6546c837d2e («1987») | "1987"
+building.year | 1986 | kufar.year_built.v_f835ce49258d («1986») | "1986"
+building.year | 1985 | kufar.year_built.v_1beca45f64fb («1985») | "1985"
+building.year | 1984 | kufar.year_built.v_4b8b1ec1f26c («1984») | "1984"
+building.year | 1983 | kufar.year_built.v_7bc122f849c8 («1983») | "1983"
+building.year | 1982 | kufar.year_built.v_b4f63eb53b76 («1982») | "1982"
+building.year | 1981 | kufar.year_built.v_853adddb8ef7 («1981») | "1981"
+building.year | 1980 | kufar.year_built.v_d4f0251a9b70 («1980») | "1980"
+building.year | 1979 | kufar.year_built.v_cf54efc96b32 («1979») | "1979"
+building.year | 1978 | kufar.year_built.v_a95bab487bb6 («1978») | "1978"
+building.year | 1977 | kufar.year_built.v_34c91c16d8c4 («1977») | "1977"
+building.year | 1976 | kufar.year_built.v_14b5b37250e6 («1976») | "1976"
+building.year | 1975 | kufar.year_built.v_e654e8db9d78 («1975») | "1975"
+building.year | 1974 | kufar.year_built.v_822033807582 («1974») | "1974"
+building.year | 1973 | kufar.year_built.v_41b16ea50604 («1973») | "1973"
+building.year | 1972 | kufar.year_built.v_13203f6a1df0 («1972») | "1972"
+building.year | 1971 | kufar.year_built.v_3eac835d1a78 («1971») | "1971"
+building.year | 1970 | kufar.year_built.v_bcfa30c91219 («1970») | "1970"
+building.year | 1969 | kufar.year_built.v_467eb3fe62a8 («1969») | "1969"
+building.year | 1968 | kufar.year_built.v_019b52fa6801 («1968») | "1968"
+building.year | 1967 | kufar.year_built.v_074afd1e4c4a («1967») | "1967"
+building.year | 1966 | kufar.year_built.v_91c38a047195 («1966») | "1966"
+building.year | 1965 | kufar.year_built.v_b2f0da5a81bd («1965») | "1965"
+building.year | 1964 | kufar.year_built.v_9fc164716cad («1964») | "1964"
+building.year | 1963 | kufar.year_built.v_ed700f802e53 («1963») | "1963"
+building.year | 1962 | kufar.year_built.v_f9fa08fdef07 («1962») | "1962"
+building.year | 1961 | kufar.year_built.v_c6578653ee2c («1961») | "1961"
+building.year | 1960 | kufar.year_built.v_d57452956b1b («1960») | "1960"
+building.year | 1959 | kufar.year_built.v_394ba2c6009a («1959») | "1959"
+building.year | 1958 | kufar.year_built.v_4dc7381d3239 («1958») | "1958"
+building.year | 1957 | kufar.year_built.v_d9ee36372fc9 («1957») | "1957"
+building.year | 1956 | kufar.year_built.v_ec8ff040ca3b («1956») | "1956"
+building.year | 1955 | kufar.year_built.v_c1185135d07f («1955») | "1955"
+building.year | 1954 | kufar.year_built.v_cb056db87822 («1954») | "1954"
+building.year | 1953 | kufar.year_built.v_767f2e889c66 («1953») | "1953"
+building.year | 1952 | kufar.year_built.v_914c5e19f140 («1952») | "1952"
+building.year | 1951 | kufar.year_built.v_3ad1ea074cda («1951») | "1951"
+building.year | 1950 или ранее | kufar.year_built.v_35367fda5f10 («1950 или ранее») | "1950"
+building.wall | Панельный | kufar.house_type.v_e49c54607d45 («Панельный») | "1"
+building.wall | Монолитный | kufar.house_type.v_196b9170727a («Монолитный») | "2"
+building.wall | Кирпичный | kufar.house_type.v_d8122286f1ff («Кирпичный») | "3"
+building.wall | Блочный | kufar.house_type.v_a2ccdff76bdd («Блочный») | "4"
+building.wall | Каркасный | kufar.house_type.v_cc80edb6227f («Каркасный») | "5"
+building.wall | Каркасно-блочный | kufar.house_type.v_213256f1167c («Каркасно-блочный») | "10"
+apartment.bathroom | Раздельный | kufar.bathroom.v_e49c54607d45 («Раздельный») | "1"
+apartment.bathroom | Совмещенный | kufar.bathroom.v_196b9170727a («Совмещенный») | "2"
+apartment.bathroom | Два | kufar.bathroom.v_d8122286f1ff («Два») | "3"
+apartment.bathroom | Три | kufar.bathroom.v_a2ccdff76bdd («Три») | "4"
+apartment.balcony | Есть | kufar.balcony.v_e49c54607d45 («Есть») | "1"
+apartment.balcony | Нет | kufar.balcony.v_196b9170727a («Нет») | "2"
+apartment.balcony | Лоджия | kufar.balcony.v_d8122286f1ff («Лоджия») | "3"
+apartment.balcony | Два | kufar.balcony.v_a2ccdff76bdd («Два») | "4"
+apartment.repair | Косметический | kufar.flat_repair.v_e49c54607d45 («Косметический») | "1"
+apartment.repair | Евро | kufar.flat_repair.v_cc80edb6227f («Евро») | "5"
+apartment.repair | Дизайнерский | kufar.flat_repair.v_213256f1167c («Дизайнерский») | "10"
+apartment.repair | Строительная отделка | kufar.flat_repair.v_7a1239e18075 («Строительная отделка») | "15"
+apartment.repair | Без отделки | kufar.flat_repair.v_bdbac52b4b51 («Без отделки») | "20"
+apartment.repair | Требуется ремонт | kufar.flat_repair.v_2386d438555d («Требуется ремонт») | "22"
+apartment.repair | Аварийное состояние | kufar.flat_repair.v_239b24e386a9 («Аварийное состояние») | "25"
+apartment.ceiling_min | от 2.5 м | kufar.flat_ceiling_height.v_e49c54607d45 («от 2.5 м») | "1"
+apartment.ceiling_min | от 2.7 м | kufar.flat_ceiling_height.v_cc80edb6227f («от 2.7 м») | "5"
+apartment.ceiling_min | от 3 м | kufar.flat_ceiling_height.v_213256f1167c («от 3 м») | "10"
+apartment.ceiling_min | от 3.5 м | kufar.flat_ceiling_height.v_7a1239e18075 («от 3.5 м») | "15"
+apartment.ceiling_min | от 4 м | kufar.flat_ceiling_height.v_bdbac52b4b51 («от 4 м») | "20"
+apartment.market | Вторичка | kufar.condition.v_e49c54607d45 («Вторичное») | "1"
+sale.currency | USD | domovita.price_currency_text.v_7b2792c0dde8 («USD») | "USD"
+sale.currency | EUR | domovita.price_currency_text.v_b072f5d57e05 («EUR») | "EUR"
+sale.currency | BYN | domovita.price_currency_text.v_652c0946998e («BYN») | "BYN"
+sale.currency | RUB | domovita.price_currency_text.v_c3113c5faf3e («RUB») | "RUB"
+sale.terms | Любые | domovita.terms.v_da532648e503 («Любые») | "Любые"
+sale.terms | Чистая продажа | domovita.terms.v_3c609c9ff395 («Чистая продажа») | "Чистая продажа"
+sale.terms | Обмен | domovita.terms.v_1018d5764643 («Обмен») | "Обмен"
+apartment.rooms | studio | domovita.rooms.v_6db638fe4d2f («Студия») | 0
+apartment.rooms | 1 | domovita.rooms.v_5d61994ce558 («1») | 1
+apartment.rooms | 2 | domovita.rooms.v_ea9753513186 («2») | 2
+apartment.rooms | 3 | domovita.rooms.v_fc9d7eb4104a («3») | 3
+apartment.rooms | 4 | domovita.rooms.v_1c68ca07f2d7 («4») | 4
+apartment.rooms | 5 | domovita.rooms.v_353d3af5fc87 («5») | 5
+apartment.rooms | 6 | domovita.rooms.v_5daa0980abe1 («6») | 6
+apartment.rooms | 7 | domovita.rooms.v_f81db69cc8df («7») | 7
+apartment.separate_rooms | 1 | domovita.separate_rooms.v_5d61994ce558 («1») | 1
+apartment.separate_rooms | 2 | domovita.separate_rooms.v_ea9753513186 («2») | 2
+apartment.separate_rooms | 3 | domovita.separate_rooms.v_fc9d7eb4104a («3») | 3
+apartment.separate_rooms | 4 | domovita.separate_rooms.v_1c68ca07f2d7 («4») | 4
+apartment.separate_rooms | 5 | domovita.separate_rooms.v_353d3af5fc87 («5») | 5
+apartment.separate_rooms | 6 | domovita.separate_rooms.v_5daa0980abe1 («6») | 6
+apartment.separate_rooms | 7 | domovita.separate_rooms.v_f81db69cc8df («7») | 7
+building.wall | Панельный | domovita.house_type.v_22e79b709cfb («Панельный») | "Панельный"
+building.wall | Монолитный | domovita.house_type.v_39e97dd2fa32 («Монолитный») | "Монолитный"
+building.wall | Кирпичный | domovita.house_type.v_6696bb191b9b («Кирпичный») | "Кирпичный"
+building.wall | Каркасно-блочный | domovita.house_type.v_a27c0486481c («Каркасно-блочный») | "Каркасно-блочный"
+building.wall | Силикатные блоки | domovita.house_type.v_1aced887ba95 («Силикатные блоки») | "Силикатные блоки"
+building.wall | Бревенчатый | domovita.house_type.v_ef503c7521d4 («Бревенчатый») | "Бревенчатый"
+building.wall | Блок-комнаты | domovita.house_type.v_aa83fe13900d («Блок-комнаты») | "Блок-комнаты"
+building.management | ЖЭУ | domovita.house_control_type.v_547ead6fbb23 («ЖЭУ») | "housing_department"
+building.management | Товарищество собственников | domovita.house_control_type.v_1941b17b7f61 («Товарищество собственников») | "owners_association"
+building.management | Управляющая компания | domovita.house_control_type.v_5a4e8388d376 («Управляющая компания») | "managing_company"
+building.management | Иной вид управления | domovita.house_control_type.v_f175e88c60b8 («Иной вид управления») | "other"
+apartment.bathroom | Раздельный | domovita.lavatory.v_4da592696ae6 («Раздельный») | "Раздельный"
+apartment.bathroom | Совмещенный | domovita.lavatory.v_f9d63825d180 («Совмещенный») | "Совмещенный"
+apartment.bathroom | Два | domovita.lavatory.v_2ab758898810 («2 сан.узла») | "2 сан.узла"
+apartment.balcony | Балкон | domovita.balcony.v_4d196839c068 («Балкон») | "Балкон"
+apartment.balcony | Лоджия | domovita.balcony.v_dd07212042a3 («Лоджия») | "Лоджия"
+apartment.balcony | Нет | domovita.balcony.v_d42d574019c7 («Нет») | "Нет"
+apartment.repair | С отделкой | domovita.repair_state.v_86670ddfb621 («С отделкой») | "С отделкой"
+apartment.repair | Без отделки | domovita.repair_state.v_1e8451e849c1 («Без отделки») | "Без отделки"
+apartment.repair | Хороший | domovita.repair_state.v_c60479fad0c6 («Хороший») | "Хороший"
+apartment.repair | Евро | domovita.repair_state.v_18bbd167029d («Евро») | "Евро"
+apartment.repair | Дизайнерский | domovita.repair_state.v_11e1c0af6628 («Дизайнерский») | "Дизайнерский"
+sale.currency | USD | onliner.price.currency.v_7b2792c0dde8 («Доллары США») | "USD"
+sale.currency | BYN | onliner.price.currency.v_652c0946998e («Белорусские рубли») | "BYN"
+apartment.rooms | 1 | onliner.rooms.v_5d61994ce558 («1») | 1
+apartment.rooms | 2 | onliner.rooms.v_ea9753513186 («2») | 2
+apartment.rooms | 3 | onliner.rooms.v_fc9d7eb4104a («3») | 3
+apartment.rooms | 4 | onliner.rooms.v_1c68ca07f2d7 («4») | 4
+apartment.rooms | 5 | onliner.rooms.v_353d3af5fc87 («5») | 5
+apartment.rooms | 6+ | onliner.rooms.v_5daa0980abe1 («6+») | 6
+building.wall | Панельный | onliner.walling.v_3cb4ddc22010 («Панель») | "panel"
+building.wall | Кирпичный | onliner.walling.v_9722f2f3e30f («Кирпич») | "brick"
+building.wall | Монолитный | onliner.walling.v_6d9fee2a8dbc («Монолит») | "monolith"
+building.wall | Блочный | onliner.walling.v_630256c9e24f («Блок») | "block"
+apartment.balcony | Есть | onliner.balcony.v_8a84abcfa577 («Есть») | true
+apartment.balcony | Нет | onliner.balcony.v_95e186dd7a87 («Нет») | false
+apartment.repair | С ремонтом | onliner.repaired.v_8a84abcfa577 («С ремонтом») | true
+apartment.repair | Без отделки | onliner.repaired.v_95e186dd7a87 («Без отделки») | false
+apartment.market | Вторичка | onliner.resale.v_8a84abcfa577 («Вторичка») | true
+apartment.market | Новостройка | onliner.resale.v_95e186dd7a87 («Новостройка») | false
+Кандидаты: Для decimal отдельно сверить допустимую точность, минимумы/максимумы и формат каждой площадки. Для массивов удобств и видов из окон проверить подмножество допустимых значений и реакцию на неподдерживаемый элемент; прямой скалярный lookup не создаётся. У Kufar «Новое» оставлено без соответствия с первичным рынком до уточнения. Координаты из geocoder, position_x и position_y — кандидат на составной маппинг только после подтверждения системы координат, порядка осей и принадлежности выбранному дому. Число комнат по техпаспорту отделено от фактического числа. Наличие парковки у дома и выделенное парковочное место Onliner имеют разный смысл.
+Проверки набора: каждое исходное конечное поле учтено ровно одной записью binding; проверены существование ID обоих концов каждой связи, тип значения каждого lookup, наличие родительских ID и значений when. Хеши ниже и выше относятся к сохранённым исследовательским файлам.
+4296e56217cc43934fdd736ed532459d7b280196f27e24b291c2f9d71252efb7  apartments_sale_common.json
+
+Приёмочные примеры
+• Ввод «2» комнаты: Realt → 2, Kufar → "2", Domovita → 2, Onliner → 2. «6+» на Onliner → 6, точное «6» на Domovita → 6. Значение «6+» на Domovita даёт needs_review.
+• Полная цена 147500 BYN. Входная валюта → "933" / "BYR" / "BYN" / "BYN" (Realt / Kufar / Domovita / Onliner). Число и точность цены проверяются отдельно; перевод валюты запрещён. На Kufar режим «За м²» относится к другой величине. RUB подтверждён у Domovita, у Onliner — needs_review.
+• Комплект фото: все четыре mappings переносят только совместимые оригиналы; пустая коллекция не готова для Onliner. Принятие загрузки на сайтах не проверено.
+• Ноль как код: на Domovita studio → 0. У Realt «Раздельный» санузел → 0; эти коды имеют разный смысл. Неизвестное значение не подменять нулём.
+• Открытые вопросы: геокоды для выбранного адреса, отдельный профиль компании Kufar, контакты Realt за входом, фактическое принятие фото на всех сайтах, прохождение обязательных шагов Onliner и Domovita. Закрывать отдельным исследованием. Для активации нужны согласованные card, manifest, preparation и browser, проверка на формах.
+
+Результат приёмки файлов: 4 схемы, 169 конечных полей, 39 общих полей, 54 записи mapping, 28 проверенных привязок и 141 needs_review. Пройдены проверки JSON, SHA-256, уникальности ID, покрытия binding, условий, ссылок и типизированных кодов, положительные и отрицательные примеры комнат и валют. Пройдены SchemaCompatibility.normalize (2.1) и ReferenceValidator с исследовательскими строками в тестовой оболочке в памяти, включая BindingValidator и проверку циклов. Эта проверка не активирует категорию и не выполняет сценарий публикации.

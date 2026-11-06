@@ -1,0 +1,906 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "kufar",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "kufar.subject",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "kufar.body",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "kufar.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "BYR"
+          },
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.auction",
+      "platform_option_id": "kufar.re_auction_sale",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "1"
+          },
+          {
+            "from": "Нет",
+            "to": "0"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.rooms",
+      "platform_option_id": "kufar.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5+",
+            "to": "5"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.floor",
+      "platform_option_id": "kufar.floor",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10",
+            "to": "10"
+          },
+          {
+            "from": "11",
+            "to": "11"
+          },
+          {
+            "from": "12",
+            "to": "12"
+          },
+          {
+            "from": "13",
+            "to": "13"
+          },
+          {
+            "from": "14",
+            "to": "14"
+          },
+          {
+            "from": "15",
+            "to": "15"
+          },
+          {
+            "from": "16",
+            "to": "16"
+          },
+          {
+            "from": "17",
+            "to": "17"
+          },
+          {
+            "from": "18",
+            "to": "18"
+          },
+          {
+            "from": "19",
+            "to": "19"
+          },
+          {
+            "from": "20",
+            "to": "20"
+          },
+          {
+            "from": "21",
+            "to": "21"
+          },
+          {
+            "from": "22",
+            "to": "22"
+          },
+          {
+            "from": "23",
+            "to": "23"
+          },
+          {
+            "from": "24",
+            "to": "24"
+          },
+          {
+            "from": "25",
+            "to": "25"
+          },
+          {
+            "from": "26",
+            "to": "26"
+          },
+          {
+            "from": "27",
+            "to": "27"
+          },
+          {
+            "from": "28",
+            "to": "28"
+          },
+          {
+            "from": "29",
+            "to": "29"
+          },
+          {
+            "from": "Больше 30",
+            "to": "30"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.floors",
+      "platform_option_id": "kufar.re_number_floors",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10",
+            "to": "10"
+          },
+          {
+            "from": "11",
+            "to": "11"
+          },
+          {
+            "from": "12",
+            "to": "12"
+          },
+          {
+            "from": "13",
+            "to": "13"
+          },
+          {
+            "from": "14",
+            "to": "14"
+          },
+          {
+            "from": "15",
+            "to": "15"
+          },
+          {
+            "from": "16",
+            "to": "16"
+          },
+          {
+            "from": "17",
+            "to": "17"
+          },
+          {
+            "from": "18",
+            "to": "18"
+          },
+          {
+            "from": "19",
+            "to": "19"
+          },
+          {
+            "from": "20",
+            "to": "20"
+          },
+          {
+            "from": "21",
+            "to": "21"
+          },
+          {
+            "from": "22",
+            "to": "22"
+          },
+          {
+            "from": "23",
+            "to": "23"
+          },
+          {
+            "from": "24",
+            "to": "24"
+          },
+          {
+            "from": "25",
+            "to": "25"
+          },
+          {
+            "from": "26",
+            "to": "26"
+          },
+          {
+            "from": "27",
+            "to": "27"
+          },
+          {
+            "from": "28",
+            "to": "28"
+          },
+          {
+            "from": "29",
+            "to": "29"
+          },
+          {
+            "from": "Больше 30",
+            "to": "30"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.levels",
+      "platform_option_id": "kufar.flat_storeys",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "5"
+          },
+          {
+            "from": "3",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.year",
+      "platform_option_id": "kufar.year_built",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "2029",
+            "to": "2029"
+          },
+          {
+            "from": "2028",
+            "to": "2028"
+          },
+          {
+            "from": "2027",
+            "to": "2027"
+          },
+          {
+            "from": "2026",
+            "to": "2026"
+          },
+          {
+            "from": "2025",
+            "to": "2025"
+          },
+          {
+            "from": "2024",
+            "to": "2024"
+          },
+          {
+            "from": "2023",
+            "to": "2023"
+          },
+          {
+            "from": "2022",
+            "to": "2022"
+          },
+          {
+            "from": "2021",
+            "to": "2021"
+          },
+          {
+            "from": "2020",
+            "to": "2020"
+          },
+          {
+            "from": "2019",
+            "to": "2019"
+          },
+          {
+            "from": "2018",
+            "to": "2018"
+          },
+          {
+            "from": "2017",
+            "to": "2017"
+          },
+          {
+            "from": "2016",
+            "to": "2016"
+          },
+          {
+            "from": "2015",
+            "to": "2015"
+          },
+          {
+            "from": "2014",
+            "to": "2014"
+          },
+          {
+            "from": "2013",
+            "to": "2013"
+          },
+          {
+            "from": "2012",
+            "to": "2012"
+          },
+          {
+            "from": "2011",
+            "to": "2011"
+          },
+          {
+            "from": "2010",
+            "to": "2010"
+          },
+          {
+            "from": "2009",
+            "to": "2009"
+          },
+          {
+            "from": "2008",
+            "to": "2008"
+          },
+          {
+            "from": "2007",
+            "to": "2007"
+          },
+          {
+            "from": "2006",
+            "to": "2006"
+          },
+          {
+            "from": "2005",
+            "to": "2005"
+          },
+          {
+            "from": "2004",
+            "to": "2004"
+          },
+          {
+            "from": "2003",
+            "to": "2003"
+          },
+          {
+            "from": "2002",
+            "to": "2002"
+          },
+          {
+            "from": "2001",
+            "to": "2001"
+          },
+          {
+            "from": "2000",
+            "to": "2000"
+          },
+          {
+            "from": "1999",
+            "to": "1999"
+          },
+          {
+            "from": "1998",
+            "to": "1998"
+          },
+          {
+            "from": "1997",
+            "to": "1997"
+          },
+          {
+            "from": "1996",
+            "to": "1996"
+          },
+          {
+            "from": "1995",
+            "to": "1995"
+          },
+          {
+            "from": "1994",
+            "to": "1994"
+          },
+          {
+            "from": "1993",
+            "to": "1993"
+          },
+          {
+            "from": "1992",
+            "to": "1992"
+          },
+          {
+            "from": "1991",
+            "to": "1991"
+          },
+          {
+            "from": "1990",
+            "to": "1990"
+          },
+          {
+            "from": "1989",
+            "to": "1989"
+          },
+          {
+            "from": "1988",
+            "to": "1988"
+          },
+          {
+            "from": "1987",
+            "to": "1987"
+          },
+          {
+            "from": "1986",
+            "to": "1986"
+          },
+          {
+            "from": "1985",
+            "to": "1985"
+          },
+          {
+            "from": "1984",
+            "to": "1984"
+          },
+          {
+            "from": "1983",
+            "to": "1983"
+          },
+          {
+            "from": "1982",
+            "to": "1982"
+          },
+          {
+            "from": "1981",
+            "to": "1981"
+          },
+          {
+            "from": "1980",
+            "to": "1980"
+          },
+          {
+            "from": "1979",
+            "to": "1979"
+          },
+          {
+            "from": "1978",
+            "to": "1978"
+          },
+          {
+            "from": "1977",
+            "to": "1977"
+          },
+          {
+            "from": "1976",
+            "to": "1976"
+          },
+          {
+            "from": "1975",
+            "to": "1975"
+          },
+          {
+            "from": "1974",
+            "to": "1974"
+          },
+          {
+            "from": "1973",
+            "to": "1973"
+          },
+          {
+            "from": "1972",
+            "to": "1972"
+          },
+          {
+            "from": "1971",
+            "to": "1971"
+          },
+          {
+            "from": "1970",
+            "to": "1970"
+          },
+          {
+            "from": "1969",
+            "to": "1969"
+          },
+          {
+            "from": "1968",
+            "to": "1968"
+          },
+          {
+            "from": "1967",
+            "to": "1967"
+          },
+          {
+            "from": "1966",
+            "to": "1966"
+          },
+          {
+            "from": "1965",
+            "to": "1965"
+          },
+          {
+            "from": "1964",
+            "to": "1964"
+          },
+          {
+            "from": "1963",
+            "to": "1963"
+          },
+          {
+            "from": "1962",
+            "to": "1962"
+          },
+          {
+            "from": "1961",
+            "to": "1961"
+          },
+          {
+            "from": "1960",
+            "to": "1960"
+          },
+          {
+            "from": "1959",
+            "to": "1959"
+          },
+          {
+            "from": "1958",
+            "to": "1958"
+          },
+          {
+            "from": "1957",
+            "to": "1957"
+          },
+          {
+            "from": "1956",
+            "to": "1956"
+          },
+          {
+            "from": "1955",
+            "to": "1955"
+          },
+          {
+            "from": "1954",
+            "to": "1954"
+          },
+          {
+            "from": "1953",
+            "to": "1953"
+          },
+          {
+            "from": "1952",
+            "to": "1952"
+          },
+          {
+            "from": "1951",
+            "to": "1951"
+          },
+          {
+            "from": "1950 или ранее",
+            "to": "1950"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall",
+      "platform_option_id": "kufar.house_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Панельный",
+            "to": "1"
+          },
+          {
+            "from": "Монолитный",
+            "to": "2"
+          },
+          {
+            "from": "Кирпичный",
+            "to": "3"
+          },
+          {
+            "from": "Блочный",
+            "to": "4"
+          },
+          {
+            "from": "Каркасный",
+            "to": "5"
+          },
+          {
+            "from": "Каркасно-блочный",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.bathroom",
+      "platform_option_id": "kufar.bathroom",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Раздельный",
+            "to": "1"
+          },
+          {
+            "from": "Совмещенный",
+            "to": "2"
+          },
+          {
+            "from": "Два",
+            "to": "3"
+          },
+          {
+            "from": "Три",
+            "to": "4"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.balcony",
+      "platform_option_id": "kufar.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": "1"
+          },
+          {
+            "from": "Нет",
+            "to": "2"
+          },
+          {
+            "from": "Лоджия",
+            "to": "3"
+          },
+          {
+            "from": "Два",
+            "to": "4"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.repair",
+      "platform_option_id": "kufar.flat_repair",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Косметический",
+            "to": "1"
+          },
+          {
+            "from": "Евро",
+            "to": "5"
+          },
+          {
+            "from": "Дизайнерский",
+            "to": "10"
+          },
+          {
+            "from": "Строительная отделка",
+            "to": "15"
+          },
+          {
+            "from": "Без отделки",
+            "to": "20"
+          },
+          {
+            "from": "Требуется ремонт",
+            "to": "22"
+          },
+          {
+            "from": "Аварийное состояние",
+            "to": "25"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.ceiling_min",
+      "platform_option_id": "kufar.flat_ceiling_height",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "от 2.5 м",
+            "to": "1"
+          },
+          {
+            "from": "от 2.7 м",
+            "to": "5"
+          },
+          {
+            "from": "от 3 м",
+            "to": "10"
+          },
+          {
+            "from": "от 3.5 м",
+            "to": "15"
+          },
+          {
+            "from": "от 4 м",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.market",
+      "platform_option_id": "kufar.condition",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Вторичка",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "kufar.images",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.youtube_video",
+      "platform_option_id": "kufar.content_video",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "kufar.contact_person",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.email",
+      "platform_option_id": "kufar.email",
+      "conversion": {
+        "kind": "identity"
+      }
+    }
+  ]
+}

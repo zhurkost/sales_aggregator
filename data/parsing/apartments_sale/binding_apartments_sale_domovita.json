@@ -1,0 +1,337 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "domovita",
+  "fields": [
+    {
+      "option_id": "domovita.town_id",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.street_name",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.house_number",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.position_x",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.position_y",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.contact_name",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"contact_name\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.phones.0.contact_phone",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.email",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.rooms",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.separate_rooms",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена.",
+      "depends_on": [
+        "domovita.rooms"
+      ]
+    },
+    {
+      "option_id": "domovita.area_total",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area_total\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.area_kitchen",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area_kitchen\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.area_living",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area_living\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.storey",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"storey\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.storeys",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"storeys\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.balcony",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.lavatory",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.repair_state",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.house_type",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.building_year",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"building_year\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.repair_year",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"repair_year\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.extra_info_comments",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.house_control_type",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.photos",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "domovita.description",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.youtube_link",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "domovita.is_online_showing",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.price",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"price\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "domovita.price_currency_text",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.terms",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.action",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.type",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.phones.1.contact_phone",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.phones.2.contact_phone",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    },
+    {
+      "option_id": "domovita.phones.3.contact_phone",
+      "status": "needs_review",
+      "reason": "Изучена конфигурация формы. Установка с повторным чтением на доступном шаге не проверена."
+    }
+  ]
+}

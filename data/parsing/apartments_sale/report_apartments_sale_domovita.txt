@@ -1,0 +1,48 @@
+Этап A — продажа квартир | domovita
+Наблюдение: 2026-11-06, Europe/Minsk. Сборка отчёта: 2026-11-06T12:30:50.328Z
+Задание пользователя: четыре формы продажи квартиры целиком в Беларуси. Ревизия правил 800a9d0, формат 2.1. Первая ревизия этой категории.
+Статус: partial. Точка входа / источник для нижеследующих строк: https://domovita.by/new/add/flats/sale
+Переход /new/add → Продаже → Квартиры → /new/add/flats/sale. Источники: активный шаг адреса, остальные смонтированные секции формы, имена контролов, options с типами value и регистрационные правила required. Маркер и ID населённого пункта не выводятся из строки адреса. Отдельно различены одиночные переключатели, визуально похожие на checkbox, и набор удобств. Тип сделки и недвижимости зафиксирован ровно для проверенной ветви. Телефон не подтверждался, файлы не загружались; проверка фактической приёмки файлов и отправки остаётся открытой. Вкладки «О квартире», «О доме», «Контакты», «Цена и условия сделки» доступны без отправки формы; проверены обычные поля, перечисленные в ready. Для rooms=0 (Студия) отдельные комнаты скрыты, при 1…7 доступны. Кнопка добавления телефона исчезла после четвёртого номера. При запросах Минск, Брест и Речица получены разные подсказки, включая одноимённые населённые пункты с разными числовыми ID. Улицу и дом нужно проверять в контексте выбранной подсказки. Дополнительные телефоны добавлялись как пустые поля; номер не отправлялся.
+Официальные правила площадки: https://domovita.by/rules. Условия модерации и свойства UI проверяются раздельно.
+Проверка ограничений: https://domovita.by/robots.txt; прочитан. Исследована новая форма через пользовательский интерфейс. Объявления и платные действия не отправлялись. Данные аккаунта в результатах отсутствуют.
+Поля: 35. Binding ready: 9, needs_review: 26, unsupported: 0.
+Ready: уникальный селектор в форме, тестовое значение установлено, пережило blur, повторно прочитано; поле очищено. Для прочих полей причина указана в binding.
+Полнота options_complete относится к набору вариантов данной ветви, известному из конфигурации или разметки. null в required/choice.value означает отсутствие подтверждения. Выполнение ограничений сервером не проверено.
+domovita.town_id | Населённый пункт | Форма flats/sale → town_id; варианты компонента формы.
+domovita.street_name | Улица | Форма flats/sale → street_name; имя контрола или модели формы.
+domovita.house_number | Дом | Форма flats/sale → house_number; имя контрола или модели формы.
+domovita.position_x | Координата position_x | Форма flats/sale → position_x; имя контрола или модели формы.
+domovita.position_y | Координата position_y | Форма flats/sale → position_y; имя контрола или модели формы.
+domovita.contact_name | Как обращаться | Форма flats/sale → contact_name; имя контрола или модели формы.
+domovita.phones.0.contact_phone | Телефон для связи | Форма flats/sale → phones.0.contact_phone; имя контрола или модели формы.
+domovita.email | Эл. почта | Форма flats/sale → email; имя контрола или модели формы.
+domovita.rooms | Всего комнат | Форма flats/sale → rooms; варианты компонента формы.
+domovita.separate_rooms | Отдельных комнат | Форма flats/sale → separate_rooms; варианты компонента формы.
+domovita.area_total | Общая площадь | Форма flats/sale → area_total; имя контрола или модели формы.
+domovita.area_kitchen | Площадь кухни | Форма flats/sale → area_kitchen; имя контрола или модели формы.
+domovita.area_living | Жилая площадь | Форма flats/sale → area_living; имя контрола или модели формы.
+domovita.storey | Этаж | Форма flats/sale → storey; имя контрола или модели формы.
+domovita.storeys | Этажей в доме | Форма flats/sale → storeys; имя контрола или модели формы.
+domovita.balcony | Балкон | Форма flats/sale → balcony; варианты компонента формы.
+domovita.lavatory | Сан. узел | Форма flats/sale → lavatory; варианты компонента формы.
+domovita.repair_state | Ремонт | Форма flats/sale → repair_state; варианты компонента формы.
+domovita.house_type | Тип стен | Форма flats/sale → house_type; варианты компонента формы.
+domovita.building_year | Год постройки | Форма flats/sale → building_year; имя контрола или модели формы.
+domovita.repair_year | Год кап. ремонта | Форма flats/sale → repair_year; имя контрола или модели формы.
+domovita.extra_info_comments | Удобства | Форма flats/sale → extra_info_comments; отдельные checkbox с value.
+domovita.house_control_type | Вид управления домом | Форма flats/sale → house_control_type; варианты компонента формы.
+domovita.photos | Фотографии | Форма flats/sale → photos; файловый input, загрузка после подтверждения телефона.
+domovita.description | Описание | Форма flats/sale → description; имя контрола или модели формы.
+domovita.youtube_link | Ссылка на видео с YouTube | Форма flats/sale → youtube_link; приём ссылки YouTube.
+domovita.is_online_showing | Доступен онлайн-показ квартиры | Форма flats/sale → is_online_showing; имя контрола или модели формы.
+domovita.price | Общая цена | Форма flats/sale → price; имя контрола или модели формы.
+domovita.price_currency_text | Валюта | Форма flats/sale → price_currency_text; варианты компонента формы.
+domovita.terms | Условия сделки | Форма flats/sale → terms; варианты компонента формы.
+domovita.action | Тип сделки | Радиокнопка начального шага /new/add, выбрана ветвь flats/sale.
+domovita.type | Тип недвижимости | Радиокнопка начального шага /new/add, выбрана ветвь flats/sale.
+domovita.phones.1.contact_phone | Дополнительный телефон 1 | Контакты → Добавить другой номер. В форме не более четырёх номеров вместе с основным.
+domovita.phones.2.contact_phone | Дополнительный телефон 2 | Контакты → Добавить другой номер. В форме не более четырёх номеров вместе с основным.
+domovita.phones.3.contact_phone | Дополнительный телефон 3 | Контакты → Добавить другой номер. В форме не более четырёх номеров вместе с основным.
+SHA-256 файлов в UTF-8 с LF (как в Git):
+57fccdd35b5e220b864d648ac86ab2f397617f10ef92339d7b72d5cb074c0e06  apartments_sale_domovita.json
+1480b7c594aa790ec1bbcacf5e26693c9c66432f5cfaf4389232d64ab6c39846  binding_apartments_sale_domovita.json

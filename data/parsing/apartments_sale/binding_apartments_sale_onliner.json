@@ -1,0 +1,184 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "onliner",
+  "fields": [
+    {
+      "option_id": "onliner.file",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "onliner.location.user_address",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.resale",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.walling",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.repaired",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.rooms",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.balcony",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.parking",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.floor",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.floors",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.combinedKitchen",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.area.total",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.area.living",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.area.kitchen",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.wallHeight",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.buildingYear",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.description",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.price.amount",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.price.currency",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.seller.type",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.seller.name",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена.",
+      "depends_on": [
+        "onliner.seller.type"
+      ]
+    },
+    {
+      "option_id": "onliner.seller.legalInfo.unp",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена.",
+      "depends_on": [
+        "onliner.seller.type"
+      ]
+    },
+    {
+      "option_id": "onliner.seller.legalInfo.contract.number",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена.",
+      "depends_on": [
+        "onliner.seller.type"
+      ]
+    },
+    {
+      "option_id": "onliner.seller.legalInfo.contract.date",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена.",
+      "depends_on": [
+        "onliner.seller.type"
+      ]
+    },
+    {
+      "option_id": "onliner.seller.legalInfo.licence.number",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена.",
+      "depends_on": [
+        "onliner.seller.type"
+      ]
+    },
+    {
+      "option_id": "onliner.seller.legalInfo.licence.date",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена.",
+      "depends_on": [
+        "onliner.seller.type"
+      ]
+    },
+    {
+      "option_id": "onliner.contact.name",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.phone",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.call_from",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.call_to",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.additional_phone_1",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    },
+    {
+      "option_id": "onliner.additional_phone_2",
+      "status": "needs_review",
+      "reason": "Изучена разметка формы. Установка с повторным чтением после шага фото не проверена."
+    }
+  ]
+}

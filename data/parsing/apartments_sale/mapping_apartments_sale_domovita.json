@@ -1,0 +1,308 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "domovita",
+  "fields": [
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "domovita.price_currency_text",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          },
+          {
+            "from": "BYN",
+            "to": "BYN"
+          },
+          {
+            "from": "RUB",
+            "to": "RUB"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.terms",
+      "platform_option_id": "domovita.terms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Любые",
+            "to": "Любые"
+          },
+          {
+            "from": "Чистая продажа",
+            "to": "Чистая продажа"
+          },
+          {
+            "from": "Обмен",
+            "to": "Обмен"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.rooms",
+      "platform_option_id": "domovita.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "studio",
+            "to": 0
+          },
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5",
+            "to": 5
+          },
+          {
+            "from": "6",
+            "to": 6
+          },
+          {
+            "from": "7",
+            "to": 7
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.separate_rooms",
+      "platform_option_id": "domovita.separate_rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5",
+            "to": 5
+          },
+          {
+            "from": "6",
+            "to": 6
+          },
+          {
+            "from": "7",
+            "to": 7
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.wall",
+      "platform_option_id": "domovita.house_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Панельный",
+            "to": "Панельный"
+          },
+          {
+            "from": "Монолитный",
+            "to": "Монолитный"
+          },
+          {
+            "from": "Кирпичный",
+            "to": "Кирпичный"
+          },
+          {
+            "from": "Каркасно-блочный",
+            "to": "Каркасно-блочный"
+          },
+          {
+            "from": "Силикатные блоки",
+            "to": "Силикатные блоки"
+          },
+          {
+            "from": "Бревенчатый",
+            "to": "Бревенчатый"
+          },
+          {
+            "from": "Блок-комнаты",
+            "to": "Блок-комнаты"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "building.management",
+      "platform_option_id": "domovita.house_control_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "ЖЭУ",
+            "to": "housing_department"
+          },
+          {
+            "from": "Товарищество собственников",
+            "to": "owners_association"
+          },
+          {
+            "from": "Управляющая компания",
+            "to": "managing_company"
+          },
+          {
+            "from": "Иной вид управления",
+            "to": "other"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.bathroom",
+      "platform_option_id": "domovita.lavatory",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Раздельный",
+            "to": "Раздельный"
+          },
+          {
+            "from": "Совмещенный",
+            "to": "Совмещенный"
+          },
+          {
+            "from": "Два",
+            "to": "2 сан.узла"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.balcony",
+      "platform_option_id": "domovita.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Балкон",
+            "to": "Балкон"
+          },
+          {
+            "from": "Лоджия",
+            "to": "Лоджия"
+          },
+          {
+            "from": "Нет",
+            "to": "Нет"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "apartment.repair",
+      "platform_option_id": "domovita.repair_state",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "С отделкой",
+            "to": "С отделкой"
+          },
+          {
+            "from": "Без отделки",
+            "to": "Без отделки"
+          },
+          {
+            "from": "Хороший",
+            "to": "Хороший"
+          },
+          {
+            "from": "Евро",
+            "to": "Евро"
+          },
+          {
+            "from": "Дизайнерский",
+            "to": "Дизайнерский"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "domovita.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.youtube_video",
+      "platform_option_id": "domovita.youtube_link",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "domovita.contact_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.email",
+      "platform_option_id": "domovita.email",
+      "conversion": {
+        "kind": "identity"
+      }
+    }
+  ]
+}
