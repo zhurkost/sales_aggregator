@@ -25,6 +25,15 @@ final class RentalBrowserPreparation {
         String id = text(source, "field");
         supported.add(id);
         JsonNode value = result.path("values").get(id);
+        var age = source.path("maxBuildingAge");
+        if (value != null && value.asBoolean(false) && age.isObject()) {
+          int year = result.path("values").path(text(age, "field")).asInt(0);
+          if (year < java.time.Year.now(java.time.ZoneId.of("Europe/Minsk")).getValue() - age.path("years").asInt()) {
+            unsupported.add(text(fields.get(id), "name") + ": проверьте год постройки (не старше " + age.path("years").asInt() + " лет)");
+            continue;
+          }
+        }
+        boolean emptyChoice = SchemaFields.isEmptyChoice(fields.get(id), value);
         if (source.has("addressPart")) {
           value = card.path("address").get(text(source, "addressPart"));
           if (value != null && value.isTextual())
@@ -39,9 +48,10 @@ final class RentalBrowserPreparation {
         if (!text(source, "action").equals("files")
             && (value == null
                 || value.isNull()
-                || value.isTextual() && value.asText().isBlank()
+                || value.isTextual() && value.asText().isBlank() && !emptyChoice
                 || value.isArray() && value.isEmpty() && !source.path("replaceGroup").asBoolean())) continue;
         ObjectNode control = source.deepCopy();
+        if (emptyChoice) control.put("emptyChoice", true);
         control.set("value", value == null ? array() : value.deepCopy());
         if (source.has("addressPart")) {
           String part = text(source, "addressPart");

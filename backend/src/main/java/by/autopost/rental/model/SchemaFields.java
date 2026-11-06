@@ -13,6 +13,13 @@ public final class SchemaFields {
     return result;
   }
 
+  /** Some forms use an empty native radio value for an explicit negative choice. */
+  public static boolean isEmptyChoice(JsonNode field, JsonNode value) {
+    return value != null && value.isTextual() && value.textValue().isEmpty()
+        && text(field, "type").equals("enum") && list(field.path("options")).stream()
+            .anyMatch(choice -> value.equals(choice.path("fill_rule").get("value")));
+  }
+
   public static void collect(JsonNode options, Map<String, JsonNode> result) {
     for (var o : options) {
       if (!text(o, "type").equals("choice")) result.put(text(o, "id"), o);

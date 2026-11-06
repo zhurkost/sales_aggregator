@@ -239,5 +239,7 @@
       "selector": "[data-testid=\"kufar-chose-category-popup\"]",
       "absent": true
     }
-  ]
+  ],
+  "addressBeforeDeal": true,
+  "oneChangePerTick": true
 }

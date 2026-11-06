@@ -170,6 +170,34 @@
       "field": "kufar.size_snb",
       "action": "text",
       "selector": "input[name=\"size_snb\"]"
+    },
+    {
+      "field": "kufar.re_auction_sale",
+      "action": "check",
+      "selector": "[data-name=\"re_auction_sale\"] input[type=\"checkbox\"]",
+      "checkedValue": "1"
+    },
+    {
+      "field": "kufar.flat_open_room",
+      "action": "check",
+      "selector": "[data-name=\"flat_open_room\"] input[type=\"checkbox\"]",
+      "checkedValue": "1"
+    },
+    {
+      "field": "kufar.flat_new_building",
+      "action": "check",
+      "selector": "[data-name=\"flat_new_building\"] input[type=\"checkbox\"]",
+      "checkedValue": "1"
+    },
+    {
+      "field": "kufar.flat_storeys",
+      "action": "choices",
+      "selector": "[data-name=\"flat_storeys\"]"
+    },
+    {
+      "field": "kufar.flat_ceiling_height",
+      "action": "choices",
+      "selector": "[data-name=\"flat_ceiling_height\"]"
     }
   ],
   "next": [],
@@ -183,13 +211,19 @@
       "text": "Квартиры"
     },
     {
-      "selector": "[data-name=\"type\"] [class*=\"chip__filled-green\"]",
+      "selector": "[data-name=\"re_auction_sale\"], [data-name=\"type\"] [class*=\"chip__filled-green\"]",
       "text": "Продажа"
+    },
+    {
+      "selector": "[data-name=\"type\"] [class*=\"chip__filled-green\"]",
+      "text": "аренда",
+      "absent": true
     },
     {
       "selector": "[data-testid=\"kufar-chose-category-popup\"]",
       "absent": true
     }
   ],
-  "addressBeforeDeal": true
+  "addressBeforeDeal": true,
+  "oneChangePerTick": true
 }

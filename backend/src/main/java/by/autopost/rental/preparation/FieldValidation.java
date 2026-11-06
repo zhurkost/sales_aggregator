@@ -40,7 +40,7 @@ public final class FieldValidation {
         values.remove(id);
         continue;
       }
-      if (missing(v)) {
+      if (missing(v) && !by.autopost.rental.model.SchemaFields.isEmptyChoice(field, v)) {
         if (rule.path("required").asBoolean(false)
             && list(issues).stream().noneMatch(i -> text(i, "field").equals(id)))
           issue(issues, id, "required", "Заполните: " + text(field, "name"));

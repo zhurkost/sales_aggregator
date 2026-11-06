@@ -78,6 +78,14 @@ class RentalAiTest {
     var unitPrice = RentalAiPolicy.sanitize(sale, description, object("suggestions",
         List.of(suggestion("sale.price", "1700", "1 700 USD за м²"))));
     assertTrue(unitPrice.path("suggestions").isEmpty());
+    for (String fragment : List.of("1 700 USD за м²", "комиссия 1 700 USD", "аванс: 1 700 USD", "1 700 USD в месяц")) {
+      var narrow = RentalAiPolicy.sanitize(sale, "Продам квартиру. " + fragment, object("suggestions",
+          List.of(suggestion("sale.price", "1700", "1 700 USD"))));
+      assertTrue(narrow.path("suggestions").isEmpty(), fragment);
+    }
+    var withTwoPrices = RentalAiPolicy.sanitize(sale, description, object("suggestions",
+        List.of(suggestion("sale.price", "85000", "85 000 USD, 1 700 USD за м²"))));
+    assertEquals(1, withTwoPrices.path("suggestions").size());
     assertFalse(RentalAiPolicy.prompt(sale, "apartment_sale").contains("rental.monthly_price"));
   }
 

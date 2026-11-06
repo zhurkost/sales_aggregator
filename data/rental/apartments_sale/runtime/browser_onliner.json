@@ -166,6 +166,18 @@
       "field": "onliner.buildingYear",
       "action": "text",
       "selector": "input[name=\"buildingYear\"],input[data-bind*=\"value: $root.data.buildingYear,\"],input[data-bind$=\"value: $root.data.buildingYear\"]"
+    },
+    {
+      "field": "onliner.additional_phone_1",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер телефона в международном формате\"]",
+      "index": 1
+    },
+    {
+      "field": "onliner.additional_phone_2",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер телефона в международном формате\"]",
+      "index": 2
     }
   ],
   "next": [],

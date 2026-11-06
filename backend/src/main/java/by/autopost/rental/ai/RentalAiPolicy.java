@@ -17,9 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 public final class RentalAiPolicy {
-  private static final java.util.regex.Pattern UNIT_PRICE = java.util.regex.Pattern.compile(
-      "(?iu)(?:за|/)\\s*(?:1\\s*)?(?:м[²2]|кв\\.?\\s*м|квадрат)|в месяц|ежемесячн");
-
   public static Map<String, JsonNode> fields(JsonNode editor) {
     Map<String, JsonNode> fields = new LinkedHashMap<>();
     for (var group : editor.path("category").path("options"))
@@ -172,7 +169,7 @@ Enum — только точный код из choices; multi_enum — масс�
     }
     if (fields.containsKey("sale.price")) {
       var price = accepted.get("sale.price");
-      if (price != null && UNIT_PRICE.matcher(text(price, "quote")).find()) {
+      if (price != null && !SalePriceEvidence.supports(source, text(price, "quote"), text(price, "value"))) {
         accepted.remove("sale.price");
         ignored++;
       }

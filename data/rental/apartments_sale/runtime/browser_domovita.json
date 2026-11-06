@@ -152,7 +152,8 @@
         "optionSelector": "[role=\"option\"]",
         "busySelector": ".custom-select__menu-notice--loading",
         "selectedValueSelector": ".custom-select__single-value",
-        "confirm": "display-and-closed"
+        "confirm": "display-and-closed",
+        "retryClearedQuery": true
       }
     },
     {
@@ -180,6 +181,59 @@
       "field": "domovita.is_online_showing",
       "action": "check",
       "selector": "input[name=\"is_online_showing\"]"
+    },
+    {
+      "field": "domovita.terms",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Условия сделки",
+      "mountedChoice": true
+    },
+    {
+      "field": "domovita.house_type",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Тип стен",
+      "mountedChoice": true
+    },
+    {
+      "field": "domovita.house_control_type",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Вид управления домом",
+      "mountedChoice": true
+    },
+    {
+      "field": "domovita.lavatory",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Сан. узел",
+      "mountedChoice": true
+    },
+    {
+      "field": "domovita.balcony",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Балкон",
+      "mountedChoice": true
+    },
+    {
+      "field": "domovita.repair_state",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Ремонт",
+      "mountedChoice": true
+    },
+    {
+      "field": "domovita.youtube_link",
+      "action": "text",
+      "selector": "input[name=\"youtube_link\"]"
     }
   ],
   "next": [],

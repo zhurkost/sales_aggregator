@@ -59,6 +59,14 @@
           {
             "from": "6+",
             "to": 6
+          },
+          {
+            "from": "6",
+            "to": 6
+          },
+          {
+            "from": "7",
+            "to": 6
           }
         ],
         "on_unmapped": "needs_review"
@@ -103,6 +111,22 @@
           {
             "from": "Нет",
             "to": false
+          },
+          {
+            "from": "Балкон",
+            "to": true
+          },
+          {
+            "from": "Лоджия",
+            "to": true
+          },
+          {
+            "from": "Балкон и лоджия",
+            "to": true
+          },
+          {
+            "from": "Два",
+            "to": true
           }
         ],
         "on_unmapped": "needs_review"
@@ -121,6 +145,18 @@
           {
             "from": "Без отделки",
             "to": false
+          },
+          {
+            "from": "Евро",
+            "to": true
+          },
+          {
+            "from": "Дизайнерский",
+            "to": true
+          },
+          {
+            "from": "Косметический",
+            "to": true
           }
         ],
         "on_unmapped": "needs_review"
@@ -255,6 +291,10 @@
       "conversion": {
         "kind": "lookup",
         "values": [
+          {
+            "from": "Нет",
+            "to": ""
+          },
           {
             "from": "На улице",
             "to": "street"

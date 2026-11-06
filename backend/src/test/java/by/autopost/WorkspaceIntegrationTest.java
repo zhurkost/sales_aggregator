@@ -108,6 +108,30 @@ class WorkspaceIntegrationTest {
   }
 
   @Test
+  void saleRulesPreserveInclusiveRoomCountsAndExplicitNativeChoices() throws Exception {
+    var cookie = register().cookie();
+    var path = "categories/apartments_sale/";
+    var editor = getJson(path + "editor", cookie, 200);
+    var values = object("sale.price", "92000", "sale.currency", "USD", "apartment.total_area", "96",
+        "apartment.rooms", "7", "apartment.balcony", "Лоджия", "specific.onliner.parking", "Нет");
+    var card = object("schemaVersion", text(editor, "version"), "categoryId", "apartments_sale",
+        "platforms", List.of("realt", "kufar", "domovita", "onliner"), "values", values);
+    var jobs = postJson(path + "extension-config", cookie, object("card", card, "id", "edges", "revision", 1), 200);
+    for (var job : parse(jobs.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8)).path("jobs")) {
+      var controls = list(job.path("controls"));
+      String platform = text(job, "platform");
+      var rooms = controls.stream().filter(c -> text(c, "field").endsWith(".rooms")).findFirst().orElseThrow();
+      assertEquals(Map.of("realt", 5, "kufar", 5, "domovita", 7, "onliner", 6).get(platform).intValue(), rooms.path("value").asInt());
+      if (platform.equals("onliner")) {
+        var parking = controls.stream().filter(c -> text(c, "field").equals("onliner.parking")).findFirst().orElseThrow();
+        assertTrue(parking.path("emptyChoice").asBoolean());
+        assertEquals("", parking.path("value").textValue());
+        assertTrue(controls.stream().anyMatch(c -> text(c, "field").equals("onliner.balcony") && c.path("value").asBoolean()));
+      }
+    }
+  }
+
+  @Test
   void removedCardStorageRoutesReturnNotFound() throws Exception {
     var account = register();
     for (String path : List.of("rental/drafts", "rental/drafts/example", "rental/drafts/example/delete")) {

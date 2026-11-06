@@ -24,7 +24,7 @@
   style.textContent =
     ":host{position:fixed;right:16px;bottom:16px;z-index:2147483647;max-width:340px;font:14px/1.4 system-ui;color:#172236;background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:16px;box-shadow:0 4px 24px #0002}button{padding:8px;margin:8px 8px 0 0;cursor:pointer}p{margin:8px 0}";
   const title = document.createElement("strong");
-  title.textContent = "Автопост · аренда квартиры";
+  title.textContent = task.categoryId === "apartments_sale" ? "Автопост · продажа квартиры" : "Автопост · аренда квартиры";
   const status = document.createElement("p"),
     detail = document.createElement("p"),
     retry = document.createElement("button"),
@@ -95,7 +95,11 @@
       if (departed || document.hidden) return;
       if (!form.ready()) {
         idle = cycles = 0;
-        await report("running", "Ожидаем открытия формы площадки.");
+        const wrongDeal = task.categoryId !== "apartments_sale" && task.recipe.platform === "kufar"
+          && [...document.querySelectorAll('[data-name="re_auction_sale"]')].some(api.visible);
+        await report(wrongDeal ? "needs_action" : "running", wrongDeal
+          ? "Открыта продажа. Выберите долгосрочную аренду на Kufar; заполнение продолжится автоматически."
+          : "Ожидаем открытия формы площадки.");
         return;
       }
       cycles++;

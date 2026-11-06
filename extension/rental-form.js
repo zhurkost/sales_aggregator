@@ -36,6 +36,8 @@
   }
   function targets(c, scope = document) {
     let rows = query(c.selector, scope);
+    if (c.controlText) rows = rows.filter(e => norm((e.innerText || e.textContent).split("\n")[0]) === norm(c.controlText));
+    if (c.headingSelector) rows = rows.filter(e => query(c.headingSelector, e).some(h => norm(h.textContent) === norm(c.heading)));
     if (c.index !== undefined) rows = rows[c.index] ? [rows[c.index]] : [];
     return rows.filter(
       (e) =>
@@ -225,7 +227,7 @@
       if (
         value === null ||
         value === undefined ||
-        value === "" ||
+        (value === "" && !c.emptyChoice) ||
         (Array.isArray(value) && !value.length && !c.replaceGroup)
       )
         return;
@@ -239,9 +241,10 @@
         const e = c.action === "richtext" && target.tagName === "IFRAME" ? target.contentDocument?.body : target;
         if (!e || (target !== e && !e.isContentEditable)) return;
         if (c.action === "check") {
-          const desired = value === true || value === "true";
-          if (e.checked !== desired) this.clickControl(e);
-          if (e.checked === desired) this.done.add(c.field);
+          const desired = c.checkedValue !== undefined ? String(value) === c.checkedValue : value === true || value === "true";
+          const state = () => typeof e.checked === "boolean" ? e.checked : e.getAttribute("aria-checked") === "true";
+          if (state() !== desired) this.clickControl(e);
+          if (state() === desired) this.done.add(c.field);
           return;
         }
         if (c.action === "select") {
@@ -521,11 +524,11 @@
       const beforeProgress = this.progress;
       // Choose category before touching any values in a potentially unrelated form.
       if (!this.ready()) {
-        // In the sale flow Kufar may ask for the apartment address before showing the deal selector.
+        // Kufar may ask for the apartment address before showing the deal selector.
         if (this.recipe.addressBeforeDeal && this.recipe.platform === "kufar" &&
             query('[data-testid="name_selected_category"]').some(e => visible(e) && norm(e.textContent).includes("квартиры")) &&
             !query('[data-testid="kufar-chose-category-popup"],[data-name="type"]').some(visible)) {
-          const address = this.recipe.controls.find(c => c.field === "kufar.address");
+          const address = this.recipe.controls.find(c => c.action === "autocomplete" && c.addressPart === "label");
           if (address) await this.fill(address);
           return this.progress !== beforeProgress;
         }
@@ -544,7 +547,8 @@
       }
       for (const c of this.recipe.controls) {
         await this.fill(c);
-        if (this.waiting) break;
+        // React controls may re-render their siblings after a click.
+        if (this.waiting || (this.recipe.oneChangePerTick && this.progress !== beforeProgress)) break;
       }
       return this.done.size > before || this.progress > beforeProgress;
     }

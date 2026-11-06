@@ -164,7 +164,8 @@
         "optionSelector": "[role=\"option\"]",
         "busySelector": ".custom-select__menu-notice--loading",
         "selectedValueSelector": ".custom-select__single-value",
-        "confirm": "display-and-closed"
+        "confirm": "display-and-closed",
+        "retryClearedQuery": true
       }
     },
     {

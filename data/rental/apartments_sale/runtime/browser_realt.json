@@ -95,7 +95,8 @@
     {
       "field": "realt.termsOfDeal.price",
       "action": "text",
-      "selector": "[id=\"termsOfDeal.price\"]"
+      "selector": "[id=\"termsOfDeal.price\"]",
+      "after": "realt.termsOfDeal.currency"
     },
     {
       "field": "realt.description.shortDescription",
@@ -213,6 +214,94 @@
       "action": "choices",
       "selector": "#termsOfDeal",
       "label": "Условия сделки"
+    },
+    {
+      "field": "realt.termsOfDeal.termsExtra",
+      "action": "check",
+      "selector": "#termsOfDeal button[role=\"switch\"]",
+      "controlText": "Конкурс / Аукцион",
+      "checkedValue": "903"
+    },
+    {
+      "field": "realt.apartment.ceilingHeight",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Высота потолков",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.planning",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Планировка",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.viewFromWindow",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Вид из окон",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.registrationRooms",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Комнат по техпаспорту",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.house.homeMaintenance",
+      "action": "choices",
+      "selector": "#house",
+      "label": "Обслуживание дома",
+      "expandSection": "house"
+    },
+    {
+      "field": "realt.additional.yard",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Благоустройство двора",
+      "expandSection": "additional"
+    },
+    {
+      "field": "realt.additional.parking",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Парковка",
+      "expandSection": "additional"
+    },
+    {
+      "field": "realt.additional.facilitiesForDisabledPeople",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Удобства для людей с ограниченными возможностями",
+      "expandSection": "additional"
+    },
+    {
+      "field": "realt.additional.appliance",
+      "action": "choices",
+      "selector": "#additional",
+      "pickerId": "additional.appliance",
+      "label": "Удобства"
+    },
+    {
+      "field": "realt.house.isNotFinish",
+      "action": "choices",
+      "selector": "#house",
+      "label": "Год постройки",
+      "expandSection": "house"
+    },
+    {
+      "field": "realt.house.newBuilding",
+      "action": "check",
+      "selector": "#house button[role=\"switch\"]",
+      "controlText": "Новостройка",
+      "expandSection": "house",
+      "maxBuildingAge": {
+        "field": "realt.house.buildingYear",
+        "years": 5
+      }
     }
   ],
   "next": [],

@@ -121,7 +121,8 @@
     const label = (e) => parts(rawLabel(e)).label;
     const display = () => query(config.selectedValueSelector, scope)[0]?.textContent || "";
     let pending = form.pending.get(control.field);
-    if (!pending) {
+    const retry = config.retryClearedQuery && pending?.phase === "query" && !input.value && !display() && (pending.retries || 0) < 2;
+    if (!pending || retry) {
       if (config.selectedValueSelector && display()) {
         // Preserve a selection made before the helper started.
         const selected = parts(display());
@@ -153,7 +154,7 @@
       input.dispatchEvent(new Event("change", { bubbles: true }));
       if (config.queryEvent === "keyup")
         input.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
-      form.pending.set(control.field, { phase: "query", search });
+      form.pending.set(control.field, { phase: "query", search, retries: retry ? (pending.retries || 0) + 1 : 0 });
       form.waiting = { field: control.field, tries: 0 };
       return;
     }
@@ -163,7 +164,7 @@
         config.confirm === "display-and-closed" ? display() :
         config.kind === "settlement" ? input.value.split(",")[0] : input.value;
       if (!options().length && (norm(value) === norm(pending.label) ||
-          (control.field === "kufar.address_text" && kufarSelectedAddress(value, pending.label))))
+          (["kufar.address_text", "kufar.address"].includes(control.field) && kufarSelectedAddress(value, pending.label))))
         form.done.add(control.field);
       return;
     }

@@ -95,7 +95,8 @@
     {
       "field": "realt.monthly_rent",
       "action": "text",
-      "selector": "[id=\"termsOfDeal.price\"]"
+      "selector": "[id=\"termsOfDeal.price\"]",
+      "after": "realt.currency"
     },
     {
       "field": "realt.short_description",
