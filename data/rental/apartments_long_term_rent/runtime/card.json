@@ -561,6 +561,22 @@
       "Юго-Запад"
     ]
   },
+  "mainFields": [
+    "rental.room_configuration",
+    "rental.total_area",
+    "rental.floor",
+    "building.total_floors",
+    "rental.monthly_price",
+    "rental.currency",
+    "contact.landlord_role",
+    "amenity.furniture",
+    "amenity.refrigerator",
+    "amenity.washing_machine",
+    "amenity.internet",
+    "contact.name",
+    "contact.phone",
+    "media.images"
+  ],
   "addressProjection": {
     "location.settlement": "settlement",
     "location.street": "street",
