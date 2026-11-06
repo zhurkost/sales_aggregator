@@ -23,8 +23,9 @@ describe("publication of incomplete rental cards", () => {
     extension.mockResolvedValueOnce({capabilities:["rental-publishing"], jobs:[]});
     await c.ngOnChanges();
     expect(c.ready).toBe(false);
+    extension.mockResolvedValueOnce({capabilities:["rental-publishing"], jobs:[]});
     await c.publish();
-    expect(c.error).toContain(EXTENSION_VERSION);
+    expect(c.connectionMessage).toContain(EXTENSION_VERSION);
     expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
     c.ngOnDestroy(); c.store.destroy();
   });
@@ -112,12 +113,13 @@ describe("publication of incomplete rental cards", () => {
     c.store.card.platforms = ["realt"];
     c.workspaceId = "owner";
     c.sessionId = c.store.id;
+    extension.mockRejectedValueOnce(new Error("Нет связи с расширением"));
     await c.publish();
-    expect(extension).not.toHaveBeenCalled();
-    expect(c.error).toContain(EXTENSION_VERSION);
-    c.ready = true;
+    expect(c.connectionMessage).toContain("Нет связи");
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
     c.mode = "assist";
     await c.publish();
+    expect(c.connectionMessage).toBe("");
     expect(extension).toHaveBeenCalledWith(
       "RENTAL_RUN",
       expect.objectContaining({ mode: "assist" }),

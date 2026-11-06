@@ -59,10 +59,10 @@
     Уточнения в проверке необязательны. Площадки могут запросить свои
     обязательные поля и подтверждения.
   </p>
-  @if (!ready) {
+  @if (!ready && connectionMessage) {
     <p>
-      <a href="/autopost-extension.zip" download>Скачать расширение {{ extensionVersion }}</a> ·
-      После установки обновите страницу.
+      {{ connectionMessage }}
+      <a href="/autopost-extension.zip" download>Скачать расширение {{ extensionVersion }}</a>
     </p>
   }
   @if (error) {

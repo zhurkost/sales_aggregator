@@ -1,5 +1,5 @@
 import { APARTMENT_RENT } from "../listing-categories";
-import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
+import { Component, HostListener, Input, OnChanges, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { EXTENSION_VERSION, type Photo } from "../../../../lib/workspace";
 import { RentalFormStore } from "./rental-form.store";
@@ -33,21 +33,33 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   photosBusy = false;
   error = "";
   ready = false;
+  connectionMessage = "";
   photos: Photo[] = [];
   jobs: Job[] = [];
   private generation = 0;
+  private probe = 0;
   private timer?: ReturnType<typeof setInterval>;
   private destroyed = false;
   async ngOnChanges() {
     const generation = ++this.generation;
     clearInterval(this.timer);
+    this.timer = undefined;
     this.jobs = [];
     this.photos = [];
     this.error = "";
+    this.ready = false;
+    this.connectionMessage = "";
     if (!this.publicationEnabled || !this.workspaceId || !this.sessionId) return;
+    await this.checkConnection();
+  }
+  @HostListener("window:focus")
+  async checkConnection() {
+    if (this.destroyed || !this.publicationEnabled || !this.workspaceId || !this.sessionId) return;
+    const generation = this.generation;
+    const probe = ++this.probe;
     try {
       const ping = await this.gateway.request("PING", undefined, 4000);
-      if (generation !== this.generation) return;
+      if (generation !== this.generation || probe !== this.probe) return;
       this.ready =
         Array.isArray(ping["capabilities"]) &&
         ping["capabilities"].includes("rental-publishing") &&
@@ -58,14 +70,27 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-onliner-city-menu") &&
         ping["capabilities"].includes("rental-localized-price") &&
         (this.store.category() === APARTMENT_RENT || (ping["capabilities"].includes("listing-category-path") && ping["capabilities"].includes("sale-scoped-controls")));
-      if (this.ready) {
+      this.connectionMessage = this.ready ? "" :
+        `Подключённый помощник ${ping["version"] || ""} не поддерживает заполнение этой категории. Загрузите расширение ${this.extensionVersion} и перезагрузите его в Chrome.`;
+      if (this.ready && this.timer === undefined) {
+        this.timer = setInterval(() => void this.refresh(), 2500);
         await this.refresh();
-        if (generation === this.generation && !this.destroyed)
-          this.timer = setInterval(() => void this.refresh(), 2500);
       }
-    } catch {
-      if (generation === this.generation) this.ready = false;
+    } catch (e) {
+      if (generation !== this.generation || probe !== this.probe) return;
+      this.ready = false;
+      this.connectionMessage = (e as Error).message;
     }
+    if (!this.ready) {
+      clearInterval(this.timer);
+      this.timer = undefined;
+    }
+  }
+  @HostListener("window:message", ["$event"])
+  onExtensionReady(event: MessageEvent) {
+    if (event.source === window && event.origin === location.origin &&
+        event.data?.source === "autopost-extension" && event.data.type === "READY")
+      void this.checkConnection();
   }
   async refresh() {
     const generation = this.generation;
@@ -84,10 +109,6 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   async publish() {
     if (!this.publicationEnabled || this.busy || this.store.busy || !this.store.card.platforms.length)
       return;
-    if (!this.ready) {
-      this.error = `Установите расширение ${this.extensionVersion} и обновите вкладку Автопоста.`;
-      return;
-    }
     this.busy = true;
     this.error = "";
     const generation = this.generation;
@@ -100,6 +121,10 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
       photos: this.photos,
     };
     try {
+      if (!this.ready) {
+        await this.checkConnection();
+        if (generation !== this.generation || !this.ready) return;
+      }
       const result = await this.gateway.request("RENTAL_RUN", payload, 25000);
       if (generation === this.generation)
         this.jobs = (result["jobs"] || []) as Job[];
