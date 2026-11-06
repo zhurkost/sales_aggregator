@@ -175,7 +175,10 @@
       }
       if (c.expandSection) {
         const section = document.getElementById(c.expandSection);
-        const expand = section && query('button', section).find(b => visible(b) && norm(b.textContent) === 'все параметры');
+        const sibling = section?.nextElementSibling;
+        const buttons = section ? query('button', section) : [];
+        if (sibling?.matches('button')) buttons.push(sibling);
+        const expand = buttons.find(b => visible(b) && norm(b.textContent) === 'все параметры');
         if (expand) { this.clickControl(expand); this.progress++; return; }
       }
       if (c.pickerId) return this.fillRealtPicker(c);
@@ -312,8 +315,16 @@
           this.protected.add(c.field);
           return;
         }
-        setText(e, value);
+        // Onliner's BYN mask treats a dot as a grouping separator.
+        const inputValue = onlinerPrice && e.placeholder.includes(",")
+          ? String(value).replace(".", ",") : value;
+        setText(e, inputValue);
         if (equivalent(e.value, value)) this.done.add(c.field);
+        else if (c.field === "realt.house_number" && e.value !== current) {
+          // Realt may strip a house suffix. Leave the original value for manual review.
+          setText(e, current);
+          this.protected.add(c.field);
+        }
         return;
       }
       if (c.replaceGroup) {

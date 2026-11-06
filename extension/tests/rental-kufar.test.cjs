@@ -137,6 +137,19 @@ test('page waits for delayed uploads and ignores next, submit and promotion even
   assert.equal(reports.at(-1).remaining.includes(c.field),false);
 });
 
+test('Kufar confirms the chosen suggestion after reformatting without accepting a different house',async t=>{
+  for(const [house,confirmed] of [['12А',true],['12',false]]){
+    const c=control('address_text',{value:'Витебск Ленина 12А',streetType:'ул'});
+    const f=await fixture(t,'<input id="geocoder"><div id="rows"></div>',[c]);
+    await f.form.tick();
+    const row=f.doc.createElement('div');row.dataset.name='autocomplete-option-0';row.textContent='улица Ленина, 12А, Витебск';
+    f.doc.querySelector('#rows').append(row);
+    row.onclick=()=>{f.doc.querySelector('input').value='Ленина ул, '+house+', Витебск, Витебская область';row.remove();};
+    for(let i=0;i<5;i++)await f.form.tick();
+    assert.equal(f.form.done.has(c.field),confirmed);
+  }
+});
+
 for (const [code,labels,expected] of [
   ['пр',['Минск, ул. Мира, 18','Минск, Мира пр-т, 18','Минск, пр. Мира, 18'],1],
   ['пр',['Минск, пр-д Мира, 18','Минск, пр-кт Мира, 18'],0],

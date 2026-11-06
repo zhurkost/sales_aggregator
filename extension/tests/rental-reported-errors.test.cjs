@@ -122,6 +122,31 @@ test('Onliner replaces restored values, confirms the formatted price and respect
   assert.equal(editor.value,'Правка пользователя');
 });
 
+test('Onliner decimal price survives the Belarusian ruble mask and keeps kopecks', async t => {
+  const {window:w,document:d,form}=await fixture('<input id="price" placeholder="0,00">',
+    [{field:'onliner.price_amount',action:'text',selector:'#price',value:990.5}]);
+  t.after(()=>w.close());
+  const input=d.querySelector('input');
+  input.oninput=()=>{input.value=Number(input.value.replace(/[^0-9,]/g,'').replace(',','.')).toFixed(2).replace('.',',');};
+  await form.tick();
+  assert.equal(input.value,'990,50');
+  assert.deepEqual(Array.from(form.remaining()),[]);
+});
+
+test('Realt opens the adjacent area section and rejects a truncated house number', async t=>{
+  const controls=['realt.kitchen_area','realt.house_number'].map((field,i)=>({
+    ...recipe('realt').controls.find(c=>c.field===field),after:undefined,value:[8.4,'12А'][i]}));
+  const {window:w,document:d,form}=await fixture('<div id="area"></div><button>Все параметры</button><input id="location.houseNumber">',controls);
+  t.after(()=>w.close());
+  d.querySelector('button').onclick=e=>{d.getElementById('area').innerHTML='<input id="area.kitchen">';e.currentTarget.remove();};
+  const house=d.getElementById('location.houseNumber');
+  house.oninput=()=>{house.value=house.value.replace(/[^0-9]/g,'');};
+  await form.tick();await form.tick();
+  assert.equal(d.getElementById('area.kitchen').value,'8.4');
+  assert.equal(house.value,'');
+  assert.deepEqual(Array.from(form.remaining()),['realt.house_number']);
+});
+
 test('Onliner keeps restored photos until replacement previews arrive, without sending the files twice', async t => {
   const c=recipe('onliner').controls.find(c=>c.action==='files');
   const {window:w,document:d}=await fixture('<input class="new-photos__input-file" type="file" name="file">',[]);

@@ -53,6 +53,18 @@
       .map(([type]) => type.slice(0, 2));
   }
 
+  function kufarSelectedAddress(display, option) {
+    // The menu shows "улица Ленина, 12А, Витебск"; the accepted value moves the
+    // street type to the end and may append the region.
+    const parts = value => String(value).split(",").map(norm);
+    const selected = parts(display), clicked = parts(option);
+    if (clicked.length < 3 || selected.length < clicked.length) return false;
+    const street = addressName(clicked[0], "street");
+    const shown = addressName(selected[0], "street");
+    return !!street.type && street.type === shown.type && street.name === shown.name
+      && clicked.slice(1).every((part, i) => !!part && part === selected[i + 1]);
+  }
+
   function preferredOption(options, label, control, kind) {
     const first = options[0];
     if (options.length < 2 || kind === "house") return first;
@@ -150,7 +162,8 @@
       const value =
         config.confirm === "display-and-closed" ? display() :
         config.kind === "settlement" ? input.value.split(",")[0] : input.value;
-      if (!options().length && norm(value) === norm(pending.label))
+      if (!options().length && (norm(value) === norm(pending.label) ||
+          (control.field === "kufar.address_text" && kufarSelectedAddress(value, pending.label))))
         form.done.add(control.field);
       return;
     }
