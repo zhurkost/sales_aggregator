@@ -197,9 +197,11 @@ class RentalPublicationTest {
             .findFirst().orElseThrow();
         if (site.equals("kufar")) {
           assertEquals(expected, text(control, "value"));
+          assertEquals("ул", text(control, "streetType"));
           assertEquals(text(before, "label"), text(control, "matchValue"));
         } else {
           assertEquals(expected.startsWith("Минск") ? "Минск" : "Зеленый Бор", text(control, "value"));
+          assertFalse(control.has("streetType"));
           assertEquals("settlement", text(control, "addressPart"));
           assertEquals("single-or-exact", text(control.path("autocomplete"), "selection"));
           assertEquals("keyup", text(control.path("autocomplete"), "queryEvent"));

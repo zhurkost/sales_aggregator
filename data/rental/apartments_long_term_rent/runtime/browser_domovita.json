@@ -72,22 +72,26 @@
     {
       "field": "domovita.rooms",
       "action": "choices",
-      "selector": "input[name=\"rooms\"]"
+      "selector": "input[name=\"rooms\"]",
+      "mountedChoice": true
     },
     {
       "field": "domovita.account_type",
       "action": "choices",
-      "selector": "input[name=\"account_type\"]"
+      "selector": "input[name=\"account_type\"]",
+      "mountedChoice": true
     },
     {
       "field": "domovita.amenities",
       "action": "choices",
-      "selector": "input[type=\"checkbox\"]"
+      "selector": "input[type=\"checkbox\"]",
+      "mountedChoice": true
     },
     {
       "field": "domovita.tenant_conditions",
       "action": "choices",
-      "selector": "input[type=\"checkbox\"]"
+      "selector": "input[type=\"checkbox\"]",
+      "mountedChoice": true
     },
     {
       "field": "domovita.description",
@@ -159,6 +163,12 @@
         "selectedValueSelector": ".custom-select__single-value",
         "confirm": "display-and-closed"
       }
+    },
+    {
+      "field": "domovita.has_commission",
+      "action": "choices",
+      "selector": "label:has(> input[type=\"checkbox\"][value=\"\"])",
+      "mountedChoice": true
     }
   ],
   "next": [],

@@ -45,6 +45,18 @@ class RentalReportedErrorsTest {
     }
   }
 
+  @Test void internetReachesKufarUnlessWifiIsExplicitlyDisabled() {
+    var values = object("amenity.internet", "yes");
+    var card = object("schemaVersion", catalog.version(), "modelVersion", 2,
+        "values", values, "extras", object(), "platforms", List.of("kufar"));
+    var controls = list(catalog.browser(card).path("jobs").get(0).path("controls"));
+    assertTrue(controls.stream().anyMatch(c -> text(c, "field").equals("kufar.household_amenities")
+        && c.path("value").toString().equals("[\"1\"]")));
+    ((ObjectNode) card.get("values")).put("amenity.wifi", false);
+    controls = list(catalog.browser(card).path("jobs").get(0).path("controls"));
+    assertFalse(controls.stream().anyMatch(c -> text(c, "field").equals("kufar.household_amenities")));
+  }
+
   @Test void allKufarCurrenciesAreExplicitAndUnsupportedRubDoesNotTransferPrice() {
     for (var entry : Map.of("BYN","BYR", "USD","USD", "EUR","EUR", "RUB", "").entrySet()) {
       var draft = object("schemaVersion", catalog.version(), "modelVersion", 2,

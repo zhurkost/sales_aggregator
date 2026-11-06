@@ -48,6 +48,7 @@ export class RentalFormEditor {
       if (item.source.startsWith("address.")) {
         const part = item.source.slice(8);
         const address = {...this.card.address, [part]: item.candidate, confirmed: false, provider: "manual", latitude: "", longitude: ""} as Address;
+        if (part === "street") { delete address.streetType; delete address.streetWithType; }
         address.label = [address.region, address.district, address.settlement, address.street, address.house, address.block].filter(Boolean).join(", ");
         this.addressChanged(address);
       } else this.card.values[item.source] = item.candidate;

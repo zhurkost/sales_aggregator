@@ -3,6 +3,7 @@ package by.autopost;
 import static by.autopost.shared.Json.*;
 
 import by.autopost.address.application.AddressProvider;
+import by.autopost.address.application.StreetKind;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.*;
@@ -147,6 +148,8 @@ public class AddressService {
             false,
             "level",
             house.isEmpty() ? (text(d, "street").isEmpty() ? "settlement" : "street") : "house");
+    String code = StreetKind.parse(text(a, "street")).code();
+    if (!code.isBlank()) a.put("streetType", code);
     // Foreign Belarus addresses legitimately have fias_level=-1. Assess actual parts, not Russian
     // levels.
     for (var axis : Map.of("latitude", "geo_lat", "longitude", "geo_lon").entrySet()) {

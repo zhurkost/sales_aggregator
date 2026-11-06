@@ -5,7 +5,8 @@
     {
       "field": "onliner.images",
       "action": "files",
-      "selector": "input.new-photos__input-file[name=\"file\"]"
+      "selector": "input.new-photos__input-file[name=\"file\"]",
+      "previewSelector": ".new-photos__thumbnail-figure:has(img[src^=\"https://content.onliner.by/apartments_photo/\"]):has(.new-photos__thumbnail-remove)"
     },
     {
       "field": "onliner.rent_type",
@@ -20,12 +21,14 @@
     {
       "field": "onliner.facilities",
       "action": "choices",
-      "selector": "input[data-bind=\"checked: $root.data.facilities\"]"
+      "selector": "input[data-bind=\"checked: $root.data.facilities\"]",
+      "replaceGroup": true
     },
     {
       "field": "onliner.rent_rules",
       "action": "choices",
-      "selector": "input[data-bind=\"checked: $root.data.rentRules\"]"
+      "selector": "input[data-bind=\"checked: $root.data.rentRules\"]",
+      "replaceGroup": true
     },
     {
       "field": "onliner.contact_owner",
@@ -54,7 +57,8 @@
     {
       "field": "onliner.price_amount",
       "action": "text",
-      "selector": "#price-input"
+      "selector": "#price-input",
+      "after": "onliner.price_currency"
     },
     {
       "field": "onliner.price_currency",

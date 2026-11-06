@@ -178,6 +178,56 @@
       "action": "files",
       "selector": "input[type=\"file\"]",
       "index": 0
+    },
+    {
+      "field": "realt.title",
+      "action": "text",
+      "selector": "[id=\"description.title\"]"
+    },
+    {
+      "field": "realt.description",
+      "action": "richtext",
+      "selector": "iframe[id=\"description.description_ifr\"]"
+    },
+    {
+      "field": "realt.kitchen_area",
+      "action": "text",
+      "selector": "[id=\"area.kitchen\"]",
+      "expandSection": "area"
+    },
+    {
+      "field": "realt.building_type",
+      "action": "choices",
+      "selector": "#house",
+      "label": "Тип дома",
+      "expandSection": "house"
+    },
+    {
+      "field": "realt.bathroom",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Санузел",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.furniture",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Мебель"
+    },
+    {
+      "field": "realt.appliances",
+      "action": "choices",
+      "selector": "#additional",
+      "pickerId": "additional.applianceRental",
+      "label": "Бытовая техника"
+    },
+    {
+      "field": "realt.amenities",
+      "action": "choices",
+      "selector": "#additional",
+      "pickerId": "additional.appliance",
+      "label": "Удобства"
     }
   ],
   "next": [],

@@ -14,6 +14,8 @@ export interface Address {
   countryIso: string;
   settlement: string;
   street: string;
+  streetType?: string;
+  streetWithType?: string;
   house: string;
   block?: string;
   blockType?: string;

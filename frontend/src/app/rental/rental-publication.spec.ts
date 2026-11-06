@@ -5,7 +5,7 @@ import { RentalPublicationComponent } from "./rental-publication.component";
 import { RentalFormStore } from "./rental-form.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
 const extension = vi.fn(async () => ({
-  capabilities: ["rental-publishing", "rental-address-suggestions", "rental-form-session"],
+  capabilities: ["rental-publishing", "rental-address-suggestions", "rental-form-session", "rental-field-transfer-v2", "rental-street-type"],
   jobs: [],
 }));
 const gateway = {

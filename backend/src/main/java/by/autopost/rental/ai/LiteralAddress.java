@@ -2,6 +2,7 @@ package by.autopost.rental.ai;
 
 import static by.autopost.shared.Json.*;
 
+import by.autopost.address.application.StreetKind;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
@@ -11,13 +12,14 @@ import java.util.regex.Pattern;
 /** Literal components only: no geocoding, invented location or AI-provided identifiers. */
 public final class LiteralAddress {
   public static String cleanComponent(String value, String part) {
+    if ("street".equals(part)) return StreetKind.parse(value).name();
     return value.strip().replaceFirst("(?iu)^(?:" + typePrefix(part) + ")(?:\\.\\s*|\\s+)", "").strip();
   }
 
   private static String typePrefix(String part) {
     return switch (part) {
-      case "settlement" -> "городской поселок|городской посёлок|г\\.?\\s*п|рабочий поселок|рабочий посёлок|р\\.?\\s*п|город|г|агрогородок|аг|деревня|дер|д|поселок|посёлок|пос|п|село|с";
-      case "street" -> "улица|ул|переулок|пер|проспект|пр-т|просп|бульвар|бул|б-р|площадь|пл|проезд|пр-д|шоссе|ш|набережная|наб|тупик|туп|тракт";
+      case "settlement" -> "городской поселок|городской посёлок|г\\.?\\s*п|рабочий поселок|рабочий посёлок|р\\.?\\s*п|городе|города|город|г|агрогородок|аг|деревня|дер|д|поселок|посёлок|пос|п|село|с";
+      case "street" -> "улица|ул|переулок|пер|проспект|пр-т|пр-кт|просп|пр|бульвар|бул|б-р|площадь|пл|проезд|пр-д|шоссе|ш|набережная|наб|тупик|туп|тракт";
       case "house" -> "дом|д";
       case "block" -> "корпус|корп|к";
       default -> "(?!)";
@@ -46,7 +48,8 @@ public final class LiteralAddress {
     for (String part : List.of("settlement", "street", "house", "block")) {
       if (!address.has(part)) continue;
       String original = text(address, part), clean = cleanComponent(original, part);
-      if (!original.equals(clean) && (part.equals("settlement") || part.equals("street")))
+      if (part.equals("street") && !original.equals(clean)) address.put("streetType", StreetKind.parse(original).code());
+      if (!original.equals(clean) && part.equals("settlement"))
         address.put(part + "WithType", original);
       address.put(part, clean);
     }
@@ -55,7 +58,7 @@ public final class LiteralAddress {
   private static final String CITY =
       "(?:город|г\\.?|агрогородок|аг\\.?|деревня|дер\\.?|д\\.?|поселок|посёлок|пос\\.?)";
   private static final String STREET =
-      "(?:улица|ул\\.?|переулок|пер\\.?|проспект|пр-т|просп\\.?|бульвар|бул\\.?|площадь|пл\\.?|проезд|шоссе)";
+      "(?:улица|ул\\.?|переулок|пер\\.?|проспект|пр-т|пр-кт|просп\\.?|пр-д|пр\\.?|бульвар|бул\\.?|площадь|пл\\.?|проезд|шоссе)";
   private static final List<String> PARTS =
       List.of("region", "district", "settlement", "street", "house", "block");
 
@@ -95,7 +98,42 @@ public final class LiteralAddress {
           .matcher(label)
           .find()) result.put(part, value);
     }
+    // Only accept inflections of text actually evidenced for this component.
+    for (String part : List.of("settlement", "street")) {
+      String raw = text(proposal, part).strip(), nom = text(proposal, part + "Nominative").strip();
+      if (raw.isBlank() || nom.isBlank() || !containsWord(label, raw)) continue;
+      var street = StreetKind.parse(raw);
+      String name = cleanComponent(raw, part);
+      if (!inflectionOf(name, nom)) continue;
+      String parsed = text(result, part);
+      if (!parsed.isBlank() && !containsWord(parsed, raw) && !containsWord(raw, parsed)) continue;
+      String typed = raw.replace(name, nom);
+      if (part.equals("settlement")) typed = typed.replaceFirst("(?iu)^город(?:е|а)\\s+", "город ");
+      if (part.equals("street")) {
+        String kind = street.kind().isEmpty() ? StreetKind.parse(parsed).kind() : street.kind();
+        typed = kind.isEmpty() ? nom : kind + " " + nom;
+      }
+      result.put(part, typed);
+    }
     return result;
+  }
+
+  private static boolean containsWord(String label, String value) {
+    return Pattern.compile("(?iu)(?<![\\p{L}\\d])" + Pattern.quote(value) + "(?![\\p{L}\\d])")
+        .matcher(label).find();
+  }
+
+  private static boolean inflectionOf(String source, String nominal) {
+    if (nominal.length() > 200 || !nominal.matches("[\\p{L}\\d .-]+")) return false;
+    String[] a = key(source).split("[ -]+"), b = key(nominal).split("[ -]+");
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].equals(b[i])) continue;
+      String endings = "(?:ого|его|ому|ему|ыми|ими|ой|ей|ом|ем|ым|им|ых|их|ах|ях|ов|ев|ью|ая|яя|ое|ее|ый|ий|ые|ие|ую|юю|[аяуюоеыиьй])$";
+      String stem = a[i].replaceFirst(endings, "");
+      if (stem.length() < 2 || !stem.equals(b[i].replaceFirst(endings, ""))) return false;
+    }
+    return true;
   }
 
   public static boolean matches(JsonNode literal, JsonNode candidate) {
@@ -109,7 +147,9 @@ public final class LiteralAddress {
       if (expected.isBlank()) continue;
       if (!component(expected, part).equals(component(actual, part))) return false;
       if (part.equals("street") || part.equals("settlement")) {
-        String expectedType = type(expected), actualType = type(actual);
+        String expectedType = part.equals("street") ? StreetKind.parse(expected).kind() : type(expected);
+        String actualType = part.equals("street") ? StreetKind.parse(actual).kind() : type(actual);
+        if (expectedType.equals("пр") && actualType.startsWith("пр")) continue;
         if (!expectedType.isBlank() && !expectedType.equals(actualType)) return false;
       }
     }
@@ -121,7 +161,8 @@ public final class LiteralAddress {
   }
 
   private static String component(String value, String part) {
-    String prefix = part.equals("street") ? STREET : part.equals("settlement") ? CITY : "(?!)";
+    if (part.equals("street")) return key(StreetKind.parse(value).name());
+    String prefix = part.equals("settlement") ? CITY : "(?!)";
     String stripped = value.replaceFirst("(?iu)^" + prefix + "\\s+", "");
     if (part.equals("region")) stripped = stripped.replaceFirst("(?iu)\\s+(область|обл\\.?)$", "");
     if (part.equals("district")) stripped = stripped.replaceFirst("(?iu)\\s+(район|р-н)$", "");
@@ -131,12 +172,6 @@ public final class LiteralAddress {
   private static String type(String value) {
     String first = key(value).split(" ")[0];
     return switch (first) {
-      case "улица", "ул" -> "street";
-      case "переулок", "пер" -> "lane";
-      case "проспект", "пр-т", "просп" -> "avenue";
-      case "бульвар", "бул" -> "boulevard";
-      case "площадь", "пл" -> "square";
-      case "проезд", "шоссе" -> first;
       case "город", "г" -> "city";
       case "агрогородок", "аг" -> "agro";
       case "деревня", "дер", "д" -> "village";

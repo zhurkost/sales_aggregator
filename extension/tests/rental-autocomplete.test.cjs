@@ -102,7 +102,7 @@ test("clean address input retains original street type for matching", async (t) 
   t.after(() => f.window.happyDOM.abort());
   f.form.done.add("realt.settlement");
   f.street.disabled = false;
-  Object.assign(f.form.recipe.controls[1], {value: "Ольшевского", matchValue: "ул Ольшевского"});
+  Object.assign(f.form.recipe.controls[1], {value: "Ольшевского", streetType: "ул"});
   let correct = 0, wrong = 0;
   const buttons = f.document.querySelectorAll('#street-wrap [role="button"]');
   buttons[0].onclick = () => wrong++;

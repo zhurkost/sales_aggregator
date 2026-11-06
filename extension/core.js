@@ -1,7 +1,7 @@
 /* Shared validation. No network requests or page-provided code. */
 (function (root) {
   'use strict';
-  const VERSION = '0.9.11';
+  const VERSION = '0.9.13';
   const APP_ORIGINS = Object.freeze([
     'https://autopost-belarus-mvp.sunlit-lemur-2753.chatgpt.site',
     'https://87.199.205.227',

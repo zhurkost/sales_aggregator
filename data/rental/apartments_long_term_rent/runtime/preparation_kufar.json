@@ -985,6 +985,20 @@
                 "to": null
               }
             ]
+          },
+          {
+            "common_option_id": "amenity.internet",
+            "unless_supplied": "amenity.wifi",
+            "values": [
+              {
+                "from": "yes",
+                "to": "1"
+              },
+              {
+                "from": "no",
+                "to": null
+              }
+            ]
           }
         ]
       },

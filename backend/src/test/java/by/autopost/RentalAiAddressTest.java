@@ -111,7 +111,7 @@ class RentalAiAddressTest {
     assertEquals("27.4150416", text(address, "longitude"));
     assertTrue(address.path("confirmed").asBoolean());
     assertEquals(List.of("workspace", "workspace"), provider.workspaces);
-    assertEquals(List.of(LABEL, "г Минск, ул Брикета, д 18"), provider.queries);
+    assertEquals(List.of("город Минск ул. Брикета 18", "г Минск, ул Брикета, д 18"), provider.queries);
     assertEquals(1, result.path("suggestions").size());
     var draft =
         object(
@@ -180,6 +180,35 @@ class RentalAiAddressTest {
       assertFalse(result.path("address").path("confirmed").asBoolean(), pair.getKey());
       assertEquals(1, provider.queries.size());
     }
+  }
+
+  @Test
+  void resolvesInflectedEvidenceAgainstTheTypedStreetInsteadOfItsNamesake() {
+    var provider = new Provider();
+    var right = raw();
+    ((ObjectNode)right.path("data")).put("street_with_type", "пр-кт Независимости");
+    var wrong = right.deepCopy();
+    ((ObjectNode)wrong.path("data")).put("street_with_type", "ул Независимости");
+    provider.response = array(List.of(wrong, right));
+    provider.confirmation = array(List.of(right));
+    String label = "в Минске на проспекте Независимости, дом 18";
+    var result = RentalAiPolicy.sanitize(catalog.analysisSchema(), label,
+        object("address", object("quote", label, "label", label, "street", "проспекте Независимости",
+            "streetNominative", "Независимости", "settlement", "Минске", "settlementNominative", "Минск")));
+    new RentalAiAddressResolver(provider).resolve("workspace", result);
+    var address = (ObjectNode)result.path("address");
+    assertTrue(address.path("confirmed").asBoolean());
+    assertEquals("Минск проспект Независимости 18", provider.queries.get(0));
+    LiteralAddress.cleanComponents(address);
+    assertEquals("Независимости", text(address, "street"));
+    assertEquals("пр", text(address, "streetType"));
+    assertFalse(address.has("streetWithType"));
+    var adjective = LiteralAddress.parse("на Садовой улице", object("street", "Садовой улице", "streetNominative", "Садовая"));
+    LiteralAddress.cleanComponents(adjective);
+    assertEquals("Садовая", text(adjective, "street"));
+    assertEquals("ул", text(adjective, "streetType"));
+    assertNotEquals("Московская", text(LiteralAddress.parse("на Садовой улице",
+        object("street", "Садовой улице", "streetNominative", "Московская")), "street"));
   }
 
   @Test

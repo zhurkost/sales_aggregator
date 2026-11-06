@@ -61,6 +61,7 @@ public final class RuleExecutor {
         boolean supplied = !missing(prior);
         for (var member : cv.path("members")) {
           JsonNode v = common.path(text(member, "common_option_id"));
+          if (member.has("unless_supplied") && !missing(common.path(text(member, "unless_supplied")))) continue;
           if (missing(v)) continue;
           supplied = true;
           try {

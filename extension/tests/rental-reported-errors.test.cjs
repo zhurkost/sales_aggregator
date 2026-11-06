@@ -93,3 +93,58 @@ test('Realt receives separate rooms and its own short description, not full list
   assert.equal(f.document.querySelector('textarea').value,'Светлая квартира рядом с парком.');
   assert.equal(f.form.done.size,2);f.window.happyDOM.abort();
 });
+
+test('Onliner replaces restored values, confirms the formatted price and respects subsequent manual input', async t => {
+  const controls = [
+    {field:'onliner.price_amount', action:'text', selector:'#price', value:1475},
+    {field:'onliner.description', action:'text', selector:'textarea', value:'Новое объявление'},
+    {field:'onliner.facilities', action:'choices', selector:'.facility', value:['internet','furniture'], replaceGroup:true},
+    {field:'onliner.rent_rules', action:'choices', selector:'.rule', value:[], replaceGroup:true},
+  ];
+  const {window:w, document:d, form} = await fixture(
+    '<input id="price" value="1 300,00"><textarea>Прежнее объявление</textarea>' +
+    '<input class="facility" type="checkbox" value="internet"><input class="facility" type="checkbox" value="furniture">' +
+    '<input class="rule" type="checkbox" value="without_children" checked>',controls);
+  t.after(()=>w.close());
+  // Mirror the native input event emitted synchronously by programmatic checkbox activation.
+  d.addEventListener('input', e=>{if(e.target.type==='checkbox') form.protect(e.target);});
+  d.querySelector('#price').oninput=e=>{e.target.value='1 475,00';};
+  for(let i=0;i<5;i++) await form.tick();
+  assert.equal(d.querySelector('textarea').value,'Новое объявление');
+  assert.equal(d.querySelector('#price').value,'1 475,00');
+  assert.equal(d.querySelectorAll('.facility:checked').length,2);
+  assert.equal(d.querySelector('.rule').checked,false);
+  assert.deepEqual(Array.from(form.remaining()),[]);
+  const manual = new w.AutopostRentalForm.Form({controls});
+  const editor = d.querySelector('textarea');
+  editor.value='Правка пользователя'; manual.protect(editor);
+  await manual.tick();
+  assert.equal(editor.value,'Правка пользователя');
+});
+
+test('Onliner keeps restored photos until replacement previews arrive, without sending the files twice', async t => {
+  const c=recipe('onliner').controls.find(c=>c.action==='files');
+  const {window:w,document:d}=await fixture('<input class="new-photos__input-file" type="file" name="file">',[]);
+  t.after(()=>w.close());
+  function preview(id) {
+    const figure=d.createElement('div');figure.className='new-photos__thumbnail-figure';
+    figure.innerHTML='<img src="https://content.onliner.by/apartments_photo/'+id+'.jpg"><a class="new-photos__thumbnail-remove">Удалить</a>';
+    figure.querySelector('a').onclick=()=>figure.remove();d.body.append(figure);return figure;
+  }
+  const old=preview('old');
+  let claims=0;
+  const form=new w.AutopostRentalForm.Form({controls:[c]},[{name:'new.png',dataUrl:'data:image/png;base64,YQ=='}],async()=>{claims++;return true;});
+  await form.tick();await form.tick();
+  assert.equal(old.isConnected,true);assert.equal(form.done.size,0);
+  const fresh=preview('new');
+  await form.tick();await form.tick();
+  assert.equal(old.isConnected,false);assert.equal(fresh.isConnected,true);
+  assert.equal(claims,1);assert.equal(form.done.has(c.field),true);
+});
+
+test('Kufar can deselect a default paid package without clicking a paid offer or submitting',async t=>{
+  const {window:w,document:d,form}=await fixture('<div role="button" data-cy="vas-express" class="abc_card--selected"></div><div role="button" data-cy="vas-no_vas">Без увеличения просмотров</div><button>Подать объявление</button>',[]);
+  t.after(()=>w.close());form.recipe.platform='kufar';
+  const clicks=[];d.addEventListener('click',e=>clicks.push(e.target.dataset.cy));
+  await form.tick();await form.tick();assert.deepEqual(clicks,['vas-no_vas']);
+});

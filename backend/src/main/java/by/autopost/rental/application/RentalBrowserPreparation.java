@@ -4,6 +4,7 @@ import static by.autopost.shared.Json.*;
 
 import by.autopost.rental.catalog.ReferenceSnapshot;
 import by.autopost.rental.ai.LiteralAddress;
+import by.autopost.address.application.StreetKind;
 import by.autopost.rental.model.SchemaFields;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -38,7 +39,7 @@ final class RentalBrowserPreparation {
             && (value == null
                 || value.isNull()
                 || value.isTextual() && value.asText().isBlank()
-                || value.isArray() && value.isEmpty())) continue;
+                || value.isArray() && value.isEmpty() && !source.path("replaceGroup").asBoolean())) continue;
         ObjectNode control = source.deepCopy();
         control.set("value", value == null ? array() : value.deepCopy());
         if (source.has("addressPart")) {
@@ -52,6 +53,20 @@ final class RentalBrowserPreparation {
               : LiteralAddress.cleanComponent(original, part).equals(value.asText()));
           if (sameAddress)
             control.put("matchValue", original);
+        }
+        if (text(source, "addressPart").equals("street") || text(source, "addressPart").equals("label")) {
+          var address = card.path("address");
+          var street = StreetKind.parse(text(address, "street"));
+          String code = street.code();
+          if (code.isBlank()) {
+            var previous = StreetKind.parse(text(address, "streetWithType"));
+            code = previous.name().equalsIgnoreCase(street.name()) && !previous.code().isBlank()
+                ? previous.code() : text(address, "streetType");
+          }
+          if (!street.name().isBlank()) {
+            control.put("streetName", street.name());
+            if (code.matches("[а-яё]{2}")) control.put("streetType", code);
+          }
         }
         var matchContext = array();
         for (var part : source.path("autocomplete").path("contextParts")) {

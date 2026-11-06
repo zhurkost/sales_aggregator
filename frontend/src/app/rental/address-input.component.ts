@@ -128,6 +128,7 @@ export class AddressInputComponent implements OnDestroy {
     if (this.disabled) return;
     this.resetPending();
     const a = {countryIso:"BY", settlement:"", street:"", house:"", ...this.selected, [key]:value, provider:"manual", confirmed:false, latitude:"", longitude:"", sourceId:undefined, confirmedAt:undefined, precision:undefined, resolution:undefined} as Address;
+    if (key === "street") { delete a.streetType; delete a.streetWithType; }
     a.label = [a.region, a.district, a.settlement, a.street, a.house, a.block].filter(Boolean).join(", ");
     this.selected = a; this.query = a.label; this.addressChange.emit(a);
   }

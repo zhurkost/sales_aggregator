@@ -17,7 +17,7 @@
     !e.disabled &&
     e.getAttribute("aria-disabled") !== "true" &&
     !/\b\S*[_-]disabled\b/.test(e.className || "");
-  const label = (e) => e.labels?.[0] || e.closest('label,[role="checkbox"],[role="radio"]') || e;
+  const label = (e) => e.closest('label') || e.labels?.[0] || e.closest('[role="checkbox"],[role="radio"]') || e;
   function query(selector, scope = document) {
     try {
       return [...scope.querySelectorAll(selector)].filter(
@@ -27,6 +27,13 @@
       return [];
     }
   }
+  function renderedChoice(c, e) {
+    if (visible(e) || visible(label(e))) return true;
+    // Domovita mounts inactive mobile sections and hides them with CSS visibility.
+    const wrapper = e.closest("label");
+    return c.mountedChoice && wrapper && !wrapper.closest("[hidden]") &&
+      wrapper.getBoundingClientRect().width > 0;
+  }
   function targets(c, scope = document) {
     let rows = query(c.selector, scope);
     if (c.index !== undefined) rows = rows[c.index] ? [rows[c.index]] : [];
@@ -34,6 +41,7 @@
       (e) =>
         (visible(e) ||
           (c.action === "files" && e.type === "file") ||
+          (c.action === "choices" && renderedChoice(c, e)) ||
           (["checkbox", "radio"].includes(e.type) && visible(label(e)))) &&
         enabled(e),
     );
@@ -58,6 +66,11 @@
       String(value),
     );
     events(e);
+  }
+  function editorText(container) {
+    const copy = container.cloneNode(true);
+    for (const br of copy.querySelectorAll("br")) br.replaceWith("\n");
+    return [...copy.childNodes].map(node => node.textContent).join("");
   }
   function selected(e) {
     return (
@@ -113,7 +126,13 @@
         return r.absent ? !exists : exists;
       });
     }
+    clickControl(element) {
+      // Native checkbox activation emits a trusted input event even for element.click().
+      this.activating = true;
+      try { element.click(); } finally { this.activating = false; }
+    }
     protect(target) {
+      if (this.activating) return;
       for (const c of this.recipe.controls)
         if (
           query(c.selector).some(
@@ -127,16 +146,39 @@
       if (this.done.has(c.field) || this.protected.has(c.field)) return;
       if (c.after && !this.done.has(c.after)) return;
       if (c.blockedSelector && query(c.blockedSelector).some(visible)) return;
+      const hasCounter = c.uploadedCountSelector || c.previewSelector;
       const uploadedCount = () => {
+        if (c.previewSelector) return query(c.previewSelector).length;
         const counters = query(c.uploadedCountSelector).filter(visible);
         return counters.length === 1
           ? Number(counters[0].textContent.match(/\d+/)?.[0] ?? NaN) : NaN;
       };
-      if (c.action === "files" && c.uploadedCountSelector && this.photoSent) {
+      if (c.action === "files" && c.previewSelector && this.oldPreviews && this.photoExpected) {
+        const current = query(c.previewSelector);
+        const fresh = current.filter(photo => !this.oldPreviews.has(photo.querySelector("img").src));
+        if (fresh.length !== this.photoExpected) return;
+        const old = current.find(photo => this.oldPreviews.has(photo.querySelector("img").src));
+        if (old) {
+          const remove = old.querySelector(".new-photos__thumbnail-remove");
+          if (remove && !this.removedPreviews.has(old)) {
+            this.removedPreviews.add(old);
+            this.clickControl(remove);
+            this.progress++;
+          }
+          return;
+        }
+      }
+      if (c.action === "files" && hasCounter && this.photoSent) {
         if (this.photoExpected && uploadedCount() === this.photoExpected)
           this.done.add(c.field);
         return;
       }
+      if (c.expandSection) {
+        const section = document.getElementById(c.expandSection);
+        const expand = section && query('button', section).find(b => visible(b) && norm(b.textContent) === 'все параметры');
+        if (expand) { this.clickControl(expand); this.progress++; return; }
+      }
+      if (c.pickerId) return this.fillRealtPicker(c);
       const elements = targets(c);
       if (!elements.length) return;
       const value = c.value,
@@ -144,7 +186,11 @@
       if (c.action === "files") {
         if (!this.photos.length || this.photoSent) return;
         // Existing uploads belong to the user; do not append duplicates or claim success.
-        if (c.uploadedCountSelector && uploadedCount() > 0) {
+        if (c.field === "onliner.images" && c.previewSelector) {
+          // Replace restored thumbnails only once all the incoming uploads appeared.
+          this.oldPreviews = new Set(query(c.previewSelector).map(photo => photo.querySelector("img").src));
+          this.removedPreviews = new Set();
+        } else if (hasCounter && uploadedCount() > 0) {
           this.protected.add(c.field);
           return;
         }
@@ -166,7 +212,7 @@
         this.photoExpected = this.photos.length;
         events(elements[0]);
         // Some uploaders clear or replace the input as soon as they accept the files.
-        if (c.uploadedCountSelector ? uploadedCount() === this.photoExpected
+        if (hasCounter ? !this.oldPreviews?.size && uploadedCount() === this.photoExpected
             : elements[0].files.length === this.photos.length) {
           this.done.add(c.field);
         }
@@ -176,7 +222,7 @@
         value === null ||
         value === undefined ||
         value === "" ||
-        (Array.isArray(value) && !value.length)
+        (Array.isArray(value) && !value.length && !c.replaceGroup)
       )
         return;
       if (
@@ -185,10 +231,12 @@
         )
       ) {
         if (elements.length !== 1) return;
-        const e = elements[0];
+        const target = elements[0];
+        const e = c.action === "richtext" && target.tagName === "IFRAME" ? target.contentDocument?.body : target;
+        if (!e || (target !== e && !e.isContentEditable)) return;
         if (c.action === "check") {
           const desired = value === true || value === "true";
-          if (e.checked !== desired) e.click();
+          if (e.checked !== desired) this.clickControl(e);
           if (e.checked === desired) this.done.add(c.field);
           return;
         }
@@ -204,7 +252,26 @@
           }
           return;
         }
-        const current = c.action === "richtext" ? e.textContent : e.value;
+        if (c.action === "richtext") {
+          const expected = editorText(new DOMParser().parseFromString(String(value), "text/html").body);
+          const current = norm(editorText(e));
+          if (current && current !== norm(expected)) {
+            this.protected.add(c.field);
+            return;
+          }
+          if (!current) {
+            const p = e.ownerDocument.createElement("p");
+            expected.split("\n").forEach((line, i) => {
+              if (i) p.append(e.ownerDocument.createElement("br"));
+              p.append(line);
+            });
+            e.replaceChildren(p);
+            events(e);
+          }
+          if (norm(editorText(e)) === norm(expected)) this.done.add(c.field);
+          return;
+        }
+        const current = e.value;
         if (c.action === "autocomplete") {
           root.AutopostRentalAutocomplete.fill(this, c, e, {
             query,
@@ -234,22 +301,29 @@
           if (national(e.value) === national(value)) this.done.add(c.field);
           return;
         }
-        if (current && norm(current) !== norm(value)) {
+        const onlinerPrice = c.field === "onliner.price_amount";
+        const equivalent = (a, b) => {
+          if (!onlinerPrice) return norm(a) === norm(b);
+          const number = v => Number(String(v).replace(/\s/g, "").replace(",", "."));
+          return String(a).trim() !== "" && number(a) === number(b);
+        };
+        const replaceRestored = c.field === "onliner.description" || onlinerPrice;
+        if (current && !equivalent(current, value) && !replaceRestored) {
           this.protected.add(c.field);
           return;
         }
-        if (c.action === "richtext") {
-          e.textContent = String(value).replace(/<[^>]*>/g, "");
-          events(e);
-          if (
-            norm(e.textContent) === norm(String(value).replace(/<[^>]*>/g, ""))
-          )
-            this.done.add(c.field);
-        } else {
-          setText(e, value);
-          if (norm(e.value) === norm(value)) this.done.add(c.field);
-        }
+        setText(e, value);
+        if (equivalent(e.value, value)) this.done.add(c.field);
         return;
+      }
+      if (c.replaceGroup) {
+        const wanted = new Set(values.map(String));
+        const stale = elements.find(e => e.type === "checkbox" && e.checked && !wanted.has(e.value));
+        if (stale) {
+          this.clickControl(stale);
+          if (!stale.checked) this.progress++;
+          return;
+        }
       }
       let all = true;
       for (const v of values) {
@@ -274,7 +348,7 @@
           const matchingInputs = inputs.filter(
               (e) =>
                 (String(e.value) === String(v) || norm(label(e).textContent) === want) &&
-                enabled(e) && (visible(e) || visible(label(e))),
+                enabled(e) && renderedChoice(c, e),
             );
           candidates.push(...matchingInputs);
           if (!matchingInputs.length)
@@ -286,7 +360,7 @@
             );
         }
         candidates = [...new Set(candidates)].filter(
-          (e) => enabled(e) && (visible(e) || visible(label(e))),
+          (e) => enabled(e) && renderedChoice(c, e),
         );
         // A label nested in a clickable chip is one choice, not two matches.
         candidates = candidates.filter((e) => !candidates.some(
@@ -332,7 +406,7 @@
           all = false;
           continue;
         }
-        e.click();
+        this.clickControl(e);
         this.tried.add(key);
         this.progress++;
         // Let the site's render finish before the next choice. Synchronous clicks
@@ -340,6 +414,54 @@
         return;
       }
       if (all) this.done.add(c.field);
+    }
+    fillRealtPicker(c) {
+      if (this.picker && this.picker.field !== c.field) return;
+      const section = document.querySelector(c.selector);
+      if (!section) return;
+      const wanted = c.value.map(String);
+      const options = () => wanted.map(id => document.getElementById(id))
+        .filter(e => e?.matches('input[type="checkbox"][name="option"]') && visible(label(e)));
+      if (!this.picker) {
+        if (this.tried.has(c.field + ":picker")) return;
+        const desktop = document.getElementById(c.pickerId);
+        const mobile = query('[role="button"]', section).find(e =>
+          visible(e) && norm(e.firstElementChild?.textContent) === norm(c.label));
+        const opener = desktop && visible(desktop) ? desktop : mobile;
+        if (!opener) return;
+        this.tried.add(c.field + ":picker");
+        this.picker = {field:c.field, attempts:0};
+        if (opener === desktop) opener.focus();
+        this.clickControl(opener);
+        this.progress++;
+        return;
+      }
+      const items = options();
+      if (items.length === wanted.length && items.length) {
+        const missing = items.find(e => !e.checked);
+        if (!missing) {
+          // Mobile edits are staged in a sheet. Only apply this option list.
+          let scope = items[0].parentElement;
+          let apply;
+          while (scope && scope !== document.body && !apply) {
+            apply = query('button', scope).find(e => visible(e) && norm(e.textContent) === "применить");
+            scope = scope.parentElement;
+          }
+          if (apply) this.clickControl(apply);
+          else items[0].dispatchEvent(new KeyboardEvent("keydown", {key:"Escape", bubbles:true}));
+          this.done.add(c.field);
+          this.picker = null;
+          return;
+        }
+        if (!this.tried.has(c.field + ":" + missing.id)) {
+          this.tried.add(c.field + ":" + missing.id);
+          this.clickControl(missing);
+          this.progress++;
+          return;
+        }
+      }
+      if (++this.picker.attempts < 6) this.progress++;
+      else this.picker = null;
     }
     clickStep(phase) {
       for (const s of this.recipe[phase] || []) {
@@ -371,6 +493,17 @@
       }
       return false;
     }
+    declinePaidDefault() {
+      if (this.recipe.platform !== "kufar" || this.promotionHandled) return;
+      const chosen = query('[data-cy^="vas-"][class*="card--selected"]').filter(visible);
+      if (chosen.length !== 1 || chosen[0].dataset.cy === "vas-no_vas") return;
+      const free = query('[data-cy="vas-no_vas"]').filter(e =>
+        visible(e) && norm(e.textContent) === "без увеличения просмотров");
+      if (free.length === 1) {
+        this.promotionHandled = true;
+        this.clickControl(free[0]);
+      }
+    }
     async tick() {
       const before = this.done.size;
       const beforeProgress = this.progress;
@@ -379,6 +512,7 @@
         if (this.clickStep("setup")) return true;
         return false;
       }
+      this.declinePaidDefault();
       if (this.waiting) {
         const c = this.recipe.controls.find(
           (c) => c.field === this.waiting.field,
@@ -396,7 +530,7 @@
     }
     awaitingPhotos() {
       return !!this.photoExpected && this.recipe.controls.some(c =>
-        c.action === "files" && c.uploadedCountSelector && !this.done.has(c.field));
+        c.action === "files" && (c.uploadedCountSelector || c.previewSelector) && !this.done.has(c.field));
     }
     remaining() {
       return this.recipe.controls

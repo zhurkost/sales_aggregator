@@ -87,3 +87,22 @@ test('page waits for photo verification without advancing and resumes after unlo
   for(let i=0;i<5;i++){tick();await flush();}
   assert.equal(claims,1);assert.equal(next,0);
 });
+
+test('Domovita uses the stored two-letter type on a clean street name',async t=>{
+  const f=await setup(t,{town:'Минск',street:'Мира',house_number:'18'});
+  delete f.controls[1].matchValue;
+  f.controls[1].streetType='пр';
+  f.options(0,['г. Минск']);f.options(1,['улица Мира','пр-кт Мира']);f.options(2,['18']);
+  for(let i=0;i<16;i++)await f.form.tick();
+  assert.deepEqual(f.clicks,['г. Минск','пр-кт Мира','18']);
+});
+
+test('Domovita accepts a sole untyped street with the exact name, but not an explicitly wrong type',async t=>{
+  for(const [option,accept] of [['Мира',true],['ул. Мира',false]]) {
+    const f=await setup(t,{town:'Минск',street:'Мира',house_number:'18'});
+    f.controls[1].streetType='пр';delete f.controls[1].matchValue;
+    f.options(0,['г. Минск']);f.options(1,[option]);
+    for(let i=0;i<12;i++)await f.form.tick();
+    assert.equal(f.clicks.includes(option),accept);
+  }
+});

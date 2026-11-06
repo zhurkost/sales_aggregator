@@ -19,12 +19,20 @@ public class RentalAiAddressResolver {
     this.addresses = addresses;
   }
 
+  private static String lookupQuery(JsonNode address) {
+    if (text(address, "settlement").isBlank() || text(address, "street").isBlank()) return text(address, "label");
+    return java.util.stream.Stream.of(text(address, "region"), text(address, "district"),
+        text(address, "settlement"), text(address, "street"), text(address, "house"),
+        text(address, "block").isBlank() ? "" : "корпус " + text(address, "block"))
+        .filter(s -> !s.isBlank()).collect(java.util.stream.Collectors.joining(" "));
+  }
+
   public void resolve(String workspace, ObjectNode result) {
     if (!(result.get("address") instanceof ObjectNode literal)) return;
     String status = "not_found";
     try {
       JsonNode suggestions =
-          addresses.suggest(workspace, text(literal, "label")).path("suggestions");
+          addresses.suggest(workspace, lookupQuery(literal)).path("suggestions");
       var matches =
           list(suggestions).stream()
               .filter(s -> LiteralAddress.matches(literal, s.path("address")))

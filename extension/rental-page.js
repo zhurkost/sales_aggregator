@@ -48,6 +48,9 @@
     },
     true,
   );
+  document.addEventListener("click", e => {
+    if (e.isTrusted && e.target.closest?.('[data-cy^="vas-"]')) form.promotionHandled = true;
+  }, true);
   async function report(state, message) {
     status.textContent = message;
     const remaining = form.remaining();
@@ -113,8 +116,9 @@
         resumeWhenVisible = form.remaining().length > 0;
         await report(
           "needs_action",
-          form.done.size
-            ? "Заполненные данные перенесены. Завершите шаг площадки."
+          form.remaining().length && form.done.size
+            ? "Часть полей требует проверки в форме площадки."
+            : form.done.size ? "Заполненные данные перенесены. Завершите шаг площадки."
             : "Форма ещё недоступна. Откройте её и нажмите «Повторить заполнение».",
         );
       }
