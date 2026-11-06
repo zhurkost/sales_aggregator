@@ -65,11 +65,10 @@ public final class LiteralAddress {
   // In "В Витебске сдаётся квартира, ул. Ленина, дом 12А" the address is not contiguous.
   // Use only literal components from the same sentence. Never assemble separate addresses.
   private static final Pattern OPENING_LOCATION = Pattern.compile(
-      "(?iu)(?:^|[.!?]\\s+)(?:(?:сдам|сдаю|сда[её]тся)\\s+[^.!?;:\\n]{0,70}?)?\\bв\\s+([\\p{L}-]+)(?:\\s+(?:сда[её]тся|сда[её]м|сдаю)\\s+[^.!?;\\n]{0,130}?,|\\s*:)\\s*("
+      "(?iu)(?:^|[.!?]\\s+)(?:(?:сдам|сдаю|сда[её]тся)\\s+[^.!?;:\\n]{0,70}?)?\\bв\\s+([\\p{L}-]+)(?:\\s+(?:сда[её]тся|сда[её]м|сдаю)\\s+[^.!?;\\n]{0,130}?,|(?:\\s+по\\s+адресу)?\\s*:)\\s*("
           + STREET + "\\s+[\\p{L}][\\p{L} .-]{0,65}?),\\s*((?:дом|д\\.)\\s*\\d+[\\p{L}\\d/-]*)(?:,\\s*((?:корпус|корп\\.)\\s*\\d+[\\p{L}\\d/-]*))?(?=[\\s.,;!?]|$)");
 
   static ObjectNode withOpeningLocation(String source, JsonNode proposal, ObjectNode original) {
-    if (!proposal.isObject()) return original;
     var match = OPENING_LOCATION.matcher(source);
     if (!match.find()) return original;
     String city = match.group(1), street = match.group(2), house = match.group(3), block = match.group(4);

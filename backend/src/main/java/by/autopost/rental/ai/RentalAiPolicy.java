@@ -164,7 +164,8 @@ Enum — только точный код из choices; multi_enum — масс�
         && grounded(source, quote)
         && normalized(quote).contains(normalized(label)))
       candidateAddress = LiteralAddress.parse(label, address);
-    candidateAddress = LiteralAddress.withOpeningLocation(source, address, candidateAddress);
+    if (address.isObject() || !accepted.isEmpty())
+      candidateAddress = LiteralAddress.withOpeningLocation(source, address, candidateAddress);
     ArrayNode questions = array();
     for (var q : list(parsed.path("questions"))) {
       if (q.isTextual() && !q.asText().isBlank() && questions.size() < 3)

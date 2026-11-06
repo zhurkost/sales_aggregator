@@ -236,6 +236,11 @@ class RentalReportedErrorsTest {
   }
 
   @Test void genitiveStreetNamesRetainTheSurname() {
+    String intro = "Сдаю на длительный срок трёхкомнатную квартиру в Гродно по адресу: ул. Горького, дом 34.";
+    var literal = analyze(intro, suggestion("rental.room_configuration","3","трёхкомнатную квартиру")).path("address");
+    assertEquals("Гродно", text(literal, "settlement"));
+    assertEquals("Горького", LiteralAddress.cleanComponent(text(literal, "street"), "street"));
+    assertEquals("34", text(literal, "house"));
     for (String raw : List.of("ул. Горького", "Горького")) {
       var address = LiteralAddress.parse("Гродно, ул. Горького, дом 34",
           object("street", raw, "streetNominative", "Горькая"));
