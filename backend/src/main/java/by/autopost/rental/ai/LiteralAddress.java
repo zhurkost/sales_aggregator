@@ -65,7 +65,7 @@ public final class LiteralAddress {
   // In "В Витебске сдаётся квартира, ул. Ленина, дом 12А" the address is not contiguous.
   // Use only literal components from the same sentence. Never assemble separate addresses.
   private static final Pattern OPENING_LOCATION = Pattern.compile(
-      "(?iu)(?:^|[.!?]\\s+)в\\s+([\\p{L}-]+)\\s+(?:сда[её]тся|сда[её]м|сдаю)\\s+[^.!?;\\n]{0,130}?,\\s*("
+      "(?iu)(?:^|[.!?]\\s+)(?:(?:сдам|сдаю|сда[её]тся)\\s+[^.!?;:\\n]{0,70}?)?\\bв\\s+([\\p{L}-]+)(?:\\s+(?:сда[её]тся|сда[её]м|сдаю)\\s+[^.!?;\\n]{0,130}?,|\\s*:)\\s*("
           + STREET + "\\s+[\\p{L}][\\p{L} .-]{0,65}?),\\s*((?:дом|д\\.)\\s*\\d+[\\p{L}\\d/-]*)(?:,\\s*((?:корпус|корп\\.)\\s*\\d+[\\p{L}\\d/-]*))?(?=[\\s.,;!?]|$)");
 
   static ObjectNode withOpeningLocation(String source, JsonNode proposal, ObjectNode original) {
@@ -131,8 +131,14 @@ public final class LiteralAddress {
       raw = raw.replaceFirst(part.equals("settlement") ? "(?iu)^(?:в|во)\\s+" : "(?iu)^(?:на|по)\\s+", "");
       var street = StreetKind.parse(raw);
       String name = cleanComponent(raw, part);
-      if (!inflectionOf(name, nom)) continue;
       String parsed = text(result, part);
+      String typedStreet = street.kind().isEmpty() ? parsed : raw;
+      // A name following the street type is already in its citation form ("ул. Горького").
+      // Preserve it when it ends in a genitive surname, even if the model proposes an adjective.
+      if (part.equals("street") && !name.equalsIgnoreCase(nom)
+          && name.matches("(?iu).*(?:ого|его)$") && !StreetKind.parse(typedStreet).kind().isEmpty()
+          && typedStreet.toLowerCase(Locale.ROOT).endsWith(name.toLowerCase(Locale.ROOT))) continue;
+      if (!inflectionOf(name, nom)) continue;
       if (!parsed.isBlank() && !containsWord(parsed, raw) && !containsWord(raw, parsed)) continue;
       String typed = raw.replace(name, nom);
       if (part.equals("settlement")) typed = typed.replaceFirst("(?iu)^город(?:е|а)\\s+", "город ");

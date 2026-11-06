@@ -49,6 +49,27 @@ final class RentalAiFacts {
   private static final Pattern WRITTEN_FLOORS = Pattern.compile(
       "(?iu)(?<![\\p{L}\\d])(\\d+)(?:-?(?:м|ом|ем))?\\s+этаже\\s+(" + String.join("|", HEIGHTS.keySet()).replace("е", "[её]")
           + ")этажного\\s+дома\\b");
+  private static final Map<String, String> FLOOR_ORDINALS = Map.of(
+      "первом", "1", "втором", "2", "третьем", "3", "четвертом", "4", "пятом", "5",
+      "шестом", "6", "седьмом", "7", "восьмом", "8", "девятом", "9", "десятом", "10");
+  private static final Pattern FLOOR_IN_WORDS = Pattern.compile("(?iu)\\bна\\s+("
+      + String.join("|", FLOOR_ORDINALS.keySet()).replace("четвертом", "четв[её]ртом") + ")\\s+этаже\\b");
+  static boolean spelledFloor(String quote, String value) {
+    var floor = FLOOR_IN_WORDS.matcher(quote);
+    while (floor.find())
+      if (apartmentFloor(quote, floor) && floorOrdinal(floor.group(1)).equals(value)) return true;
+    return false;
+  }
+  private static boolean apartmentFloor(String source, java.util.regex.Matcher floor) {
+    String lead = source.substring(0, floor.start()).replaceFirst("(?s)^.*(?:[.!?;]\\s+|\\n)", "").strip();
+    String tail = source.substring(floor.end()).stripLeading();
+    return (lead.isEmpty() || lead.matches("(?iu).*(?:квартир[ауы]|студия|студию)(?:\\s+[\\d,.]+\\s*м[²2])?\\s*,?"))
+        && (tail.isEmpty() || ".,;:!?".indexOf(tail.charAt(0)) >= 0 || tail.matches("(?isu)^\\p{L}*этажного\\s+дома\\b.*"));
+  }
+  private static String floorOrdinal(String word) {
+    return FLOOR_ORDINALS.get(word.toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
+  }
+
   static boolean spelledHeight(String quote, String value) {
     var match = WRITTEN_FLOORS.matcher(quote.toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
     while (match.find()) if (value.equals(HEIGHTS.get(match.group(2)))) return true;
@@ -61,7 +82,21 @@ final class RentalAiFacts {
     return true;
   }
 
+  private static final Map<String, String> ROOM_NUMERALS = Map.of(
+      "одна", "1", "одну", "1", "две", "2", "три", "3", "четыре", "4",
+      "пять", "5", "шесть", "6", "семь", "7");
+  private static final String ROOM_COUNT = "(\\d+|" + String.join("|", ROOM_NUMERALS.keySet()) + ")";
+  private static final Pattern SEPARATE_COUNT = Pattern.compile("(?iu)(?<![\\p{L}\\d])" + ROOM_COUNT
+      + "\\s+(?:раздельн|изолированн)\\p{L}*(?=\\s+комнат|\\s*(?:$|[,.;:!?])|\\s+и\\s+\\S+\\s+проходн)");
+  private static final Pattern WALK_THROUGH_COUNT = Pattern.compile("(?iu)(?<![\\p{L}\\d])" + ROOM_COUNT
+      + "\\s+проходн\\p{L}*(?=\\s+комнат|\\s*(?:$|[,.;:!?]))");
+  private static String roomNumber(String token) {
+    return ROOM_NUMERALS.getOrDefault(token.toLowerCase(java.util.Locale.ROOT), token);
+  }
+
   static boolean spelledRoomCount(String value, String quote) {
+    var separate = SEPARATE_COUNT.matcher(quote);
+    while (separate.find()) if (roomNumber(separate.group(1)).equals(value)) return true;
     String prefix = ROOM_PREFIXES.get(value);
     if (value.equals("1") && Pattern.compile("(?iu)(?<!\\p{L})одн(?:а|у)\\s+комнат[ау](?!\\p{L})").matcher(quote).find()) return true;
     return prefix != null && Pattern.compile("(?iu)(?<![\\p{L}])(?:" + prefix + ")комнатн\\p{L}*")
@@ -79,23 +114,31 @@ final class RentalAiFacts {
           conflicts.add(ROOMS);
       }
       var rooms = Pattern.compile(
-          "(?iu)(?<![\\p{L}\\d])(?:всего\\s+)?(\\d+)\\s+(?:(раздельн\\p{L}*|изолированн\\p{L}*)\\s+)?комнат[аы]?(?:\\s+(раздельн\\p{L}*|изолированн\\p{L}*))?")
+          "(?iu)(?<![\\p{L}\\d])(?:всего\\s+)?" + ROOM_COUNT + "\\s+(?:(раздельн\\p{L}*|изолированн\\p{L}*)\\s+)?комнат[аы]?(?:\\s+(раздельн\\p{L}*|изолированн\\p{L}*))?")
           .matcher(source);
       while (rooms.find()) {
         String id = rooms.group(2) != null || rooms.group(3) != null ? SEPARATE : ROOMS;
-        var previous = explicit.put(id, object("field", id, "value", rooms.group(1), "quote", rooms.group()));
-        if (previous != null && !text(previous, "value").equals(rooms.group(1))) conflicts.add(id);
+        var previous = explicit.put(id, object("field", id, "value", roomNumber(rooms.group(1)), "quote", rooms.group()));
+        if (previous != null && !text(previous, "value").equals(roomNumber(rooms.group(1)))) conflicts.add(id);
       }
-      var separate = Pattern.compile("(?iu)(?<![\\p{L}\\d])(\\d+)\\s+(?:раздельн|изолированн)\\p{L}*")
-          .matcher(source);
+      var separate = SEPARATE_COUNT.matcher(source);
       while (separate.find()) {
         var previous = explicit.put(SEPARATE,
-            object("field", SEPARATE, "value", separate.group(1), "quote", separate.group()));
-        if (previous != null && !text(previous, "value").equals(separate.group(1))) conflicts.add(SEPARATE);
+            object("field", SEPARATE, "value", roomNumber(separate.group(1)), "quote", separate.group()));
+        if (previous != null && !text(previous, "value").equals(roomNumber(separate.group(1)))) conflicts.add(SEPARATE);
+      }
+      var walkThrough = WALK_THROUGH_COUNT.matcher(source);
+      if (walkThrough.find() && !roomNumber(walkThrough.group(1)).matches("0+")
+          && !accepted.containsKey("rental.walk_through_room") && !conflicts.contains("rental.walk_through_room")
+          && fields.containsKey("rental.walk_through_room")) {
+        accepted.put("rental.walk_through_room",
+            object("field", "rental.walk_through_room", "value", true, "quote", walkThrough.group()));
       }
       explicit.forEach((id, entry) -> put(editor, fields, accepted, conflicts, id,
           text(entry, "value"), text(entry, "quote")));
-      if (explicit.size() == 1 && conflicts.isEmpty()) {
+      boolean hasWalkThrough = accepted.containsKey("rental.walk_through_room")
+          && accepted.get("rental.walk_through_room").path("value").asBoolean();
+      if (!hasWalkThrough && explicit.size() == 1 && conflicts.isEmpty()) {
         var entry = explicit.values().iterator().next();
         String other = explicit.containsKey(ROOMS) ? SEPARATE : ROOMS;
         if (!accepted.containsKey(other))
@@ -104,7 +147,7 @@ final class RentalAiFacts {
       for (String id : Set.of(ROOMS, SEPARATE)) if (conflicts.contains(id)) accepted.remove(id);
       for (String id : Set.of(ROOMS, SEPARATE)) {
         String other = id.equals(ROOMS) ? SEPARATE : ROOMS;
-        if (!accepted.containsKey(id) && accepted.containsKey(other)
+        if (!hasWalkThrough && !accepted.containsKey(id) && accepted.containsKey(other)
             && text(accepted.get(other), "value").matches("[1-9]\\d*"))
           put(editor, fields, accepted, conflicts, id, text(accepted.get(other), "value"),
               text(accepted.get(other), "quote"));
@@ -112,15 +155,30 @@ final class RentalAiFacts {
       if (accepted.containsKey(ROOMS) && accepted.containsKey(SEPARATE)
           && text(accepted.get(ROOMS), "value").matches("\\d+")) {
         var total = new java.math.BigDecimal(text(accepted.get(ROOMS), "value"));
-        if (new java.math.BigDecimal(text(accepted.get(SEPARATE), "value")).compareTo(total) > 0) {
+        int comparison = new java.math.BigDecimal(text(accepted.get(SEPARATE), "value")).compareTo(total);
+        if (comparison > 0 || (comparison == 0 && hasWalkThrough)) {
           accepted.remove(SEPARATE);
           conflicts.add(SEPARATE);
         }
       }
     }
     if (!accepted.isEmpty()) {
+      var noBalcony = Pattern.compile("(?iu)(?:^|[.!?;]\\s*)(балкона\\s+нет|без\\s+балкона)\\s*(?=[.!?;]|$)").matcher(source);
+      if (noBalcony.find()) {
+        String other = source.substring(0, noBalcony.start()) + source.substring(noBalcony.end());
+        if (!Pattern.compile("(?iu)\\b(?:балкон|лоджи)\\p{L}*").matcher(other).find())
+          put(editor, fields, accepted, conflicts, "rental.balcony", "none", noBalcony.group(1));
+      }
       var floors = Pattern.compile("(?iu)(?:этаж\\s*(\\d+)\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*(?:-?й\\s*)?этаж\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*/\\s*(\\d+)\\s*этаж)").matcher(source);
       Map<String, ObjectNode> explicit = new LinkedHashMap<>();
+      var floorInWords = FLOOR_IN_WORDS.matcher(source);
+      while (floorInWords.find()) {
+        // An amenity on another floor is not the floor of the apartment.
+        if (!apartmentFloor(source, floorInWords)) continue;
+        String value = floorOrdinal(floorInWords.group(1));
+        var previous = explicit.put("rental.floor", object("value", value, "quote", floorInWords.group()));
+        if (previous != null && !text(previous, "value").equals(value)) conflicts.add("rental.floor");
+      }
       var writtenFloors = WRITTEN_FLOORS.matcher(source);
       while (writtenFloors.find()) {
         String height = HEIGHTS.get(writtenFloors.group(2).toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));

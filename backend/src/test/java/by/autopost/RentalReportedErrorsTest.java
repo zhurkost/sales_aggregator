@@ -200,6 +200,49 @@ class RentalReportedErrorsTest {
     assertEquals("", value(result, "rental.separate_rooms"));
   }
 
+  @Test void writtenRoomCountsKeepIsolatedAndWalkThroughRoomsDistinct() {
+    String source = "Трёхкомнатная квартира. Из трёх комнат две изолированные, одна проходная.";
+    var result = analyze(source, suggestion("rental.room_configuration", "3", source),
+        suggestion("rental.separate_rooms", "3", source));
+    assertEquals("2", value(result, "rental.separate_rooms"));
+    assertEquals("3", value(result, "rental.room_configuration"));
+    assertEquals("true", value(result, "rental.walk_through_room"));
+    source = "Три комнаты, из них одна раздельная и две проходные.";
+    result = analyze(source, suggestion("rental.room_configuration", "3", source));
+    assertEquals("1", value(result, "rental.separate_rooms"));
+    assertEquals("true", value(result, "rental.walk_through_room"));
+    source = "Трёхкомнатная квартира. Одна проходная.";
+    result = analyze(source, suggestion("rental.room_configuration", "3", source));
+    assertEquals("", value(result, "rental.separate_rooms"));
+    source = "Трёхкомнатная квартира. Две раздельные кровати.";
+    result = analyze(source, suggestion("rental.room_configuration", "3", source));
+    assertNotEquals("2", value(result, "rental.separate_rooms"));
+  }
+
+  @Test void studioKeepsCityBeforeColonWrittenFloorAndExplicitlyAbsentBalcony() {
+    String source = "Сдам квартиру в Лиде: ул. Победы, дом 5. Это студия 29,5 м² на первом этаже, всего в доме 4 этажа. Балкона нет.";
+    var analyzed = RentalAiPolicy.sanitize(catalog.analysisSchema(), source,
+        object("suggestions", List.of(suggestion("rental.room_configuration","studio","студия")),
+            "address",object("label","ул. Победы, дом 5","quote","ул. Победы, дом 5",
+                "street","ул. Победы","settlementNominative","Лида")));
+    assertEquals("Лида", text(analyzed.path("address"), "settlement"));
+    assertEquals("1", value(analyzed,"rental.floor"));
+    assertEquals("none", value(analyzed,"rental.balcony"));
+    source = "Это студия. На первом этаже магазин. Балкона нет. Есть лоджия.";
+    var other = analyze(source, suggestion("rental.room_configuration","studio","студия"),
+        suggestion("rental.floor","1","На первом этаже магазин"));
+    assertEquals("", value(other,"rental.floor"));
+    assertEquals("", value(other,"rental.balcony"));
+  }
+
+  @Test void genitiveStreetNamesRetainTheSurname() {
+    for (String raw : List.of("ул. Горького", "Горького")) {
+      var address = LiteralAddress.parse("Гродно, ул. Горького, дом 34",
+          object("street", raw, "streetNominative", "Горькая"));
+      assertEquals("Горького", LiteralAddress.cleanComponent(text(address, "street"), "street"));
+    }
+  }
+
   @Test void floorAndBuildingHeightRemainDistinctAllTheWayToBrowser() {
     for (String source : List.of("Сдам квартиру, этаж 3 из 9", "Сдам квартиру, 3 этаж из 9", "Сдам квартиру, 3/9 этаж")) {
       var result = analyze(source, suggestion("rental.floor", "3", source),

@@ -78,7 +78,8 @@ public final class RentalAiPolicy {
 координаты, удобства, отсутствующие контакты. Адрес — дословная часть, без геокодирования. Включи населённый пункт из начала фразы.
 Для settlementNominative и streetNominative приведи названия к официальной форме:
 «в Минске на проспекте Независимости» → Минск и Независимости; «на Садовой улице» → Садовая.
-Сохраняй родительный падеж внутри названия: улица Ленина, проспект Независимости.
+Сохраняй родительный падеж внутри названия: улица Ленина, проспект Независимости. Из «ул. Горького» верни Горького, из «ул. Ольшевского» — Ольшевского.
+В «Сдам квартиру в Лиде: ул. Победы, дом 5» город входит в адрес: settlement=Лиде, settlementNominative=Лида.
 В settlement и street не включай предлоги «в», «на», «по». Например, из «в Минске» возьми «Минске».
 Остальные части адреса — только дословные фрагменты label, включая тип улицы/населённого пункта,
 если указан; house и block — только номер с буквой. Отсутствующие части оставь пустыми.
@@ -89,6 +90,7 @@ public final class RentalAiPolicy {
 Числа — обычная десятичная строка без единиц. «3/9 этаж» = этаж 3 и этажность 9.
 «Этаж 3 из 9» также означает rental.floor=3, building.total_floors=9.
 rental.room_configuration — ВСЕ комнаты, rental.separate_rooms — раздельные комнаты внутри этого числа.
+«Трёхкомнатная, две изолированные, одна проходная» = всего 3, раздельных 2.
 «Всего 3 комнаты, из них 2 комнаты раздельные» = room_configuration="3", separate_rooms="2".
 Если указано только одно точное количество комнат, предложи его для обоих полей.
 Не приравнивай studio и 5+ к точному количеству. Раздельных комнат не может быть больше всех.
@@ -227,6 +229,8 @@ Enum — только точный код из choices; multi_enum — масс�
         if (text(field, "id").equals("rental.separate_rooms")
             && RentalAiFacts.spelledRoomCount(number.stripTrailingZeros().toPlainString(), quote))
           found = true;
+        if (text(field, "id").equals("rental.floor")
+            && RentalAiFacts.spelledFloor(quote, number.stripTrailingZeros().toPlainString())) found = true;
         if (text(field, "id").equals("building.total_floors")
             && RentalAiFacts.spelledHeight(quote, number.stripTrailingZeros().toPlainString())) found = true;
         return found && number.signum() >= 0
