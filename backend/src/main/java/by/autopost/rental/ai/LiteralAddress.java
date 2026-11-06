@@ -61,6 +61,7 @@ public final class LiteralAddress {
         && !text(result, "street").isBlank()
         && segments[0].matches("[\\p{L}][\\p{L} .-]{1,79}")
         && !segments[0].matches("(?iu).*(?:область|обл\\.?|район|р-н|беларусь)$")
+        && (text(proposal, "settlement").isBlank() || !containsWord(label, text(proposal, "settlement")))
         && !segments[0].equals(text(result, "street"))) result.put("settlement", segments[0]);
     // AI may split unusual syntax, but every part must be copied from this address snippet.
     for (String part : PARTS) {
@@ -83,28 +84,46 @@ public final class LiteralAddress {
     // Only accept inflections of text actually evidenced for this component.
     for (String part : List.of("settlement", "street")) {
       String raw = text(proposal, part).strip(), nom = text(proposal, part + "Nominative").strip();
+      if (raw.isBlank()) raw = text(result, part);
       if (raw.isBlank() || nom.isBlank() || !containsWord(label, raw)) continue;
       raw = raw.replaceFirst(part.equals("settlement") ? "(?iu)^(?:в|во)\\s+" : "(?iu)^(?:на|по)\\s+", "");
       var street = StreetKind.parse(raw);
-      String name = cleanComponent(raw, part);
+      String typedRaw = part.equals("settlement") ? normalizeSettlementType(raw) : raw;
+      String name = cleanComponent(typedRaw, part);
       String parsed = text(result, part);
       String typedStreet = street.kind().isEmpty() ? parsed : raw;
-      // A name following the street type is already in its citation form ("ул. Горького").
-      // Preserve it when it ends in a genitive surname, even if the model proposes an adjective.
+      // A noun or surname after the type keeps its own case: улица Ленина, проспект Независимости.
       if (part.equals("street") && !name.equalsIgnoreCase(nom)
-          && name.matches("(?iu).*(?:ого|его)$") && !StreetKind.parse(typedStreet).kind().isEmpty()
+          && name.matches("(?iu).*(?:ого|его|[аыи])$")
+          && !lastWord(name).equalsIgnoreCase(lastWord(nom)) && !StreetKind.parse(typedStreet).kind().isEmpty()
           && typedStreet.toLowerCase(Locale.ROOT).endsWith(name.toLowerCase(Locale.ROOT))) continue;
       if (!inflectionOf(name, nom)) continue;
       if (!parsed.isBlank() && !containsWord(parsed, raw) && !containsWord(raw, parsed)) continue;
-      String typed = raw.replace(name, nom);
-      if (part.equals("settlement")) typed = typed.replaceFirst("(?iu)^город(?:е|а)\\s+", "город ");
+      String typed = typedRaw.replace(name, nom);
       if (part.equals("street")) {
         String kind = street.kind().isEmpty() ? StreetKind.parse(parsed).kind() : street.kind();
         typed = kind.isEmpty() ? nom : kind + " " + nom;
       }
       result.put(part, typed);
     }
+    for (String part : List.of("region", "district")) {
+      String literal = text(result, part).replaceFirst("(?iu)^в\\s+", "");
+      String nominal = text(proposal, part + "Nominative").strip();
+      if (!literal.isBlank() && !nominal.isBlank() && inflectionOf(literal, nominal)) result.put(part, nominal);
+    }
     return result;
+  }
+
+  private static String lastWord(String value) {
+    return value.substring(value.lastIndexOf(' ') + 1);
+  }
+
+  private static String normalizeSettlementType(String raw) {
+    return raw.replaceFirst("(?iu)^город(?:е|а)\\s+", "город ")
+        .replaceFirst("(?iu)^деревн(?:е|и)\\s+", "деревня ")
+        .replaceFirst("(?iu)^агрогородк(?:е|а)\\s+", "агрогородок ")
+        .replaceFirst("(?iu)^пос[её]лк(?:е|а)\\s+", "посёлок ")
+        .replaceFirst("(?iu)^сел(?:е|а)\\s+", "село ");
   }
 
   private static boolean containsWord(String label, String value) {

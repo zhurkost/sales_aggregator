@@ -214,6 +214,33 @@ class RentalAiAddressTest {
   }
 
   @Test
+  void returnsNominativeDisplayAddressForRentAndSaleWithoutGeocoder() {
+    String snippet = "в Минской области, в Борисовском районе, в городе Борисове на Садовой улице, дом 12А, корпус 2";
+    var proposal = object("label", snippet, "quote", snippet,
+        "settlement", "городе Борисове", "settlementNominative", "Борисов",
+        "street", "Садовой улице", "streetNominative", "Садовая",
+        "region", "Минской области", "regionNominative", "Минская область",
+        "district", "Борисовском районе", "districtNominative", "Борисовский район");
+    for (var deal : Map.of("apartment_rental", "apartments_long_term_rent", "apartment_sale", "apartments_sale").entrySet()) {
+      var refs = new RentalCatalog(new FileReferenceRepository("../data/rental/" + deal.getValue()));
+      String source = (deal.getKey().equals("apartment_sale") ? "Продам" : "Сдам") + " квартиру " + snippet;
+      var ai = mock(AiGateway.class);
+      when(ai.serverJson(anyString(), anyString(), eq(source))).thenReturn(object("address", proposal));
+      var provider = new Provider();
+      provider.failure = new ApiException(503, "offline");
+      var response = new RentalAiService(ai, new RentalAiAddressResolver(provider)).analyze(
+          refs, deal.getKey(), "person", "workspace", object("text", source, "schemaVersion", refs.version()));
+      var address = response.path("address");
+      assertEquals("Минская область, Борисовский район, город Борисов, улица Садовая, дом 12А, корпус 2", text(address, "label"));
+      assertEquals("Борисов", text(address, "settlement"));
+      assertEquals("Садовая", text(address, "street"));
+      assertEquals("ул", text(address, "streetType"));
+      assertEquals(snippet, text(response.path("addressResolution"), "sourceLabel"));
+      assertFalse(address.path("confirmed").asBoolean());
+    }
+  }
+
+  @Test
   void ambiguousOrIncompleteEvidenceNeverSelectsFirstSuggestion() {
     var provider = new Provider();
     provider.response = array(List.of(raw(), raw()));

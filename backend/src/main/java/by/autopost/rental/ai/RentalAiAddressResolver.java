@@ -61,6 +61,16 @@ public class RentalAiAddressResolver {
       // Address lookup is optional. Keep the literal components and all other AI suggestions.
       status = e.status == 409 ? "ambiguous" : "unavailable";
     }
+    String sourceLabel = text(literal, "label");
+    // The editor displays label, including when the provider cannot confirm the house.
+    if (!text(literal, "settlement").isBlank() || !text(literal, "street").isBlank()) {
+      String display = java.util.stream.Stream.of(text(literal, "region"), text(literal, "district"),
+          text(literal, "settlement"), text(literal, "street"),
+          text(literal, "house").isBlank() ? "" : "дом " + text(literal, "house"),
+          text(literal, "block").isBlank() ? "" : "корпус " + text(literal, "block"))
+          .filter(part -> !part.isBlank()).collect(java.util.stream.Collectors.joining(", "));
+      literal.put("label", display);
+    }
     literal.put("resolution", status);
     String message =
         switch (status) {
@@ -71,6 +81,6 @@ public class RentalAiAddressResolver {
         };
     result.set(
         "addressResolution",
-        object("status", status, "sourceLabel", text(literal, "label"), "message", message));
+        object("status", status, "sourceLabel", sourceLabel, "message", message));
   }
 }
