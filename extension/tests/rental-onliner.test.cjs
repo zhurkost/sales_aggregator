@@ -8,17 +8,17 @@ const recipe = JSON.parse(fs.readFileSync(path.join(__dirname,
 async function fixture(t, labels, value = 'Речица', accept = true) {
   const {Window} = await import('happy-dom');
   const w = new Window(); t.after(()=>w.close());
-  w.document.body.innerHTML='<input data-bind="value: $root.data.location.user_address"><div id="suggestions"></div>';
+  w.document.body.innerHTML='<section class="new-sub__location"><input data-bind="value: $root.data.location.user_address"><div id="suggestions"></div></section>';
   for(const file of ['rental-autocomplete.js','rental-form.js'])
     w.eval(fs.readFileSync(path.join(__dirname,'..',file),'utf8'));
   const source=recipe.controls.find(c=>c.field==='onliner.address_query');
-  const c={...source,value,matchValue:'г. '+value,autocomplete:{...source.autocomplete,optionSelector:'.test-option'}};
+  const c={...source,value,matchValue:'г. '+value};
   const input=w.document.querySelector('input');let searches=0;const clicks=[];
   function render(rows) {
     const container=w.document.querySelector('#suggestions');container.replaceChildren();
     for(const label of rows){
-      const option=w.document.createElement('div');option.className='test-option';option.textContent=label;
-      option.onclick=()=>{clicks.push(label);if(accept){input.value=label;container.replaceChildren();}};
+      const option=w.document.createElement('div');option.className='new-sub__map-menu-item';option.textContent=label;
+      option.onmousedown=()=>{clicks.push(label);if(accept){input.value=label;container.replaceChildren();}};
       container.append(option);
     }
   }
@@ -29,6 +29,7 @@ async function fixture(t, labels, value = 'Речица', accept = true) {
 
 test('Onliner searches on keyup and chooses full case-insensitive match among multiple suggestions',async t=>{
   const f=await fixture(t,['Новая Речица','рЕчИцА','Речицкий район']);
+  f.input.value='Минск'; // Restored city from a previous listing.
   await f.form.tick();
   assert.equal(f.input.value,'Речица');assert.equal(f.searches(),1);
   for(let i=0;i<5;i++)await f.form.tick();

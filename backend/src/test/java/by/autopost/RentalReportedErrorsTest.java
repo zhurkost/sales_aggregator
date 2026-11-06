@@ -117,6 +117,45 @@ class RentalReportedErrorsTest {
     }
   }
 
+  @Test void fractionalRentSurvivesAnalysisAndOnlyGoesToCompatiblePlatforms() {
+    String quote = "Ежемесячная плата 990,50 BYN";
+    var result = analyze(quote, suggestion("rental.monthly_price", "990.50", quote),
+        suggestion("rental.currency", "BYN", quote));
+    assertEquals("990.5", value(result, "rental.monthly_price"));
+    var fields = object("rental.monthly_price", value(result, "rental.monthly_price"), "rental.currency", "BYN");
+    var prices = Map.of("kufar","kufar.price", "onliner","onliner.price_amount",
+        "domovita","domovita.monthly_price", "realt","realt.monthly_rent");
+    var jobs = catalog.browser(object("values",fields,"schemaVersion",catalog.version(),"modelVersion",2,
+        "extras",object(),"platforms",prices.keySet())).path("jobs");
+    assertEquals(4, jobs.size());
+    for (var job : jobs) {
+      String site = text(job,"platform");
+      var price = list(job.path("controls")).stream().filter(c -> text(c,"field").equals(prices.get(site))).findFirst();
+      if (site.equals("kufar") || site.equals("onliner")) assertEquals(990.5, price.orElseThrow().path("value").asDouble());
+      else assertTrue(price.isEmpty(), site);
+    }
+  }
+
+  @Test void cityAndHeightComeFromTheListingEvenWhenWrittenInProse() {
+    String source = "В Витебске сдаётся однокомнатная квартира на длительный срок, ул. Ленина, дом 12А.";
+    var addr = object("label","Витебск, ул. Ленина, дом 12А","quote","Витебск, ул. Ленина, дом 12А",
+        "settlementNominative","Витебск","streetNominative","Ленина");
+    var actual = RentalAiPolicy.sanitize(catalog.analysisSchema(), source, object("address", addr)).path("address");
+    assertEquals("Витебск", text(actual, "settlement"));
+    assertEquals("Ленина", LiteralAddress.cleanComponent(text(actual,"street"),"street"));
+    assertEquals("12А", text(actual, "house"));
+    var mogilev = LiteralAddress.parse("в Могилёве, проспект Мира, дом 10",
+        object("settlement","в Могилёве","settlementNominative","Могилёв"));
+    assertEquals("Могилёв", text(mogilev,"settlement"));
+
+    source = "На 3-м этаже пятиэтажного дома. Из окна виден девятиэтажный дом.";
+    var result = analyze(source, suggestion("rental.floor", "3", "На 3-м этаже"));
+    assertEquals("5", value(result, "building.total_floors"));
+    assertEquals("3", value(result, "rental.floor"));
+    result = analyze(source, suggestion("listing.title", "Светлая квартира в центре", source));
+    assertTrue(result.path("suggestions").isEmpty());
+  }
+
   @Test void bareCityStartingWithKIsNotABuildingBlock() {
     var parsed = LiteralAddress.parse("Кобрин, ул. Пушкина 7",
         object("settlement","Кобрин", "street","ул. Пушкина", "house","7"));

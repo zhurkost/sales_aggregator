@@ -124,7 +124,7 @@
         ? addressName(control.value, config.kind).name
         : String(control.value);
       if (
-        current &&
+        !config.replaceInitialValue && current &&
         norm(current) !== norm(search) &&
         norm(current) !== norm(control.value)
       ) {
@@ -200,7 +200,9 @@
       pending.label = config.confirm === "display-and-closed" ? rawLabel(option) : label(option);
       form.waiting = { field: control.field, tries: 0 };
     }
-    option.click();
+    if (config.optionEvent === "mousedown")
+      option.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, button: 0 }));
+    else option.click();
     if (!config.confirm) form.done.add(control.field);
   }
   root.AutopostRentalAutocomplete = { fill, addressName };

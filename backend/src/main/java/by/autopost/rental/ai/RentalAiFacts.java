@@ -41,6 +41,26 @@ final class RentalAiFacts {
   private static final Map<String, String> ROOM_PREFIXES = Map.of("1", "одно", "2", "двух|дву",
       "3", "трех|трёх", "4", "четырех|четырёх", "5", "пяти", "6", "шести", "7", "семи");
 
+  private static final Map<String, String> HEIGHTS = Map.ofEntries(
+      Map.entry("одно", "1"), Map.entry("двух", "2"), Map.entry("трех", "3"), Map.entry("четырех", "4"),
+      Map.entry("пяти", "5"), Map.entry("шести", "6"), Map.entry("семи", "7"), Map.entry("восьми", "8"),
+      Map.entry("девяти", "9"), Map.entry("десяти", "10"), Map.entry("одиннадцати", "11"),
+      Map.entry("двенадцати", "12"), Map.entry("шестнадцати", "16"));
+  private static final Pattern WRITTEN_FLOORS = Pattern.compile(
+      "(?iu)(?<![\\p{L}\\d])(\\d+)(?:-?(?:м|ом|ем))?\\s+этаже\\s+(" + String.join("|", HEIGHTS.keySet()).replace("е", "[её]")
+          + ")этажного\\s+дома\\b");
+  static boolean spelledHeight(String quote, String value) {
+    var match = WRITTEN_FLOORS.matcher(quote.toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
+    while (match.find()) if (value.equals(HEIGHTS.get(match.group(2)))) return true;
+    return false;
+  }
+
+  static boolean supportedCopy(String copy, String source) {
+    for (String claim : java.util.List.of("(?iu)\\bв\\s+центре\\b", "(?iu)\\bсветл(?:ая|ый|ое|ые|ую|ой|ыми|ых|ого|ом)\\b"))
+      if (Pattern.compile(claim).matcher(copy).find() && !Pattern.compile(claim).matcher(source).find()) return false;
+    return true;
+  }
+
   static boolean spelledRoomCount(String value, String quote) {
     String prefix = ROOM_PREFIXES.get(value);
     if (value.equals("1") && Pattern.compile("(?iu)(?<!\\p{L})одн(?:а|у)\\s+комнат[ау](?!\\p{L})").matcher(quote).find()) return true;
@@ -101,6 +121,12 @@ final class RentalAiFacts {
     if (!accepted.isEmpty()) {
       var floors = Pattern.compile("(?iu)(?:этаж\\s*(\\d+)\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*(?:-?й\\s*)?этаж\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*/\\s*(\\d+)\\s*этаж)").matcher(source);
       Map<String, ObjectNode> explicit = new LinkedHashMap<>();
+      var writtenFloors = WRITTEN_FLOORS.matcher(source);
+      while (writtenFloors.find()) {
+        String height = HEIGHTS.get(writtenFloors.group(2).toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
+        var previous = explicit.put("building.total_floors", object("value", height, "quote", writtenFloors.group()));
+        if (previous != null && !text(previous, "value").equals(height)) conflicts.add("building.total_floors");
+      }
       while (floors.find()) {
         int offset = floors.group(1) != null ? 1 : floors.group(3) != null ? 3 : 5;
         for (var e : Map.of("rental.floor", floors.group(offset),

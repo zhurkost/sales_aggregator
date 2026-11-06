@@ -62,6 +62,24 @@ public final class LiteralAddress {
   private static final List<String> PARTS =
       List.of("region", "district", "settlement", "street", "house", "block");
 
+  // In "В Витебске сдаётся квартира, ул. Ленина, дом 12А" the address is not contiguous.
+  // Use only literal components from the same sentence. Never assemble separate addresses.
+  private static final Pattern OPENING_LOCATION = Pattern.compile(
+      "(?iu)(?:^|[.!?]\\s+)в\\s+([\\p{L}-]+)\\s+(?:сда[её]тся|сда[её]м|сдаю)\\s+[^.!?;\\n]{0,130}?,\\s*("
+          + STREET + "\\s+[\\p{L}][\\p{L} .-]{0,65}?),\\s*((?:дом|д\\.)\\s*\\d+[\\p{L}\\d/-]*)(?:,\\s*((?:корпус|корп\\.)\\s*\\d+[\\p{L}\\d/-]*))?(?=[\\s.,;!?]|$)");
+
+  static ObjectNode withOpeningLocation(String source, JsonNode proposal, ObjectNode original) {
+    if (!proposal.isObject()) return original;
+    var match = OPENING_LOCATION.matcher(source);
+    if (!match.find()) return original;
+    String city = match.group(1), street = match.group(2), house = match.group(3), block = match.group(4);
+    if (match.find()) return original;
+    String label = city + ", " + street + ", " + house + (block == null ? "" : ", " + block);
+    ObjectNode evidence = object("settlement", city, "settlementNominative", text(proposal, "settlementNominative"),
+        "street", street, "streetNominative", text(proposal, "streetNominative"));
+    return parse(label, evidence);
+  }
+
   public static ObjectNode parse(String label, JsonNode proposal) {
     ObjectNode result =
         object("provider", "manual", "countryIso", "BY", "label", label, "confirmed", false);
@@ -110,6 +128,7 @@ public final class LiteralAddress {
     for (String part : List.of("settlement", "street")) {
       String raw = text(proposal, part).strip(), nom = text(proposal, part + "Nominative").strip();
       if (raw.isBlank() || nom.isBlank() || !containsWord(label, raw)) continue;
+      raw = raw.replaceFirst(part.equals("settlement") ? "(?iu)^(?:в|во)\\s+" : "(?iu)^(?:на|по)\\s+", "");
       var street = StreetKind.parse(raw);
       String name = cleanComponent(raw, part);
       if (!inflectionOf(name, nom)) continue;
@@ -139,7 +158,7 @@ public final class LiteralAddress {
       if (a[i].equals(b[i])) continue;
       String endings = "(?:ого|его|ому|ему|ыми|ими|ой|ей|ом|ем|ым|им|ых|их|ах|ях|ов|ев|ью|ая|яя|ое|ее|ый|ий|ые|ие|ую|юю|[аяуюоеыиьй])$";
       String stem = a[i].replaceFirst(endings, "");
-      if (stem.length() < 2 || !stem.equals(b[i].replaceFirst(endings, ""))) return false;
+      if (stem.length() < 2 || !(stem.equals(b[i]) || stem.equals(b[i].replaceFirst(endings, "")))) return false;
     }
     return true;
   }

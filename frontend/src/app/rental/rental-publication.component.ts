@@ -52,7 +52,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-address-suggestions") &&
         ping["capabilities"].includes("rental-form-session") &&
         ping["capabilities"].includes("rental-field-transfer-v2") &&
-        ping["capabilities"].includes("rental-address-type-then-first");
+        ping["capabilities"].includes("rental-address-type-then-first") &&
+        ping["capabilities"].includes("rental-onliner-city-menu");
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)

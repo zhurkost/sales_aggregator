@@ -34,7 +34,8 @@ public final class RentalAiPolicy {
                   p -> {
                     for (var row : p.path("rules"))
                       if (text(row, "common_option_id").equals(id)
-                          && text(row.path("conversion"), "kind").equals("decimal"))
+                          && text(row.path("conversion"), "kind").equals("decimal")
+                          && !text(copy, "type").equals("number"))
                         copy.put(
                             "type",
                             text(row.path("conversion"), "target").equals("integer")
@@ -81,7 +82,8 @@ public final class RentalAiPolicy {
 В settlement и street не включай предлоги «в», «на», «по». Например, из «в Минске» возьми «Минске».
 Остальные части адреса — только дословные фрагменты label, включая тип улицы/населённого пункта,
 если указан; house и block — только номер с буквой. Отсутствующие части оставь пустыми.
-В label не включай телефон, имя контактного лица, ориентиры и описание квартиры.
+Когда город и улицу разделяют слова объявления, label и quote должны содержать весь непрерывный фрагмент с этими словами.
+В остальных случаях в label не включай телефон, имя контактного лица, ориентиры и описание квартиры.
 «Сдам студию» — это аренда квартиры: заполни все явно указанные поля, включая room_configuration=studio.
 Если текст не про сдачу квартиры, верни пустые suggestions и address:null.
 Числа — обычная десятичная строка без единиц. «3/9 этаж» = этаж 3 и этажность 9.
@@ -102,7 +104,7 @@ Enum — только точный код из choices; multi_enum — масс�
 (до 3 вопросов только про неоднозначности, не перечисляй все незаполненные поля).
 Не создавай поля вне списка. Не заполняй за пользователя описание или ссылки на фото.
 Составь listing.title до 100 символов: привлекательный заголовок по преимуществам из текста,
-а не перечень технических характеристик. Не выдумывай преимущества.
+а не перечень технических характеристик. Не приписывай квартире светлые комнаты или расположение в центре без прямого указания.
 Составь listing.short_description до 500 символов: отдельное краткое описание преимуществ,
 не копию всего объявления. Для обоих текстов приложи точную цитату-основание.
 Список полей и значения:
@@ -136,7 +138,8 @@ Enum — только точный код из choices; multi_enum — масс�
         continue;
       }
       JsonNode valid = validValue(field, editor.path("canonicalValues").path(id), value, quote);
-      if (valid == null) {
+      if (valid == null || ((id.equals("listing.title") || id.equals("listing.short_description"))
+          && !RentalAiFacts.supportedCopy(valid.asText(), source))) {
         ignored++;
         continue;
       }
@@ -159,6 +162,7 @@ Enum — только точный код из choices; multi_enum — масс�
         && grounded(source, quote)
         && normalized(quote).contains(normalized(label)))
       candidateAddress = LiteralAddress.parse(label, address);
+    candidateAddress = LiteralAddress.withOpeningLocation(source, address, candidateAddress);
     ArrayNode questions = array();
     for (var q : list(parsed.path("questions"))) {
       if (q.isTextual() && !q.asText().isBlank() && questions.size() < 3)
@@ -223,6 +227,8 @@ Enum — только точный код из choices; multi_enum — масс�
         if (text(field, "id").equals("rental.separate_rooms")
             && RentalAiFacts.spelledRoomCount(number.stripTrailingZeros().toPlainString(), quote))
           found = true;
+        if (text(field, "id").equals("building.total_floors")
+            && RentalAiFacts.spelledHeight(quote, number.stripTrailingZeros().toPlainString())) found = true;
         return found && number.signum() >= 0
             ? TextNode.valueOf(number.stripTrailingZeros().toPlainString())
             : null;

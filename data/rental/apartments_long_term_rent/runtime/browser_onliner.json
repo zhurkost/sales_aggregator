@@ -42,8 +42,11 @@
       "addressPart": "settlement",
       "autocomplete": {
         "kind": "address",
-        "scopeSelector": "body",
-        "optionSelector": "[role=\"option\"]",
+        "scopeSelector": ".new-sub__location",
+        "optionSelector": ".new-sub__map-menu-item",
+        "busySelector": ".new-sub__location-input_processing",
+        "replaceInitialValue": true,
+        "optionEvent": "mousedown",
         "selection": "single-or-exact",
         "confirm": "value-and-closed",
         "queryEvent": "keyup"
