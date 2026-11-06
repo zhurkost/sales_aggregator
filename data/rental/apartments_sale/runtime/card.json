@@ -700,9 +700,16 @@
     "sale.currency",
     "apartment.rooms",
     "apartment.total_area",
+    "apartment.living_area",
+    "apartment.kitchen_area",
     "apartment.floor",
     "building.floors",
-    "apartment.market"
+    "building.year",
+    "building.wall",
+    "apartment.balcony",
+    "apartment.repair",
+    "apartment.market",
+    "media.images"
   ],
   "addressProjection": {
     "location.address": "label",

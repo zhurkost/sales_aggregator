@@ -15,6 +15,9 @@
     @if (store.card.schemaVersion !== store.schema.version || store.error.includes('Правила обновились')) {
       <button type="button" class="quiet-button" [disabled]="store.busy" (click)="store.updateFields()">Обновить поля карточки</button>
     }
+    <ng-template #publication>
+      <app-rental-publication [publicationEnabled]="store.schema.publicationEnabled === true" [store]="store" [workspaceId]="workspaceId" [sessionId]="store.id" />
+    </ng-template>
     <fieldset class="card" [disabled]="store.busy" [attr.aria-busy]="ai.busy">
       <section class="description-section">
         <label for="rental-listing.description">Описание квартиры</label>
@@ -30,6 +33,7 @@
       </section>
       <section class="main-section" aria-label="Основные характеристики">
         <app-rental-fields class="main-fields" [fields]="view.mainFields" [values]="store.card.values" [choices]="store.schema.canonicalValues" [labels]="store.schema.card?.valueLabels || {}" [evidence]="store.card.aiEvidence || {}" [disabled]="store.busy" (edit)="editField($event)" />
+        @if (deal === 'sale') { <ng-container [ngTemplateOutlet]="publication" /> }
       </section>
       <section class="extra-section">
         <div class="extra-heading"><h2>Дополнительно</h2><button type="button" class="text-button" (click)="openPanel('parameters')">Все параметры @if (view.additionalFilled.length) { · {{ view.additionalFilled.length }} }</button></div>
@@ -72,7 +76,7 @@
       </section>
     }
     <div class="rental-actions"><button type="button" class="quiet-button" [disabled]="store.busy || store.check.checking || !store.card.platforms.length" (click)="store.prepare()">{{ store.check.checking ? 'Проверяем…' : 'Проверить карточку' }}</button></div>
-    <app-rental-publication [publicationEnabled]="store.schema.publicationEnabled === true" [store]="store" [workspaceId]="workspaceId" [sessionId]="store.id" />
+    @if (deal !== 'sale') { <ng-container [ngTemplateOutlet]="publication" /> }
   }
 </div>
 @if (panel && store.schema) {

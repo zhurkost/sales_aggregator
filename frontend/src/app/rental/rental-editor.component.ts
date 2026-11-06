@@ -6,6 +6,7 @@ import {
   OnDestroy,
 } from "@angular/core";
 import { RentalAiReviewComponent } from "./rental-ai-review.component";
+import { NgTemplateOutlet } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AddressInputComponent } from "./address-input.component";
 import { RentalFieldsComponent } from "./rental-fields.component";
@@ -24,7 +25,7 @@ import {
 @Component({
   selector: "app-rental-editor",
   standalone: true,
-  imports: [RentalPublicationComponent, RentalAiReviewComponent, FormsModule, AddressInputComponent, RentalFieldsComponent],
+  imports: [NgTemplateOutlet, RentalPublicationComponent, RentalAiReviewComponent, FormsModule, AddressInputComponent, RentalFieldsComponent],
   templateUrl: "./rental-editor.component.html",
   styleUrl: "./rental-editor.component.css",
 })
