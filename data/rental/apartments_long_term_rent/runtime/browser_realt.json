@@ -24,7 +24,7 @@
       "selector": "[id=\"location.settlement\"]",
       "addressPart": "settlement",
       "autocomplete": {
-        "selection": "first",
+        "selection": "type-then-first",
         "kind": "settlement",
         "scopeSelector": "div.relative:has(> div > input[id=\"location.settlement\"])",
         "optionSelector": "ul > li > [role=\"button\"]",
@@ -45,7 +45,7 @@
       "addressPart": "street",
       "after": "realt.settlement",
       "autocomplete": {
-        "selection": "first",
+        "selection": "type-then-first",
         "kind": "street",
         "scopeSelector": "div.relative:has(> div > input[id=\"location.street\"])",
         "optionSelector": "ul > li > [role=\"button\"]",

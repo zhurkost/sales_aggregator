@@ -47,6 +47,26 @@
     }
     return { name, type: "" };
   }
+  function streetCodes(text) {
+    const words = norm(text).replace(/[‑–—]/g, "-").split(/[^\p{L}\d-]+/u);
+    return types.street.filter(([, aliases]) => aliases.some(alias => words.includes(alias)))
+      .map(([type]) => type.slice(0, 2));
+  }
+
+  function preferredOption(options, label, control, kind) {
+    const first = options[0];
+    if (options.length < 2 || kind === "house") return first;
+    const value = control.matchValue || control.value;
+    if (kind === "settlement") {
+      const wanted = addressName(value, kind).type;
+      return (wanted && options.find(e => addressName(label(e), kind).type === wanted)) || first;
+    }
+
+    const code = control.streetType || streetCodes(value)[0];
+    if (!code) return first;
+    return options.find(e => streetCodes(label(e)).includes(code)) || first;
+  }
+
   function matches(label, value, kind, code, single = false) {
     const actual = addressName(label, kind),
       wanted = addressName(value, kind);
@@ -150,8 +170,8 @@
     const exactName = (v) => String(v ?? "").trim().replace(/\s+/g, " ").toLocaleLowerCase("ru");
     const candidates = config.selection === "single-or-exact"
       ? available.length === 1 ? available : available.filter(e => exactName(label(e)) === exactName(control.value))
-      : config.selection === "first"
-        ? available.slice(0, 1)
+      : config.selection === "type-then-first"
+        ? [preferredOption(available, label, control, config.kind)].filter(Boolean)
         : available.filter((e) => {
       if (!matches(label(e), control.matchValue || control.value, config.kind, control.streetType, available.length === 1)) return false;
       const context = config.contextSelector
@@ -169,7 +189,7 @@
     }
     const option = candidates[0];
     if (config.confirm) {
-      const signature = config.selection === "single-or-exact"
+      const signature = config.selection === "single-or-exact" || config.selection === "type-then-first"
         ? JSON.stringify(available.map(e => exactName(e.textContent))) : norm(option.textContent);
       // Debounced searches briefly display results from the previous query.
       if (pending.signature !== signature) {

@@ -32,7 +32,7 @@ test('Domovita selects full city label, first street and first house in order; c
   assert.equal(f.form.done.has('domovita.town'),false);
   assert.equal(f.w.document.querySelector('#select-1 [role="combobox"]').value,'');
   for(let i=0;i<12;i++)await f.form.tick();
-  assert.deepEqual(f.clicks,['г. Минск МИНСКАЯ ОБЛАСТЬ Минский район','пер. Ольшевского','27/2']);
+  assert.deepEqual(f.clicks,['г. Минск МИНСКАЯ ОБЛАСТЬ Минский район','ул. Ольшевского','27/2']);
   assert.equal(f.form.done.size,3);
 });
 test('Domovita duplicate towns use site order after loading',async t=>{
@@ -87,13 +87,13 @@ test('page waits for photo verification without advancing and resumes after unlo
   assert.equal(claims,1);assert.equal(next,0);
 });
 
-test('Domovita selects the first street even when the second matches the stored type',async t=>{
+test('Domovita prioritizes the second street when its type matches',async t=>{
   const f=await setup(t,{town:'Минск',street:'Мира',house_number:'18'});
   delete f.controls[1].matchValue;
   f.controls[1].streetType='пр';
   f.options(0,['г. Минск']);f.options(1,['улица Мира','пр-кт Мира']);f.options(2,['18']);
   for(let i=0;i<16;i++)await f.form.tick();
-  assert.deepEqual(f.clicks,['г. Минск','улица Мира','18']);
+  assert.deepEqual(f.clicks,['г. Минск','пр-кт Мира','18']);
 });
 
 test('Domovita selects a sole suggestion with or without a type label',async t=>{

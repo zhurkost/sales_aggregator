@@ -68,7 +68,7 @@ public final class BrowserRecipeValidator {
         check(text(control, "action").equals("autocomplete") && config.isObject(), "autocomplete");
         check(Set.of("settlement", "street", "house", "address").contains(text(config, "kind")), "тип autocomplete");
         if (config.has("selection"))
-          check(text(config, "selection").equals("first") ||
+          check(text(config, "selection").equals("type-then-first") ||
               (text(config, "kind").equals("address") && text(config, "selection").equals("single-or-exact")),
               "выбор подсказки autocomplete");
         if (config.has("queryEvent"))

@@ -65,19 +65,19 @@ test('Kufar does not duplicate existing photos or mark a failed upload as comple
   }
 });
 
-test('Kufar enters title case query and selects first suggestion without matching its text', async t => {
+test('Kufar enters title case query and selects the matching street type from a manually typed full address', async t => {
   const c=control('address_text',{value:'Минск Брикета 18', matchValue:'г. Минск, ул. Брикета, д. 18'});
   const f=await fixture(t, '<input id="geocoder"><div id="options"></div>', [c]);
   await f.form.tick();
   assert.equal(f.doc.querySelector('input').value,'Минск Брикета 18');
-  const labels=['улица Брикета, 18, Минск','Минск Брикета 18'];
+  const labels=['пер. Брикета, 18, Минск','улица Брикета, 18, Минск'];
   f.doc.querySelector('#options').innerHTML=labels.map((l,i)=>`<div role="button" data-name="autocomplete-option-${i}">${l}</div>`).join('');
   let clicks=[];
   for(const e of f.doc.querySelectorAll('[role="button"]'))e.onclick=()=>{
     clicks.push(e.textContent);f.doc.querySelector('input').value=e.textContent;f.doc.querySelector('#options').replaceChildren();
   };
   for(let i=0;i<5;i++)await f.form.tick();
-  assert.deepEqual(clicks,[labels[0]]);
+  assert.deepEqual(clicks,[labels[1]]);
   assert.equal(f.form.done.has(c.field),true);
 });
 
@@ -137,12 +137,15 @@ test('page waits for delayed uploads and ignores next, submit and promotion even
   assert.equal(reports.at(-1).remaining.includes(c.field),false);
 });
 
-for (const labels of [
-  ['Минск, ул. Мира, 18','Минск, Мира пр-т, 18'],
-  ['Минск, пр-д Мира, 18','Минск, пр-кт Мира, 18'],
-  ['Минск, Мира, 18'],
-]) test('Kufar selects first address: '+labels.join(' / '), async t=>{
-  const c=control('address_text',{value:'Минск Мира 18',streetName:'Мира',streetType:'пр'});
+for (const [code,labels,expected] of [
+  ['пр',['Минск, ул. Мира, 18','Минск, Мира пр-т, 18','Минск, пр. Мира, 18'],1],
+  ['пр',['Минск, пр-д Мира, 18','Минск, пр-кт Мира, 18'],0],
+  ['пр',['Минск, ул. Мира, 18','Минск, Мира пер., 18'],0],
+  ['',['Минск, ул. Мира, 18','Минск, Мира пр-т, 18'],0],
+  ['ул',['Минск, Ульяновская, 18','Минск, ул.Мира, 18'],1],
+  ['пр',['Минск, Мира, 18'],0],
+]) test('Kufar type then site order '+code+': '+labels.join(' / '), async t=>{
+  const c=control('address_text',{value:'Минск Мира 18',streetName:'Мира',streetType:code});
   const f=await fixture(t,'<input id="geocoder"><div id="rows"></div>',[c]);
   await f.form.tick();
   assert.equal(f.doc.querySelector('input').value,'Минск Мира 18');
@@ -153,6 +156,6 @@ for (const labels of [
     row.onclick=()=>{clicked.push(i);f.doc.querySelector('input').value=label;f.doc.querySelector('#rows').replaceChildren();};
   }
   for(let i=0;i<5;i++)await f.form.tick();
-  assert.deepEqual(clicked,[0]);
+  assert.deepEqual(clicked,[expected]);
   assert.equal(f.form.done.has(c.field),true);
 });

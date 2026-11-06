@@ -44,7 +44,7 @@ async function setup(rows = cityRows, city = field("settlement", "г Минск"
     house: document.getElementById("location.houseNumber"),
   };
 }
-test("Realt selects first city and first street, waits for confirmation, then fills house", async (t) => {
+test("Realt selects first city and first street of the requested type, waits for confirmation, then fills house", async (t) => {
   const f = await setup();
   t.after(() => f.window.happyDOM.abort());
   let cityClicks = 0,
@@ -60,10 +60,10 @@ test("Realt selects first city and first street, waits for confirmation, then fi
     f.street.disabled = false;
     f.house.disabled = false;
   };
-  f.document.querySelectorAll('#street-wrap [role="button"]')[0].onclick =
+  f.document.querySelectorAll('#street-wrap [role="button"]')[1].onclick =
     () => {
       streetClicks++;
-      f.street.value = "Ольшевского пер.";
+      f.street.value = "Ольшевского ул.";
       f.document.querySelector("#street-wrap ul").remove();
     };
   await f.form.tick();
@@ -98,7 +98,7 @@ test("an add-new action alone is not an address suggestion", async (t) => {
   assert.equal(f.form.done.has("realt.street"), false);
 });
 
-test("a later matching type does not outrank the first suggestion", async (t) => {
+test("a later matching type outranks the first suggestion", async (t) => {
   const f = await setup();
   t.after(() => f.window.happyDOM.abort());
   f.form.done.add("realt.settlement");
@@ -106,8 +106,8 @@ test("a later matching type does not outrank the first suggestion", async (t) =>
   Object.assign(f.form.recipe.controls[1], {value: "Ольшевского", streetType: "ул"});
   let correct = 0, wrong = 0;
   const buttons = f.document.querySelectorAll('#street-wrap [role="button"]');
-  buttons[0].onclick = () => correct++;
-  buttons[1].onclick = () => wrong++;
+  buttons[0].onclick = () => wrong++;
+  buttons[1].onclick = () => correct++;
   buttons[2].onclick = () => wrong++;
   for (let i = 0; i < 4; i++) await f.form.tick();
   assert.equal(f.street.value, "ольшевского");
