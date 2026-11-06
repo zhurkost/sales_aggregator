@@ -1,0 +1,550 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "realt",
+  "fields": [
+    {
+      "option_id": "realt.location.settlement",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.location.street",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.location.houseNumber",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.location.buildingNumber",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.location.newBuildComplexUuid",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.rooms",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.inventoryNumber",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.storey",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"apartment.storey\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.apartment.repair",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.balcony",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.toilet",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.ceilingHeight",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.levels",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"apartment.levels\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.apartment.planning",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.apartment.viewFromWindow",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.area.total",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area.total\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.area.living",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area.living\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.area.kitchen",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area.kitchen\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.area.balcony",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area.balcony\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.area.snb",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"area.snb\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.house.storeys",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"house.storeys\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.house.buildingYear",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"house.buildingYear\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.house.isNotFinish",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.house.repairYear",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"house.repairYear\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.house.houseType",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.house.newBuilding",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.house.homeMaintenance",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.additional.appliance",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.additional.facilitiesForDisabledPeople",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.additional.yard",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.additional.parking",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.termsOfDeal.currency",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.termsOfDeal.price",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"termsOfDeal.price\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.termsOfDeal.bargain",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.termsOfDeal.ownerShip",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.termsOfDeal.termsOfDeal",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.termsOfDeal.termsExtra",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.media.photos",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "realt.media.planning",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "realt.media.youtube",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "realt.media.tour3d",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "realt.description.title",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.description.shortDescription",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"description.shortDescription\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "realt.description.description",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.location.metro_1_station",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_1_mode",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_1_minutes",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_2_station",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_2_mode",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_2_minutes",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_3_station",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_3_mode",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.metro_3_minutes",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.apartment.registrationRooms",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "realt.apartment.rooms"
+      ]
+    },
+    {
+      "option_id": "realt.apartment.separateRooms",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"apartment.separateRooms\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "realt.apartment.rooms"
+      ]
+    },
+    {
+      "option_id": "realt.deal",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.family",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "realt.kind",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    }
+  ]
+}

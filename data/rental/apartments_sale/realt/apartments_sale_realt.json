@@ -1,0 +1,3553 @@
+[
+  {
+    "id": "apartments_sale",
+    "name": "Продажа квартир",
+    "description": "Беларусь. Предложение продать квартиру целиком. Ветки покупки, аренды, комнаты и доли исключены.",
+    "categories": [],
+    "options": [
+      {
+        "id": "realt.location.settlement",
+        "name": "Населенный пункт, район, область",
+        "description": "Форма продажи → location.settlement; динамические стартовые подсказки, выдача меняется.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.settlement.v_3e53ff58d7e7",
+            "name": "г. Минск",
+            "description": "",
+            "type": "choice",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_899fe25220fc",
+            "name": "г. Брест",
+            "description": "",
+            "type": "choice",
+            "value": "4c8f8db2-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_0e31d74389af",
+            "name": "г. Витебск",
+            "description": "",
+            "type": "choice",
+            "value": "4c9236d8-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_69de058a4513",
+            "name": "г. Гомель",
+            "description": "",
+            "type": "choice",
+            "value": "4c95d414-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_90134b9ba717",
+            "name": "г. Гродно",
+            "description": "",
+            "type": "choice",
+            "value": "4c97eac6-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_49b012d97ba9",
+            "name": "г. Могилев",
+            "description": "",
+            "type": "choice",
+            "value": "4cb0e950-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_43f779047814",
+            "name": "г. Барановичи",
+            "description": "",
+            "type": "choice",
+            "value": "4c8b99bf-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_848b91ae716a",
+            "name": "г. Бобруйск",
+            "description": "",
+            "type": "choice",
+            "value": "4c8d4f2b-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_533ac4c6caaa",
+            "name": "г. Борисов",
+            "description": "",
+            "type": "choice",
+            "value": "4c8eb194-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_ef8bfe2fff31",
+            "name": "г. Жодино",
+            "description": "",
+            "type": "choice",
+            "value": "4c9c91dc-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_819e70b3dd49",
+            "name": "г. Лепель",
+            "description": "",
+            "type": "choice",
+            "value": "4caa39be-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_ce4f33656160",
+            "name": "г. М-1/30, 593-й километр",
+            "description": "",
+            "type": "choice",
+            "value": "5959a5f0-9655-11f1-90e2-d37de807e6f3",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_68f839a6601d",
+            "name": "г. М-3",
+            "description": "",
+            "type": "choice",
+            "value": "3af02480-72bc-11f0-acb8-4dcc407af3cb",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_85ea99fc1aab",
+            "name": "г. М6",
+            "description": "",
+            "type": "choice",
+            "value": "e174d350-0ce5-11f1-b1c4-59d7696d26e4",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_fdc5ef8e34e2",
+            "name": "г. Мозырь",
+            "description": "",
+            "type": "choice",
+            "value": "4cb0f061-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_04da8a3c49a5",
+            "name": "г. Молодечно",
+            "description": "",
+            "type": "choice",
+            "value": "4cb10f08-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_2469463e3a21",
+            "name": "г. Новополоцк",
+            "description": "",
+            "type": "choice",
+            "value": "4cb3ba49-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_0889c27cce33",
+            "name": "г. Орша",
+            "description": "",
+            "type": "choice",
+            "value": "4cb53761-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_c4af1bf247f1",
+            "name": "г. Пинск",
+            "description": "",
+            "type": "choice",
+            "value": "4cb7b548-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_b4601f5429bc",
+            "name": "г. Полоцк",
+            "description": "",
+            "type": "choice",
+            "value": "4cb8da90-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_33ec5b043bf0",
+            "name": "г. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4cbbfd6e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_7efa84db57b5",
+            "name": "аг. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4cbc00e9-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_f846dfa30132",
+            "name": "д. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4ccf969f-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_7d42ba53cb44",
+            "name": "д. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4cbc020a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_69173e9c99a7",
+            "name": "д. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4ccf6078-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_032b60bda6c9",
+            "name": "д. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4cbbffc9-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_fe3c3c67630c",
+            "name": "рп. Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4cbbfe95-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_6feb02f65873",
+            "name": "д. Полевая Речица",
+            "description": "",
+            "type": "choice",
+            "value": "4ccd7b51-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false
+      },
+      {
+        "id": "realt.location.street",
+        "name": "Улица",
+        "description": "Форма продажи → location.street; динамические стартовые подсказки, выдача меняется. Стартовые варианты в Минске, Бресте и Речице привязаны к выбранному населённому пункту.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.street.v_efa81d93a12b",
+            "name": "50 лет Октября парк",
+            "description": "",
+            "type": "choice",
+            "value": "4c3d1fe3-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_dab95f1e219d",
+            "name": "50 лет Победы ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a28a143-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_8ca2cd240a66",
+            "name": "Абрикосовая ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4ab5fe7e-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_667ad70c51f5",
+            "name": "Авакяна ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a236eca-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_39bf1eb48d46",
+            "name": "Авангардная ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2375fc-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_91403a5c90ce",
+            "name": "Авангардный пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4a237867-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_8e89840d18ff",
+            "name": "Авиации ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a237a47-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_af14914ffe0b",
+            "name": "Авроровская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a237c33-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_024bd7baf7b1",
+            "name": "Автодоровская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a237dfd-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_979df845a24a",
+            "name": "Автодоровский пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4a237fb2-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_0d539796f2f8",
+            "name": "Автозаводская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a238594-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_1aff146d2bd2",
+            "name": "Автозаводской пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2386e9-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_18fc23fa08d0",
+            "name": "Автомобилистов ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4ab62655-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_1145623a537b",
+            "name": "Агатовый пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4ab62b88-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_7683d46b5e1a",
+            "name": "Азгура ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a23880b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_9e0c03701514",
+            "name": "Азизова ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a238918-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_ee8bb7839108",
+            "name": "Азовская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a238a1b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_2a4e0c3c285f",
+            "name": "Айвазовского пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4a238b1d-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_39553d7e92c9",
+            "name": "Айвазовского ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a238dc3-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_f5dc39949f11",
+            "name": "Академическая ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2390ec-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cb07174-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_c569b60afa22",
+            "name": "1 Мая пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4a441e99-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_a885a4acac52",
+            "name": "17 Сентября ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bb325-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_3a7586ca8238",
+            "name": "28 Июля ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bb42b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_f1391f251b80",
+            "name": "9 Января ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a445d7c-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_0c89dcebd7e3",
+            "name": "Абрикосовая ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bb52b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_e6745ce8c947",
+            "name": "Августовская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4bbd3019-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_5fb234b949d6",
+            "name": "Авиационный пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4a43f49b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_051f02989297",
+            "name": "Автолюбителей ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4bbd31d0-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_e9053efafaf4",
+            "name": "Автомобилистов ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a43f59c-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_187234111783",
+            "name": "Адамковская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bb62b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_4b441fe66928",
+            "name": "Алая ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4bbd32db-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_ce2a2a99e0fa",
+            "name": "Александровская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4bbd33e3-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_3df18a49d966",
+            "name": "Аркадьевская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a44607f-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_a6d235541505",
+            "name": "Армейская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bb728-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_d3e4e434f91f",
+            "name": "Аэродромная ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bb868-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_eb756e82af55",
+            "name": "Базановой ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a43f880-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_b1784c358579",
+            "name": "Баррикадная ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a44617b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_49fa3a86aa20",
+            "name": "Барсукова ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4bbd3592-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_33161e5e0deb",
+            "name": "Бархатная ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4bbd3695-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_a25103dd23b3",
+            "name": "Бауманская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4a2bbab0-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4c8f8db2-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_05dbea3c5d5a",
+            "name": "10 Лет Октября ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4aeb2772-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_58df6cb6154a",
+            "name": "18 Ноября ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039660-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_8f60acf15f34",
+            "name": "323 Км ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4aeb4ed8-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_d1d6eb07b005",
+            "name": "323-й километр ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c35d2bc-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_e3c5948407c2",
+            "name": "35-й Гвардейской минометной бригады ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039765-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_59fe0fcfea9d",
+            "name": "40 Лет Октября пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4aea766f-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_693f4336fab8",
+            "name": "40 Лет Октября ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4aea6f64-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_06b52314eb5b",
+            "name": "8 Марта пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4c03987d-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_96a4d80a62dc",
+            "name": "9 Мая пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4c03997e-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_e28988098328",
+            "name": "9 Мая ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039a86-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_6189e7611cab",
+            "name": "Авиационный пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4aeb03f1-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_3def2f5a16ae",
+            "name": "Авроры ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4aeae46b-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_0f53e3725a50",
+            "name": "Адама Мицкевича пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039b8a-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_189aac12573d",
+            "name": "Адама Мицкевича ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039c8c-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_178f6b5f0625",
+            "name": "Амбулаторная ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039e9e-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_a9482d3499fa",
+            "name": "Аркадия Кулешова ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c039fa1-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_d554c870be4a",
+            "name": "Батова ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4aeaaaff-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_cc5f11ec0d0e",
+            "name": "Белорусская ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4aead6c2-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_f9b0e83d783a",
+            "name": "Береговой пер.",
+            "description": "",
+            "type": "choice",
+            "value": "4c03a0a3-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          },
+          {
+            "id": "realt.location.street.v_30c6dcc4b2f9",
+            "name": "Березовая ул.",
+            "description": "",
+            "type": "choice",
+            "value": "4c03a1a1-7b00-11eb-8943-0cc47adabd66",
+            "options": [],
+            "when": {
+              "option_id": "realt.location.settlement",
+              "operator": "in",
+              "value": [
+                "4cbbfd6e-7b00-11eb-8943-0cc47adabd66"
+              ]
+            }
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "realt.location.houseNumber",
+        "name": "Дом",
+        "description": "Форма продажи → location.houseNumber; контрол и свойства в конфигурации формы.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 255
+        }
+      },
+      {
+        "id": "realt.location.buildingNumber",
+        "name": "Корпус",
+        "description": "Форма продажи → location.buildingNumber; контрол и свойства в конфигурации формы.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 4
+        }
+      },
+      {
+        "id": "realt.location.newBuildComplexUuid",
+        "name": "Жилой комплекс",
+        "description": "Форма продажи → location.newBuildComplexUuid; динамические стартовые подсказки, выдача меняется.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.newBuildComplexUuid.v_9bdac7e1828a",
+            "name": "«Наоми 3» в современном комплексе \"Северный Берег\"",
+            "description": "",
+            "type": "choice",
+            "value": "a769a330-8016-11f1-b9ba-439cc3fcd283",
+            "options": []
+          },
+          {
+            "id": "realt.location.newBuildComplexUuid.v_b1c83f2abfc7",
+            "name": "Dana Center",
+            "description": "",
+            "type": "choice",
+            "value": "a911f36b-7b05-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.newBuildComplexUuid.v_a0259b1050ec",
+            "name": "Dana Mall",
+            "description": "",
+            "type": "choice",
+            "value": "a8c23dbd-7b05-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.newBuildComplexUuid.v_a7a1031e775c",
+            "name": "Административно-торговое помещение",
+            "description": "",
+            "type": "choice",
+            "value": "9462fd60-ced4-11f1-b56d-fddc6cf67616",
+            "options": []
+          },
+          {
+            "id": "realt.location.newBuildComplexUuid.v_66f6c9983b95",
+            "name": "Административное здание с арендаторами в центральной части",
+            "description": "",
+            "type": "choice",
+            "value": "c8d5f9c0-d75e-11f1-a46c-87fe997ab043",
+            "options": []
+          },
+          {
+            "id": "realt.location.newBuildComplexUuid.v_5af5fe45a19b",
+            "name": "Аренда в бизнес-центре Фортуна (131-1000  м²)",
+            "description": "",
+            "type": "choice",
+            "value": "8025237e-829b-11ec-ad48-dee111c4eff3",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "realt.apartment.rooms",
+        "name": "Комнат",
+        "description": "Форма продажи → apartment.rooms; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.rooms.v_5d61994ce558",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.rooms.v_ea9753513186",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.rooms.v_fc9d7eb4104a",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.rooms.v_1c68ca07f2d7",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.rooms.v_353d3af5fc87",
+            "name": "5+",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.inventoryNumber",
+        "name": "Инвентарный номер",
+        "description": "Форма продажи → apartment.inventoryNumber; контрол и свойства в конфигурации формы.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "realt.apartment.storey",
+        "name": "Этаж",
+        "description": "Форма продажи → apartment.storey; контрол и свойства в конфигурации формы.",
+        "type": "integer",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 99
+        }
+      },
+      {
+        "id": "realt.apartment.repair",
+        "name": "Ремонт",
+        "description": "Форма продажи → apartment.repair; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.repair.v_6db638fe4d2f",
+            "name": "евроремонт",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_5d61994ce558",
+            "name": "отличный",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_ea9753513186",
+            "name": "хороший",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_fc9d7eb4104a",
+            "name": "нормальный",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_1c68ca07f2d7",
+            "name": "удовлетворительный",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_353d3af5fc87",
+            "name": "плохое состояние",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_5daa0980abe1",
+            "name": "аварийное состояние",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_f81db69cc8df",
+            "name": "без отделки",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.repair.v_aca4f4a652c9",
+            "name": "строительная отделка",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.balcony",
+        "name": "Балконов / лоджий",
+        "description": "Форма продажи → apartment.balcony; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.balcony.v_5d61994ce558",
+            "name": "балкон",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.balcony.v_6db638fe4d2f",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.balcony.v_ea9753513186",
+            "name": "Лоджия",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.balcony.v_4651eeefa115",
+            "name": "балкон и лоджия",
+            "description": "",
+            "type": "choice",
+            "value": 25,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.balcony.v_a48f515d8d2a",
+            "name": "терраса",
+            "description": "",
+            "type": "choice",
+            "value": 19,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.toilet",
+        "name": "Санузел",
+        "description": "Форма продажи → apartment.toilet; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.toilet.v_6db638fe4d2f",
+            "name": "Раздельный",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.toilet.v_5d61994ce558",
+            "name": "Совмещенный",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.toilet.v_ea9753513186",
+            "name": "2 и более",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.ceilingHeight",
+        "name": "Высота потолков",
+        "description": "Форма продажи → apartment.ceilingHeight; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.ceilingHeight.v_3a70522f60d4",
+            "name": "от 2,5 м",
+            "description": "",
+            "type": "choice",
+            "value": "2.5",
+            "options": []
+          },
+          {
+            "id": "realt.apartment.ceilingHeight.v_dd964e3fe5dc",
+            "name": "от 2,7 м",
+            "description": "",
+            "type": "choice",
+            "value": "2.7",
+            "options": []
+          },
+          {
+            "id": "realt.apartment.ceilingHeight.v_d8122286f1ff",
+            "name": "от 3 м",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "realt.apartment.ceilingHeight.v_e78553a4590c",
+            "name": "от 3,5 м",
+            "description": "",
+            "type": "choice",
+            "value": "3.5",
+            "options": []
+          },
+          {
+            "id": "realt.apartment.ceilingHeight.v_a2ccdff76bdd",
+            "name": "от 4 м",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.levels",
+        "name": "Уровней в квартире",
+        "description": "Форма продажи → apartment.levels; контрол и свойства в конфигурации формы.",
+        "type": "integer",
+        "options": [],
+        "required": null,
+        "validation": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      {
+        "id": "realt.apartment.planning",
+        "name": "Планировка",
+        "description": "Форма продажи → apartment.planning; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.planning.v_fc9d7eb4104a",
+            "name": "чешский проект",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_f81db69cc8df",
+            "name": "брежневка",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_353d3af5fc87",
+            "name": "сталинка",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_5daa0980abe1",
+            "name": "хрущевка",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_1c68ca07f2d7",
+            "name": "малосемейка",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_3e64baebd6b2",
+            "name": "пентхаус",
+            "description": "",
+            "type": "choice",
+            "value": 10,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_0f2b09bf336d",
+            "name": "таунхаус",
+            "description": "",
+            "type": "choice",
+            "value": 11,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_aca4f4a652c9",
+            "name": "свободная планировка",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.planning.v_728b81fd8bd2",
+            "name": "студия",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.viewFromWindow",
+        "name": "Вид из окон",
+        "description": "Форма продажи → apartment.viewFromWindow; контрол и свойства в конфигурации формы.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.apartment.viewFromWindow.v_ea9753513186",
+            "name": "Во двор",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.viewFromWindow.v_5d61994ce558",
+            "name": "На улицу",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.viewFromWindow.v_fc9d7eb4104a",
+            "name": "Лес",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.viewFromWindow.v_1c68ca07f2d7",
+            "name": "Парк",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.viewFromWindow.v_353d3af5fc87",
+            "name": "Водоем",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.area.total",
+        "name": "Площадь общая, м²",
+        "description": "Форма продажи → area.total; контрол и свойства в конфигурации формы.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999
+        }
+      },
+      {
+        "id": "realt.area.living",
+        "name": "Площадь жилая, м²",
+        "description": "Форма продажи → area.living; контрол и свойства в конфигурации формы.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999
+        }
+      },
+      {
+        "id": "realt.area.kitchen",
+        "name": "Площадь кухни, м²",
+        "description": "Форма продажи → area.kitchen; контрол и свойства в конфигурации формы.",
+        "type": "number",
+        "options": [],
+        "required": null,
+        "validation": {
+          "min": 1,
+          "max": 9999
+        }
+      },
+      {
+        "id": "realt.area.balcony",
+        "name": "Площадь балконов / лоджий, м²",
+        "description": "Форма продажи → area.balcony; контрол и свойства в конфигурации формы.",
+        "type": "number",
+        "options": [],
+        "required": null,
+        "validation": {
+          "min": 1,
+          "max": 9999
+        }
+      },
+      {
+        "id": "realt.area.snb",
+        "name": "Площадь по СНБ, м²",
+        "description": "Форма продажи → area.snb; контрол и свойства в конфигурации формы.",
+        "type": "number",
+        "options": [],
+        "required": null,
+        "validation": {
+          "min": 1,
+          "max": 9999
+        }
+      },
+      {
+        "id": "realt.house.storeys",
+        "name": "Этажей в доме",
+        "description": "Форма продажи → house.storeys; контрол и свойства в конфигурации формы.",
+        "type": "integer",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 99
+        }
+      },
+      {
+        "id": "realt.house.buildingYear",
+        "name": "Год постройки",
+        "description": "Форма продажи → house.buildingYear; контрол и свойства в конфигурации формы.",
+        "type": "integer",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1700,
+          "max": 2100
+        }
+      },
+      {
+        "id": "realt.house.isNotFinish",
+        "name": "Сдан / Не сдан",
+        "description": "Форма продажи → house.isNotFinish; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.house.isNotFinish.v_5d61994ce558",
+            "name": "Сдан",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.house.isNotFinish.v_6db638fe4d2f",
+            "name": "Не сдан",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.house.repairYear",
+        "name": "Год капитального ремонта",
+        "description": "Форма продажи → house.repairYear; контрол и свойства в конфигурации формы.",
+        "type": "integer",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max": 9999
+        }
+      },
+      {
+        "id": "realt.house.houseType",
+        "name": "Тип дома",
+        "description": "Форма продажи → house.houseType; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.house.houseType.v_5d61994ce558",
+            "name": "Панельный",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.house.houseType.v_6db638fe4d2f",
+            "name": "Кирпичный",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.house.houseType.v_fc9d7eb4104a",
+            "name": "Монолитный",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.house.houseType.v_353d3af5fc87",
+            "name": "Силикатные блоки",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.house.houseType.v_0f2b09bf336d",
+            "name": "Каркасно-блочный",
+            "description": "",
+            "type": "choice",
+            "value": 11,
+            "options": []
+          },
+          {
+            "id": "realt.house.houseType.v_ea9753513186",
+            "name": "Блок-комнаты",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.house.houseType.v_5daa0980abe1",
+            "name": "Бревенчатый",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.house.newBuilding",
+        "name": "Новостройка",
+        "description": "Форма продажи → house.newBuilding; контрол и свойства в конфигурации формы.",
+        "type": "boolean",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "realt.house.homeMaintenance",
+        "name": "Обслуживание дома",
+        "description": "Форма продажи → house.homeMaintenance; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.house.homeMaintenance.v_5d61994ce558",
+            "name": "ЖЭС",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.house.homeMaintenance.v_ea9753513186",
+            "name": "ТС",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.additional.appliance",
+        "name": "Удобства",
+        "description": "Форма продажи → additional.appliance; контрол и свойства в конфигурации формы.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.appliance.v_1d1ff5e87897",
+            "name": "телефонная сеть",
+            "description": "",
+            "type": "choice",
+            "value": 606,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_45f04b216e6f",
+            "name": "охрана/консьерж",
+            "description": "",
+            "type": "choice",
+            "value": 637,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_32d32290bb6f",
+            "name": "мебель",
+            "description": "",
+            "type": "choice",
+            "value": 639,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_631eae9d9ce4",
+            "name": "интернет",
+            "description": "",
+            "type": "choice",
+            "value": 607,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_4ed263d0ea0b",
+            "name": "лифт",
+            "description": "",
+            "type": "choice",
+            "value": 622,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_367b85ae73ce",
+            "name": "видеодомофон",
+            "description": "",
+            "type": "choice",
+            "value": 640,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_6f8350758a1c",
+            "name": "видеонаблюдение",
+            "description": "",
+            "type": "choice",
+            "value": 641,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.additional.facilitiesForDisabledPeople",
+        "name": "Удобства для людей с ограниченными возможностями",
+        "description": "Форма продажи → additional.facilitiesForDisabledPeople; контрол и свойства в конфигурации формы.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.facilitiesForDisabledPeople.v_6db638fe4d2f",
+            "name": "нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.additional.facilitiesForDisabledPeople.v_5d61994ce558",
+            "name": "широкий дверной проем",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.additional.facilitiesForDisabledPeople.v_ea9753513186",
+            "name": "грузовые лифты",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.additional.facilitiesForDisabledPeople.v_fc9d7eb4104a",
+            "name": "выделенные места на парковке",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.additional.facilitiesForDisabledPeople.v_1c68ca07f2d7",
+            "name": "пандусы/подъемник",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.additional.yard",
+        "name": "Благоустройство двора",
+        "description": "Форма продажи → additional.yard; контрол и свойства в конфигурации формы.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.yard.v_5d61994ce558",
+            "name": "двор без машин",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.additional.yard.v_ea9753513186",
+            "name": "современные детские площадки",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.additional.yard.v_fc9d7eb4104a",
+            "name": "закрытая территория",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.additional.yard.v_1c68ca07f2d7",
+            "name": "мусоропровод",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.additional.parking",
+        "name": "Парковка",
+        "description": "Форма продажи → additional.parking; контрол и свойства в конфигурации формы.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.parking.v_ea9753513186",
+            "name": "подземный (встроенный)",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_353d3af5fc87",
+            "name": "во дворе",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_f81db69cc8df",
+            "name": "охраняемая",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_aca4f4a652c9",
+            "name": "на крыше",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_728b81fd8bd2",
+            "name": "есть гараж",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_3e64baebd6b2",
+            "name": "открытая",
+            "description": "",
+            "type": "choice",
+            "value": 10,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.termsOfDeal.currency",
+        "name": "Валюта цены",
+        "description": "Форма продажи → termsOfDeal.currency; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.currency.v_1bde55acc88c",
+            "name": "BYN",
+            "description": "",
+            "type": "choice",
+            "value": "933",
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.currency.v_8778db41776c",
+            "name": "USD",
+            "description": "",
+            "type": "choice",
+            "value": "840",
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.currency.v_9c22543842e7",
+            "name": "EUR",
+            "description": "",
+            "type": "choice",
+            "value": "978",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.termsOfDeal.price",
+        "name": "Цена",
+        "description": "Форма продажи → termsOfDeal.price; контрол и свойства в конфигурации формы.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 999999999
+        }
+      },
+      {
+        "id": "realt.termsOfDeal.bargain",
+        "name": "Возможен торг",
+        "description": "Форма продажи → termsOfDeal.bargain; контрол и свойства в конфигурации формы.",
+        "type": "boolean",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "realt.termsOfDeal.ownerShip",
+        "name": "Собственность",
+        "description": "Форма продажи → termsOfDeal.ownerShip; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.ownerShip.v_353d3af5fc87",
+            "name": "частная",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.ownerShip.v_5d61994ce558",
+            "name": "государственная",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.ownerShip.v_1c68ca07f2d7",
+            "name": "долевое строительство",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.ownerShip.v_5daa0980abe1",
+            "name": "жилищные облигации",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.termsOfDeal.termsOfDeal",
+        "name": "Условия сделки",
+        "description": "Форма продажи → termsOfDeal.termsOfDeal; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_5d61994ce558",
+            "name": "Чистая продажа",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_ea9753513186",
+            "name": "Обмен",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_fc9d7eb4104a",
+            "name": "Обмен - разъезд",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_1c68ca07f2d7",
+            "name": "Обмен - съезд",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_353d3af5fc87",
+            "name": "Подбираются варианты",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_f81db69cc8df",
+            "name": "Съезд",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.termsOfDeal.termsExtra",
+        "name": "Конкурс / Аукцион",
+        "description": "Форма продажи → termsOfDeal.termsExtra; контрол и свойства в конфигурации формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.termsExtra.v_597a5065a955",
+            "name": "Конкурс / Аукцион",
+            "description": "",
+            "type": "choice",
+            "value": "903",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "realt.media.photos",
+        "name": "Фото",
+        "description": "Форма продажи → media.photos; обычный лимит 20 фото, до 20 МБ каждое; со Спецпредложением до 50.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "validation": {
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ]
+        }
+      },
+      {
+        "id": "realt.media.planning",
+        "name": "Фото планировки",
+        "description": "Форма продажи → media.planning; контрол и свойства в конфигурации формы.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "floor_plan"
+      },
+      {
+        "id": "realt.media.youtube",
+        "name": "Ссылка на видео YouTube",
+        "description": "Форма продажи → media.youtube; ввод внешней ссылки; Спецпредложение.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_video"
+      },
+      {
+        "id": "realt.media.tour3d",
+        "name": "3D тур",
+        "description": "Форма продажи → media.tour3d; ввод внешней ссылки; Спецпредложение.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "virtual_tour"
+      },
+      {
+        "id": "realt.description.title",
+        "name": "Заголовок",
+        "description": "Форма продажи → description.title; контрол и свойства в конфигурации формы.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 255
+        }
+      },
+      {
+        "id": "realt.description.shortDescription",
+        "name": "Краткое описание",
+        "description": "Форма продажи → description.shortDescription; контрол и свойства в конфигурации формы.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "max_length": 500
+        }
+      },
+      {
+        "id": "realt.description.description",
+        "name": "Подробное описание",
+        "description": "Форма продажи → description.description; контрол и свойства в конфигурации формы.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 5000
+        }
+      },
+      {
+        "id": "realt.location.metro_1_station",
+        "name": "Ближайшее метро 1",
+        "description": "Расположение → location.nearestMetroStations[0].metroStation. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.metro_1_station.v_43bd15ffa756",
+            "name": "Институт культуры",
+            "description": "",
+            "type": "choice",
+            "value": "481c9f9e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_ea444deeeb1d",
+            "name": "Площадь Ленина",
+            "description": "",
+            "type": "choice",
+            "value": "481ca4ae-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_643a46288304",
+            "name": "Октябрьская",
+            "description": "",
+            "type": "choice",
+            "value": "481ca613-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_b721cfd5e8fd",
+            "name": "Площадь Победы",
+            "description": "",
+            "type": "choice",
+            "value": "481ca729-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_e1df4c637e58",
+            "name": "Площадь Якуба Коласа",
+            "description": "",
+            "type": "choice",
+            "value": "481ca889-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_c2c3fc138bed",
+            "name": "Академия наук",
+            "description": "",
+            "type": "choice",
+            "value": "481ca9de-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_9935ff297cea",
+            "name": "Парк Челюскинцев",
+            "description": "",
+            "type": "choice",
+            "value": "481caba5-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_157487a061b9",
+            "name": "Московская",
+            "description": "",
+            "type": "choice",
+            "value": "481caca1-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_56a07b513cee",
+            "name": "Восток",
+            "description": "",
+            "type": "choice",
+            "value": "481cada1-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_273be0e0b07a",
+            "name": "Борисовский тракт",
+            "description": "",
+            "type": "choice",
+            "value": "481cae9a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_2b9a6b9d5240",
+            "name": "Уручье",
+            "description": "",
+            "type": "choice",
+            "value": "481caf96-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_b39de270a353",
+            "name": "Грушевка",
+            "description": "",
+            "type": "choice",
+            "value": "481cb081-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_0ea0d9adf62e",
+            "name": "Михалово",
+            "description": "",
+            "type": "choice",
+            "value": "481cb170-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_5c11e5d65ef4",
+            "name": "Петровщина",
+            "description": "",
+            "type": "choice",
+            "value": "481cb2fe-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_905a90426281",
+            "name": "Малиновка",
+            "description": "",
+            "type": "choice",
+            "value": "481cb3f0-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_4be169b18106",
+            "name": "Пушкинская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb4e6-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_a0ae2f3e724d",
+            "name": "Молодежная",
+            "description": "",
+            "type": "choice",
+            "value": "481cb5df-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_0a73baf09c2c",
+            "name": "Фрунзенская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb72e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_433536dcb4d9",
+            "name": "Немига",
+            "description": "",
+            "type": "choice",
+            "value": "481cb824-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_d6529d01eda8",
+            "name": "Купаловская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb91d-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_181824e1e331",
+            "name": "Первомайская",
+            "description": "",
+            "type": "choice",
+            "value": "481cba0d-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_3e74f6db8241",
+            "name": "Пролетарская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbafb-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_2395f0baf510",
+            "name": "Тракторный завод",
+            "description": "",
+            "type": "choice",
+            "value": "481cbc5a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_d20a191eecd0",
+            "name": "Партизанская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbd4f-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_6257e6da2382",
+            "name": "Автозаводская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbe47-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_2eee1a862284",
+            "name": "Могилевская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbf4b-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_a2e696eacef7",
+            "name": "Спортивная",
+            "description": "",
+            "type": "choice",
+            "value": "481cc03e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_8f8c384e12b2",
+            "name": "Кунцевщина",
+            "description": "",
+            "type": "choice",
+            "value": "481cc130-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_71400d5adbea",
+            "name": "Каменная горка",
+            "description": "",
+            "type": "choice",
+            "value": "481cc223-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_cd3f0432cbe3",
+            "name": "Юбилейная площадь",
+            "description": "",
+            "type": "choice",
+            "value": "481cc312-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_feecbf0b676e",
+            "name": "Площадь Богушевича",
+            "description": "",
+            "type": "choice",
+            "value": "481cc404-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_3e582e603112",
+            "name": "Вокзальная",
+            "description": "",
+            "type": "choice",
+            "value": "481cc4f8-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_86dc6c099299",
+            "name": "Ковальская Слобода",
+            "description": "",
+            "type": "choice",
+            "value": "481cc5e4-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_f49c533e3166",
+            "name": "Аэродромная (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "51ca0078-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_4a66005c1086",
+            "name": "Неморшанский сад (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "82355720-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_station.v_584d9ab049f7",
+            "name": "Слуцкий гостинец (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "c27127ef-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.metro_1_mode",
+        "name": "Способ передвижения 1",
+        "description": "Расположение → location.nearestMetroStations[0].metroTimeType. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.metro_1_mode.v_5d61994ce558",
+            "name": "Пешком",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_1_mode.v_ea9753513186",
+            "name": "На транспорте",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.metro_1_minutes",
+        "name": "Минут в пути 1",
+        "description": "Расположение → location.nearestMetroStations[0].metroTime. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "integer",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        }
+      },
+      {
+        "id": "realt.location.metro_2_station",
+        "name": "Ближайшее метро 2",
+        "description": "Расположение → location.nearestMetroStations[1].metroStation. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.metro_2_station.v_43bd15ffa756",
+            "name": "Институт культуры",
+            "description": "",
+            "type": "choice",
+            "value": "481c9f9e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_ea444deeeb1d",
+            "name": "Площадь Ленина",
+            "description": "",
+            "type": "choice",
+            "value": "481ca4ae-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_643a46288304",
+            "name": "Октябрьская",
+            "description": "",
+            "type": "choice",
+            "value": "481ca613-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_b721cfd5e8fd",
+            "name": "Площадь Победы",
+            "description": "",
+            "type": "choice",
+            "value": "481ca729-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_e1df4c637e58",
+            "name": "Площадь Якуба Коласа",
+            "description": "",
+            "type": "choice",
+            "value": "481ca889-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_c2c3fc138bed",
+            "name": "Академия наук",
+            "description": "",
+            "type": "choice",
+            "value": "481ca9de-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_9935ff297cea",
+            "name": "Парк Челюскинцев",
+            "description": "",
+            "type": "choice",
+            "value": "481caba5-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_157487a061b9",
+            "name": "Московская",
+            "description": "",
+            "type": "choice",
+            "value": "481caca1-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_56a07b513cee",
+            "name": "Восток",
+            "description": "",
+            "type": "choice",
+            "value": "481cada1-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_273be0e0b07a",
+            "name": "Борисовский тракт",
+            "description": "",
+            "type": "choice",
+            "value": "481cae9a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_2b9a6b9d5240",
+            "name": "Уручье",
+            "description": "",
+            "type": "choice",
+            "value": "481caf96-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_b39de270a353",
+            "name": "Грушевка",
+            "description": "",
+            "type": "choice",
+            "value": "481cb081-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_0ea0d9adf62e",
+            "name": "Михалово",
+            "description": "",
+            "type": "choice",
+            "value": "481cb170-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_5c11e5d65ef4",
+            "name": "Петровщина",
+            "description": "",
+            "type": "choice",
+            "value": "481cb2fe-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_905a90426281",
+            "name": "Малиновка",
+            "description": "",
+            "type": "choice",
+            "value": "481cb3f0-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_4be169b18106",
+            "name": "Пушкинская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb4e6-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_a0ae2f3e724d",
+            "name": "Молодежная",
+            "description": "",
+            "type": "choice",
+            "value": "481cb5df-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_0a73baf09c2c",
+            "name": "Фрунзенская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb72e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_433536dcb4d9",
+            "name": "Немига",
+            "description": "",
+            "type": "choice",
+            "value": "481cb824-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_d6529d01eda8",
+            "name": "Купаловская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb91d-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_181824e1e331",
+            "name": "Первомайская",
+            "description": "",
+            "type": "choice",
+            "value": "481cba0d-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_3e74f6db8241",
+            "name": "Пролетарская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbafb-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_2395f0baf510",
+            "name": "Тракторный завод",
+            "description": "",
+            "type": "choice",
+            "value": "481cbc5a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_d20a191eecd0",
+            "name": "Партизанская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbd4f-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_6257e6da2382",
+            "name": "Автозаводская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbe47-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_2eee1a862284",
+            "name": "Могилевская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbf4b-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_a2e696eacef7",
+            "name": "Спортивная",
+            "description": "",
+            "type": "choice",
+            "value": "481cc03e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_8f8c384e12b2",
+            "name": "Кунцевщина",
+            "description": "",
+            "type": "choice",
+            "value": "481cc130-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_71400d5adbea",
+            "name": "Каменная горка",
+            "description": "",
+            "type": "choice",
+            "value": "481cc223-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_cd3f0432cbe3",
+            "name": "Юбилейная площадь",
+            "description": "",
+            "type": "choice",
+            "value": "481cc312-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_feecbf0b676e",
+            "name": "Площадь Богушевича",
+            "description": "",
+            "type": "choice",
+            "value": "481cc404-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_3e582e603112",
+            "name": "Вокзальная",
+            "description": "",
+            "type": "choice",
+            "value": "481cc4f8-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_86dc6c099299",
+            "name": "Ковальская Слобода",
+            "description": "",
+            "type": "choice",
+            "value": "481cc5e4-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_f49c533e3166",
+            "name": "Аэродромная (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "51ca0078-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_4a66005c1086",
+            "name": "Неморшанский сад (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "82355720-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_station.v_584d9ab049f7",
+            "name": "Слуцкий гостинец (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "c27127ef-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.metro_2_mode",
+        "name": "Способ передвижения 2",
+        "description": "Расположение → location.nearestMetroStations[1].metroTimeType. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.metro_2_mode.v_5d61994ce558",
+            "name": "Пешком",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_2_mode.v_ea9753513186",
+            "name": "На транспорте",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.metro_2_minutes",
+        "name": "Минут в пути 2",
+        "description": "Расположение → location.nearestMetroStations[1].metroTime. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "integer",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        }
+      },
+      {
+        "id": "realt.location.metro_3_station",
+        "name": "Ближайшее метро 3",
+        "description": "Расположение → location.nearestMetroStations[2].metroStation. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.metro_3_station.v_43bd15ffa756",
+            "name": "Институт культуры",
+            "description": "",
+            "type": "choice",
+            "value": "481c9f9e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_ea444deeeb1d",
+            "name": "Площадь Ленина",
+            "description": "",
+            "type": "choice",
+            "value": "481ca4ae-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_643a46288304",
+            "name": "Октябрьская",
+            "description": "",
+            "type": "choice",
+            "value": "481ca613-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_b721cfd5e8fd",
+            "name": "Площадь Победы",
+            "description": "",
+            "type": "choice",
+            "value": "481ca729-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_e1df4c637e58",
+            "name": "Площадь Якуба Коласа",
+            "description": "",
+            "type": "choice",
+            "value": "481ca889-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_c2c3fc138bed",
+            "name": "Академия наук",
+            "description": "",
+            "type": "choice",
+            "value": "481ca9de-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_9935ff297cea",
+            "name": "Парк Челюскинцев",
+            "description": "",
+            "type": "choice",
+            "value": "481caba5-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_157487a061b9",
+            "name": "Московская",
+            "description": "",
+            "type": "choice",
+            "value": "481caca1-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_56a07b513cee",
+            "name": "Восток",
+            "description": "",
+            "type": "choice",
+            "value": "481cada1-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_273be0e0b07a",
+            "name": "Борисовский тракт",
+            "description": "",
+            "type": "choice",
+            "value": "481cae9a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_2b9a6b9d5240",
+            "name": "Уручье",
+            "description": "",
+            "type": "choice",
+            "value": "481caf96-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_b39de270a353",
+            "name": "Грушевка",
+            "description": "",
+            "type": "choice",
+            "value": "481cb081-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_0ea0d9adf62e",
+            "name": "Михалово",
+            "description": "",
+            "type": "choice",
+            "value": "481cb170-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_5c11e5d65ef4",
+            "name": "Петровщина",
+            "description": "",
+            "type": "choice",
+            "value": "481cb2fe-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_905a90426281",
+            "name": "Малиновка",
+            "description": "",
+            "type": "choice",
+            "value": "481cb3f0-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_4be169b18106",
+            "name": "Пушкинская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb4e6-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_a0ae2f3e724d",
+            "name": "Молодежная",
+            "description": "",
+            "type": "choice",
+            "value": "481cb5df-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_0a73baf09c2c",
+            "name": "Фрунзенская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb72e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_433536dcb4d9",
+            "name": "Немига",
+            "description": "",
+            "type": "choice",
+            "value": "481cb824-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_d6529d01eda8",
+            "name": "Купаловская",
+            "description": "",
+            "type": "choice",
+            "value": "481cb91d-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_181824e1e331",
+            "name": "Первомайская",
+            "description": "",
+            "type": "choice",
+            "value": "481cba0d-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_3e74f6db8241",
+            "name": "Пролетарская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbafb-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_2395f0baf510",
+            "name": "Тракторный завод",
+            "description": "",
+            "type": "choice",
+            "value": "481cbc5a-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_d20a191eecd0",
+            "name": "Партизанская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbd4f-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_6257e6da2382",
+            "name": "Автозаводская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbe47-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_2eee1a862284",
+            "name": "Могилевская",
+            "description": "",
+            "type": "choice",
+            "value": "481cbf4b-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_a2e696eacef7",
+            "name": "Спортивная",
+            "description": "",
+            "type": "choice",
+            "value": "481cc03e-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_8f8c384e12b2",
+            "name": "Кунцевщина",
+            "description": "",
+            "type": "choice",
+            "value": "481cc130-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_71400d5adbea",
+            "name": "Каменная горка",
+            "description": "",
+            "type": "choice",
+            "value": "481cc223-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_cd3f0432cbe3",
+            "name": "Юбилейная площадь",
+            "description": "",
+            "type": "choice",
+            "value": "481cc312-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_feecbf0b676e",
+            "name": "Площадь Богушевича",
+            "description": "",
+            "type": "choice",
+            "value": "481cc404-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_3e582e603112",
+            "name": "Вокзальная",
+            "description": "",
+            "type": "choice",
+            "value": "481cc4f8-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_86dc6c099299",
+            "name": "Ковальская Слобода",
+            "description": "",
+            "type": "choice",
+            "value": "481cc5e4-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_f49c533e3166",
+            "name": "Аэродромная (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "51ca0078-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_4a66005c1086",
+            "name": "Неморшанский сад (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "82355720-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_station.v_584d9ab049f7",
+            "name": "Слуцкий гостинец (2024)",
+            "description": "",
+            "type": "choice",
+            "value": "c27127ef-a674-11eb-963d-0cc47adabd66",
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.metro_3_mode",
+        "name": "Способ передвижения 3",
+        "description": "Расположение → location.nearestMetroStations[2].metroTimeType. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.metro_3_mode.v_5d61994ce558",
+            "name": "Пешком",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.location.metro_3_mode.v_ea9753513186",
+            "name": "На транспорте",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.metro_3_minutes",
+        "name": "Минут в пути 3",
+        "description": "Расположение → location.nearestMetroStations[2].metroTime. После подтверждения г. Минск; в Бресте и Речице контрол отсутствует.",
+        "type": "integer",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "realt.location.settlement",
+          "operator": "equals",
+          "value": "4cb07174-7b00-11eb-8943-0cc47adabd66"
+        }
+      },
+      {
+        "id": "realt.apartment.registrationRooms",
+        "name": "Комнат по техпаспорту",
+        "description": "После выбора 2, 3, 4 или 5+ комнат, дополнительный блок «Квартира».",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.registrationRooms.v_5d61994ce558",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_ea9753513186",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_fc9d7eb4104a",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_1c68ca07f2d7",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_353d3af5fc87",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_5daa0980abe1",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_f81db69cc8df",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_aca4f4a652c9",
+            "name": "8",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.registrationRooms.v_728b81fd8bd2",
+            "name": "9 и более",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "realt.apartment.rooms",
+          "operator": "in",
+          "value": [
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.separateRooms",
+        "name": "Раздельных комнат",
+        "description": "Квартира → при выборе нескольких комнат появился input[name=\"apartment.separateRooms\"].",
+        "type": "integer",
+        "options": [],
+        "required": true,
+        "when": {
+          "option_id": "realt.apartment.rooms",
+          "operator": "in",
+          "value": [
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      },
+      {
+        "id": "realt.deal",
+        "name": "Продать",
+        "description": "Путь формы: Продать → Жилая → Квартира. Выбрана указанная ветвь; код маршрута не проверен.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.deal.v_f5c99e32a4d8",
+            "name": "Продать",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "realt.family",
+        "name": "Жилая",
+        "description": "Путь формы: Продать → Жилая → Квартира. Выбрана указанная ветвь; код маршрута не проверен.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.family.v_25031731ff94",
+            "name": "Жилая",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "realt.kind",
+        "name": "Квартира",
+        "description": "Путь формы: Продать → Жилая → Квартира. Выбрана указанная ветвь; код маршрута не проверен.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.kind.v_906e8c3637ca",
+            "name": "Квартира",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      }
+    ]
+  }
+]

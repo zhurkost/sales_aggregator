@@ -29,7 +29,7 @@ public final class CardProjection {
             });
   }
 
-  public static void annotate(ObjectNode prepared, JsonNode plan, JsonNode input) {
+  public static void annotate(ObjectNode prepared, JsonNode plan, JsonNode input, JsonNode card) {
     ArrayNode issues = (ArrayNode) prepared.get("issues");
     Map<String, List<String>> sources = new HashMap<>();
     for (var row : plan.path("fields")) sources.put(text(row, "platform_option_id"), sources(row));
@@ -74,17 +74,18 @@ public final class CardProjection {
     // Cross-field facts must be valid even if only one marketplace is selected.
     try {
       var values = input.path("values");
-      if (!Values.missing(values.get("rental.floor"))
-          && !Values.missing(values.get("building.total_floors"))
-          && Values.decimal(values.get("rental.floor"), true)
-                  .compareTo(Values.decimal(values.get("building.total_floors"), true))
+      String floor = text(card.path("floorCheck"), "floor"), total = text(card.path("floorCheck"), "total");
+      if (!Values.missing(values.get(floor))
+          && !Values.missing(values.get(total))
+          && Values.decimal(values.get(floor), true)
+                  .compareTo(Values.decimal(values.get(total), true))
               > 0)
         issues.add(
             object(
                 "field",
-                "rental.floor",
+                floor,
                 "source",
-                "rental.floor",
+                floor,
                 "code",
                 "floor",
                 "message",

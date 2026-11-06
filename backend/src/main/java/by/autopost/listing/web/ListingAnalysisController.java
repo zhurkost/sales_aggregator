@@ -34,8 +34,8 @@ class ListingAnalysisController {
       @RequestBody JsonNode input) {
     var actor = access.require(request);
     var selected = catalogs.require(category);
-    if (!"apartment_rental".equals(selected.analysis()))
+    if (!java.util.Set.of("apartment_rental", "apartment_sale").contains(selected.analysis()))
       throw new ApiException(409, "Заполнение с ИИ для этой категории ещё не подключено.");
-    return ai.analyze(selected.catalog(), actor.id(), actor.workspace(), input);
+    return ai.analyze(selected.catalog(), selected.analysis(), actor.id(), actor.workspace(), input);
   }
 }

@@ -67,6 +67,21 @@ class RentalAiTest {
   }
 
   @Test
+  void saleAnalysisUsesItsOwnFactsAndRejectsPricePerMetre() {
+    var references = new FileReferenceRepository("../data/rental/apartments_sale");
+    var sale = new AnalysisSchemaBuilder().build(references.snapshot());
+    String description = "Продам двушку за 85 000 USD, 1 700 USD за м².";
+    var result = RentalAiPolicy.sanitize(sale, description, object("suggestions", List.of(
+        suggestion("sale.price", "85000", "85 000 USD"), suggestion("sale.currency", "USD", "85 000 USD"),
+        suggestion("rental.monthly_price", "85000", "85 000 USD"))));
+    assertEquals(List.of("sale.price", "sale.currency"), result.path("suggestions").findValuesAsText("field"));
+    var unitPrice = RentalAiPolicy.sanitize(sale, description, object("suggestions",
+        List.of(suggestion("sale.price", "1700", "1 700 USD за м²"))));
+    assertTrue(unitPrice.path("suggestions").isEmpty());
+    assertFalse(RentalAiPolicy.prompt(sale, "apartment_sale").contains("rental.monthly_price"));
+  }
+
+  @Test
   void dropsUnknownIdsInvalidEnumsInventedNumbersAndUnsupportedQuotes() {
     var result =
         RentalAiPolicy.sanitize(
@@ -201,7 +216,7 @@ class RentalAiTest {
 
   @Test
   void providerPromptUsesCurrentCanonicalSchemaNotNativeFormsOrStoredCards() {
-    String prompt = RentalAiPolicy.prompt(editor());
+    String prompt = RentalAiPolicy.prompt(editor(), "apartment_rental");
     assertTrue(prompt.contains("price"));
     assertTrue(prompt.contains("wifi"));
     assertFalse(prompt.contains("photos"));

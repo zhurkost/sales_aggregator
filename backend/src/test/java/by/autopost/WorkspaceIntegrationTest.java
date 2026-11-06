@@ -70,6 +70,33 @@ class WorkspaceIntegrationTest {
   }
 
   @Test
+  void saleEditorPreparesTotalPriceForEachMarketplace() throws Exception {
+    var cookie = register().cookie();
+    var path = "categories/apartments_sale/";
+    var editor = getJson(path + "editor", cookie, 200);
+    assertTrue(list(editor.path("card").path("mainFields")).stream().anyMatch(v -> v.asText().equals("sale.price")));
+    assertFalse(editor.path("category").toString().contains("rental.monthly_price"));
+    var values = object("sale.price", "85000", "sale.currency", "USD", "apartment.rooms", "2",
+        "apartment.floor", "3", "building.floors", "9", "apartment.total_area", "54.5");
+    var card = object("schemaVersion", text(editor, "version"), "categoryId", "apartments_sale",
+        "platforms", List.of("realt", "kufar", "domovita", "onliner"), "values", values);
+    var prices = Map.of("realt", "realt.termsOfDeal.price", "kufar", "kufar.price",
+        "domovita", "domovita.price", "onliner", "onliner.price.amount");
+    var currencies = Map.of("realt", "realt.termsOfDeal.currency", "kufar", "kufar.currency",
+        "domovita", "domovita.price_currency_text", "onliner", "onliner.price.currency");
+    var response = postJson(path + "prepare", cookie, card, 200).getResponse();
+    var platforms = parse(response.getContentAsString(java.nio.charset.StandardCharsets.UTF_8)).path("platforms");
+    assertEquals(4, platforms.size());
+    for (var prepared : platforms) {
+      String site = text(prepared, "platform");
+      var target = prepared.path("values");
+      assertEquals(85000, target.path(prices.get(site)).asDouble(), site);
+      assertEquals(site.equals("realt") ? "840" : "USD", text(target, currencies.get(site)), site);
+      if (site.equals("onliner")) assertEquals(2, target.path("onliner.rooms").asInt());
+    }
+  }
+
+  @Test
   void removedCardStorageRoutesReturnNotFound() throws Exception {
     var account = register();
     for (String path : List.of("rental/drafts", "rental/drafts/example", "rental/drafts/example/delete")) {

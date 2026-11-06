@@ -321,7 +321,8 @@ class RentalCardTest {
     CardProjection.annotate(
         prepared,
         object("platform", "example"),
-        object("values", object("rental.floor", "9", "building.total_floors", "5")));
+        object("values", object("rental.floor", "9", "building.total_floors", "5")),
+        object("floorCheck", object("floor", "rental.floor", "total", "building.total_floors")));
     assertFalse(prepared.path("dataReady").asBoolean());
     assertEquals("rental.floor", prepared.path("issues").get(0).path("source").asText());
   }

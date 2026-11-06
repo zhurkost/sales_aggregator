@@ -34,19 +34,24 @@ export class RentalViewModel {
       !!this.store.schema?.category.options.some(g => g.id === source || g.options.some(f => f.id === source));
   }
   get mainFields() {
+    const order = this.store.schema?.card?.mainFields;
+    if (order) {
+      const fields = new Map(this.store.schema!.category.options.flatMap(g => this.groupFields(g)).map(f => [f.id, f]));
+      return order.flatMap(id => fields.get(id) || []);
+    }
     const main = this.store.schema?.category.options.find(g => g.id === "group.main");
     return main ? this.groupFields(main) : [];
   }
   get additionalGroups() {
     const query = this.parameterSearch.trim().toLocaleLowerCase();
     return (this.store.schema?.category.options || []).filter(g => g.id !== "group.main").map(g => ({...g, options:this.groupFields(g).filter(f =>
-      f.id !== "listing.description" && (!this.filledOnly || hasValue(this.store.card.values[f.id])) &&
+      f.id !== "listing.description" && !this.store.schema?.card?.mainFields?.includes(f.id) && (!this.filledOnly || hasValue(this.store.card.values[f.id])) &&
       (!query || (g.name + " " + f.name + " " + this.valueLabel(this.store.card.values[f.id])).toLocaleLowerCase().includes(query))
     )})).filter(g => g.options.length);
   }
   get additionalFilled() {
     return (this.store.schema?.category.options || []).filter(g => g.id !== "group.main").flatMap(g => this.groupFields(g))
-      .filter(f => f.id !== "listing.description" && hasValue(this.store.card.values[f.id]));
+      .filter(f => f.id !== "listing.description" && !this.store.schema?.card?.mainFields?.includes(f.id) && hasValue(this.store.card.values[f.id]));
   }
   fieldName(id: string) { return this.store.schema?.category.options.flatMap(g => g.options).find(f => f.id === id)?.name || id; }
   valueLabel(value: JsonValue | undefined) {

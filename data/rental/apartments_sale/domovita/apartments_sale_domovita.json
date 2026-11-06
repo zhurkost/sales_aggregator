@@ -1,0 +1,916 @@
+[
+  {
+    "id": "apartments_sale",
+    "name": "Продажа квартир",
+    "description": "Беларусь. Предложение продать квартиру целиком. Ветки покупки, аренды, комнаты и доли исключены.",
+    "categories": [],
+    "options": [
+      {
+        "id": "domovita.town_id",
+        "name": "Населённый пункт",
+        "description": "Форма flats/sale → town_id; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.town_id.v_417a2fb9cf4e",
+            "name": "г. Минск МИНСКАЯ ОБЛАСТЬ Минский район",
+            "description": "",
+            "type": "choice",
+            "value": 15362,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_cbef445bf5db",
+            "name": "ст. Минская правда МИНСКАЯ ОБЛАСТЬ Логойский район",
+            "description": "",
+            "type": "choice",
+            "value": 59833,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_d150f679c37b",
+            "name": "ст. Минский Водник МИНСКАЯ ОБЛАСТЬ Логойский район",
+            "description": "",
+            "type": "choice",
+            "value": 63042,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_f118904f9f55",
+            "name": "ст. Минский фарфоровый завод МИНСКАЯ ОБЛАСТЬ Логойский район",
+            "description": "",
+            "type": "choice",
+            "value": 59657,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_ef305b4fc911",
+            "name": "ст. Минского маргаринового з-да МИНСКАЯ ОБЛАСТЬ Пуховичский район",
+            "description": "",
+            "type": "choice",
+            "value": 60173,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_d65108ba88fb",
+            "name": "г. Брест БРЕСТСКАЯ ОБЛАСТЬ Брестский район",
+            "description": "",
+            "type": "choice",
+            "value": 2194,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_346cae312392",
+            "name": "д. Брестский БРЕСТСКАЯ ОБЛАСТЬ Брестский район",
+            "description": "",
+            "type": "choice",
+            "value": 55762,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_2dbc42236281",
+            "name": "г. Речица ГОМЕЛЬСКАЯ ОБЛАСТЬ Речицкий район",
+            "description": "",
+            "type": "choice",
+            "value": 10311,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_38e00d84cb26",
+            "name": "д. Речица БРЕСТСКАЯ ОБЛАСТЬ Каменецкий район",
+            "description": "",
+            "type": "choice",
+            "value": 1202,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_b540e7559106",
+            "name": "д. Речица ВИТЕБСКАЯ ОБЛАСТЬ Полоцкий район",
+            "description": "",
+            "type": "choice",
+            "value": 6193,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_fea8311a0931",
+            "name": "рп. Речица БРЕСТСКАЯ ОБЛАСТЬ Столинский район",
+            "description": "",
+            "type": "choice",
+            "value": 55189,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_ec489cd921a2",
+            "name": "д. Речица ГОМЕЛЬСКАЯ ОБЛАСТЬ Лельчицкий район",
+            "description": "",
+            "type": "choice",
+            "value": 55886,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_8428d1be4328",
+            "name": "нп. Речица ГОМЕЛЬСКАЯ ОБЛАСТЬ Речицкий район",
+            "description": "",
+            "type": "choice",
+            "value": 62749,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_d02143d8c2a0",
+            "name": "нп. Речица БРЕСТСКАЯ ОБЛАСТЬ Столинский район",
+            "description": "",
+            "type": "choice",
+            "value": 62750,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_f00142904b37",
+            "name": "д. Речица БРЕСТСКАЯ ОБЛАСТЬ Березовский район",
+            "description": "",
+            "type": "choice",
+            "value": 345,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_6efc1657b3e9",
+            "name": "д. Речица БРЕСТСКАЯ ОБЛАСТЬ Кобринский район",
+            "description": "",
+            "type": "choice",
+            "value": 1257,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_1147eee81b2c",
+            "name": "аг. Речица МОГИЛЕВСКАЯ ОБЛАСТЬ Чериковский район",
+            "description": "",
+            "type": "choice",
+            "value": 23434,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_16693b4b7097",
+            "name": "нп. Речица БРЕСТСКАЯ ОБЛАСТЬ Каменецкий район",
+            "description": "",
+            "type": "choice",
+            "value": 62751,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_57589e6bf185",
+            "name": "нп. Речица БРЕСТСКАЯ ОБЛАСТЬ Кобринский район",
+            "description": "",
+            "type": "choice",
+            "value": 62752,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_ad838aae226d",
+            "name": "нп. Речица БРЕСТСКАЯ ОБЛАСТЬ Берёзовский район",
+            "description": "",
+            "type": "choice",
+            "value": 62754,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_62f8bae4c2d6",
+            "name": "нп. Речица ВИТЕБСКАЯ ОБЛАСТЬ Полоцкий район",
+            "description": "",
+            "type": "choice",
+            "value": 62755,
+            "options": []
+          },
+          {
+            "id": "domovita.town_id.v_6d130d595e6a",
+            "name": "нп. Речица ГОМЕЛЬСКАЯ ОБЛАСТЬ Чериковский район",
+            "description": "",
+            "type": "choice",
+            "value": 62756,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.street_name",
+        "name": "Улица",
+        "description": "Форма flats/sale → street_name; имя контрола или модели формы.",
+        "type": "enum",
+        "options": [],
+        "required": false,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.house_number",
+        "name": "Дом",
+        "description": "Форма flats/sale → house_number; имя контрола или модели формы.",
+        "type": "enum",
+        "options": [],
+        "required": false,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.position_x",
+        "name": "Координата position_x",
+        "description": "Форма flats/sale → position_x; имя контрола или модели формы.",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.position_y",
+        "name": "Координата position_y",
+        "description": "Форма flats/sale → position_y; имя контрола или модели формы.",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.contact_name",
+        "name": "Как обращаться",
+        "description": "Форма flats/sale → contact_name; имя контрола или модели формы.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.phones.0.contact_phone",
+        "name": "Телефон для связи",
+        "description": "Форма flats/sale → phones.0.contact_phone; имя контрола или модели формы.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "domovita.email",
+        "name": "Эл. почта",
+        "description": "Форма flats/sale → email; имя контрола или модели формы.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.rooms",
+        "name": "Всего комнат",
+        "description": "Форма flats/sale → rooms; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.rooms.v_6db638fe4d2f",
+            "name": "Студия",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_5d61994ce558",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_ea9753513186",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_fc9d7eb4104a",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_1c68ca07f2d7",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_353d3af5fc87",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_5daa0980abe1",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_f81db69cc8df",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.separate_rooms",
+        "name": "Отдельных комнат",
+        "description": "Форма flats/sale → separate_rooms; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.separate_rooms.v_5d61994ce558",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "domovita.separate_rooms.v_ea9753513186",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "domovita.separate_rooms.v_fc9d7eb4104a",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "domovita.separate_rooms.v_1c68ca07f2d7",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "domovita.separate_rooms.v_353d3af5fc87",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "domovita.separate_rooms.v_5daa0980abe1",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "domovita.separate_rooms.v_f81db69cc8df",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "domovita.rooms",
+          "operator": "in",
+          "value": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_total",
+        "name": "Общая площадь",
+        "description": "Форма flats/sale → area_total; имя контрола или модели формы.",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.area_kitchen",
+        "name": "Площадь кухни",
+        "description": "Форма flats/sale → area_kitchen; имя контрола или модели формы.",
+        "type": "number",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.area_living",
+        "name": "Жилая площадь",
+        "description": "Форма flats/sale → area_living; имя контрола или модели формы.",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.storey",
+        "name": "Этаж",
+        "description": "Форма flats/sale → storey; имя контрола или модели формы.",
+        "type": "integer",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.storeys",
+        "name": "Этажей в доме",
+        "description": "Форма flats/sale → storeys; имя контрола или модели формы.",
+        "type": "integer",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.balcony",
+        "name": "Балкон",
+        "description": "Форма flats/sale → balcony; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.balcony.v_4d196839c068",
+            "name": "Балкон",
+            "description": "",
+            "type": "choice",
+            "value": "Балкон",
+            "options": []
+          },
+          {
+            "id": "domovita.balcony.v_dd07212042a3",
+            "name": "Лоджия",
+            "description": "",
+            "type": "choice",
+            "value": "Лоджия",
+            "options": []
+          },
+          {
+            "id": "domovita.balcony.v_d42d574019c7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": "Нет",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.lavatory",
+        "name": "Сан. узел",
+        "description": "Форма flats/sale → lavatory; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.lavatory.v_4da592696ae6",
+            "name": "Раздельный",
+            "description": "",
+            "type": "choice",
+            "value": "Раздельный",
+            "options": []
+          },
+          {
+            "id": "domovita.lavatory.v_f9d63825d180",
+            "name": "Совмещенный",
+            "description": "",
+            "type": "choice",
+            "value": "Совмещенный",
+            "options": []
+          },
+          {
+            "id": "domovita.lavatory.v_2ab758898810",
+            "name": "2 сан.узла",
+            "description": "",
+            "type": "choice",
+            "value": "2 сан.узла",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.repair_state",
+        "name": "Ремонт",
+        "description": "Форма flats/sale → repair_state; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.repair_state.v_86670ddfb621",
+            "name": "С отделкой",
+            "description": "",
+            "type": "choice",
+            "value": "С отделкой",
+            "options": []
+          },
+          {
+            "id": "domovita.repair_state.v_1e8451e849c1",
+            "name": "Без отделки",
+            "description": "",
+            "type": "choice",
+            "value": "Без отделки",
+            "options": []
+          },
+          {
+            "id": "domovita.repair_state.v_c60479fad0c6",
+            "name": "Хороший",
+            "description": "",
+            "type": "choice",
+            "value": "Хороший",
+            "options": []
+          },
+          {
+            "id": "domovita.repair_state.v_18bbd167029d",
+            "name": "Евро",
+            "description": "",
+            "type": "choice",
+            "value": "Евро",
+            "options": []
+          },
+          {
+            "id": "domovita.repair_state.v_11e1c0af6628",
+            "name": "Дизайнерский",
+            "description": "",
+            "type": "choice",
+            "value": "Дизайнерский",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.house_type",
+        "name": "Тип стен",
+        "description": "Форма flats/sale → house_type; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.house_type.v_22e79b709cfb",
+            "name": "Панельный",
+            "description": "",
+            "type": "choice",
+            "value": "Панельный",
+            "options": []
+          },
+          {
+            "id": "domovita.house_type.v_39e97dd2fa32",
+            "name": "Монолитный",
+            "description": "",
+            "type": "choice",
+            "value": "Монолитный",
+            "options": []
+          },
+          {
+            "id": "domovita.house_type.v_6696bb191b9b",
+            "name": "Кирпичный",
+            "description": "",
+            "type": "choice",
+            "value": "Кирпичный",
+            "options": []
+          },
+          {
+            "id": "domovita.house_type.v_a27c0486481c",
+            "name": "Каркасно-блочный",
+            "description": "",
+            "type": "choice",
+            "value": "Каркасно-блочный",
+            "options": []
+          },
+          {
+            "id": "domovita.house_type.v_1aced887ba95",
+            "name": "Силикатные блоки",
+            "description": "",
+            "type": "choice",
+            "value": "Силикатные блоки",
+            "options": []
+          },
+          {
+            "id": "domovita.house_type.v_ef503c7521d4",
+            "name": "Бревенчатый",
+            "description": "",
+            "type": "choice",
+            "value": "Бревенчатый",
+            "options": []
+          },
+          {
+            "id": "domovita.house_type.v_aa83fe13900d",
+            "name": "Блок-комнаты",
+            "description": "",
+            "type": "choice",
+            "value": "Блок-комнаты",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.building_year",
+        "name": "Год постройки",
+        "description": "Форма flats/sale → building_year; имя контрола или модели формы.",
+        "type": "integer",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.repair_year",
+        "name": "Год кап. ремонта",
+        "description": "Форма flats/sale → repair_year; имя контрола или модели формы.",
+        "type": "integer",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.extra_info_comments",
+        "name": "Удобства",
+        "description": "Форма flats/sale → extra_info_comments; отдельные checkbox с value.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "domovita.extra_info_comments.v_3415f8672b98",
+            "name": "Паркинг",
+            "description": "",
+            "type": "choice",
+            "value": "parking",
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_232b834e3165",
+            "name": "Видеонаблюдение",
+            "description": "",
+            "type": "choice",
+            "value": "videonabl",
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_30c75ba3417c",
+            "name": "Консьерж",
+            "description": "",
+            "type": "choice",
+            "value": "concierge",
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_74f1ef6c5866",
+            "name": "Пандус",
+            "description": "",
+            "type": "choice",
+            "value": "ramp",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.house_control_type",
+        "name": "Вид управления домом",
+        "description": "Форма flats/sale → house_control_type; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.house_control_type.v_547ead6fbb23",
+            "name": "ЖЭУ",
+            "description": "",
+            "type": "choice",
+            "value": "housing_department",
+            "options": []
+          },
+          {
+            "id": "domovita.house_control_type.v_1941b17b7f61",
+            "name": "Товарищество собственников",
+            "description": "",
+            "type": "choice",
+            "value": "owners_association",
+            "options": []
+          },
+          {
+            "id": "domovita.house_control_type.v_5a4e8388d376",
+            "name": "Управляющая компания",
+            "description": "",
+            "type": "choice",
+            "value": "managing_company",
+            "options": []
+          },
+          {
+            "id": "domovita.house_control_type.v_f175e88c60b8",
+            "name": "Иной вид управления",
+            "description": "",
+            "type": "choice",
+            "value": "other",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.photos",
+        "name": "Фотографии",
+        "description": "Форма flats/sale → photos; файловый input, загрузка после подтверждения телефона.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "validation": {
+          "extensions": [
+            "jpg",
+            "jpeg",
+            "png"
+          ]
+        }
+      },
+      {
+        "id": "domovita.description",
+        "name": "Описание",
+        "description": "Форма flats/sale → description; имя контрола или модели формы.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "domovita.youtube_link",
+        "name": "Ссылка на видео с YouTube",
+        "description": "Форма flats/sale → youtube_link; приём ссылки YouTube.",
+        "type": "files",
+        "options": [],
+        "required": false,
+        "file_role": "product_video"
+      },
+      {
+        "id": "domovita.is_online_showing",
+        "name": "Доступен онлайн-показ квартиры",
+        "description": "Форма flats/sale → is_online_showing; имя контрола или модели формы.",
+        "type": "boolean",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.price",
+        "name": "Общая цена",
+        "description": "Форма flats/sale → price; имя контрола или модели формы.",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "domovita.price_currency_text",
+        "name": "Валюта",
+        "description": "Форма flats/sale → price_currency_text; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.price_currency_text.v_7b2792c0dde8",
+            "name": "USD",
+            "description": "",
+            "type": "choice",
+            "value": "USD",
+            "options": []
+          },
+          {
+            "id": "domovita.price_currency_text.v_b072f5d57e05",
+            "name": "EUR",
+            "description": "",
+            "type": "choice",
+            "value": "EUR",
+            "options": []
+          },
+          {
+            "id": "domovita.price_currency_text.v_652c0946998e",
+            "name": "BYN",
+            "description": "",
+            "type": "choice",
+            "value": "BYN",
+            "options": []
+          },
+          {
+            "id": "domovita.price_currency_text.v_c3113c5faf3e",
+            "name": "RUB",
+            "description": "",
+            "type": "choice",
+            "value": "RUB",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.terms",
+        "name": "Условия сделки",
+        "description": "Форма flats/sale → terms; варианты компонента формы.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.terms.v_da532648e503",
+            "name": "Любые",
+            "description": "",
+            "type": "choice",
+            "value": "Любые",
+            "options": []
+          },
+          {
+            "id": "domovita.terms.v_3c609c9ff395",
+            "name": "Чистая продажа",
+            "description": "",
+            "type": "choice",
+            "value": "Чистая продажа",
+            "options": []
+          },
+          {
+            "id": "domovita.terms.v_1018d5764643",
+            "name": "Обмен",
+            "description": "",
+            "type": "choice",
+            "value": "Обмен",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.action",
+        "name": "Тип сделки",
+        "description": "Радиокнопка начального шага /new/add, выбрана ветвь flats/sale.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.action.v_4ebcb3749428",
+            "name": "Продаже",
+            "description": "",
+            "type": "choice",
+            "value": "sale",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.type",
+        "name": "Тип недвижимости",
+        "description": "Радиокнопка начального шага /new/add, выбрана ветвь flats/sale.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.type.v_c5c0cbc81c18",
+            "name": "Квартиры",
+            "description": "",
+            "type": "choice",
+            "value": "flats",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.phones.1.contact_phone",
+        "name": "Дополнительный телефон 1",
+        "description": "Контакты → Добавить другой номер. В форме не более четырёх номеров вместе с основным.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.phones.2.contact_phone",
+        "name": "Дополнительный телефон 2",
+        "description": "Контакты → Добавить другой номер. В форме не более четырёх номеров вместе с основным.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "domovita.phones.3.contact_phone",
+        "name": "Дополнительный телефон 3",
+        "description": "Контакты → Добавить другой номер. В форме не более четырёх номеров вместе с основным.",
+        "type": "text",
+        "options": [],
+        "required": false
+      }
+    ]
+  }
+]

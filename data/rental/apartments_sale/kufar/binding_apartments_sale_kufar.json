@@ -1,0 +1,346 @@
+{
+  "category_id": "apartments_sale",
+  "platform": "kufar",
+  "fields": [
+    {
+      "option_id": "kufar.type",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.category",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.subject",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"subject\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.address",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.body",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"body\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.images",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "kufar.price",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"price\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "kufar.price_mode"
+      ]
+    },
+    {
+      "option_id": "kufar.currency",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.region",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.content_video",
+      "status": "needs_review",
+      "reason": "Не проверено подтверждение приёма файла площадкой."
+    },
+    {
+      "option_id": "kufar.re_contract",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.phone",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.contact_person",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.email",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.coordinates",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.rooms",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.re_number_floors",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.flat_storeys",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.flat_open_room",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.house_type",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.bathroom",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.balcony",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.floor",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.flat_new_building",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.re_last_floor",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.size_kitchen",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"size_kitchen\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.flat_ceiling_height",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.re_auction_sale",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.flat_building_improvements",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.new_buildings_apartment_complex",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.condition",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.square_meter",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "kufar.price_mode"
+      ]
+    },
+    {
+      "option_id": "kufar.year_built",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.flat_windows_side",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.size_living_space",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"size_living_space\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.size",
+      "status": "ready",
+      "target": {
+        "selectors": [
+          "form [name=\"size\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "blur"
+      ],
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.flat_repair",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.size_snb",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.possible_exchange",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    },
+    {
+      "option_id": "kufar.re_district",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "kufar.region"
+      ]
+    },
+    {
+      "option_id": "kufar.metro",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "kufar.region"
+      ]
+    },
+    {
+      "option_id": "kufar.re_metro_afoot",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "kufar.region"
+      ]
+    },
+    {
+      "option_id": "kufar.re_metro_transport",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола.",
+      "depends_on": [
+        "kufar.region"
+      ]
+    },
+    {
+      "option_id": "kufar.price_mode",
+      "status": "needs_review",
+      "reason": "Значение не устанавливалось с последующей проверкой состояния этого контрола."
+    }
+  ]
+}

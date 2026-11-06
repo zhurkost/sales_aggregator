@@ -1,0 +1,4686 @@
+[
+  {
+    "id": "apartments_sale",
+    "name": "Продажа квартир",
+    "description": "Беларусь. Предложение продать квартиру целиком. Ветки покупки, аренды, комнаты и доли исключены.",
+    "categories": [],
+    "options": [
+      {
+        "id": "kufar.type",
+        "name": "Тип сделки",
+        "description": "bootstrap → ad_metadata.parameters.refs[1444]; {\"category\":\"1010\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.type.v_34003eb5c91d",
+            "name": "Продажа",
+            "description": "",
+            "type": "choice",
+            "value": "sell",
+            "options": []
+          },
+          {
+            "id": "kufar.type.v_d66fcf04fbc9",
+            "name": "Долгосрочная аренда",
+            "description": "",
+            "type": "choice",
+            "value": "let",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.category",
+        "name": "Категория",
+        "description": "bootstrap → ad_metadata.parameters.refs[1591]; базовые метаданные категории 1010.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.category.v_262c175c27c7",
+            "name": "Новостройки",
+            "description": "",
+            "type": "choice",
+            "value": "1120",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_9d85fe85bb57",
+            "name": "Квартиры",
+            "description": "",
+            "type": "choice",
+            "value": "1010",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_612c0fea3ee8",
+            "name": "Комнаты",
+            "description": "",
+            "type": "choice",
+            "value": "1040",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_46f0a533fcda",
+            "name": "Дома, агроусадьбы, коттеджи",
+            "description": "",
+            "type": "choice",
+            "value": "1020",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_916724579d5d",
+            "name": "Гаражи и стоянки",
+            "description": "",
+            "type": "choice",
+            "value": "1030",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_4cfdc5a95061",
+            "name": "Участки",
+            "description": "",
+            "type": "choice",
+            "value": "1080",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_7c50ca2f0097",
+            "name": "Коммерческая",
+            "description": "",
+            "type": "choice",
+            "value": "1050",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.subject",
+        "name": "Название объявления",
+        "description": "bootstrap → ad_metadata.parameters.refs[1512]; базовые метаданные категории 1010.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 2,
+          "max_length": 100
+        }
+      },
+      {
+        "id": "kufar.address",
+        "name": "Адрес",
+        "description": "bootstrap → ad_metadata.parameters.refs[1595]; базовые метаданные категории 1010. Геокодер и выбор подсказки или перемещение метки. Открытый справочник.",
+        "type": "enum",
+        "options": [],
+        "required": true,
+        "options_complete": false
+      },
+      {
+        "id": "kufar.body",
+        "name": "Описание",
+        "description": "bootstrap → ad_metadata.parameters.refs[10911]; базовые метаданные категории 1010.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 20,
+          "max_length": 5000
+        }
+      },
+      {
+        "id": "kufar.images",
+        "name": "Фотографии",
+        "description": "bootstrap → ad_metadata.parameters.refs[1774]; базовые метаданные категории 1010. В форме указано до 10 МБ на файл; добавление требует входа. Метаданные помечают поле необязательным, правила модерации для вторичного жилья требуют реальное фото: https://helpcenter.kufar.by/knowledge_base/item/276423 .",
+        "type": "files",
+        "options": [],
+        "required": false,
+        "file_role": "product_image",
+        "validation": {
+          "extensions": [
+            "jpg",
+            "jpeg",
+            "png"
+          ]
+        }
+      },
+      {
+        "id": "kufar.price",
+        "name": "Цена",
+        "description": "bootstrap → ad_metadata.parameters.refs[1592]; базовые метаданные категории 1010.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "kufar.price_mode",
+          "operator": "equals",
+          "value": "common"
+        }
+      },
+      {
+        "id": "kufar.currency",
+        "name": "Валюта",
+        "description": "bootstrap → ad_metadata.parameters.refs[1775]; базовые метаданные категории 1010.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.currency.v_197c91b85380",
+            "name": "р.",
+            "description": "",
+            "type": "choice",
+            "value": "BYR",
+            "options": []
+          },
+          {
+            "id": "kufar.currency.v_7b2792c0dde8",
+            "name": "$",
+            "description": "",
+            "type": "choice",
+            "value": "USD",
+            "options": []
+          },
+          {
+            "id": "kufar.currency.v_b072f5d57e05",
+            "name": "€",
+            "description": "",
+            "type": "choice",
+            "value": "EUR",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.region",
+        "name": "Регион",
+        "description": "bootstrap → ad_metadata.parameters.refs[9121]; базовые метаданные категории 1010.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.region.v_6181ea9dd037",
+            "name": "Минск",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_e49c54607d45",
+            "name": "Брестская область",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_196b9170727a",
+            "name": "Гомельская область",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_d8122286f1ff",
+            "name": "Гродненская область",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_a2ccdff76bdd",
+            "name": "Могилевская область",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_cc80edb6227f",
+            "name": "Минская область",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_580e435b671d",
+            "name": "Витебская область",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.content_video",
+        "name": "Видео на YouTube",
+        "description": "bootstrap → ad_metadata.parameters.refs[6007]; {\"type\":\"sell\"}",
+        "type": "files",
+        "options": [],
+        "required": false,
+        "file_role": "product_video"
+      },
+      {
+        "id": "kufar.re_contract",
+        "name": "Номер и дата договора",
+        "description": "bootstrap → ad_metadata.parameters.refs[7287]; {\"type\":\"sell\"}",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min_length": 2,
+          "max_length": 150
+        }
+      },
+      {
+        "id": "kufar.phone",
+        "name": "Телефон",
+        "description": "bootstrap → ad_metadata.parameters.refs[1515]; базовые метаданные категории 1010.",
+        "type": "text",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "kufar.contact_person",
+        "name": "Контактное лицо",
+        "description": "bootstrap → ad_metadata.parameters.refs[1519]; базовые метаданные категории 1010.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "kufar.email",
+        "name": "E-mail",
+        "description": "bootstrap → ad_metadata.parameters.refs[1514]; базовые метаданные категории 1010.",
+        "type": "text",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "kufar.coordinates",
+        "name": "Координаты",
+        "description": "bootstrap → ad_metadata.parameters.refs[809]; базовые метаданные категории 1010.",
+        "type": "text",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "kufar.rooms",
+        "name": "Количество комнат",
+        "description": "bootstrap → ad_metadata.parameters.refs[1464]; {\"category\":\"1010\",\"type\":\"sell\"} В справочнике multi=true, валидатор v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.rooms.v_e49c54607d45",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.rooms.v_196b9170727a",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.rooms.v_d8122286f1ff",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.rooms.v_a2ccdff76bdd",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.rooms.v_cc80edb6227f",
+            "name": "5 и более",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.re_number_floors",
+        "name": "Количество этажей",
+        "description": "bootstrap → ad_metadata.parameters.refs[4898]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_number_floors.v_e49c54607d45",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_196b9170727a",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_d8122286f1ff",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_a2ccdff76bdd",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_cc80edb6227f",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_580e435b671d",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_6181ea9dd037",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_fa4165c18fcd",
+            "name": "8",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_c38d6751c9b0",
+            "name": "9",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_213256f1167c",
+            "name": "10",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_14b28c7f15c1",
+            "name": "11",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_39f0843a988b",
+            "name": "12",
+            "description": "",
+            "type": "choice",
+            "value": "12",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_e19a50dd4b6d",
+            "name": "13",
+            "description": "",
+            "type": "choice",
+            "value": "13",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_c5b923a01e2c",
+            "name": "14",
+            "description": "",
+            "type": "choice",
+            "value": "14",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_7a1239e18075",
+            "name": "15",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_81248492d0b7",
+            "name": "16",
+            "description": "",
+            "type": "choice",
+            "value": "16",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_c27831f07d06",
+            "name": "17",
+            "description": "",
+            "type": "choice",
+            "value": "17",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_b2d0a5611b58",
+            "name": "18",
+            "description": "",
+            "type": "choice",
+            "value": "18",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_058c58c38566",
+            "name": "19",
+            "description": "",
+            "type": "choice",
+            "value": "19",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_bdbac52b4b51",
+            "name": "20",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_ce453a599829",
+            "name": "21",
+            "description": "",
+            "type": "choice",
+            "value": "21",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_2386d438555d",
+            "name": "22",
+            "description": "",
+            "type": "choice",
+            "value": "22",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_c69846fbcc59",
+            "name": "23",
+            "description": "",
+            "type": "choice",
+            "value": "23",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_8296df951a54",
+            "name": "24",
+            "description": "",
+            "type": "choice",
+            "value": "24",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_239b24e386a9",
+            "name": "25",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_79b8501e3427",
+            "name": "26",
+            "description": "",
+            "type": "choice",
+            "value": "26",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_7a4b07ec7c3e",
+            "name": "27",
+            "description": "",
+            "type": "choice",
+            "value": "27",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_cd0a508bcda8",
+            "name": "28",
+            "description": "",
+            "type": "choice",
+            "value": "28",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_1c9c333e35ab",
+            "name": "29",
+            "description": "",
+            "type": "choice",
+            "value": "29",
+            "options": []
+          },
+          {
+            "id": "kufar.re_number_floors.v_fd269d9b570d",
+            "name": "больше 30",
+            "description": "",
+            "type": "choice",
+            "value": "30",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.flat_storeys",
+        "name": "Число уровней",
+        "description": "bootstrap → ad_metadata.parameters.refs[4929]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.flat_storeys.v_e49c54607d45",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_storeys.v_cc80edb6227f",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_storeys.v_213256f1167c",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.flat_open_room",
+        "name": "Есть проходная комната",
+        "description": "bootstrap → ad_metadata.parameters.refs[4889]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.flat_open_room.v_e49c54607d45",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_open_room.v_99c9e7dd3890",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.house_type",
+        "name": "Материал стен",
+        "description": "bootstrap → ad_metadata.parameters.refs[1468]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_type.v_e49c54607d45",
+            "name": "Панельный",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type.v_196b9170727a",
+            "name": "Монолитный",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type.v_d8122286f1ff",
+            "name": "Кирпичный",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type.v_a2ccdff76bdd",
+            "name": "Блочный",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type.v_cc80edb6227f",
+            "name": "Каркасный",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type.v_213256f1167c",
+            "name": "Каркасно-блочный",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.bathroom",
+        "name": "Санузел",
+        "description": "bootstrap → ad_metadata.parameters.refs[1479]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.bathroom.v_e49c54607d45",
+            "name": "Раздельный",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.bathroom.v_196b9170727a",
+            "name": "Совмещенный",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.bathroom.v_d8122286f1ff",
+            "name": "Два",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.bathroom.v_a2ccdff76bdd",
+            "name": "Три",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.balcony",
+        "name": "Балкон",
+        "description": "bootstrap → ad_metadata.parameters.refs[1480]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.balcony.v_e49c54607d45",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.balcony.v_196b9170727a",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.balcony.v_d8122286f1ff",
+            "name": "Лоджия",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.balcony.v_a2ccdff76bdd",
+            "name": "Два",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.floor",
+        "name": "Этаж",
+        "description": "bootstrap → ad_metadata.parameters.refs[1474]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.floor.v_e49c54607d45",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_196b9170727a",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_d8122286f1ff",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_a2ccdff76bdd",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_cc80edb6227f",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_580e435b671d",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_6181ea9dd037",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_fa4165c18fcd",
+            "name": "8",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_c38d6751c9b0",
+            "name": "9",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_213256f1167c",
+            "name": "10",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_14b28c7f15c1",
+            "name": "11",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_39f0843a988b",
+            "name": "12",
+            "description": "",
+            "type": "choice",
+            "value": "12",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_e19a50dd4b6d",
+            "name": "13",
+            "description": "",
+            "type": "choice",
+            "value": "13",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_c5b923a01e2c",
+            "name": "14",
+            "description": "",
+            "type": "choice",
+            "value": "14",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_7a1239e18075",
+            "name": "15",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_81248492d0b7",
+            "name": "16",
+            "description": "",
+            "type": "choice",
+            "value": "16",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_c27831f07d06",
+            "name": "17",
+            "description": "",
+            "type": "choice",
+            "value": "17",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_b2d0a5611b58",
+            "name": "18",
+            "description": "",
+            "type": "choice",
+            "value": "18",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_058c58c38566",
+            "name": "19",
+            "description": "",
+            "type": "choice",
+            "value": "19",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_bdbac52b4b51",
+            "name": "20",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_ce453a599829",
+            "name": "21",
+            "description": "",
+            "type": "choice",
+            "value": "21",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_2386d438555d",
+            "name": "22",
+            "description": "",
+            "type": "choice",
+            "value": "22",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_c69846fbcc59",
+            "name": "23",
+            "description": "",
+            "type": "choice",
+            "value": "23",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_8296df951a54",
+            "name": "24",
+            "description": "",
+            "type": "choice",
+            "value": "24",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_239b24e386a9",
+            "name": "25",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_79b8501e3427",
+            "name": "26",
+            "description": "",
+            "type": "choice",
+            "value": "26",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_7a4b07ec7c3e",
+            "name": "27",
+            "description": "",
+            "type": "choice",
+            "value": "27",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_cd0a508bcda8",
+            "name": "28",
+            "description": "",
+            "type": "choice",
+            "value": "28",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_1c9c333e35ab",
+            "name": "29",
+            "description": "",
+            "type": "choice",
+            "value": "29",
+            "options": []
+          },
+          {
+            "id": "kufar.floor.v_fd269d9b570d",
+            "name": "больше 30",
+            "description": "",
+            "type": "choice",
+            "value": "30",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.flat_new_building",
+        "name": "В новостройке",
+        "description": "bootstrap → ad_metadata.parameters.refs[4897]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.flat_new_building.v_e49c54607d45",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_new_building.v_99c9e7dd3890",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.re_last_floor",
+        "name": "Про этаж",
+        "description": "bootstrap → ad_metadata.parameters.refs[10931]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_last_floor.v_e49c54607d45",
+            "name": "Не последний этаж",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_last_floor.v_196b9170727a",
+            "name": "Последний этаж",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.size_kitchen",
+        "name": "Площадь кухни, м²",
+        "description": "bootstrap → ad_metadata.parameters.refs[1450]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "number",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "kufar.flat_ceiling_height",
+        "name": "Высота потолков",
+        "description": "bootstrap → ad_metadata.parameters.refs[4926]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.flat_ceiling_height.v_e49c54607d45",
+            "name": "от 2.5 м",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_cc80edb6227f",
+            "name": "от 2.7 м",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_213256f1167c",
+            "name": "от 3 м",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_7a1239e18075",
+            "name": "от 3.5 м",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_bdbac52b4b51",
+            "name": "от 4 м",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.re_auction_sale",
+        "name": "Продажа через аукцион/конкурс",
+        "description": "bootstrap → ad_metadata.parameters.refs[4892]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_auction_sale.v_e49c54607d45",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_auction_sale.v_99c9e7dd3890",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.flat_building_improvements",
+        "name": "Обустройство дома",
+        "description": "bootstrap → ad_metadata.parameters.refs[4974]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.flat_building_improvements.v_e49c54607d45",
+            "name": "Лифт",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_196b9170727a",
+            "name": "Пандус",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_d8122286f1ff",
+            "name": "Мусоропровод",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_a2ccdff76bdd",
+            "name": "Огороженная территория",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_cc80edb6227f",
+            "name": "Парковка крытая",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_580e435b671d",
+            "name": "Стояночное место",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_6181ea9dd037",
+            "name": "Домофон",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_fa4165c18fcd",
+            "name": "Видеонаблюдение",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_building_improvements.v_c38d6751c9b0",
+            "name": "Подвал",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.new_buildings_apartment_complex",
+        "name": "Жилой комплекс",
+        "description": "bootstrap → ad_metadata.parameters.refs[5501]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e49c54607d45",
+            "name": "MOD House",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_500d36ba3eaf",
+            "name": "ЖК Гастелло Резиденс",
+            "description": "",
+            "type": "choice",
+            "value": "645",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_cc80edb6227f",
+            "name": "Дом №3 в мкр. Лошица-6",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_213256f1167c",
+            "name": "Дом № 3 по ул. Гоголя-Папанина",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_7a1239e18075",
+            "name": "Дом № 4 по ул. Пролетарской - Щорса",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_bdbac52b4b51",
+            "name": "Дом № 603Б в мкр. №6 жилого района Аэропорт",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_239b24e386a9",
+            "name": "Дом № 615А в мкр. №6 жилого района Аэропорт",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_fd269d9b570d",
+            "name": "Дом №1 по ул. Комсомольская",
+            "description": "",
+            "type": "choice",
+            "value": "30",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_64b61b1be1b7",
+            "name": "Дом №1 по ул. Курчатова",
+            "description": "",
+            "type": "choice",
+            "value": "35",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d0e0a6a7946c",
+            "name": "Дом №11 по ул.Суворова ЖК Колбасино",
+            "description": "",
+            "type": "choice",
+            "value": "40",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f2afa5a15ebb",
+            "name": "Дом №2 по ул. Ленина",
+            "description": "",
+            "type": "choice",
+            "value": "45",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_0928d077c22e",
+            "name": "Дом №2 по ул. Пролетарской - Щорса",
+            "description": "",
+            "type": "choice",
+            "value": "50",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_5e611f28e899",
+            "name": "Дом №28 в мкрн. Спутник",
+            "description": "",
+            "type": "choice",
+            "value": "55",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_653685f3ceb1",
+            "name": "Дом №312А по ул.Суворова ЖК Колбасино",
+            "description": "",
+            "type": "choice",
+            "value": "60",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_35209f01e737",
+            "name": "Дом №34 в мкрн. Спутник",
+            "description": "",
+            "type": "choice",
+            "value": "65",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_61b37b8d9cf4",
+            "name": "Дом №35 по ул. Труда",
+            "description": "",
+            "type": "choice",
+            "value": "70",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_89642260a3d3",
+            "name": "Дом №4 в мкр. Лошица-6",
+            "description": "",
+            "type": "choice",
+            "value": "75",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_4ebbccf16ba9",
+            "name": "Дом №41 по ул. Огинского",
+            "description": "",
+            "type": "choice",
+            "value": "80",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b63a1004c265",
+            "name": "Дом №56",
+            "description": "",
+            "type": "choice",
+            "value": "85",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_500fed79e515",
+            "name": "Дом №6 по ул. Пролетарской - Щорса",
+            "description": "",
+            "type": "choice",
+            "value": "90",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a9b66aa52a8e",
+            "name": "Дом «Амстердам» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "830",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_2065d580008c",
+            "name": "Дом «Бангкок» в квартале «Азия» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "900",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d581b2cf1944",
+            "name": "Дом «Белград» в квартале «Центральная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "815",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_02daa4b0140b",
+            "name": "Дом «Берлин» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "855",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_c2a27a0c9ca1",
+            "name": "Дом «Бразилиа» в квартале «Южная Америка» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "875",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_fdc5421890dd",
+            "name": "Дом «Бухарест» в квартале «Центральная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "885",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f017364d87df",
+            "name": "Дом «Варшава» в квартале «Центральная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "860",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f95dda32b412",
+            "name": "Дом «Гайд Парк» в квартале «Happy Planet» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "890",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_58b1565c280f",
+            "name": "Дом «Голден Гейт Парк» в квартале «Happy Planet» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "850",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e3fa4200a456",
+            "name": "Дом «Ёёги Парк» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "845",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_21f1c9c6e233",
+            "name": "Дом «Лима» в квартале «Южная Америка» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "920",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ccaf719bc334",
+            "name": "Дом «Лимасол» в квартале «Средиземноморский» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "895",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e9e7fad479e0",
+            "name": "Дом «Лиссабон» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "800",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_aaaa6dd6e4cd",
+            "name": "Дом «Лондон» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "880",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e263d2744706",
+            "name": "Дом «Мадрид» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "910",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_fea2a77b25c5",
+            "name": "Дом «Манчестер» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "915",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_da9bfc595f87",
+            "name": "Дом «Марсель» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "820",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e8f801a54be7",
+            "name": "Дом «Мехико-Сити» в квартале «Южная Америка» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "805",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_22bdc67b23db",
+            "name": "Дом «Монтевидео» в квартале «Южная Америка» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "865",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_862f743e2113",
+            "name": "Дом «Мюнхен» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "795",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_099340c5b747",
+            "name": "Дом «Париж» в квартале «Западная Европа» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "825",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f60f46eae208",
+            "name": "Дом «Родос» в квартале «Средиземноморский» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "870",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8778db41776c",
+            "name": "Дом «Румба» в квартале «Мировые танцы» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "840",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b5f586da6648",
+            "name": "Дом «Самба» в квартале «Мировые танцы» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "925",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9e5cd07649e2",
+            "name": "Дом «Сан-Паулу» в квартале «Южная Америка» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "905",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b8111ff37a1c",
+            "name": "Дом «Санторини» в квартале «Средиземноморский» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "810",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a9b1a0916705",
+            "name": "Дом «Сентрал Парк» в квартале «Happy Planet» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "790",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e8f74d3d05ee",
+            "name": "Дом «Ча-Ча-Ча» в квартале «Мировые танцы» (Minsk World)",
+            "description": "",
+            "type": "choice",
+            "value": "835",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6cc9a02da8b1",
+            "name": "Дом на Будённого, 30",
+            "description": "",
+            "type": "choice",
+            "value": "705",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_85731b23023a",
+            "name": "Дом на Менделеева, 30",
+            "description": "",
+            "type": "choice",
+            "value": "710",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_bad02cc57412",
+            "name": "Дом на пр-т Мира 18",
+            "description": "",
+            "type": "choice",
+            "value": "95",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_10ab16b0a799",
+            "name": "Дом по пр-ту Фрунзе 36А",
+            "description": "",
+            "type": "choice",
+            "value": "100",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_2157af26a002",
+            "name": "Дом по ул. 3-я Коллективная",
+            "description": "",
+            "type": "choice",
+            "value": "105",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_edfd06ae9ed6",
+            "name": "Дом по ул. Буденного 28",
+            "description": "",
+            "type": "choice",
+            "value": "110",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_83c34da15723",
+            "name": "Дом по ул. Волотовской 11",
+            "description": "",
+            "type": "choice",
+            "value": "115",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_7fdf7afcb320",
+            "name": "Дом по ул. Махновича 11",
+            "description": "",
+            "type": "choice",
+            "value": "120",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6883c500fc8d",
+            "name": "Дом по ул. Пушкина",
+            "description": "",
+            "type": "choice",
+            "value": "125",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d0bed4c3abc4",
+            "name": "Дом по ул. Свердлова 12",
+            "description": "",
+            "type": "choice",
+            "value": "130",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_79647db95aae",
+            "name": "Дом по ул. Социалистической",
+            "description": "",
+            "type": "choice",
+            "value": "135",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_0bf8c26ece28",
+            "name": "Дом по ул. Червякова",
+            "description": "",
+            "type": "choice",
+            "value": "140",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a37dcd73a8eb",
+            "name": "Дом Эмиратс Волна",
+            "description": "",
+            "type": "choice",
+            "value": "145",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_92875bcc2d2a",
+            "name": "Доступное жильё: Железнодорожная дом №4",
+            "description": "",
+            "type": "choice",
+            "value": "150",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_1168bad33c11",
+            "name": "Доступное жилье: Железнодорожная дом №6",
+            "description": "",
+            "type": "choice",
+            "value": "155",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a070518c7078",
+            "name": "Доступное жильё: Запад",
+            "description": "",
+            "type": "choice",
+            "value": "160",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8245df22a070",
+            "name": "Доступное жилье: Степянка",
+            "description": "",
+            "type": "choice",
+            "value": "165",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_cfda69df7dbb",
+            "name": "ЖД № 67  в мкрн Билево-2",
+            "description": "",
+            "type": "choice",
+            "value": "170",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_cfd18916134e",
+            "name": "ЖД №1008 по ул. Еронько",
+            "description": "",
+            "type": "choice",
+            "value": "175",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_0ff6aa994391",
+            "name": "ЖД №1054 по ул. Еронько",
+            "description": "",
+            "type": "choice",
+            "value": "180",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_bb59a3adf577",
+            "name": "ЖД №2 по ул. Папанина",
+            "description": "",
+            "type": "choice",
+            "value": "185",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f4e61b12dd78",
+            "name": "ЖД №49 по ул. Алексея Пысина",
+            "description": "",
+            "type": "choice",
+            "value": "190",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_15145bd255ab",
+            "name": "ЖД Дипломат",
+            "description": "",
+            "type": "choice",
+            "value": "195",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_1189a6a6959e",
+            "name": "ЖД на пер. 1-й Южный 19",
+            "description": "",
+            "type": "choice",
+            "value": "200",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_930bb37c7aad",
+            "name": "ЖД на проспекте Строителей 92",
+            "description": "",
+            "type": "choice",
+            "value": "205",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b3e3d3824c06",
+            "name": "ЖД по ул. Адамковской",
+            "description": "",
+            "type": "choice",
+            "value": "700",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f2d64a768a02",
+            "name": "ЖД на ул. Гагарина",
+            "description": "",
+            "type": "choice",
+            "value": "210",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9ca8766ef25c",
+            "name": "ЖД на ул. Горького 41",
+            "description": "",
+            "type": "choice",
+            "value": "215",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_aebd3381e33c",
+            "name": "ЖД по ул. Свердлова, 29",
+            "description": "",
+            "type": "choice",
+            "value": "690",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_10d4a573d491",
+            "name": "ЖД по ул. Чкалова",
+            "description": "",
+            "type": "choice",
+            "value": "220",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_030a6883d6bb",
+            "name": "ЖД по ул. Федько, 3",
+            "description": "",
+            "type": "choice",
+            "value": "685",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_264472785c0d",
+            "name": "ЖД Рамонак",
+            "description": "",
+            "type": "choice",
+            "value": "640",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_db55de008a19",
+            "name": "ЖД Топаз",
+            "description": "",
+            "type": "choice",
+            "value": "670",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_c8408da7de98",
+            "name": "ЖД Фаворит",
+            "description": "",
+            "type": "choice",
+            "value": "665",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_53a6508bdcf2",
+            "name": "Жилой дом № 2",
+            "description": "",
+            "type": "choice",
+            "value": "225",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a3d9ce9326f9",
+            "name": "Жилой дом № 3",
+            "description": "",
+            "type": "choice",
+            "value": "230",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_640731601236",
+            "name": "Жилой дом № 5 по ул. Суворова",
+            "description": "",
+            "type": "choice",
+            "value": "235",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6c7e39414652",
+            "name": "Жилой дом № 8 по ул. Академика Карского",
+            "description": "",
+            "type": "choice",
+            "value": "240",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_5d243bcdebd2",
+            "name": "Жилой дом №2",
+            "description": "",
+            "type": "choice",
+            "value": "245",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9e6151f14d21",
+            "name": "Жилой дом №4",
+            "description": "",
+            "type": "choice",
+            "value": "250",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_c7ec57b4c1b4",
+            "name": "Жилой дом №5 по ул. Судиловского в г. Солигорске",
+            "description": "",
+            "type": "choice",
+            "value": "730",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_89a13e3e6609",
+            "name": "Жилой дом №66Л по ул.Правды",
+            "description": "",
+            "type": "choice",
+            "value": "255",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_3d012b92b948",
+            "name": "Жилой дом №92",
+            "description": "",
+            "type": "choice",
+            "value": "260",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ab0f88f24f23",
+            "name": "Жилой дом в мкр. Лебяжий",
+            "description": "",
+            "type": "choice",
+            "value": "265",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_21cf332a87eb",
+            "name": "Жилой дом Зодиак",
+            "description": "",
+            "type": "choice",
+            "value": "270",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ea82b2a091c0",
+            "name": "Жилой дом КПД №3 в мкрн Билево-1",
+            "description": "",
+            "type": "choice",
+            "value": "275",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_fc96c3c54155",
+            "name": "Жилой дом по пер. Горный, 8",
+            "description": "",
+            "type": "choice",
+            "value": "755",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_0a36358bb708",
+            "name": "Жилой дом по ул. Грибоедова",
+            "description": "",
+            "type": "choice",
+            "value": "280",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_701aa7f19fb2",
+            "name": "Жилой комплекс Янтарь",
+            "description": "",
+            "type": "choice",
+            "value": "285",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6fd7b89cab45",
+            "name": "Жилой район Новая Боровая",
+            "description": "",
+            "type": "choice",
+            "value": "290",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a3da93576383",
+            "name": "ЖК на ул. Розы Люксембург",
+            "description": "",
+            "type": "choice",
+            "value": "655",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_c2b80f0309b9",
+            "name": "ЖК Радужный",
+            "description": "",
+            "type": "choice",
+            "value": "305",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ba912fc69692",
+            "name": "ЖК Родны Кут",
+            "description": "",
+            "type": "choice",
+            "value": "660",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6fa9f646b023",
+            "name": "ЖК D3",
+            "description": "",
+            "type": "choice",
+            "value": "310",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6145e596bec7",
+            "name": "ЖК Minsk World",
+            "description": "",
+            "type": "choice",
+            "value": "315",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_dbfb45a894b7",
+            "name": "ЖК Smart",
+            "description": "",
+            "type": "choice",
+            "value": "320",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_cb9a6c5da2a9",
+            "name": "ЖК Антоновский квартал",
+            "description": "",
+            "type": "choice",
+            "value": "765",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ac8436655c59",
+            "name": "ЖК Белый город",
+            "description": "",
+            "type": "choice",
+            "value": "775",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_56881c527ca4",
+            "name": "ЖК Браславский",
+            "description": "",
+            "type": "choice",
+            "value": "325",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_83bfdcb1bfeb",
+            "name": "ЖК Брестский",
+            "description": "",
+            "type": "choice",
+            "value": "330",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_a418a94ad0a5",
+            "name": "ЖК в мкрн Загорский",
+            "description": "",
+            "type": "choice",
+            "value": "335",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_46f7efed4564",
+            "name": "ЖК в районе ул. Алибегова — Я. Брыля",
+            "description": "",
+            "type": "choice",
+            "value": "340",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_7ed055c8f8e3",
+            "name": "ЖК Варшавский",
+            "description": "",
+            "type": "choice",
+            "value": "345",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_4b8b459945d0",
+            "name": "ЖК Варшавский дом №37",
+            "description": "",
+            "type": "choice",
+            "value": "350",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_2f54ec22fd76",
+            "name": "ЖК Восточный",
+            "description": "",
+            "type": "choice",
+            "value": "355",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f317bd855629",
+            "name": "ЖК Гармония",
+            "description": "",
+            "type": "choice",
+            "value": "750",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_42184a82ebe5",
+            "name": "ЖК Гранд Авеню",
+            "description": "",
+            "type": "choice",
+            "value": "760",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8900b8596a2f",
+            "name": "ЖК Гранд Хаус",
+            "description": "",
+            "type": "choice",
+            "value": "360",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9b6c78ea9d81",
+            "name": "ЖК Грушевский посад",
+            "description": "",
+            "type": "choice",
+            "value": "365",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_014d87fb21a5",
+            "name": "ЖК Зеленая гавань",
+            "description": "",
+            "type": "choice",
+            "value": "370",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9ee3bf2e78d4",
+            "name": "ЖК Триумф",
+            "description": "",
+            "type": "choice",
+            "value": "375",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_be50554ba91f",
+            "name": "ЖК КАСКАД",
+            "description": "",
+            "type": "choice",
+            "value": "380",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_c6a6cbb2ad48",
+            "name": "ЖК Квартал Михалово",
+            "description": "",
+            "type": "choice",
+            "value": "785",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d04dca29f978",
+            "name": "ЖК Кипарис",
+            "description": "",
+            "type": "choice",
+            "value": "650",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9c6845583705",
+            "name": "ЖК Колбасино",
+            "description": "",
+            "type": "choice",
+            "value": "385",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_381f1f4d0b2b",
+            "name": "ЖК Комфорт парк",
+            "description": "",
+            "type": "choice",
+            "value": "745",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_115af75dad2f",
+            "name": "ЖК Лазурит",
+            "description": "",
+            "type": "choice",
+            "value": "300",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_2533ad8b2c2c",
+            "name": "ЖК Левада",
+            "description": "",
+            "type": "choice",
+            "value": "390",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f6c641df9a55",
+            "name": "ЖК Малахит",
+            "description": "",
+            "type": "choice",
+            "value": "395",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_52b290efa86b",
+            "name": "ЖК Малиновка",
+            "description": "",
+            "type": "choice",
+            "value": "400",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b8d3be66b2cc",
+            "name": "ЖК Матвеевский",
+            "description": "",
+            "type": "choice",
+            "value": "405",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_117d7b90e078",
+            "name": "ЖK Маэстро",
+            "description": "",
+            "type": "choice",
+            "value": "740",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_2e566a512f00",
+            "name": "ЖК Маяк Минска",
+            "description": "",
+            "type": "choice",
+            "value": "410",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_90c46dab172c",
+            "name": "ЖК Мегаполис",
+            "description": "",
+            "type": "choice",
+            "value": "415",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_07e4568a3fd2",
+            "name": "ЖК Менжинский",
+            "description": "",
+            "type": "choice",
+            "value": "420",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8d507a36a306",
+            "name": "ЖК Минский квартал",
+            "description": "",
+            "type": "choice",
+            "value": "425",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_40ce386c39a5",
+            "name": "ЖК Монтерей",
+            "description": "",
+            "type": "choice",
+            "value": "430",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_1fd42c568726",
+            "name": "ЖК на просп. Ивана Жолтовского",
+            "description": "",
+            "type": "choice",
+            "value": "435",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ed3cefacff14",
+            "name": "ЖК на Титова, 14",
+            "description": "",
+            "type": "choice",
+            "value": "715",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e40180c01679",
+            "name": "ЖК на ул. Восточной - Олешева",
+            "description": "",
+            "type": "choice",
+            "value": "440",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_be04496f1646",
+            "name": "ЖК на ул. Заслонова 47",
+            "description": "",
+            "type": "choice",
+            "value": "445",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f0c0af621c29",
+            "name": "ЖК на ул. Якубовского 70",
+            "description": "",
+            "type": "choice",
+            "value": "450",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_be7d1c5bae82",
+            "name": "ЖК Нарочанский",
+            "description": "",
+            "type": "choice",
+            "value": "455",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8cf8c0c9cc4c",
+            "name": "ЖК Некрасовский",
+            "description": "",
+            "type": "choice",
+            "value": "460",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8ca80ba9fd98",
+            "name": "ЖК Новоселье",
+            "description": "",
+            "type": "choice",
+            "value": "465",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_54a55665e47e",
+            "name": "ЖК Новый Заславль",
+            "description": "",
+            "type": "choice",
+            "value": "295",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b62d1d2a48fd",
+            "name": "ЖК Одесский",
+            "description": "",
+            "type": "choice",
+            "value": "470",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e28d5aaefb6a",
+            "name": "ЖК Озерцо",
+            "description": "",
+            "type": "choice",
+            "value": "475",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_cadb6e0e4972",
+            "name": "ЖК Олимпик Парк",
+            "description": "",
+            "type": "choice",
+            "value": "480",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e7155ebf837f",
+            "name": "ЖК Парк Челюскинцев",
+            "description": "",
+            "type": "choice",
+            "value": "485",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_55b88dfb8bd2",
+            "name": "ЖК Петровщина",
+            "description": "",
+            "type": "choice",
+            "value": "490",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e10835859afd",
+            "name": "ЖК Петровщина",
+            "description": "",
+            "type": "choice",
+            "value": "495",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_22fa12a16d5d",
+            "name": "ЖК Пирс",
+            "description": "",
+            "type": "choice",
+            "value": "500",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_dede21766bde",
+            "name": "ЖК по мкрн 104 ЖД №39",
+            "description": "",
+            "type": "choice",
+            "value": "505",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_fe7b1a522743",
+            "name": "ЖК по мкрн 59 ЖД №33",
+            "description": "",
+            "type": "choice",
+            "value": "510",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_3b622a78c534",
+            "name": "ЖК по мкрн №15 ЖД №19",
+            "description": "",
+            "type": "choice",
+            "value": "515",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_027c78ae4ad8",
+            "name": "ЖК по просп. Речицкий ЖД №142",
+            "description": "",
+            "type": "choice",
+            "value": "520",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_127bc30e259d",
+            "name": "ЖК по просп. Строителей 92",
+            "description": "",
+            "type": "choice",
+            "value": "525",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_07bce8d665d1",
+            "name": "ЖК по ул. Богдана Хмельницкого",
+            "description": "",
+            "type": "choice",
+            "value": "530",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_40b1eac94956",
+            "name": "ЖК по ул. Докутович ЖД №3",
+            "description": "",
+            "type": "choice",
+            "value": "535",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_37a1e9ed6a5f",
+            "name": "ЖК по ул. Калинина 3",
+            "description": "",
+            "type": "choice",
+            "value": "540",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_3532958a0e63",
+            "name": "ЖК по ул. Колесника 1а",
+            "description": "",
+            "type": "choice",
+            "value": "545",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8f209cb54b84",
+            "name": "ЖК по ул. Полесская 28А",
+            "description": "",
+            "type": "choice",
+            "value": "550",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f69c962bd664",
+            "name": "ЖК по ул. Рогачевская ЖД №1",
+            "description": "",
+            "type": "choice",
+            "value": "555",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_dc1bfae9ff84",
+            "name": "ЖК по ул. Федюнинского ЖД №10",
+            "description": "",
+            "type": "choice",
+            "value": "560",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e4c4f56f4926",
+            "name": "ЖК Прибужский Квартал",
+            "description": "",
+            "type": "choice",
+            "value": "565",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f2fc35452a5f",
+            "name": "ЖК Променад",
+            "description": "",
+            "type": "choice",
+            "value": "570",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_9995a4799eec",
+            "name": "ЖК Променада (Брест)",
+            "description": "",
+            "type": "choice",
+            "value": "575",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6d40cb8e94bf",
+            "name": "ЖК Разинский",
+            "description": "",
+            "type": "choice",
+            "value": "580",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d1a20a65cd8c",
+            "name": "ЖК Северный",
+            "description": "",
+            "type": "choice",
+            "value": "585",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b6792d6ea296",
+            "name": "ЖК Северный Берег",
+            "description": "",
+            "type": "choice",
+            "value": "735",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b8a64d10bb09",
+            "name": "ЖК Скандинавское предместье",
+            "description": "",
+            "type": "choice",
+            "value": "587",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e3a9bbc109d9",
+            "name": "ЖК Старая крепость",
+            "description": "",
+            "type": "choice",
+            "value": "590",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_0d949dba2781",
+            "name": "ЖК Тришин",
+            "description": "",
+            "type": "choice",
+            "value": "720",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_93ff76199296",
+            "name": "ЖК Уручский-2",
+            "description": "",
+            "type": "choice",
+            "value": "595",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_f8974018dfcf",
+            "name": "ЖК Уютный",
+            "description": "",
+            "type": "choice",
+            "value": "780",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_8bcb0cc50c47",
+            "name": "ЖК Четыре сезона",
+            "description": "",
+            "type": "choice",
+            "value": "600",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_0c91651c3ccb",
+            "name": "ЖК эконом-класса по ул. Карвата, 10",
+            "description": "",
+            "type": "choice",
+            "value": "770",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_950e8e8d91bc",
+            "name": "ЖК Янтарный",
+            "description": "",
+            "type": "choice",
+            "value": "695",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_7e4ffaace45b",
+            "name": "Застройка квартала в районе улицы Ленина",
+            "description": "",
+            "type": "choice",
+            "value": "605",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_6e54d52a236c",
+            "name": "Квартал Северное сияние (Новая Боровая)",
+            "description": "",
+            "type": "choice",
+            "value": "675",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e28dc8ac7af8",
+            "name": "Квартал Цветной (Новая Боровая)",
+            "description": "",
+            "type": "choice",
+            "value": "680",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_415d275e9a7a",
+            "name": "Клубный дом Вилла Рива",
+            "description": "",
+            "type": "choice",
+            "value": "610",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_66f0dc313f59",
+            "name": "Клубный дом Цитадель",
+            "description": "",
+            "type": "choice",
+            "value": "615",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d7be848fd332",
+            "name": "Клубный комплекс Набережный",
+            "description": "",
+            "type": "choice",
+            "value": "725",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_296d1a1989d6",
+            "name": "микрорайон Грандичи",
+            "description": "",
+            "type": "choice",
+            "value": "620",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_d34640cf20e3",
+            "name": "МК Фарфоровый",
+            "description": "",
+            "type": "choice",
+            "value": "625",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_ce139de4f40e",
+            "name": "Многоквартирный жилой дом № 44",
+            "description": "",
+            "type": "choice",
+            "value": "630",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_5c342a029885",
+            "name": "Новостройка по адресу пер Горный 8",
+            "description": "",
+            "type": "choice",
+            "value": "635",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b1c6ffe3620e",
+            "name": "ЖК Depo",
+            "description": "",
+            "type": "choice",
+            "value": "930",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_71a4962edb91",
+            "name": "ЖК Славянский Квартал",
+            "description": "",
+            "type": "choice",
+            "value": "945",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_3a9a51f18800",
+            "name": "ЖК Изумрудный",
+            "description": "",
+            "type": "choice",
+            "value": "950",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_e5915b83bb04",
+            "name": "ЖК Ясный бор",
+            "description": "",
+            "type": "choice",
+            "value": "955",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_cce32fbbcbe7",
+            "name": "ЖК Дубравинский",
+            "description": "",
+            "type": "choice",
+            "value": "960",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_7e4bb34a5fcf",
+            "name": "ЖК Лайт",
+            "description": "",
+            "type": "choice",
+            "value": "965",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_b65c6328189d",
+            "name": "ЖК Парус",
+            "description": "",
+            "type": "choice",
+            "value": "970",
+            "options": []
+          },
+          {
+            "id": "kufar.new_buildings_apartment_complex.v_25efe47169f8",
+            "name": "ЖК Квартал на Грушевке",
+            "description": "",
+            "type": "choice",
+            "value": "975",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.condition",
+        "name": "Состояние",
+        "description": "bootstrap → ad_metadata.parameters.refs[1506]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.condition.v_196b9170727a",
+            "name": "Новое",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.condition.v_e49c54607d45",
+            "name": "Вторичное",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.square_meter",
+        "name": "Цена за м²",
+        "description": "bootstrap → ad_metadata.parameters.refs[5847]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "kufar.price_mode",
+          "operator": "equals",
+          "value": "m2"
+        }
+      },
+      {
+        "id": "kufar.year_built",
+        "name": "Год постройки",
+        "description": "bootstrap → ad_metadata.parameters.refs[1471]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.year_built.v_2e885f92bf4e",
+            "name": "2029",
+            "description": "",
+            "type": "choice",
+            "value": "2029",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_fa24accff9f5",
+            "name": "2028",
+            "description": "",
+            "type": "choice",
+            "value": "2028",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_98b46bee4a52",
+            "name": "2027",
+            "description": "",
+            "type": "choice",
+            "value": "2027",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_dcc4deb94f64",
+            "name": "2026",
+            "description": "",
+            "type": "choice",
+            "value": "2026",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_1f95224b14de",
+            "name": "2025",
+            "description": "",
+            "type": "choice",
+            "value": "2025",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_b52e1f8b2cec",
+            "name": "2024",
+            "description": "",
+            "type": "choice",
+            "value": "2024",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_123740f8a7a5",
+            "name": "2023",
+            "description": "",
+            "type": "choice",
+            "value": "2023",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_51b388823db8",
+            "name": "2022",
+            "description": "",
+            "type": "choice",
+            "value": "2022",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_6c8fe08bc212",
+            "name": "2021",
+            "description": "",
+            "type": "choice",
+            "value": "2021",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_476b68466ed7",
+            "name": "2020",
+            "description": "",
+            "type": "choice",
+            "value": "2020",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_593783b12a4b",
+            "name": "2019",
+            "description": "",
+            "type": "choice",
+            "value": "2019",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_a923e11f69a9",
+            "name": "2018",
+            "description": "",
+            "type": "choice",
+            "value": "2018",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_a27eb48d623a",
+            "name": "2017",
+            "description": "",
+            "type": "choice",
+            "value": "2017",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_15547a9d2c81",
+            "name": "2016",
+            "description": "",
+            "type": "choice",
+            "value": "2016",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_5a5dca2761fe",
+            "name": "2015",
+            "description": "",
+            "type": "choice",
+            "value": "2015",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_bcc81da616d3",
+            "name": "2014",
+            "description": "",
+            "type": "choice",
+            "value": "2014",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_0aac1b6928b1",
+            "name": "2013",
+            "description": "",
+            "type": "choice",
+            "value": "2013",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_c6b6096ac0af",
+            "name": "2012",
+            "description": "",
+            "type": "choice",
+            "value": "2012",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_301ec5c1fbaf",
+            "name": "2011",
+            "description": "",
+            "type": "choice",
+            "value": "2011",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_f0aa3956e07b",
+            "name": "2010",
+            "description": "",
+            "type": "choice",
+            "value": "2010",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_c935d767ccaa",
+            "name": "2009",
+            "description": "",
+            "type": "choice",
+            "value": "2009",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_be5d9b1904ab",
+            "name": "2008",
+            "description": "",
+            "type": "choice",
+            "value": "2008",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_921c62ea0592",
+            "name": "2007",
+            "description": "",
+            "type": "choice",
+            "value": "2007",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_8424325c1d33",
+            "name": "2006",
+            "description": "",
+            "type": "choice",
+            "value": "2006",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_b1cea7ce8169",
+            "name": "2005",
+            "description": "",
+            "type": "choice",
+            "value": "2005",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_db959a66bbe5",
+            "name": "2004",
+            "description": "",
+            "type": "choice",
+            "value": "2004",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_c07de5e88647",
+            "name": "2003",
+            "description": "",
+            "type": "choice",
+            "value": "2003",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_40c6143f90c2",
+            "name": "2002",
+            "description": "",
+            "type": "choice",
+            "value": "2002",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_909b0ac24742",
+            "name": "2001",
+            "description": "",
+            "type": "choice",
+            "value": "2001",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_11664bcb58f7",
+            "name": "2000",
+            "description": "",
+            "type": "choice",
+            "value": "2000",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_a0056b95069f",
+            "name": "1999",
+            "description": "",
+            "type": "choice",
+            "value": "1999",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_4841e90e5aeb",
+            "name": "1998",
+            "description": "",
+            "type": "choice",
+            "value": "1998",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_bbd8c6217903",
+            "name": "1997",
+            "description": "",
+            "type": "choice",
+            "value": "1997",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_39a42bbba735",
+            "name": "1996",
+            "description": "",
+            "type": "choice",
+            "value": "1996",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_f6cc55ceec46",
+            "name": "1995",
+            "description": "",
+            "type": "choice",
+            "value": "1995",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_471388b24837",
+            "name": "1994",
+            "description": "",
+            "type": "choice",
+            "value": "1994",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_9e43fe7e751f",
+            "name": "1993",
+            "description": "",
+            "type": "choice",
+            "value": "1993",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_d5529c5fccad",
+            "name": "1992",
+            "description": "",
+            "type": "choice",
+            "value": "1992",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_30540f78ebad",
+            "name": "1991",
+            "description": "",
+            "type": "choice",
+            "value": "1991",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_92c8034492fb",
+            "name": "1990",
+            "description": "",
+            "type": "choice",
+            "value": "1990",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_8eade007fc23",
+            "name": "1989",
+            "description": "",
+            "type": "choice",
+            "value": "1989",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_ea05ad6ff56d",
+            "name": "1988",
+            "description": "",
+            "type": "choice",
+            "value": "1988",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_a6546c837d2e",
+            "name": "1987",
+            "description": "",
+            "type": "choice",
+            "value": "1987",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_f835ce49258d",
+            "name": "1986",
+            "description": "",
+            "type": "choice",
+            "value": "1986",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_1beca45f64fb",
+            "name": "1985",
+            "description": "",
+            "type": "choice",
+            "value": "1985",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_4b8b1ec1f26c",
+            "name": "1984",
+            "description": "",
+            "type": "choice",
+            "value": "1984",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_7bc122f849c8",
+            "name": "1983",
+            "description": "",
+            "type": "choice",
+            "value": "1983",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_b4f63eb53b76",
+            "name": "1982",
+            "description": "",
+            "type": "choice",
+            "value": "1982",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_853adddb8ef7",
+            "name": "1981",
+            "description": "",
+            "type": "choice",
+            "value": "1981",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_d4f0251a9b70",
+            "name": "1980",
+            "description": "",
+            "type": "choice",
+            "value": "1980",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_cf54efc96b32",
+            "name": "1979",
+            "description": "",
+            "type": "choice",
+            "value": "1979",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_a95bab487bb6",
+            "name": "1978",
+            "description": "",
+            "type": "choice",
+            "value": "1978",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_34c91c16d8c4",
+            "name": "1977",
+            "description": "",
+            "type": "choice",
+            "value": "1977",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_14b5b37250e6",
+            "name": "1976",
+            "description": "",
+            "type": "choice",
+            "value": "1976",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_e654e8db9d78",
+            "name": "1975",
+            "description": "",
+            "type": "choice",
+            "value": "1975",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_822033807582",
+            "name": "1974",
+            "description": "",
+            "type": "choice",
+            "value": "1974",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_41b16ea50604",
+            "name": "1973",
+            "description": "",
+            "type": "choice",
+            "value": "1973",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_13203f6a1df0",
+            "name": "1972",
+            "description": "",
+            "type": "choice",
+            "value": "1972",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_3eac835d1a78",
+            "name": "1971",
+            "description": "",
+            "type": "choice",
+            "value": "1971",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_bcfa30c91219",
+            "name": "1970",
+            "description": "",
+            "type": "choice",
+            "value": "1970",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_467eb3fe62a8",
+            "name": "1969",
+            "description": "",
+            "type": "choice",
+            "value": "1969",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_019b52fa6801",
+            "name": "1968",
+            "description": "",
+            "type": "choice",
+            "value": "1968",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_074afd1e4c4a",
+            "name": "1967",
+            "description": "",
+            "type": "choice",
+            "value": "1967",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_91c38a047195",
+            "name": "1966",
+            "description": "",
+            "type": "choice",
+            "value": "1966",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_b2f0da5a81bd",
+            "name": "1965",
+            "description": "",
+            "type": "choice",
+            "value": "1965",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_9fc164716cad",
+            "name": "1964",
+            "description": "",
+            "type": "choice",
+            "value": "1964",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_ed700f802e53",
+            "name": "1963",
+            "description": "",
+            "type": "choice",
+            "value": "1963",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_f9fa08fdef07",
+            "name": "1962",
+            "description": "",
+            "type": "choice",
+            "value": "1962",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_c6578653ee2c",
+            "name": "1961",
+            "description": "",
+            "type": "choice",
+            "value": "1961",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_d57452956b1b",
+            "name": "1960",
+            "description": "",
+            "type": "choice",
+            "value": "1960",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_394ba2c6009a",
+            "name": "1959",
+            "description": "",
+            "type": "choice",
+            "value": "1959",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_4dc7381d3239",
+            "name": "1958",
+            "description": "",
+            "type": "choice",
+            "value": "1958",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_d9ee36372fc9",
+            "name": "1957",
+            "description": "",
+            "type": "choice",
+            "value": "1957",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_ec8ff040ca3b",
+            "name": "1956",
+            "description": "",
+            "type": "choice",
+            "value": "1956",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_c1185135d07f",
+            "name": "1955",
+            "description": "",
+            "type": "choice",
+            "value": "1955",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_cb056db87822",
+            "name": "1954",
+            "description": "",
+            "type": "choice",
+            "value": "1954",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_767f2e889c66",
+            "name": "1953",
+            "description": "",
+            "type": "choice",
+            "value": "1953",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_914c5e19f140",
+            "name": "1952",
+            "description": "",
+            "type": "choice",
+            "value": "1952",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_3ad1ea074cda",
+            "name": "1951",
+            "description": "",
+            "type": "choice",
+            "value": "1951",
+            "options": []
+          },
+          {
+            "id": "kufar.year_built.v_35367fda5f10",
+            "name": "1950 или ранее",
+            "description": "",
+            "type": "choice",
+            "value": "1950",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.flat_windows_side",
+        "name": "Окна выходят",
+        "description": "bootstrap → ad_metadata.parameters.refs[4965]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.flat_windows_side.v_e49c54607d45",
+            "name": "Во двор",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_196b9170727a",
+            "name": "На речку",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_d8122286f1ff",
+            "name": "В парк",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_a2ccdff76bdd",
+            "name": "На улицу",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_cc80edb6227f",
+            "name": "Юг",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_580e435b671d",
+            "name": "Север",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_6181ea9dd037",
+            "name": "Восток",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_windows_side.v_fa4165c18fcd",
+            "name": "Запад",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.size_living_space",
+        "name": "Жилая площадь, м²",
+        "description": "bootstrap → ad_metadata.parameters.refs[1440]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "number",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "kufar.size",
+        "name": "Общая площадь, м²",
+        "description": "bootstrap → ad_metadata.parameters.refs[1457]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "kufar.flat_repair",
+        "name": "Ремонт",
+        "description": "bootstrap → ad_metadata.parameters.refs[4921]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.flat_repair.v_e49c54607d45",
+            "name": "Косметический",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_repair.v_cc80edb6227f",
+            "name": "Евро",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_repair.v_213256f1167c",
+            "name": "Дизайнерский",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_repair.v_7a1239e18075",
+            "name": "Строительная отделка",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_repair.v_bdbac52b4b51",
+            "name": "Без отделки",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_repair.v_2386d438555d",
+            "name": "Требуется ремонт",
+            "description": "",
+            "type": "choice",
+            "value": "22",
+            "options": []
+          },
+          {
+            "id": "kufar.flat_repair.v_239b24e386a9",
+            "name": "Аварийное состояние",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.size_snb",
+        "name": "Площадь по СНБ, м²",
+        "description": "bootstrap → ad_metadata.parameters.refs[10348]; {\"category\":\"1010\",\"type\":\"sell\"}",
+        "type": "number",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "kufar.possible_exchange",
+        "name": "Возможен обмен",
+        "description": "bootstrap → ad_metadata.parameters.refs[2129]; {\"category\":\"1010\",\"company_ad\":\"0\",\"type\":\"sell\"}",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.possible_exchange.v_e49c54607d45",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.possible_exchange.v_99c9e7dd3890",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "kufar.re_district",
+        "name": "Микрорайон",
+        "description": "bootstrap → ad_metadata.parameters.refs[5509]; регион 7.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_district.v_cc80edb6227f",
+            "name": "Академия наук",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_213256f1167c",
+            "name": "Ангарская",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_7a1239e18075",
+            "name": "Аэродромная",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_bdbac52b4b51",
+            "name": "Боровая",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_239b24e386a9",
+            "name": "Боровляны",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_fd269d9b570d",
+            "name": "Брилевичи",
+            "description": "",
+            "type": "choice",
+            "value": "30",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_64b61b1be1b7",
+            "name": "Верхний город",
+            "description": "",
+            "type": "choice",
+            "value": "35",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_d0e0a6a7946c",
+            "name": "Веснянка",
+            "description": "",
+            "type": "choice",
+            "value": "40",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_f2afa5a15ebb",
+            "name": "Восток",
+            "description": "",
+            "type": "choice",
+            "value": "45",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_0928d077c22e",
+            "name": "Восточный",
+            "description": "",
+            "type": "choice",
+            "value": "50",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_5e611f28e899",
+            "name": "Грушевка",
+            "description": "",
+            "type": "choice",
+            "value": "55",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_35209f01e737",
+            "name": "Домбровка",
+            "description": "",
+            "type": "choice",
+            "value": "65",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_61b37b8d9cf4",
+            "name": "Дражня",
+            "description": "",
+            "type": "choice",
+            "value": "70",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_4ebbccf16ba9",
+            "name": "Запад",
+            "description": "",
+            "type": "choice",
+            "value": "80",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_500fed79e515",
+            "name": "Заславская",
+            "description": "",
+            "type": "choice",
+            "value": "90",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_bad02cc57412",
+            "name": "Зацень",
+            "description": "",
+            "type": "choice",
+            "value": "95",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_10ab16b0a799",
+            "name": "Зеленый луг",
+            "description": "",
+            "type": "choice",
+            "value": "100",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_2157af26a002",
+            "name": "Каменная Горка",
+            "description": "",
+            "type": "choice",
+            "value": "105",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_a418a94ad0a5",
+            "name": "Каменная Горка-1",
+            "description": "",
+            "type": "choice",
+            "value": "335",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_46f7efed4564",
+            "name": "Каменная Горка-2",
+            "description": "",
+            "type": "choice",
+            "value": "340",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_7ed055c8f8e3",
+            "name": "Каменная Горка-3",
+            "description": "",
+            "type": "choice",
+            "value": "345",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_4b8b459945d0",
+            "name": "Каменная Горка-4",
+            "description": "",
+            "type": "choice",
+            "value": "350",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_2f54ec22fd76",
+            "name": "Каменная Горка-5",
+            "description": "",
+            "type": "choice",
+            "value": "355",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_edfd06ae9ed6",
+            "name": "Каскад",
+            "description": "",
+            "type": "choice",
+            "value": "110",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_7fdf7afcb320",
+            "name": "Комаровка",
+            "description": "",
+            "type": "choice",
+            "value": "120",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_6883c500fc8d",
+            "name": "Красный Бор",
+            "description": "",
+            "type": "choice",
+            "value": "125",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_d0bed4c3abc4",
+            "name": "Кунцевщина",
+            "description": "",
+            "type": "choice",
+            "value": "130",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_79647db95aae",
+            "name": "Курасовщина",
+            "description": "",
+            "type": "choice",
+            "value": "135",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_0bf8c26ece28",
+            "name": "Лебяжий",
+            "description": "",
+            "type": "choice",
+            "value": "140",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_a37dcd73a8eb",
+            "name": "Лошица",
+            "description": "",
+            "type": "choice",
+            "value": "145",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_92875bcc2d2a",
+            "name": "Малиновка",
+            "description": "",
+            "type": "choice",
+            "value": "150",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_a070518c7078",
+            "name": "Масюковщина",
+            "description": "",
+            "type": "choice",
+            "value": "160",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_56881c527ca4",
+            "name": "Маяк Минска",
+            "description": "",
+            "type": "choice",
+            "value": "325",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_8245df22a070",
+            "name": "Медвежино",
+            "description": "",
+            "type": "choice",
+            "value": "165",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_cfda69df7dbb",
+            "name": "Минск-Мир",
+            "description": "",
+            "type": "choice",
+            "value": "170",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_cfd18916134e",
+            "name": "Михалово",
+            "description": "",
+            "type": "choice",
+            "value": "175",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_4619aac6b022",
+            "name": "Новая Боровая",
+            "description": "",
+            "type": "choice",
+            "value": "177",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_0ff6aa994391",
+            "name": "Новинки",
+            "description": "",
+            "type": "choice",
+            "value": "180",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_bb59a3adf577",
+            "name": "Озерище",
+            "description": "",
+            "type": "choice",
+            "value": "185",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_1f062042d958",
+            "name": "Осмоловка",
+            "description": "",
+            "type": "choice",
+            "value": "187",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_15145bd255ab",
+            "name": "поселок Радужный",
+            "description": "",
+            "type": "choice",
+            "value": "195",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_1189a6a6959e",
+            "name": "Пулихова",
+            "description": "",
+            "type": "choice",
+            "value": "200",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_930bb37c7aad",
+            "name": "Раковское шоссе",
+            "description": "",
+            "type": "choice",
+            "value": "205",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_f2d64a768a02",
+            "name": "Ржавец",
+            "description": "",
+            "type": "choice",
+            "value": "210",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_83bfdcb1bfeb",
+            "name": "Северный берег",
+            "description": "",
+            "type": "choice",
+            "value": "330",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_9ca8766ef25c",
+            "name": "Северный поселок",
+            "description": "",
+            "type": "choice",
+            "value": "215",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_10d4a573d491",
+            "name": "Сельхозпоселок",
+            "description": "",
+            "type": "choice",
+            "value": "220",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_53a6508bdcf2",
+            "name": "Семашко",
+            "description": "",
+            "type": "choice",
+            "value": "225",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_a3d9ce9326f9",
+            "name": "Серебрянка",
+            "description": "",
+            "type": "choice",
+            "value": "230",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_640731601236",
+            "name": "Серова",
+            "description": "",
+            "type": "choice",
+            "value": "235",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_6c7e39414652",
+            "name": "Слепянка",
+            "description": "",
+            "type": "choice",
+            "value": "240",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_5d243bcdebd2",
+            "name": "Сокол",
+            "description": "",
+            "type": "choice",
+            "value": "245",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_9e6151f14d21",
+            "name": "Сосны",
+            "description": "",
+            "type": "choice",
+            "value": "250",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_89a13e3e6609",
+            "name": "Степянка",
+            "description": "",
+            "type": "choice",
+            "value": "255",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_3d012b92b948",
+            "name": "Сторожовка",
+            "description": "",
+            "type": "choice",
+            "value": "260",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_ab0f88f24f23",
+            "name": "Сухарево",
+            "description": "",
+            "type": "choice",
+            "value": "265",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_ea82b2a091c0",
+            "name": "Троицкое предместье",
+            "description": "",
+            "type": "choice",
+            "value": "275",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_0a36358bb708",
+            "name": "Уручье",
+            "description": "",
+            "type": "choice",
+            "value": "280",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_6fd7b89cab45",
+            "name": "Харьковская",
+            "description": "",
+            "type": "choice",
+            "value": "290",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_c2b80f0309b9",
+            "name": "Чижовка",
+            "description": "",
+            "type": "choice",
+            "value": "305",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_6fa9f646b023",
+            "name": "Шабаны",
+            "description": "",
+            "type": "choice",
+            "value": "310",
+            "options": []
+          },
+          {
+            "id": "kufar.re_district.v_dbfb45a894b7",
+            "name": "Юго-Запад",
+            "description": "",
+            "type": "choice",
+            "value": "320",
+            "options": []
+          }
+        ],
+        "required": false,
+        "when": {
+          "option_id": "kufar.region",
+          "operator": "equals",
+          "value": "7"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "kufar.metro",
+        "name": "Метро",
+        "description": "bootstrap → ad_metadata.parameters.refs[1484]; регион 7.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.metro.v_196b9170727a",
+            "name": "Автозаводская",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_d8122286f1ff",
+            "name": "Академия наук",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_bf490ff494d4",
+            "name": "Аэродромная",
+            "description": "",
+            "type": "choice",
+            "value": "36",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_a2ccdff76bdd",
+            "name": "Борисовский тракт",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_cc80edb6227f",
+            "name": "Восток",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_580e435b671d",
+            "name": "Грушевка",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_6181ea9dd037",
+            "name": "Институт культуры",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_fa4165c18fcd",
+            "name": "Каменная горка",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_9ff9d67451c1",
+            "name": "Ковальская Слобода",
+            "description": "",
+            "type": "choice",
+            "value": "32",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_c38d6751c9b0",
+            "name": "Кунцевщина",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_213256f1167c",
+            "name": "Малиновка",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_14b28c7f15c1",
+            "name": "Михалово",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_39f0843a988b",
+            "name": "Могилевская",
+            "description": "",
+            "type": "choice",
+            "value": "12",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_e19a50dd4b6d",
+            "name": "Молодежная",
+            "description": "",
+            "type": "choice",
+            "value": "13",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_c5b923a01e2c",
+            "name": "Московская",
+            "description": "",
+            "type": "choice",
+            "value": "14",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_7a1239e18075",
+            "name": "Немига",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_64b61b1be1b7",
+            "name": "Неморшанский сад",
+            "description": "",
+            "type": "choice",
+            "value": "35",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_81248492d0b7",
+            "name": "Октябрьская (Купаловская)",
+            "description": "",
+            "type": "choice",
+            "value": "16",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_c27831f07d06",
+            "name": "Парк Челюскинцев",
+            "description": "",
+            "type": "choice",
+            "value": "17",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_b2d0a5611b58",
+            "name": "Партизанская",
+            "description": "",
+            "type": "choice",
+            "value": "18",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_058c58c38566",
+            "name": "Первомайская",
+            "description": "",
+            "type": "choice",
+            "value": "19",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_bdbac52b4b51",
+            "name": "Петровщина",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_ce453a599829",
+            "name": "Площадь Ленина (Вокзальная)",
+            "description": "",
+            "type": "choice",
+            "value": "21",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_2386d438555d",
+            "name": "Площадь Победы",
+            "description": "",
+            "type": "choice",
+            "value": "22",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_51f8c2e7b1c3",
+            "name": "Площадь Франтишка Богушевича",
+            "description": "",
+            "type": "choice",
+            "value": "33",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_c69846fbcc59",
+            "name": "Площадь Якуба Коласа",
+            "description": "",
+            "type": "choice",
+            "value": "23",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_8296df951a54",
+            "name": "Пролетарская",
+            "description": "",
+            "type": "choice",
+            "value": "24",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_239b24e386a9",
+            "name": "Пушкинская",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_79b8501e3427",
+            "name": "Спортивная",
+            "description": "",
+            "type": "choice",
+            "value": "26",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_102265b4db91",
+            "name": "Слуцкий гостинец",
+            "description": "",
+            "type": "choice",
+            "value": "34",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_7a4b07ec7c3e",
+            "name": "Тракторный завод",
+            "description": "",
+            "type": "choice",
+            "value": "27",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_cd0a508bcda8",
+            "name": "Уручье",
+            "description": "",
+            "type": "choice",
+            "value": "28",
+            "options": []
+          },
+          {
+            "id": "kufar.metro.v_1c9c333e35ab",
+            "name": "Фрунзенская (Юбилейная площадь)",
+            "description": "",
+            "type": "choice",
+            "value": "29",
+            "options": []
+          }
+        ],
+        "required": false,
+        "when": {
+          "option_id": "kufar.region",
+          "operator": "equals",
+          "value": "7"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "kufar.re_metro_afoot",
+        "name": "Пешком до ближайшей станции",
+        "description": "bootstrap → ad_metadata.parameters.refs[4906]; регион 7.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_metro_afoot.v_e49c54607d45",
+            "name": "1 мин",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_afoot.v_cc80edb6227f",
+            "name": "1-5 мин",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_afoot.v_213256f1167c",
+            "name": "5-10 мин",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_afoot.v_7a1239e18075",
+            "name": "10-15 мин",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_afoot.v_bdbac52b4b51",
+            "name": "15-20 мин",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_afoot.v_239b24e386a9",
+            "name": "20-25 мин",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          }
+        ],
+        "required": false,
+        "when": {
+          "option_id": "kufar.region",
+          "operator": "equals",
+          "value": "7"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "kufar.re_metro_transport",
+        "name": "До ближайшей станции на транспорте",
+        "description": "bootstrap → ad_metadata.parameters.refs[4916]; регион 7.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_metro_transport.v_e49c54607d45",
+            "name": "менее 5 мин",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_transport.v_cc80edb6227f",
+            "name": "5-10 мин",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_transport.v_213256f1167c",
+            "name": "10-15 мин",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_transport.v_7a1239e18075",
+            "name": "15-20 мин",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_transport.v_bdbac52b4b51",
+            "name": "20-30 мин",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.re_metro_transport.v_239b24e386a9",
+            "name": "больше 30 мин",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          }
+        ],
+        "required": false,
+        "when": {
+          "option_id": "kufar.region",
+          "operator": "equals",
+          "value": "7"
+        },
+        "options_complete": true
+      },
+      {
+        "id": "kufar.price_mode",
+        "name": "Режим цены",
+        "description": "Контрол формы цены: options и выбранное значение.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.price_mode.v_22f33d843c0c",
+            "name": "Цена",
+            "description": "",
+            "type": "choice",
+            "value": "common",
+            "options": []
+          },
+          {
+            "id": "kufar.price_mode.v_45b3bef74d48",
+            "name": "За м²",
+            "description": "",
+            "type": "choice",
+            "value": "m2",
+            "options": []
+          },
+          {
+            "id": "kufar.price_mode.v_f498393da4ac",
+            "name": "Договорная цена",
+            "description": "",
+            "type": "choice",
+            "value": "contact",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      }
+    ]
+  }
+]

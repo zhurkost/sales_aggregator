@@ -54,7 +54,7 @@ export interface RentalAiResult {
 export interface EditorSchema {
   publicationEnabled?: boolean;
   categoryId?: string;
-  card?: {valueLabels?: Record<string, string>; version: number; addressDependentFacts: string[]; profileDefaults?: {setting: "phone" | "contactPerson" | "company"; field: string}[]};
+  card?: {mainFields?: string[]; addressProjectionFields?: string[]; valueLabels?: Record<string, string>; version: number; addressDependentFacts: string[]; profileDefaults?: {setting: "phone" | "contactPerson" | "company"; field: string}[]};
   category: { options: Field[] };
   canonicalValues: Record<string, string[]>;
   platforms: Record<

@@ -67,7 +67,7 @@ public final class PreparationEngine {
                     issues,
                     e.getKey(),
                     "route_conflict",
-                    "Тип объекта или сделки не соответствует долгосрочной аренде квартиры.");
+                    "Тип объекта или сделки не соответствует выбранной категории.");
               values.set(e.getKey(), e.getValue().deepCopy());
             });
     Map<String, JsonNode> rules = new LinkedHashMap<>();

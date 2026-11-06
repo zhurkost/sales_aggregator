@@ -38,13 +38,17 @@ describe("Real estate workspace",()=>{
       expect(fixture.nativeElement.textContent).not.toContain(label);
     expect(fetcher.mock.calls.map(c=>c[0])).toEqual(["/api/workspace/session","/api/workspace/settings"]);
   });
-  it("keeps two independent copies of the apartment form when switching tabs", async () => {
+  it("fills sale fields from analysis and preserves each tab independently", async () => {
     const schema = {version:"1", category:{options:[]}, canonicalValues:{}, platforms:{one:{name:"Площадка", labels:{}, choiceLabels:{}}}};
     const fetcher = vi.fn(async (url: unknown) => {
       if (url === "/api/workspace/session") return response({profile, profiles:[profile]});
       if (url === "/api/workspace/settings") return response({settings:{}});
       if (url === "/api/workspace/categories/apartments_long_term_rent/editor") return response({...schema, publicationEnabled:true});
-      if (url === "/api/workspace/categories/apartments_sale/editor") return response({...schema, publicationEnabled:false});
+      if (url === "/api/workspace/categories/apartments_sale/editor") return response({...schema, publicationEnabled:false,
+        category:{options:[{id:"group.sale", name:"Сделка", options:[{id:"sale.price", name:"Цена квартиры", type:"number", options:[]}]}]},
+        card:{version:2, addressDependentFacts:[], mainFields:["sale.price"]}});
+      if (url === "/api/workspace/categories/apartments_sale/analyze") return response({schemaVersion:"1",
+        suggestions:[{field:"sale.price", value:"85000", quote:"85 000 USD"}], questions:[]});
       throw new Error("Unexpected request: " + url);
     });
     vi.stubGlobal("fetch",fetcher);
@@ -65,9 +69,14 @@ describe("Real estate workspace",()=>{
       await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
       expect(textarea()!.value).toBe("");
       expect(root.querySelector("button.publish")).toBeNull();
-      enter("Второе объявление");
+      enter("Продам квартиру за 85 000 USD");
+      const price = () => root.querySelector<HTMLInputElement>('[id="rental-sale.price"]');
+      root.querySelector<HTMLButtonElement>("button.ai-button")!.click();
+      await vi.waitFor(() => { fixture.detectChanges(); expect(price()?.value).toBe("85000"); });
       select(0); expect(textarea()!.value).toBe("Первое объявление");
-      select(1); expect(textarea()!.value).toBe("Второе объявление");
+      expect(price()).toBeNull();
+      select(1); expect(textarea()!.value).toBe("Продам квартиру за 85 000 USD");
+      expect(price()?.value).toBe("85000");
       expect(root.querySelectorAll("textarea.source-description")).toHaveLength(1);
       for (const category of ["apartments_long_term_rent", "apartments_sale"])
         expect(fetcher.mock.calls.filter(([url]) => url === "/api/workspace/categories/" + category + "/editor")).toHaveLength(1);

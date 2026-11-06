@@ -1,6 +1,6 @@
 <div class="fields-grid">
   @for (field of fields; track field.id) {
-    <div class="field" [class.wide]="field.type === 'files' || field.type === 'multi_enum'" [class.price]="field.id === 'rental.monthly_price'">
+    <div class="field" [class.wide]="field.type === 'files' || field.type === 'multi_enum'" [class.price]="field.id === 'rental.monthly_price' || field.id === 'sale.price'">
       <label [attr.for]="'rental-' + field.id">{{ name(field) }}
         @if (evidence[field.id]) { <span class="ai-mark" [title]="'Из описания: ' + evidence[field.id]" aria-label="Заполнено из описания">✦</span> }
       </label>

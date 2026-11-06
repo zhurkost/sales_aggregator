@@ -96,7 +96,7 @@ class RentalAiAddressTest {
             List.of(object("field", "rental.monthly_price", "value", "1300", "quote", "1300 BYN")));
     when(ai.serverJson(eq("person"), anyString(), eq(source))).thenReturn(parsed);
     var service = new RentalAiService(ai, new RentalAiAddressResolver(provider));
-    return service.analyze(catalog,
+    return service.analyze(catalog, "apartment_rental",
         "person", "workspace", object("text", source, "schemaVersion", catalog.version()));
   }
 

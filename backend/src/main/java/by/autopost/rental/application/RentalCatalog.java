@@ -107,7 +107,7 @@ public class RentalCatalog {
                   values,
                   specific.isObject() ? (ObjectNode) specific : object(),
                   input.path("address"));
-      CardProjection.annotate(prepared, plan, input);
+      CardProjection.annotate(prepared, plan, input, snapshot.card());
       output.add(prepared);
     }
     return object("platforms", output, "schemaVersion", snapshot.version());

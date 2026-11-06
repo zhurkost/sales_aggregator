@@ -1,0 +1,29 @@
+{
+  "format_version": 1,
+  "source_schema_version": "2.1",
+  "category_id": "apartments_sale",
+  "common": "integration/apartments_sale_common.json",
+  "card": "runtime/card.json",
+  "platforms": {
+    "realt": {
+      "schema": "realt/apartments_sale_realt.json",
+      "binding": "realt/binding_apartments_sale_realt.json",
+      "plan": "runtime/preparation_realt.json"
+    },
+    "kufar": {
+      "schema": "kufar/apartments_sale_kufar.json",
+      "binding": "kufar/binding_apartments_sale_kufar.json",
+      "plan": "runtime/preparation_kufar.json"
+    },
+    "domovita": {
+      "schema": "domovita/apartments_sale_domovita.json",
+      "binding": "domovita/binding_apartments_sale_domovita.json",
+      "plan": "runtime/preparation_domovita.json"
+    },
+    "onliner": {
+      "schema": "onliner/apartments_sale_onliner.json",
+      "binding": "onliner/binding_apartments_sale_onliner.json",
+      "plan": "runtime/preparation_onliner.json"
+    }
+  }
+}

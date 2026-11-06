@@ -586,5 +586,9 @@
     "location.metro_3_mode",
     "location.metro_3_minutes"
   ],
-  "modelNote": "Union canonical card v2; source schemas unchanged; semantic mapping reviewed separately."
+  "modelNote": "Union canonical card v2; source schemas unchanged; semantic mapping reviewed separately.",
+  "floorCheck": {
+    "floor": "rental.floor",
+    "total": "building.total_floors"
+  }
 }

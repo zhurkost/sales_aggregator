@@ -11,9 +11,10 @@ export class RentalFormEditor {
   private changed() { this.store.changed(); }
   replaceAddress(address: Address | null) {
     this.card.address = address;
-    for (const key of ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"])
-      delete this.card.values[key];
-    for (const key of this.schema?.card?.addressDependentFacts || []) { delete this.card.values[key]; delete this.card.aiEvidence?.[key]; }
+    const projected = this.schema?.card?.addressProjectionFields ?? ["location.settlement", "location.street", "location.house_number", "location.latitude", "location.longitude"];
+    for (const key of [...projected, ...(this.schema?.card?.addressDependentFacts || [])]) {
+      delete this.card.values[key]; delete this.card.aiEvidence?.[key];
+    }
     for (const p of this.platforms)
       for (const key of this.schema?.platforms[p].addressBoundFields || []) delete this.card.extras[p]?.[key];
   }

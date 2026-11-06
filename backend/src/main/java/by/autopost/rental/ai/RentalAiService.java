@@ -21,7 +21,7 @@ public class RentalAiService {
     this.addresses = addresses;
   }
 
-  public ObjectNode analyze(RentalCatalog catalog, String identity, String workspace, JsonNode input) {
+  public ObjectNode analyze(RentalCatalog catalog, String profile, String identity, String workspace, JsonNode input) {
     if (!input.isObject() || !input.path("text").isTextual() || input.toString().length() > 18000)
       throw new ApiException(400, "Введите описание квартиры.");
     String source = input.path("text").asText().trim();
@@ -31,7 +31,7 @@ public class RentalAiService {
     if (!text(input, "schemaVersion").equals(text(editor, "version")))
       throw new ApiException(
           409, "Правила обновились. Обновите поля карточки и повторите заполнение.");
-    var parsed = ai.serverJson(identity, RentalAiPolicy.prompt(editor), source);
+    var parsed = ai.serverJson(identity, RentalAiPolicy.prompt(editor, profile), source);
     ObjectNode result = RentalAiPolicy.sanitize(editor, source, parsed);
     addresses.resolve(workspace, result);
     // Keep type information during provider matching; expose clean components to the editor.

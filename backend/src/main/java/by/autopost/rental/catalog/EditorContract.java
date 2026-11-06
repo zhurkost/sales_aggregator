@@ -20,8 +20,13 @@ public final class EditorContract {
             "category",
             field(internal.path("category")));
     var card = object();
-    for (String key : List.of("version", "valueLabels", "addressDependentFacts", "profileDefaults"))
+    for (String key : List.of("version", "valueLabels", "addressDependentFacts", "profileDefaults", "mainFields"))
       if (internal.path("card").has(key)) card.set(key, internal.path("card").get(key).deepCopy());
+    if (internal.path("card").path("addressProjection").isObject()) {
+      var projected = array();
+      internal.path("card").path("addressProjection").fieldNames().forEachRemaining(projected::add);
+      card.set("addressProjectionFields", projected);
+    }
     if (!card.isEmpty()) result.set("card", card);
     var platforms = object();
     internal

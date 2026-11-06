@@ -1,0 +1,691 @@
+[
+  {
+    "id": "apartments_sale",
+    "name": "Продажа квартир",
+    "description": "Беларусь. Предложение продать квартиру целиком. Ветки покупки, аренды, комнаты и доли исключены.",
+    "categories": [],
+    "options": [
+      {
+        "id": "group.listing",
+        "name": "Объявление",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "listing.title",
+            "name": "Заголовок",
+            "description": "Свободный текст",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "listing.description",
+            "name": "Подробное описание",
+            "description": "Свободный текст; формат редактора зависит от площадки",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.sale",
+        "name": "Продажа",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "sale.price",
+            "name": "Полная цена квартиры",
+            "description": "Десятичная строка без разделителя тысяч, в sale.currency; только режим полной цены",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "sale.currency",
+            "name": "Валюта полной цены",
+            "description": "Код валюты BYN, USD, EUR или RUB по поддержке площадки",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "sale.auction",
+            "name": "Конкурс или аукцион",
+            "description": "Канонический флаг «Да» для явно выбранного аукциона или конкурса",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "sale.terms",
+            "name": "Условия сделки",
+            "description": "Именованное условие продажи квартиры",
+            "type": "enum",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.apartment",
+        "name": "Квартира",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "apartment.rooms",
+            "name": "Количество комнат",
+            "description": "Точное целое или отдельная категория 5+, 6+, studio",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "apartment.separate_rooms",
+            "name": "Раздельных комнат",
+            "description": "Точное целое число отдельных комнат",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "apartment.total_area",
+            "name": "Общая площадь",
+            "description": "Десятичная строка в м²",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "apartment.living_area",
+            "name": "Жилая площадь",
+            "description": "Десятичная строка в м²",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "apartment.kitchen_area",
+            "name": "Площадь кухни",
+            "description": "Десятичная строка в м²",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "apartment.snb_area",
+            "name": "Площадь по СНБ",
+            "description": "Десятичная строка в м² по СНБ",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "apartment.floor",
+            "name": "Этаж квартиры",
+            "description": "Целое или категория «больше 30» при такой точности источника",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "apartment.levels",
+            "name": "Число уровней квартиры",
+            "description": "Целое число уровней внутри квартиры",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "apartment.bathroom",
+            "name": "Санузел",
+            "description": "Тип или подтверждённое количество; «два» и «два и более» различаются",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "apartment.balcony",
+            "name": "Балкон или лоджия",
+            "description": "Нативная детализация: наличие, вид или количество; использовать только подтверждённые значения",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "apartment.repair",
+            "name": "Отделка и состояние",
+            "description": "Подтверждённое состояние; сохранять различия между «хороший», «с ремонтом» и «косметический»",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "apartment.windows",
+            "name": "Вид из окон",
+            "description": "JSON-массив строк с названиями направлений / объектов",
+            "type": "multi_enum",
+            "options": []
+          },
+          {
+            "id": "apartment.ceiling_min",
+            "name": "Высота потолков от",
+            "description": "Порог в метрах; сохранить квалификатор «от»",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "apartment.market",
+            "name": "Первичный или вторичный рынок",
+            "description": "Вторичка / Новостройка; признак рынка. У Kufar подтверждено однозначно только «Вторичное»",
+            "type": "enum",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.building",
+        "name": "Дом",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "building.floors",
+            "name": "Этажей в доме",
+            "description": "Целое или категория «больше 30» при такой точности источника",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "building.year",
+            "name": "Год постройки",
+            "description": "Четыре цифры или подтверждённая площадкой граничная категория",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "building.repair_year",
+            "name": "Год капитального ремонта",
+            "description": "Год, четыре цифры",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "building.wall",
+            "name": "Материал стен",
+            "description": "Каноническая подпись материала",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "building.management",
+            "name": "Обслуживание дома",
+            "description": "Вид организации, управляющей домом",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "building.amenities",
+            "name": "Удобства дома",
+            "description": "JSON-массив подтверждённых удобств; допустимые признаки зависят от площадки",
+            "type": "multi_enum",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.location",
+        "name": "Расположение",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "location.metro_station",
+            "name": "Ближайшая станция метро",
+            "description": "Название подтверждённой станции, с учётом города; для нескольких станций проверяется кратность",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "location.complex",
+            "name": "Жилой комплекс",
+            "description": "Название ЖК с контекстом адреса; одинаковые названия могут обозначать разные объекты",
+            "type": "enum",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.media",
+        "name": "Медиа",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "media.images",
+            "name": "Фотографии квартиры",
+            "description": "Упорядоченная коллекция исходных изображений с сохранением обложки",
+            "type": "files",
+            "options": [],
+            "file_role": "product_image"
+          },
+          {
+            "id": "media.youtube_video",
+            "name": "Видео YouTube",
+            "description": "Ссылка на видео YouTube, отдельно от коллекции изображений",
+            "type": "files",
+            "options": [],
+            "file_role": "product_video"
+          }
+        ]
+      },
+      {
+        "id": "group.contact",
+        "name": "Контакты",
+        "description": "Общие поля продажи",
+        "type": "group",
+        "options": [
+          {
+            "id": "contact.additional_phone_1",
+            "name": "Дополнительный телефон 1",
+            "description": "Международный номер, отдельно от основного",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.additional_phone_2",
+            "name": "Дополнительный телефон 2",
+            "description": "Международный номер, отдельно от основного",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.name",
+            "name": "Имя контактного лица",
+            "description": "Свободный текст",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.phone",
+            "name": "Телефон для связи",
+            "description": "Международный номер с кодом страны; учесть маску ввода",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.email",
+            "name": "Электронная почта",
+            "description": "Строка с адресом электронной почты",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.address_projection",
+        "name": "Компоненты адреса",
+        "description": "Вычисляются из единого адреса карточки.",
+        "type": "group",
+        "options": [
+          {
+            "id": "location.address",
+            "name": "Адрес квартиры",
+            "description": "Строка для поиска; результатом должен быть адрес выбранного объекта",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.settlement",
+            "name": "Населённый пункт",
+            "description": "Название; внешний код выбирается по подсказке площадки",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.street",
+            "name": "Улица",
+            "description": "Официальное название и тип улицы для адресного поиска",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.house",
+            "name": "Номер дома",
+            "description": "Строка с буквой или дробью, если применимо",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.realt",
+        "name": "Realt",
+        "description": "Уточнения для площадки",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.realt.apartment.inventoryNumber",
+            "name": "Инвентарный номер",
+            "type": "text",
+            "description": "Инвентарный номер (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.apartment.planning",
+            "name": "Планировка",
+            "type": "enum",
+            "description": "Планировка (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.area.balcony",
+            "name": "Площадь балконов / лоджий, м²",
+            "type": "number",
+            "description": "Площадь балконов / лоджий, м² (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.house.isNotFinish",
+            "name": "Сдан / Не сдан",
+            "type": "enum",
+            "description": "Сдан / Не сдан (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.house.newBuilding",
+            "name": "Новостройка",
+            "type": "boolean",
+            "description": "Новостройка (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.facilitiesForDisabledPeople",
+            "name": "Удобства для людей с ограниченными возможностями",
+            "type": "multi_enum",
+            "description": "Удобства для людей с ограниченными возможностями (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.yard",
+            "name": "Благоустройство двора",
+            "type": "multi_enum",
+            "description": "Благоустройство двора (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.parking",
+            "name": "Парковка",
+            "type": "multi_enum",
+            "description": "Парковка (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.termsOfDeal.bargain",
+            "name": "Возможен торг",
+            "type": "boolean",
+            "description": "Возможен торг (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.termsOfDeal.ownerShip",
+            "name": "Собственность",
+            "type": "enum",
+            "description": "Собственность (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.media.planning",
+            "name": "Фото планировки",
+            "type": "files",
+            "description": "Фото планировки (Realt).",
+            "options": [],
+            "file_role": "floor_plan"
+          },
+          {
+            "id": "specific.realt.media.tour3d",
+            "name": "3D тур",
+            "type": "files",
+            "description": "3D тур (Realt).",
+            "options": [],
+            "file_role": "virtual_tour"
+          },
+          {
+            "id": "listing.short_description",
+            "name": "Краткое описание",
+            "type": "text",
+            "description": "Краткое описание (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_1_mode",
+            "name": "Способ передвижения 1",
+            "type": "enum",
+            "description": "Способ передвижения 1 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_1_minutes",
+            "name": "Минут в пути 1",
+            "type": "integer",
+            "description": "Минут в пути 1 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_2_station",
+            "name": "Ближайшее метро 2",
+            "type": "enum",
+            "description": "Ближайшее метро 2 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_2_mode",
+            "name": "Способ передвижения 2",
+            "type": "enum",
+            "description": "Способ передвижения 2 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_2_minutes",
+            "name": "Минут в пути 2",
+            "type": "integer",
+            "description": "Минут в пути 2 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_3_station",
+            "name": "Ближайшее метро 3",
+            "type": "enum",
+            "description": "Ближайшее метро 3 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_3_mode",
+            "name": "Способ передвижения 3",
+            "type": "enum",
+            "description": "Способ передвижения 3 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.location.metro_3_minutes",
+            "name": "Минут в пути 3",
+            "type": "integer",
+            "description": "Минут в пути 3 (Realt).",
+            "options": []
+          },
+          {
+            "id": "specific.realt.apartment.registrationRooms",
+            "name": "Комнат по техпаспорту",
+            "type": "enum",
+            "description": "Комнат по техпаспорту (Realt).",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.kufar",
+        "name": "Kufar",
+        "description": "Уточнения для площадки",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.kufar.re_contract",
+            "name": "Номер и дата договора",
+            "type": "text",
+            "description": "Номер и дата договора (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.flat_open_room",
+            "name": "Есть проходная комната",
+            "type": "enum",
+            "description": "Есть проходная комната (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.flat_new_building",
+            "name": "В новостройке",
+            "type": "enum",
+            "description": "В новостройке (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.re_last_floor",
+            "name": "Про этаж",
+            "type": "enum",
+            "description": "Про этаж (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.possible_exchange",
+            "name": "Возможен обмен",
+            "type": "enum",
+            "description": "Возможен обмен (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.re_district",
+            "name": "Микрорайон",
+            "type": "enum",
+            "description": "Микрорайон (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.re_metro_afoot",
+            "name": "Пешком до ближайшей станции",
+            "type": "enum",
+            "description": "Пешком до ближайшей станции (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.re_metro_transport",
+            "name": "До ближайшей станции на транспорте",
+            "type": "enum",
+            "description": "До ближайшей станции на транспорте (Kufar).",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.domovita",
+        "name": "Domovita",
+        "description": "Уточнения для площадки",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.domovita.is_online_showing",
+            "name": "Доступен онлайн-показ квартиры",
+            "type": "boolean",
+            "description": "Доступен онлайн-показ квартиры (Domovita).",
+            "options": []
+          },
+          {
+            "id": "specific.domovita.phones.3.contact_phone",
+            "name": "Дополнительный телефон 3",
+            "type": "text",
+            "description": "Дополнительный телефон 3 (Domovita).",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.onliner",
+        "name": "Onliner",
+        "description": "Уточнения для площадки",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.onliner.parking",
+            "name": "Выделенное парковочное место",
+            "type": "enum",
+            "description": "Выделенное парковочное место (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.combinedKitchen",
+            "name": "Кухня совмещена с жилой",
+            "type": "enum",
+            "description": "Кухня совмещена с жилой (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.wallHeight",
+            "name": "Высота потолков",
+            "type": "number",
+            "description": "Высота потолков (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.type",
+            "name": "Кто продаёт",
+            "type": "enum",
+            "description": "Кто продаёт (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.name",
+            "name": "Юридическое наименование",
+            "type": "text",
+            "description": "Юридическое наименование (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.legalInfo.unp",
+            "name": "УНП",
+            "type": "text",
+            "description": "УНП (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.legalInfo.contract.number",
+            "name": "Номер договора",
+            "type": "text",
+            "description": "Номер договора (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.legalInfo.contract.date",
+            "name": "Дата заключения договора",
+            "type": "date",
+            "description": "Дата заключения договора (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.legalInfo.licence.number",
+            "name": "Номер лицензии",
+            "type": "text",
+            "description": "Номер лицензии (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.seller.legalInfo.licence.date",
+            "name": "Дата выдачи лицензии",
+            "type": "date",
+            "description": "Дата выдачи лицензии (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.call_from",
+            "name": "Звонить с",
+            "type": "enum",
+            "description": "Звонить с (Onliner).",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.call_to",
+            "name": "Звонить до",
+            "type": "enum",
+            "description": "Звонить до (Onliner).",
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]
