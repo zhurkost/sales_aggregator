@@ -176,6 +176,11 @@ Enum — только точный код из choices; multi_enum — масс�
     } else {
       RentalAiFacts.reconcile(editor, source, accepted, conflicts);
     }
+    if (!accepted.isEmpty()) {
+      boolean sale = fields.containsKey("sale.price");
+      RentalAiFacts.reconcileFloors(editor, fields, source, accepted, conflicts,
+          sale ? "apartment.floor" : "rental.floor", sale ? "building.floors" : "building.total_floors");
+    }
     JsonNode address = parsed.path("address");
     ObjectNode candidateAddress = null;
     String label = text(address, "label"), quote = text(address, "quote");

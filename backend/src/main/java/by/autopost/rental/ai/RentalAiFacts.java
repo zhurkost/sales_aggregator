@@ -46,12 +46,15 @@ final class RentalAiFacts {
       Map.entry("пяти", "5"), Map.entry("шести", "6"), Map.entry("семи", "7"), Map.entry("восьми", "8"),
       Map.entry("девяти", "9"), Map.entry("десяти", "10"), Map.entry("одиннадцати", "11"),
       Map.entry("двенадцати", "12"), Map.entry("шестнадцати", "16"));
-  private static final Pattern WRITTEN_FLOORS = Pattern.compile(
-      "(?iu)(?<![\\p{L}\\d])(\\d+)(?:-?(?:м|ом|ем))?\\s+этаже\\s+(" + String.join("|", HEIGHTS.keySet()).replace("е", "[её]")
-          + ")этажного\\s+дома\\b");
   private static final Map<String, String> FLOOR_ORDINALS = Map.of(
       "первом", "1", "втором", "2", "третьем", "3", "четвертом", "4", "пятом", "5",
       "шестом", "6", "седьмом", "7", "восьмом", "8", "девятом", "9", "десятом", "10");
+  private static final String HOUSE_MATERIAL = "(?:(?:панельного|кирпичного|блочного|монолитного|деревянного)\\s+)?";
+  private static final String WRITTEN_HEIGHT = "(" + String.join("|", HEIGHTS.keySet()).replace("е", "[её]")
+      + ")этажного\\s+" + HOUSE_MATERIAL + "дома\\b";
+  private static final Pattern WRITTEN_FLOORS = Pattern.compile(
+      "(?iu)(?<![\\p{L}\\d])(?:\\d+(?:-?(?:м|ом|ем))?|"
+          + String.join("|", FLOOR_ORDINALS.keySet()).replace("е", "[её]") + ")\\s+этаже\\s+" + WRITTEN_HEIGHT);
   private static final Pattern FLOOR_IN_WORDS = Pattern.compile("(?iu)\\bна\\s+("
       + String.join("|", FLOOR_ORDINALS.keySet()).replace("четвертом", "четв[её]ртом") + ")\\s+этаже\\b");
   static boolean spelledFloor(String quote, String value) {
@@ -64,7 +67,7 @@ final class RentalAiFacts {
     String lead = source.substring(0, floor.start()).replaceFirst("(?s)^.*(?:[.!?;]\\s+|\\n)", "").strip();
     String tail = source.substring(floor.end()).stripLeading();
     return (lead.isEmpty() || lead.matches("(?iu).*(?:квартир[ауы]|студия|студию)(?:\\s+[\\d,.]+\\s*м[²2])?\\s*,?"))
-        && (tail.isEmpty() || ".,;:!?".indexOf(tail.charAt(0)) >= 0 || tail.matches("(?isu)^\\p{L}*этажного\\s+дома\\b.*"));
+        && (tail.isEmpty() || ".,;:!?".indexOf(tail.charAt(0)) >= 0 || tail.matches("(?isu)^" + WRITTEN_HEIGHT + ".*"));
   }
   private static String floorOrdinal(String word) {
     return FLOOR_ORDINALS.get(word.toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
@@ -72,7 +75,7 @@ final class RentalAiFacts {
 
   static boolean spelledHeight(String quote, String value) {
     var match = WRITTEN_FLOORS.matcher(quote.toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
-    while (match.find()) if (value.equals(HEIGHTS.get(match.group(2)))) return true;
+    while (match.find()) if (value.equals(HEIGHTS.get(match.group(1)))) return true;
     return false;
   }
 
@@ -186,35 +189,39 @@ final class RentalAiFacts {
         if (!Pattern.compile("(?iu)\\b(?:балкон|лоджи)\\p{L}*").matcher(other).find())
           put(editor, fields, accepted, conflicts, "rental.balcony", "none", noBalcony.group(1));
       }
-      var floors = Pattern.compile("(?iu)(?:этаж\\s*(\\d+)\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*(?:-?й\\s*)?этаж\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*/\\s*(\\d+)\\s*этаж)").matcher(source);
-      Map<String, ObjectNode> explicit = new LinkedHashMap<>();
-      var floorInWords = FLOOR_IN_WORDS.matcher(source);
-      while (floorInWords.find()) {
-        // An amenity on another floor is not the floor of the apartment.
-        if (!apartmentFloor(source, floorInWords)) continue;
-        String value = floorOrdinal(floorInWords.group(1));
-        var previous = explicit.put("rental.floor", object("value", value, "quote", floorInWords.group()));
-        if (previous != null && !text(previous, "value").equals(value)) conflicts.add("rental.floor");
-      }
-      var writtenFloors = WRITTEN_FLOORS.matcher(source);
-      while (writtenFloors.find()) {
-        String height = HEIGHTS.get(writtenFloors.group(2).toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
-        var previous = explicit.put("building.total_floors", object("value", height, "quote", writtenFloors.group()));
-        if (previous != null && !text(previous, "value").equals(height)) conflicts.add("building.total_floors");
-      }
-      while (floors.find()) {
-        int offset = floors.group(1) != null ? 1 : floors.group(3) != null ? 3 : 5;
-        for (var e : Map.of("rental.floor", floors.group(offset),
-            "building.total_floors", floors.group(offset + 1)).entrySet()) {
-          var previous = explicit.put(e.getKey(), object("value", e.getValue(), "quote", floors.group()));
-          if (previous != null && !text(previous, "value").equals(e.getValue())) conflicts.add(e.getKey());
-        }
-      }
-      explicit.forEach((id, entry) -> put(editor, fields, accepted, conflicts, id,
-          text(entry, "value"), text(entry, "quote")));
-      for (String id : Set.of("rental.floor", "building.total_floors"))
-        if (conflicts.contains(id)) accepted.remove(id);
     }
+  }
+
+  static void reconcileFloors(JsonNode editor, Map<String, JsonNode> fields, String source,
+      Map<String, ObjectNode> accepted, Set<String> conflicts, String floorId, String heightId) {
+    var floors = Pattern.compile("(?iu)(?:этаж\\s*(\\d+)\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*(?:-?й\\s*)?этаж\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*/\\s*(\\d+)\\s*этаж)").matcher(source);
+    Map<String, ObjectNode> explicit = new LinkedHashMap<>();
+    var floorInWords = FLOOR_IN_WORDS.matcher(source);
+    while (floorInWords.find()) {
+      // An amenity on another floor is not the floor of the apartment.
+      if (!apartmentFloor(source, floorInWords)) continue;
+      String value = floorOrdinal(floorInWords.group(1));
+      var previous = explicit.put(floorId, object("value", value, "quote", floorInWords.group()));
+      if (previous != null && !text(previous, "value").equals(value)) conflicts.add(floorId);
+    }
+    var writtenFloors = WRITTEN_FLOORS.matcher(source);
+    while (writtenFloors.find()) {
+      String height = HEIGHTS.get(writtenFloors.group(1).toLowerCase(java.util.Locale.ROOT).replace('ё', 'е'));
+      var previous = explicit.put(heightId, object("value", height, "quote", writtenFloors.group()));
+      if (previous != null && !text(previous, "value").equals(height)) conflicts.add(heightId);
+    }
+    while (floors.find()) {
+      int offset = floors.group(1) != null ? 1 : floors.group(3) != null ? 3 : 5;
+      for (var e : Map.of(floorId, floors.group(offset),
+          heightId, floors.group(offset + 1)).entrySet()) {
+        var previous = explicit.put(e.getKey(), object("value", e.getValue(), "quote", floors.group()));
+        if (previous != null && !text(previous, "value").equals(e.getValue())) conflicts.add(e.getKey());
+      }
+    }
+    explicit.forEach((id, entry) -> put(editor, fields, accepted, conflicts, id,
+        text(entry, "value"), text(entry, "quote")));
+    for (String id : Set.of(floorId, heightId))
+      if (conflicts.contains(id)) accepted.remove(id);
   }
 
   private static void put(JsonNode editor, Map<String, JsonNode> fields,

@@ -67,6 +67,19 @@ class RentalAiTest {
   }
 
   @Test
+  void saleKeepsBothFloorsWhenTheBuildingMaterialFollowsItsHeight() {
+    var references = new FileReferenceRepository("../data/rental/apartments_sale");
+    var sale = new AnalysisSchemaBuilder().build(references.snapshot());
+    String source = "Квартира на шестом этаже девятиэтажного панельного дома. Цена 245 000 BYN.";
+    var result = RentalAiPolicy.sanitize(sale, source, object("suggestions", List.of(
+        suggestion("sale.price", "245000", "245 000 BYN"))));
+    var values = new java.util.HashMap<String, String>();
+    result.path("suggestions").forEach(s -> values.put(s.path("field").asText(), s.path("value").asText()));
+    assertEquals("6", values.get("apartment.floor"));
+    assertEquals("9", values.get("building.floors"));
+  }
+
+  @Test
   void saleAnalysisUsesItsOwnFactsAndRejectsPricePerMetre() {
     var references = new FileReferenceRepository("../data/rental/apartments_sale");
     var sale = new AnalysisSchemaBuilder().build(references.snapshot());
