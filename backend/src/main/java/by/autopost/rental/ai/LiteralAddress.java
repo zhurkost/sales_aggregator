@@ -73,7 +73,7 @@ public final class LiteralAddress {
       segment = segment.strip();
       if (segment.matches("(?iu)(?:дом|д\\.?)\\s*\\d[\\p{L}\\d/-]*")) {
         result.put("house", segment.replaceFirst("(?iu)^(?:дом|д\\.?)\\s*", ""));
-      } else if (segment.matches("(?iu)(?:корпус|корп\\.?|к\\.?)\\s*[\\p{L}\\d-]+")) {
+      } else if (segment.matches("(?iu)(?:корпус|корп\\.?|к\\.?)\\s*\\d[\\p{L}\\d-]*")) {
         result.put("block", segment.replaceFirst("(?iu)^(?:корпус|корп\\.?|к\\.?)\\s*", ""));
       } else if (segment.matches("(?iu)" + STREET + "\\s+.+")) result.put("street", segment);
       else if (segment.matches("(?iu)" + CITY + "\\s+.+")) result.put("settlement", segment);
@@ -97,6 +97,14 @@ public final class LiteralAddress {
       if (Pattern.compile("(?iu)(?<![\\p{L}\\d])" + Pattern.quote(value) + "(?![\\p{L}\\d])")
           .matcher(label)
           .find()) result.put(part, value);
+    }
+    // A street and house often share a segment: "ул. Пушкина 7".
+    String streetAndHouse = text(result, "street");
+    String house = text(result, "house");
+    if (!house.isBlank() && streetAndHouse.endsWith(" " + house)) {
+      String streetOnly = streetAndHouse.substring(0, streetAndHouse.length() - house.length()).strip();
+      if (StreetKind.parse(streetOnly).name().equalsIgnoreCase(
+          StreetKind.parse(text(proposal, "street")).name())) result.put("street", streetOnly);
     }
     // Only accept inflections of text actually evidenced for this component.
     for (String part : List.of("settlement", "street")) {

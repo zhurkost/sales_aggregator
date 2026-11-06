@@ -74,7 +74,7 @@ public final class RentalAiPolicy {
 "block":"корпус","region":"область","district":"район"},"questions":[]}.
 Только факты, явно указанные в описании. Для каждого значения нужна точная непрерывная
 цитата из исходного текста. Не угадывай город, валюту, роль собственника, ремонт,
-координаты, удобства, отсутствующие контакты. Адрес — дословная часть, без геокодирования.
+координаты, удобства, отсутствующие контакты. Адрес — дословная часть, без геокодирования. Включи населённый пункт из начала фразы.
 Для settlementNominative и streetNominative приведи названия к официальной форме:
 «в Минске на проспекте Независимости» → Минск и Независимости; «на Садовой улице» → Садовая.
 Сохраняй родительный падеж внутри названия: улица Ленина, проспект Независимости.
@@ -82,6 +82,7 @@ public final class RentalAiPolicy {
 Остальные части адреса — только дословные фрагменты label, включая тип улицы/населённого пункта,
 если указан; house и block — только номер с буквой. Отсутствующие части оставь пустыми.
 В label не включай телефон, имя контактного лица, ориентиры и описание квартиры.
+«Сдам студию» — это аренда квартиры: заполни все явно указанные поля, включая room_configuration=studio.
 Если текст не про сдачу квартиры, верни пустые suggestions и address:null.
 Числа — обычная десятичная строка без единиц. «3/9 этаж» = этаж 3 и этажность 9.
 «Этаж 3 из 9» также означает rental.floor=3, building.total_floors=9.
@@ -89,6 +90,7 @@ rental.room_configuration — ВСЕ комнаты, rental.separate_rooms — �
 «Всего 3 комнаты, из них 2 комнаты раздельные» = room_configuration="3", separate_rooms="2".
 Если указано только одно точное количество комнат, предложи его для обоих полей.
 Не приравнивай studio и 5+ к точному количеству. Раздельных комнат не может быть больше всех.
+«Без залога» ничего не говорит о предоплате. Код none означает явно указанное отсутствие предоплаты.
 Не смешивай залог, комиссию, предоплату и ежемесячную цену. Не пересчитывай валюты.
 «Залог за один месяц» — rental.prepayment="deposit_unspecified" (сам факт залога),
 а не months_1: длительность предоплаты из суммы залога не следует.
@@ -111,7 +113,7 @@ Enum — только точный код из choices; multi_enum — масс�
   }
 
   public static String normalized(String value) {
-    return value.strip().toLowerCase(Locale.ROOT).replaceAll("\\s+", " ");
+    return value.toLowerCase(Locale.ROOT).replaceAll("[\\p{Zs}\\s]+", " ").strip();
   }
 
   public static boolean grounded(String source, String quote) {
@@ -211,11 +213,11 @@ Enum — только точный код из choices; multi_enum — масс�
         // Numeric suggestions must be supported by a numeric token in the quoted source.
         var matcher =
             java.util.regex.Pattern.compile(
-                    "(?<![\\d.,])\\d+(?:[\\u00a0 ]\\d{3})*(?:[.,]\\d+)?(?![\\d.,])")
+                    "(?<!\\d)(?<!\\d[.,])\\d+(?:[\\u00a0\\u202f ]\\d{3})*(?:[.,]\\d+)?(?!\\d|[.,]\\d)")
                 .matcher(quote);
         boolean found = false;
         while (matcher.find())
-          if (new BigDecimal(matcher.group().replaceAll("[\\u00a0 ]", "").replace(',', '.'))
+          if (new BigDecimal(matcher.group().replaceAll("[\\u00a0\\u202f ]", "").replace(',', '.'))
                   .compareTo(number)
               == 0) found = true;
         if (text(field, "id").equals("rental.separate_rooms")

@@ -86,10 +86,45 @@ class RentalReportedErrorsTest {
       assertEquals("electric", value(analyze(quote,suggestion("amenity.stove_type","electric",quote)),"amenity.stove_type"));
     for (String quote : List.of("Без газовой плиты", "Нет газовой плиты"))
       assertEquals("", value(analyze(quote,suggestion("amenity.stove_type","gas",quote)),"amenity.stove_type"));
+    assertEquals("", value(analyze("Без залога", suggestion("rental.prepayment","none","Без залога")), "rental.prepayment"));
+    assertEquals("none", value(analyze("Без предоплаты", suggestion("rental.prepayment","none","Без предоплаты")), "rental.prepayment"));
     String quote = "Предоплата за один месяц";
     assertEquals("months_1", value(analyze(quote,suggestion("rental.prepayment","months_1",quote)),"rental.prepayment"));
     quote = "Без залога";
     assertEquals("", value(analyze(quote,suggestion("rental.prepayment","deposit_unspecified",quote)),"rental.prepayment"));
+  }
+
+  @Test void threeRoomsTwoSeparateAndGroupedRentSurvivePreparationOnAllSites() {
+    String source = "Трёхкомнатная квартира, из них 2 изолированные комнаты. Этаж 4 из 9. Аренда 1 750 рублей в месяц.";
+    var result = analyze(source, suggestion("rental.room_configuration","2","2 изолированные комнаты"),
+        suggestion("rental.separate_rooms","2","2 изолированные комнаты"),
+        suggestion("rental.monthly_price","1750","1 750 рублей в месяц"),
+        suggestion("rental.currency","BYN","рублей"), suggestion("building.total_floors","9","Этаж 4 из 9."));
+    assertAll(() -> assertEquals("1750", value(result, "rental.monthly_price")),
+        () -> assertEquals("3", value(result, "rental.room_configuration")),
+        () -> assertEquals("2", value(result, "rental.separate_rooms")),
+        () -> assertEquals("9", value(result, "building.total_floors")));
+    var values = object();
+    for (var item : result.path("suggestions")) values.set(text(item, "field"), item.path("value"));
+    var sites = Map.of("kufar", "price", "domovita", "monthly_price", "realt", "monthly_rent", "onliner", "price_amount");
+    var jobs = catalog.browser(object("values", values, "modelVersion", 2, "schemaVersion", catalog.version(),
+        "extras", object(), "platforms", sites.keySet())).path("jobs");
+    assertEquals(4, jobs.size());
+    for (var job : jobs) {
+      String site = text(job, "platform"), price = site + "." + sites.get(site);
+      assertTrue(list(job.path("controls")).stream().anyMatch(c -> text(c,"field").equals(price)
+          && c.path("value").asDouble() == 1750), site);
+    }
+  }
+
+  @Test void bareCityStartingWithKIsNotABuildingBlock() {
+    var parsed = LiteralAddress.parse("Кобрин, ул. Пушкина 7",
+        object("settlement","Кобрин", "street","ул. Пушкина", "house","7"));
+    LiteralAddress.cleanComponents(parsed);
+    assertEquals("", text(parsed, "block"));
+    assertEquals("Кобрин", text(parsed, "settlement"));
+    assertEquals("Пушкина", text(parsed, "street"));
+    assertEquals("7", text(parsed, "house"));
   }
 
   @Test void totalRoomsIncludeSeparateRoomsAndSingleCountPopulatesBoth() {
@@ -109,6 +144,8 @@ class RentalReportedErrorsTest {
       assertEquals("3", value(result, "rental.room_configuration"));
       assertEquals("3", value(result, "rental.separate_rooms"));
     }
+    result = analyze("Одна комната", suggestion("rental.room_configuration","1","Одна комната"));
+    assertEquals("1", value(result, "rental.separate_rooms"));
     result = analyze("Сдам студию", suggestion("rental.room_configuration", "studio", "студию"));
     assertEquals("", value(result, "rental.separate_rooms"));
     result = analyze("Сдам двухкомнатную квартиру",

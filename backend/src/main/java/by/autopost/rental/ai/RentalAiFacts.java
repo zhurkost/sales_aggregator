@@ -28,6 +28,7 @@ final class RentalAiFacts {
         .matcher(quote).find();
     boolean advance = Pattern.compile("(?iu)(?:предоплат|аванс|(?:оплат\\p{L}*|плат[её]ж\\p{L}*)\\s+(?:за\\s+\\S+\\s+)?впер[её]д)")
         .matcher(quote).find();
+    if (value.equals("none") && !advance) return null;
     if (value.startsWith("months_")) {
       // The legacy code stores the presence of a deposit, not its amount.
       if (deposit && !noDeposit && !advance) return "deposit_unspecified";
@@ -37,9 +38,12 @@ final class RentalAiFacts {
     return value;
   }
 
+  private static final Map<String, String> ROOM_PREFIXES = Map.of("1", "одно", "2", "двух|дву",
+      "3", "трех|трёх", "4", "четырех|четырёх", "5", "пяти", "6", "шести", "7", "семи");
+
   static boolean spelledRoomCount(String value, String quote) {
-    String prefix = Map.of("1", "одно", "2", "двух|дву", "3", "трех|трёх",
-        "4", "четырех|четырёх", "5", "пяти", "6", "шести", "7", "семи").get(value);
+    String prefix = ROOM_PREFIXES.get(value);
+    if (value.equals("1") && Pattern.compile("(?iu)(?<!\\p{L})одн(?:а|у)\\s+комнат[ау](?!\\p{L})").matcher(quote).find()) return true;
     return prefix != null && Pattern.compile("(?iu)(?<![\\p{L}])(?:" + prefix + ")комнатн\\p{L}*")
         .matcher(quote).find();
   }
@@ -49,6 +53,11 @@ final class RentalAiFacts {
     var fields = RentalAiPolicy.fields(editor);
     if (accepted.containsKey(ROOMS) || accepted.containsKey(SEPARATE)) {
       Map<String, ObjectNode> explicit = new LinkedHashMap<>();
+      for (var entry : ROOM_PREFIXES.entrySet()) {
+        var written = Pattern.compile("(?iu)(?<!\\p{L})(?:" + entry.getValue() + ")комнатн\\p{L}*").matcher(source);
+        if (written.find() && explicit.put(ROOMS, object("value", entry.getKey(), "quote", written.group())) != null)
+          conflicts.add(ROOMS);
+      }
       var rooms = Pattern.compile(
           "(?iu)(?<![\\p{L}\\d])(?:всего\\s+)?(\\d+)\\s+(?:(раздельн\\p{L}*|изолированн\\p{L}*)\\s+)?комнат[аы]?(?:\\s+(раздельн\\p{L}*|изолированн\\p{L}*))?")
           .matcher(source);
@@ -69,7 +78,8 @@ final class RentalAiFacts {
       if (explicit.size() == 1 && conflicts.isEmpty()) {
         var entry = explicit.values().iterator().next();
         String other = explicit.containsKey(ROOMS) ? SEPARATE : ROOMS;
-        put(editor, fields, accepted, conflicts, other, text(entry, "value"), text(entry, "quote"));
+        if (!accepted.containsKey(other))
+          put(editor, fields, accepted, conflicts, other, text(entry, "value"), text(entry, "quote"));
       }
       for (String id : Set.of(ROOMS, SEPARATE)) if (conflicts.contains(id)) accepted.remove(id);
       for (String id : Set.of(ROOMS, SEPARATE)) {
@@ -88,7 +98,7 @@ final class RentalAiFacts {
         }
       }
     }
-    if (accepted.containsKey("rental.floor") || accepted.containsKey("building.total_floors")) {
+    if (!accepted.isEmpty()) {
       var floors = Pattern.compile("(?iu)(?:этаж\\s*(\\d+)\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*(?:-?й\\s*)?этаж\\s*(?:из|/)\\s*(\\d+)|(\\d+)\\s*/\\s*(\\d+)\\s*этаж)").matcher(source);
       Map<String, ObjectNode> explicit = new LinkedHashMap<>();
       while (floors.find()) {
