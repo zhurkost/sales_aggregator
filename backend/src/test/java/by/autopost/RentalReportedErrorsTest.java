@@ -266,6 +266,17 @@ class RentalReportedErrorsTest {
     assertEquals("BYN", values.get("domovita.currency"));
   }
 
+  @Test void composedTitleKeepsTheFactsWhenAnUnsupportedAdjectiveIsAdded() {
+    String title = "Уютная 2-комнатная с лоджией в Орше";
+    for (String source : List.of("Сдаю двухкомнатную квартиру с лоджией.",
+        "Сдаю квартиру. Рядом уютная кофейня.", "Это не уютная квартира.")) {
+      assertEquals("2-комнатная с лоджией в Орше",
+          value(analyze(source, suggestion("listing.title", title, source)), "listing.title"));
+    }
+    String source = "Сдам уютную двухкомнатную квартиру с лоджией.";
+    assertEquals(title, value(analyze(source, suggestion("listing.title", title, source)), "listing.title"));
+  }
+
   @Test void marketingTextsAreComposedSeparatelyWithStrictLengths() {
     String source = "Сдам квартиру рядом с парком. Есть мебель и стиральная машина.";
     var result = analyze(source,

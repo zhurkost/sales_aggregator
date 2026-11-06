@@ -106,7 +106,7 @@ Enum — только точный код из choices; multi_enum — масс�
 (до 3 вопросов только про неоднозначности, не перечисляй все незаполненные поля).
 Не создавай поля вне списка. Не заполняй за пользователя описание или ссылки на фото.
 Составь listing.title до 100 символов: привлекательный заголовок по преимуществам из текста,
-а не перечень технических характеристик. Не приписывай квартире светлые комнаты или расположение в центре без прямого указания.
+а не перечень технических характеристик. Слова «уютная», «светлая», «просторная» используй только если автор так описал саму квартиру. Не приписывай квартире светлые комнаты или расположение в центре без прямого указания.
 Составь listing.short_description до 500 символов: отдельное краткое описание преимуществ,
 не копию всего объявления. Для обоих текстов приложи точную цитату-основание.
 Список полей и значения:
@@ -140,6 +140,8 @@ Enum — только точный код из choices; multi_enum — масс�
         continue;
       }
       JsonNode valid = validValue(field, editor.path("canonicalValues").path(id), value, quote);
+      if (valid != null && id.equals("listing.title"))
+        valid = TextNode.valueOf(RentalAiFacts.groundedTitle(valid.asText(), source));
       if (valid == null || ((id.equals("listing.title") || id.equals("listing.short_description"))
           && !RentalAiFacts.supportedCopy(valid.asText(), source))) {
         ignored++;

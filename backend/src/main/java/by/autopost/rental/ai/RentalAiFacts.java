@@ -76,6 +76,23 @@ final class RentalAiFacts {
     return false;
   }
 
+  private static final Pattern COZY_TITLE = Pattern.compile(
+      "(?iu)^уютная\\s+(?=квартира\\b|студия\\b|[\\p{L}\\d-]*комнатная\\b)");
+  private static final Pattern COZY_APARTMENT = Pattern.compile(
+      "(?iu)\\bуютн(?:ая|ую|ой)\\s+(?:квартир(?:а|у|ы|е|ой)|студи\\p{L}*|[\\p{L}\\d-]*комнатн\\p{L}*)\\b"
+          + "|\\b(?:квартира|студия)\\s+(?:очень\\s+)?уютная\\b");
+
+  static String groundedTitle(String title, String source) {
+    var prefix = COZY_TITLE.matcher(title);
+    if (!prefix.find()) return title;
+    var evidence = COZY_APARTMENT.matcher(source);
+    while (evidence.find()) {
+      if (!source.substring(0, evidence.start()).matches("(?isu).*\\bне\\s+(?:(?:очень|слишком|особенно)\\s+)?$")) return title;
+    }
+    String rest = title.substring(prefix.end());
+    return Character.toUpperCase(rest.charAt(0)) + rest.substring(1);
+  }
+
   static boolean supportedCopy(String copy, String source) {
     for (String claim : java.util.List.of("(?iu)\\bв\\s+центре\\b", "(?iu)\\bсветл(?:ая|ый|ое|ые|ую|ой|ыми|ых|ого|ом)\\b"))
       if (Pattern.compile(claim).matcher(copy).find() && !Pattern.compile(claim).matcher(source).find()) return false;
