@@ -13,17 +13,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RentalAiService {
-  private final RentalCatalog catalog;
   private final AiGateway ai;
   private final RentalAiAddressResolver addresses;
 
-  public RentalAiService(RentalCatalog catalog, AiGateway ai, RentalAiAddressResolver addresses) {
-    this.catalog = catalog;
+  public RentalAiService(AiGateway ai, RentalAiAddressResolver addresses) {
     this.ai = ai;
     this.addresses = addresses;
   }
 
-  public ObjectNode analyze(String identity, String workspace, JsonNode input) {
+  public ObjectNode analyze(RentalCatalog catalog, String identity, String workspace, JsonNode input) {
     if (!input.isObject() || !input.path("text").isTextual() || input.toString().length() > 18000)
       throw new ApiException(400, "Введите описание квартиры.");
     String source = input.path("text").asText().trim();

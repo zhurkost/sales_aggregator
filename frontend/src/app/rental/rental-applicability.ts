@@ -1,7 +1,7 @@
 import { rentalApi } from "./rental-api";
 import type { RentalCard } from "./rental-models";
 
-type Context = { workspace: string; id: string; version: number; schemaVersion?: string;
+type Context = { workspace: string; category: string; id: string; version: number; schemaVersion?: string;
   enabled: boolean; destroyed: boolean; card: RentalCard };
 type Result = { schemaVersion: string; platforms: Record<string, Record<string, boolean | null>> };
 
@@ -17,7 +17,7 @@ export class RentalApplicability {
 
   field(platform: string, id: string): boolean | null {
     const now = this.context();
-    if (!this.owner || this.owner.id !== now.id || this.owner.workspace !== now.workspace ||
+    if (!this.owner || this.owner.id !== now.id || this.owner.category !== now.category || this.owner.workspace !== now.workspace ||
         this.owner.schemaVersion !== now.schemaVersion) return null;
     return this.fields[platform]?.[id] ?? null;
   }
@@ -44,11 +44,11 @@ export class RentalApplicability {
     this.error = "";
     const current = () => {
       const now = this.context();
-      return request === this.sequence && !now.destroyed && before.workspace === now.workspace &&
+      return request === this.sequence && !now.destroyed && before.category === now.category && before.workspace === now.workspace &&
         before.id === now.id && before.version === now.version && before.schemaVersion === now.schemaVersion;
     };
     try {
-      const result = await rentalApi<Result>(before.workspace, "applicability", structuredClone(before.card));
+      const result = await rentalApi<Result>(before.workspace, before.category, "applicability", structuredClone(before.card));
       if (!current()) return;
       if (result.schemaVersion !== before.schemaVersion) throw new Error("Правила обновились. Обновите поля карточки.");
       this.fields = result.platforms;

@@ -36,6 +36,7 @@ node scripts/package-angular-spring.mjs
 - backend/src/main/java/by/autopost/rental — серверная логика аренды.
 - backend/src/main/java/by/autopost/workspace — сервис учётных записей и репозиторий; HTTP-слой не содержит SQL.
 - backend/src/main/java/by/autopost/address — интерфейс адресного провайдера и HTTP-адаптер DaData.
+- data/rental/categories.json — реестр идентификаторов для /api/workspace/categories/{category}/…, комплектов справочников, правил ИИ и публикации.
 - data/rental/apartments_long_term_rent — версионируемые схемы и правила четырёх площадок.
 - lib/workspace.ts — сессия, связь с расширением и обработка фото.
 - extension — расширение только для четырёх площадок аренды; старые адаптеры, протоколы и универсальные справочники удалены.

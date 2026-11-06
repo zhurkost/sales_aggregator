@@ -54,6 +54,23 @@ public final class ReferenceSnapshot {
     this.version = version;
   }
 
+  // The backing data is immutable; editors sharing a bundle still have distinct versions.
+  private ReferenceSnapshot(String category, ReferenceSnapshot source) {
+    categoryId = category;
+    version = Hashing.sha256(category + ":" + source.version);
+    common = source.common;
+    card = source.card;
+    audit = source.audit;
+    schemas = source.schemas;
+    plans = source.plans;
+    bindings = source.bindings;
+    browsers = source.browsers;
+  }
+
+  ReferenceSnapshot forCategory(String id) {
+    return id.equals(categoryId) ? this : new ReferenceSnapshot(id, this);
+  }
+
   private static Map<String, JsonNode> copy(Map<String, JsonNode> source) {
     Map<String, JsonNode> result = new TreeMap<>();
     source.forEach((k, v) -> result.put(k, v.deepCopy()));

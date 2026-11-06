@@ -11,6 +11,10 @@ public class AutopostApplication {
           args[0].substring(args[0].indexOf('=') + 1));
       return;
     }
+    if (args.length == 1 && args[0].startsWith("--validate-categories=")) {
+      by.autopost.rental.catalog.ReferenceBundleCheck.categories(args[0].substring("--validate-categories=".length()));
+      return;
+    }
     SpringApplication.run(AutopostApplication.class, args);
   }
 }

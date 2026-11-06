@@ -28,7 +28,7 @@ Access проверяет cookie, Origin и права на кабинет. Ко
 
 ## API
 
-Все маршруты ниже находятся под /api/workspace/rental и требуют сессию и доступ к кабинету.
+Все маршруты ниже находятся под /api/workspace/categories/{category} и требуют сессию и доступ к кабинету. categories.json связывает идентификатор категории со справочником, правилами ИИ и доступностью публикации. Для ранее установленных расширений /api/workspace/rental остаётся алиасом apartments_long_term_rent.
 
 - GET editor — публичная схема интерфейса.
 - POST address/suggest и address/select — адресный поиск и выбор.

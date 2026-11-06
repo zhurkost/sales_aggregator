@@ -1,3 +1,4 @@
+import { APARTMENT_RENT } from "../listing-categories";
 import {
   Component,
   Input,
@@ -29,9 +30,10 @@ import {
 })
 export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input({ required: true }) workspaceId = "";
+  @Input() category = APARTMENT_RENT;
   @Input() deal: "rent" | "sale" = "rent";
   @Input() profileDefaults: RentalProfile = {};
-  readonly store = new RentalFormStore(() => this.workspaceId, () => this.profileDefaults);
+  readonly store = new RentalFormStore(() => this.workspaceId, () => this.profileDefaults, () => this.category);
   readonly editing = new RentalFormEditor(this.store, address => this.addressChanged(address));
   readonly ai = new RentalAiAssistant(this.store, () => this.workspaceId, address => this.editing.replaceAddress(address), address => this.addressChanged(address));
   readonly view = new RentalViewModel(this.store);

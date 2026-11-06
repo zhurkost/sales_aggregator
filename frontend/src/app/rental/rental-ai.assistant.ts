@@ -20,7 +20,7 @@ export class RentalAiAssistant {
     this.conflicts = []; this.address = null; this.addressFacts = []; this.questions = [];
     const id = this.store.id, version = this.store.editVersion, schemaVersion = this.store.schema.version;
     try {
-      const result = await rentalApi<RentalAiResult>(this.workspaceId(), "analyze", {text:this.description(), schemaVersion});
+      const result = await rentalApi<RentalAiResult>(this.workspaceId(), this.store.category(), "analyze", {text:this.description(), schemaVersion});
       if (this.store.destroyed || this.store.id !== id || this.store.editVersion !== version || this.store.schema?.version !== result.schemaVersion) return;
       let count = 0;
       let appliedAddress = false;

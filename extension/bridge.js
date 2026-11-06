@@ -51,7 +51,12 @@
       if (type.startsWith('RENTAL_')) {
         if (mutation) { consumedGestureId=gestureId; running=true; }
         if (type==='RENTAL_RUN') {
-          const config=await rentalConfig(payload);
+          // Older open cabinet tabs only support apartment rentals.
+          const categoryId = payload.categoryId ?? 'apartments_long_term_rent';
+          if (typeof categoryId !== 'string' || !/^[a-z][a-z0-9_]{0,79}$/.test(categoryId))
+            throw new Error('Некорректная категория.');
+          const config=await rentalConfig(payload, categoryId);
+          if (config.categoryId !== categoryId) throw new Error('Правила получены для другой категории.');
           payload={...config,profileId:payload.profileId,card:payload.card,mode:payload.mode,photos:payload.photos||[]};
         }
         const result=await requireRuntime().sendMessage({kind:'RENTAL_REQUEST',type,payload,userGesture});
@@ -70,10 +75,10 @@
       });
     } finally { if (type.startsWith('RENTAL_')) running = false; }
   });
-  async function rentalConfig(payload) {
+  async function rentalConfig(payload, categoryId) {
     const controller = new AbortController(), timer = setTimeout(() => controller.abort(),16000);
     try {
-      const response = await fetch('/api/workspace/rental/extension-config', {
+      const response = await fetch('/api/workspace/categories/' + categoryId + '/extension-config', {
         method:'POST', credentials:'same-origin', cache:'no-store', signal:controller.signal,
         headers:{'Content-Type':'application/json','X-Autopost-Workspace':payload.profileId},
         body:JSON.stringify({id:payload.id,revision:payload.revision,card:payload.card}),

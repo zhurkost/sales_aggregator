@@ -20,7 +20,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.*;
 
-@SpringBootTest(properties = "autopost.rental-reference-dir=")
+@SpringBootTest(properties = "autopost.category-reference-dir=../data/rental")
 @AutoConfigureMockMvc
 class WorkspaceIntegrationTest {
 
@@ -34,11 +34,40 @@ class WorkspaceIntegrationTest {
     postJson("rental/analyze", "", object("text", "Сдам квартиру"), 401);
     var account = register();
     assertFalse(
-        getJson("rental/editor", account.cookie(), 503).toString().contains("DADATA_API_KEY"));
+        getJson("rental/editor", account.cookie(), 200).toString().contains("DADATA_API_KEY"));
     postJson("rental/address/suggest", account.cookie(), object("query", "М"), 400);
     postJson("rental/analyze", account.cookie(), object("text", "М"), 400);
   }
 
+
+  @Test
+  void categoryRoutesIsolateTemplatesAndRejectUnknownCategories() throws Exception {
+    var cookie = register().cookie();
+    var rent = "categories/apartments_long_term_rent/";
+    var sale = "categories/apartments_sale/";
+    var rentEditor = getJson(rent + "editor", cookie, 200);
+    var saleEditor = getJson(sale + "editor", cookie, 200);
+    assertEquals("apartments_sale", text(saleEditor, "categoryId"));
+    assertNotEquals(text(rentEditor, "version"), text(saleEditor, "version"));
+    assertEquals(rentEditor, getJson("rental/editor", cookie, 200));
+    var card = object("schemaVersion", text(saleEditor, "version"), "platforms", List.of("kufar"), "values", object());
+    card.put("categoryId", "apartments_sale");
+    postJson(sale + "prepare", cookie, card, 200);
+    postJson(sale + "applicability", cookie, card, 200);
+    postJson(sale + "normalize", cookie, card, 200);
+    postJson(rent + "normalize", cookie, card, 409);
+    postJson(sale + "address/suggest", cookie, object("query", "М"), 400);
+    postJson(sale + "analyze", cookie, object("text", "М"), 400);
+    var rentalCard = card.deepCopy().put("categoryId", "apartments_long_term_rent")
+        .put("schemaVersion", text(rentEditor, "version"));
+    var config = postJson(rent + "extension-config", cookie,
+        object("card", rentalCard, "revision", 1, "id", "example"), 200);
+    assertEquals("apartments_long_term_rent", text(parse(config.getResponse().getContentAsString()), "categoryId"));
+    postJson(rent + "prepare", cookie, card, 409);
+    postJson(sale + "extension-config", cookie, object(), 409);
+    getJson("categories/unknown/editor", cookie, 404);
+    getJson(sale + "editor", "", 401);
+  }
 
   @Test
   void removedCardStorageRoutesReturnNotFound() throws Exception {

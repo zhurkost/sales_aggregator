@@ -7,7 +7,7 @@ import type { RentalCard } from "./rental-models";
 const response = (body: unknown) => new Response(JSON.stringify(body));
 function setup() {
   const card: RentalCard = {schemaVersion:"v1",values:{area:"1,123456789012345678"},extras:{},platforms:["example"],address:null};
-  const context = {workspace:"owner",id:"card",version:1,schemaVersion:"v1",enabled:true,destroyed:false,card};
+  const context = {category:"apartments_sale",workspace:"owner",id:"card",version:1,schemaVersion:"v1",enabled:true,destroyed:false,card};
   const state = new RentalApplicability(() => ({...context}));
   return {state,context};
 }
@@ -25,7 +25,7 @@ describe("server-owned applicability", () => {
     await vi.advanceTimersByTimeAsync(200);
     expect(fetcher).toHaveBeenCalledTimes(1);
     const [url,init] = fetcher.mock.calls[0] as unknown as [string,RequestInit];
-    expect(url).toBe("/api/workspace/rental/applicability");
+    expect(url).toBe("/api/workspace/categories/apartments_sale/applicability");
     expect(JSON.parse(String(init.body)).values.area).toBe("1,123456789012345678");
     expect(state.field("example","area")).toBe(false);
     expect(context.card.values.area).toBe("1,123456789012345678");

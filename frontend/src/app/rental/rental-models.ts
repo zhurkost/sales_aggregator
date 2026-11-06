@@ -31,6 +31,7 @@ export interface Address {
   confirmedAt?: string;
 }
 export interface RentalCard {
+  categoryId?: string;
   modelVersion?: number;
   aiEvidence?: Record<string, string>;
   legacy?: {platform: string; field: string; source: string; value: JsonValue; candidate?: JsonValue; message: string}[];
@@ -51,6 +52,8 @@ export interface RentalAiResult {
   ignored: number;
 }
 export interface EditorSchema {
+  publicationEnabled?: boolean;
+  categoryId?: string;
   card?: {valueLabels?: Record<string, string>; version: number; addressDependentFacts: string[]; profileDefaults?: {setting: "phone" | "contactPerson" | "company"; field: string}[]};
   category: { options: Field[] };
   canonicalValues: Record<string, string[]>;

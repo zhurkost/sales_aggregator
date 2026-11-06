@@ -9,17 +9,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
 
-@Repository
 public class FileReferenceRepository implements ReferenceRepository {
   private static final String LEGACY_CATEGORY = "apartments_long_term_rent";
   private final ReferenceFiles files;
   private ReferenceSnapshot cached;
   private Map<String, String> stamps = Map.of();
 
-  public FileReferenceRepository(@Value("${autopost.rental-reference-dir:}") String directory) {
+  public FileReferenceRepository(String directory) {
     files = new ReferenceFiles(directory);
   }
 

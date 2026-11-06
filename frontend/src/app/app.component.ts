@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RetainedPanelDirective } from "./retained-panel.directive";
+import { APARTMENT_RENT, APARTMENT_SALE } from "./listing-categories";
 import { IconComponent } from "./icon.component";
 import { RentalEditorComponent } from "./rental/rental-editor.component";
 import type { RentalProfile } from "./rental/rental-profile-defaults";
@@ -16,7 +17,7 @@ import { WorkspaceGateway } from "./workspace.gateway";
 })
 export class AppComponent implements OnInit, OnDestroy {
   constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
-  readonly deals = [{ id: "rent", label: "Аренда квартир" }, { id: "sale", label: "Продажа квартир" }] as const;
+  readonly deals = [{ id: "rent", category: APARTMENT_RENT, label: "Аренда квартир" }, { id: "sale", category: APARTMENT_SALE, label: "Продажа квартир" }] as const;
   deal: "rent" | "sale" = "rent";
   tabKey(event: KeyboardEvent, index: number) {
     const next = event.key === "Home" ? 0 : event.key === "End" ? 1 :

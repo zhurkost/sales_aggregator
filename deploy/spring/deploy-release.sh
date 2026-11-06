@@ -11,7 +11,7 @@ tar -xzf "$archive" --no-same-owner -C "$release"
 test -f "$release/backend/target/autopost-api.jar"
 test -f "$release/dist-angular/browser/index.html"
 /usr/bin/java -jar "$release/backend/target/autopost-api.jar" \
-  "--validate-rental-reference=$release/data/rental/apartments_long_term_rent"
+  "--validate-categories=$release/data/rental"
 python3 "$release/deploy/spring/backup-workspace.py"
 chmod -R u=rwX,go=rX "$release"
 previous=$(readlink -f /opt/autopost/current || true)
@@ -35,8 +35,8 @@ python3 - <<'PY'
 from pathlib import Path
 import os
 path = Path('/etc/autopost/environment')
-lines = [line for line in path.read_text().splitlines() if not line.startswith('RENTAL_REFERENCE_DIR=')]
-lines.append('RENTAL_REFERENCE_DIR=/opt/autopost/current/data/rental/apartments_long_term_rent')
+lines = [line for line in path.read_text().splitlines() if not line.startswith(('RENTAL_REFERENCE_DIR=', 'CATEGORY_REFERENCE_DIR='))]
+lines.append('CATEGORY_REFERENCE_DIR=/opt/autopost/current/data/rental')
 path.write_text('\n'.join(lines) + '\n')
 os.chmod(path, 0o600)
 PY

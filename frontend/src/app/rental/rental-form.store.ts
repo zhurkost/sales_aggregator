@@ -1,3 +1,4 @@
+import { APARTMENT_RENT } from "../listing-categories";
 import type { EditorSchema, Prepared, RentalCard } from "./rental-models";
 import { rentalApi } from "./rental-api";
 import { RentalCardCheck } from "./rental-card-check";
@@ -6,7 +7,7 @@ import { applyProfileDefaults, type RentalProfile } from "./rental-profile-defau
 
 /** Current form in memory. No persistence or server-side project lifecycle. */
 export class RentalFormStore {
-  constructor(private workspaceId: () => string, private profile: () => RentalProfile = () => ({})) {}
+  constructor(private workspaceId: () => string, private profile: () => RentalProfile = () => ({}), readonly category: () => string = () => APARTMENT_RENT) {}
   schema: EditorSchema | null = null;
   card: RentalCard = {schemaVersion:"",values:{},extras:{},platforms:[],address:null};
   id: string = crypto.randomUUID();
@@ -15,9 +16,9 @@ export class RentalFormStore {
   busy = false;
   destroyed = false;
   private timer?: ReturnType<typeof setTimeout>;
-  readonly check = new RentalCardCheck(() => ({workspace:this.workspaceId(), id:this.id,
+  readonly check = new RentalCardCheck(() => ({workspace:this.workspaceId(), category:this.category(), id:this.id,
     version:this.editVersion, card:this.card, destroyed:this.destroyed}));
-  readonly applicability = new RentalApplicability(() => ({workspace:this.workspaceId(), id:this.id,
+  readonly applicability = new RentalApplicability(() => ({workspace:this.workspaceId(), category:this.category(), id:this.id,
     version:this.editVersion, schemaVersion:this.schema?.version, enabled:!!this.schema?.serverApplicability,
     card:this.card, destroyed:this.destroyed}));
   get results() { return this.check.results; }
@@ -25,8 +26,9 @@ export class RentalFormStore {
   get platforms() { return Object.keys(this.schema?.platforms || {}); }
   async load() {
     try {
-      this.schema = await rentalApi<EditorSchema>(this.workspaceId(), "editor");
+      this.schema = await rentalApi<EditorSchema>(this.workspaceId(), this.category(), "editor");
       if (this.destroyed) return;
+      this.card.categoryId = this.category();
       this.card.schemaVersion = this.schema.version;
       this.card.modelVersion = this.schema.card?.version;
       this.card.platforms = this.platforms;
@@ -47,8 +49,8 @@ export class RentalFormStore {
     if (this.busy) return;
     this.busy = true;
     try {
-      const schema = await rentalApi<EditorSchema>(this.workspaceId(), "editor");
-      const card = await rentalApi<RentalCard>(this.workspaceId(), "normalize", this.card);
+      const schema = await rentalApi<EditorSchema>(this.workspaceId(), this.category(), "editor");
+      const card = await rentalApi<RentalCard>(this.workspaceId(), this.category(), "normalize", this.card);
       if (this.destroyed) return;
       this.schema = schema; this.card = card; this.check.clear(); this.changed(); this.error = "";
     } catch (e) { this.error = (e as Error).message; }

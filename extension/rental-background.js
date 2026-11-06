@@ -17,6 +17,7 @@
     id: b.id,
     revision: b.revision,
     profileId: b.profileId,
+    categoryId: b.categoryId,
     jobs: b.jobs.map((j) => ({
       id: j.id,
       platform: j.recipe.platform,
@@ -41,6 +42,7 @@
       const own = rows.filter(
         (b) =>
           b.origin === senderOrigin &&
+          (b.categoryId ?? "apartments_long_term_rent") === (payload.categoryId ?? "apartments_long_term_rent") &&
           b.profileId === payload.profileId &&
           b.id === payload.id,
       );
@@ -144,6 +146,7 @@
         id: data.id,
         revision: data.revision,
         profileId: data.profileId,
+        categoryId: data.categoryId ?? "apartments_long_term_rent",
         origin: senderOrigin,
         sourceTabId: sender.tab.id,
         created: Date.now(),
@@ -196,6 +199,7 @@
         : {
             task: {
               jobId: j.id,
+              categoryId: b.categoryId ?? "apartments_long_term_rent",
               recipe: j.recipe,
               mode: b.mode,
               photos: (await root.AutopostPhotos.get(b.photoKey)) || [],

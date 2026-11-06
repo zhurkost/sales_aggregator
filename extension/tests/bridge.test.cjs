@@ -20,7 +20,7 @@ function createBridge({ sendMessage, fetchCatalog, configureChrome } = {}) {
   window.top = window;
   const chrome = { runtime: { id: 'test-id', async sendMessage(message) { forwarded.push(message); return sendMessage ? sendMessage(message) : { version: core.VERSION, jobs: [] }; } } };
   configureChrome?.(chrome);
-  const fetch = async(url,options)=>{catalogRequests.push({url,options});return fetchCatalog ? fetchCatalog(url,options) : Response.json({format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]});};
+  const fetch = async(url,options)=>{catalogRequests.push({url,options});return fetchCatalog ? fetchCatalog(url,options) : Response.json({categoryId:'apartments_long_term_rent',format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]});};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../bridge.js'), 'utf8'), { AutopostCore: core, window, chrome, location: { origin }, navigator: { userActivation: { isActive: true } }, Date,fetch,AbortController,setTimeout,clearTimeout });
   async function event(type, data) { for (const listener of listeners[type] || []) await listener(data); }
   async function request(type, requestId = 'req-1', overrides = {}) {
@@ -45,19 +45,19 @@ test('RENTAL_RUN requires a trusted event and allows only one request per gestur
   await bridge.request('RENTAL_RUN', 'req-4');
   assert.equal(bridge.forwarded.length, 1);
   assert.equal(bridge.responses.at(-1).message.payload.code, 'USER_GESTURE_REQUIRED');
-  assert.equal(bridge.catalogRequests.length,1);assert.equal(bridge.catalogRequests[0].url,'/api/workspace/rental/extension-config');
+  assert.equal(bridge.catalogRequests.length,1);assert.equal(bridge.catalogRequests[0].url,'/api/workspace/categories/apartments_long_term_rent/extension-config');
   assert.equal('photos' in JSON.parse(bridge.catalogRequests[0].options.body),false);
   assert.ok(bridge.forwarded[0].payload.jobs);
 });
 
 test('rental launch obtains a server recipe after a trusted click and never sends photos to the server',async()=>{
- const recipe={format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]};
+ const recipe={categoryId:'example_category',format:1,id:'rental',revision:1,jobs:[{platform:'kufar'}]};
  const bridge=createBridge({fetchCatalog:async()=>Response.json(recipe)});
- const input={profileId:'owner',id:'rental',revision:7,card:{values:{description:'Apartment'}},photos:[{id:'image'}],mode:'assist',jobs:[{startUrl:'https://evil.invalid'}]};
+ const input={categoryId:'example_category',profileId:'owner',id:'rental',revision:7,card:{values:{description:'Apartment'}},photos:[{id:'image'}],mode:'assist',jobs:[{startUrl:'https://evil.invalid'}]};
  const overrides={data:{source:'autopost-app',type:'RENTAL_RUN',requestId:'rental-1',payload:input}};
  await bridge.request('RENTAL_RUN','rental-1',overrides);assert.equal(bridge.catalogRequests.length,0);
  await bridge.event('click',{isTrusted:true});overrides.data.requestId='rental-2';await bridge.request('RENTAL_RUN','rental-2',overrides);
- assert.equal(bridge.catalogRequests[0].url,'/api/workspace/rental/extension-config');
+ assert.equal(bridge.catalogRequests[0].url,'/api/workspace/categories/example_category/extension-config');
  const request=bridge.catalogRequests[0].options;assert.equal(request.headers['X-Autopost-Workspace'],'owner');assert.equal('photos' in JSON.parse(request.body),false);assert.equal(JSON.parse(request.body).revision,7);assert.deepEqual(JSON.parse(request.body).card,input.card);
  assert.equal(bridge.forwarded[0].kind,'RENTAL_REQUEST');assert.deepEqual(bridge.forwarded[0].payload.jobs,recipe.jobs);assert.equal(bridge.forwarded[0].payload.mode,'assist');
 });

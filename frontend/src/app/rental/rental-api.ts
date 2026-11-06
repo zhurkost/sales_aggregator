@@ -2,10 +2,11 @@ export type * from "./rental-models";
 
 export async function rentalApi<T>(
   workspace: string,
+  category: string,
   path: string,
   data?: unknown,
 ): Promise<T> {
-  const response = await fetch("/api/workspace/rental/" + path, {
+  const response = await fetch("/api/workspace/categories/" + encodeURIComponent(category) + "/" + path, {
     method: data === undefined ? "GET" : "POST",
     credentials: "same-origin",
     headers: {

@@ -4,10 +4,10 @@ import type { Address } from "./rental-models";
 
 @Injectable({ providedIn: "root" })
 export class RentalAddressGateway {
-  suggest(workspace: string, query: string) {
-    return rentalApi<{ suggestions: { id: string; label: string }[] }>(workspace, "address/suggest", { query });
+  suggest(workspace: string, category: string, query: string) {
+    return rentalApi<{ suggestions: { id: string; label: string }[] }>(workspace, category, "address/suggest", { query });
   }
-  select(workspace: string, id: string) {
-    return rentalApi<{ address: Address }>(workspace, "address/select", { id });
+  select(workspace: string, category: string, id: string) {
+    return rentalApi<{ address: Address }>(workspace, category, "address/select", { id });
   }
 }

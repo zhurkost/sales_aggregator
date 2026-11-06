@@ -6,6 +6,7 @@ import { RentalEditorComponent } from "./rental/rental-editor.component";
 
 @Component({selector:"app-rental-editor", standalone:true, template:"<p>Rental editor</p>"})
 class RentalStub {
+  @Input() category = "";
   @Input() deal: "rent" | "sale" = "rent";
   @Input() workspaceId = "";
   @Input() profileDefaults = {};
@@ -42,7 +43,8 @@ describe("Real estate workspace",()=>{
     const fetcher = vi.fn(async (url: unknown) => {
       if (url === "/api/workspace/session") return response({profile, profiles:[profile]});
       if (url === "/api/workspace/settings") return response({settings:{}});
-      if (url === "/api/workspace/rental/editor") return response(schema);
+      if (url === "/api/workspace/categories/apartments_long_term_rent/editor") return response({...schema, publicationEnabled:true});
+      if (url === "/api/workspace/categories/apartments_sale/editor") return response({...schema, publicationEnabled:false});
       throw new Error("Unexpected request: " + url);
     });
     vi.stubGlobal("fetch",fetcher);
@@ -67,7 +69,8 @@ describe("Real estate workspace",()=>{
       select(0); expect(textarea()!.value).toBe("Первое объявление");
       select(1); expect(textarea()!.value).toBe("Второе объявление");
       expect(root.querySelectorAll("textarea.source-description")).toHaveLength(1);
-      expect(fetcher.mock.calls.filter(([url]) => url === "/api/workspace/rental/editor")).toHaveLength(2);
+      for (const category of ["apartments_long_term_rent", "apartments_sale"])
+        expect(fetcher.mock.calls.filter(([url]) => url === "/api/workspace/categories/" + category + "/editor")).toHaveLength(1);
     } finally { fixture.destroy(); }
   });
   it("ends the session without storing the form",async()=>{

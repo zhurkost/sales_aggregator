@@ -9,7 +9,15 @@ public final class ReferenceBundleCheck {
   private ReferenceBundleCheck() {}
 
   public static void run(String directory) {
-    var snapshot = new FileReferenceRepository(directory).snapshot();
+    validate(new FileReferenceRepository(directory).snapshot());
+  }
+
+  public static void categories(String root) {
+    var registry = new CategoryRegistry(root);
+    for (String id : registry.ids()) validate(registry.require(id).references().snapshot());
+  }
+
+  private static void validate(ReferenceSnapshot snapshot) {
     // Also exercise editor construction before activating a bundle.
     new EditorSchemaBuilder().build(snapshot);
     System.out.println(

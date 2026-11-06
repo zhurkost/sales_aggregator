@@ -1,3 +1,4 @@
+import { APARTMENT_RENT } from "../listing-categories";
 import { Component, Input, OnChanges, OnDestroy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { EXTENSION_VERSION, type Photo } from "../../../../lib/workspace";
@@ -25,7 +26,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) store!: RentalFormStore;
   @Input({ required: true }) workspaceId = "";
   @Input({ required: true }) sessionId = "";
-  @Input() deal: "rent" | "sale" = "rent";
+  @Input() publicationEnabled = true;
   mode: "automatic" | "assist" = "automatic";
   readonly extensionVersion = EXTENSION_VERSION;
   busy = false;
@@ -43,7 +44,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     this.jobs = [];
     this.photos = [];
     this.error = "";
-    if (this.deal === "sale" || !this.workspaceId || !this.sessionId) return;
+    if (!this.publicationEnabled || !this.workspaceId || !this.sessionId) return;
     try {
       const ping = await this.gateway.request("PING", undefined, 4000);
       if (generation !== this.generation) return;
@@ -55,7 +56,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-field-transfer-v2") &&
         ping["capabilities"].includes("rental-address-type-then-first") &&
         ping["capabilities"].includes("rental-onliner-city-menu") &&
-        ping["capabilities"].includes("rental-localized-price");
+        ping["capabilities"].includes("rental-localized-price") &&
+        (this.store.category() === APARTMENT_RENT || ping["capabilities"].includes("listing-category-path"));
       if (this.ready) {
         await this.refresh();
         if (generation === this.generation && !this.destroyed)
@@ -70,7 +72,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     try {
       const result = await this.gateway.request(
         "RENTAL_STATUS",
-        { profileId: this.workspaceId, id: this.sessionId },
+        { categoryId: this.store.category(), profileId: this.workspaceId, id: this.sessionId },
         4000,
       );
       if (generation === this.generation && !this.destroyed)
@@ -80,7 +82,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     }
   }
   async publish() {
-    if (this.deal === "sale" || this.busy || this.store.busy || !this.store.card.platforms.length)
+    if (!this.publicationEnabled || this.busy || this.store.busy || !this.store.card.platforms.length)
       return;
     if (!this.ready) {
       this.error = `Установите расширение ${this.extensionVersion} и обновите вкладку Автопоста.`;
@@ -92,7 +94,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     const payload = {
       id: this.sessionId,
       revision: this.store.editVersion + 1,
-      profileId: this.workspaceId,
+      categoryId: this.store.category(), profileId: this.workspaceId,
       card: structuredClone(this.store.card),
       mode: this.mode,
       photos: this.photos,
@@ -111,7 +113,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     try {
       await this.gateway.request("RENTAL_OPEN", {
         id: this.sessionId,
-        profileId: this.workspaceId,
+        categoryId: this.store.category(), profileId: this.workspaceId,
         jobId: job.id,
       });
     } catch (e) {
@@ -122,7 +124,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     try {
       await this.gateway.request("RENTAL_STOP", {
         id: this.sessionId,
-        profileId: this.workspaceId,
+        categoryId: this.store.category(), profileId: this.workspaceId,
       });
       await this.refresh();
     } catch (e) {

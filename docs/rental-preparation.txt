@@ -49,7 +49,7 @@ Runtime возвращает подготовленные части и явны
 в GitHub и включаются в архив релиза вне Angular-статики.
 Задать переменные окружения Spring (локально — игнорируемый .dev.vars):
   DADATA_API_KEY=<ключ подсказок>
-  RENTAL_REFERENCE_DIR=<путь к data/rental/apartments_long_term_rent>
+  CATEGORY_REFERENCE_DIR=<путь к data/rental>
 При npm run dev путь подключается автоматически. При развёртывании используется
 /opt/autopost/current/data/rental/apartments_long_term_rent.
 При проблемах прямого доступа VPS к DaData вместо DADATA_API_KEY задать:
@@ -67,11 +67,11 @@ Runtime возвращает подготовленные части и явны
 Репозиторий содержит рабочие справочники и отдельные синтетические тестовые данные.
 
 API внутри кабинета, с обычной сессией/Origin и X-Autopost-Workspace:
-  GET  /api/workspace/rental/editor — модель редактора, доступность подсказок;
-  POST /api/workspace/rental/address/suggest — {query};
-  POST /api/workspace/rental/address/select — {id} из подсказки этого кабинета;
-  POST /api/workspace/rental/extension-config — {id,revision,card}, текущие данные формы;
-  POST /api/workspace/rental/prepare — {schemaVersion,values,extras,platforms,address}.
+  GET  /api/workspace/categories/{category}/editor — модель редактора, доступность подсказок;
+  POST /api/workspace/categories/{category}/address/suggest — {query};
+  POST /api/workspace/categories/{category}/address/select — {id} из подсказки этого кабинета;
+  POST /api/workspace/categories/{category}/extension-config — {id,revision,card}, текущие данные формы;
+  POST /api/workspace/categories/{category}/prepare — {schemaVersion,values,extras,platforms,address}.
 values — словарь common Option.id → строка либо files-массив.
 extras — словарь platform → source Option.id → типизированный код/значение;
 числовые строки уточнений разбираются на сервере через BigDecimal.

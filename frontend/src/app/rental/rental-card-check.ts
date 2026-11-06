@@ -3,6 +3,7 @@ import type { Prepared, RentalCard } from "./rental-models";
 
 type Context = {
   workspace: string;
+  category: string;
   id: string;
   version: number;
   card: RentalCard;
@@ -43,6 +44,7 @@ export class RentalCardCheck {
       return (
         request === this.sequence &&
         !now.destroyed &&
+        now.category === before.category &&
         now.id === before.id &&
         now.workspace === before.workspace &&
         now.version === before.version
@@ -51,6 +53,7 @@ export class RentalCardCheck {
     try {
       const result = await rentalApi<{ platforms: Prepared[] }>(
         before.workspace,
+        before.category,
         "prepare",
         structuredClone(before.card),
       );

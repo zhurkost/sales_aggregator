@@ -11,10 +11,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.HashSet;
 import java.util.Set;
-import org.springframework.stereotype.Service;
 
 /** Application boundary. Each operation captures exactly one reference snapshot. */
-@Service
 public class RentalCatalog {
   private final ReferenceRepository references;
 
@@ -62,6 +60,8 @@ public class RentalCatalog {
   }
 
   private ObjectNode normalize(ReferenceSnapshot snapshot, JsonNode card) {
+    if (card.has("categoryId") && !snapshot.categoryId().equals(text(card, "categoryId")))
+      throw new ApiException(409, "Карточка относится к другой категории.");
     if (!card.isObject()) throw new ApiException(400, "Некорректная карточка.");
     return snapshot.card().path("version").asInt() < 2
         ? card.deepCopy()

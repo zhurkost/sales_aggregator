@@ -1,0 +1,12 @@
+{
+  "apartments_long_term_rent": {
+    "reference": "apartments_long_term_rent",
+    "analysis": "apartment_rental",
+    "publication": true
+  },
+  "apartments_sale": {
+    "reference": "apartments_long_term_rent",
+    "analysis": "apartment_rental",
+    "publication": false
+  }
+}

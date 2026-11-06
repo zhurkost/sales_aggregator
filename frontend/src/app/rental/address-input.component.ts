@@ -1,3 +1,4 @@
+import { APARTMENT_RENT } from "../listing-categories";
 import {
   Component,
   Input,
@@ -96,6 +97,7 @@ import { RentalAddressGateway } from "./rental-address.gateway";
 export class AddressInputComponent implements OnDestroy {
   constructor(private addresses: RentalAddressGateway = new RentalAddressGateway()) {}
   @Input({ required: true }) workspaceId = "";
+  @Input() category = APARTMENT_RENT;
   @Input() compact = false;
   @Input() set sessionId(id: string) {
     if (id === this.currentSession) return;
@@ -174,7 +176,7 @@ export class AddressInputComponent implements OnDestroy {
   async load(query: string, generation: number) {
     this.busy = true;
     try {
-      const result = await this.addresses.suggest(this.workspaceId, query);
+      const result = await this.addresses.suggest(this.workspaceId, this.category, query);
       if (generation !== this.generation) return;
       this.suggestions = result.suggestions;
       if (!result.suggestions.length)
@@ -193,7 +195,7 @@ export class AddressInputComponent implements OnDestroy {
     this.choosing = true;
     this.error = "";
     try {
-      const { address } = await this.addresses.select(this.workspaceId, id);
+      const { address } = await this.addresses.select(this.workspaceId, this.category, id);
       if (generation !== this.generation) return;
       this.selected = address;
       this.query = address.label;
