@@ -17,6 +17,36 @@ import org.junit.jupiter.api.Test;
 
 class PreparationEngineTest {
   @Test
+  void localFilesSatisfyPresenceButStillNeedAcceptanceAndObeyCombinedCountLimits() {
+    var schema = schema(
+        option("photos", "files", object("required", true,
+            "validation", object("min_items", 1, "max_items", 2))),
+        option("title", "text", object("required", true)));
+    var mapping = plan(row("media.images", "photos", object("kind", "files")));
+    var local = new PreparationEngine().prepare(schema, mapping, object(), object(), object(),
+        Map.of("media.images", 2));
+    assertFalse(local.path("values").has("photos"), "Local files must not become fake uploaded URLs");
+    assertTrue(list(local.path("issues")).stream().anyMatch(i -> text(i,"field").equals("photos")
+        && text(i,"code").equals("file_acceptance")));
+    assertFalse(list(local.path("issues")).stream().anyMatch(i -> text(i,"field").equals("photos")
+        && text(i,"code").equals("required")));
+    assertTrue(list(local.path("issues")).stream().anyMatch(i -> text(i,"field").equals("title")
+        && text(i,"code").equals("required")));
+    assertFalse(local.path("publicationReady").asBoolean());
+    var tooMany = new PreparationEngine().prepare(schema, mapping,
+        object("media.images", List.of("https://example.com/photo.jpg")), object(), object(),
+        Map.of("media.images", 2));
+    assertTrue(list(tooMany.path("issues")).stream().anyMatch(i -> text(i,"field").equals("photos")
+        && text(i,"code").equals("validation")));
+    var inactive = schema(option("photos", "files", object("required", true,
+        "when", object("option_id", "enabled", "operator", "equals", "value", true))),
+        option("enabled", "boolean", object()));
+    var skipped = new PreparationEngine().prepare(inactive, mapping, object(), object("enabled", false), object(),
+        Map.of("media.images", 2));
+    assertTrue(list(skipped.path("issues")).stream().noneMatch(i -> text(i,"field").equals("photos")));
+  }
+
+  @Test
   void applicabilityUsesServerConversionsWithoutLosingDecimalPrecision() {
     var threshold = new java.math.BigDecimal("1.000000000000000001");
     var schema =

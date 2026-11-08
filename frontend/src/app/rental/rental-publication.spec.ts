@@ -15,6 +15,19 @@ const gateway = {
 };
 afterEach(() => vi.clearAllMocks());
 describe("publication of incomplete rental cards", () => {
+  it("counts local files without duplicating imported URLs or sending image bytes to preparation", async () => {
+    const store = new RentalFormStore(() => "owner");
+    const url = "https://example.com/one.jpg";
+    store.card.values["media.images"] = [url];
+    store.setLocalFiles("media.images", [{}, {sourceUrl:url}]);
+    expect(store.preparationInput().localFileCounts).toEqual({"media.images":1});
+    expect(store.card).not.toHaveProperty("localFileCounts");
+    store.card.values["media.images"] = [];
+    expect(store.preparationInput().localFileCounts).toEqual({"media.images":2});
+    store.setLocalFiles("media.images", []);
+    expect(store.preparationInput().localFileCounts).toEqual({});
+    store.destroy();
+  });
   it("imports linked images once, then publishes files and removes matching links with a preview", async () => {
     const c = new RentalPublicationComponent(gateway);
     c.store = new RentalFormStore(() => "owner");
@@ -130,7 +143,7 @@ describe("publication of incomplete rental cards", () => {
         revision: store.editVersion + 1,
         profileId: "owner",
         mode: "automatic",
-        card: store.card,
+        card: {...store.card, localFileCounts:{}},
       }),
       25000,
     );

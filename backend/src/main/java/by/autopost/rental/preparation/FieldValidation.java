@@ -11,10 +11,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public final class FieldValidation {
   public void validate(JsonNode options, Truth parent, ObjectNode values, ArrayNode issues) {
+    validate(options, parent, values, issues, Map.of());
+  }
+
+  public void validate(JsonNode options, Truth parent, ObjectNode values, ArrayNode issues,
+      Map<String, Integer> localFiles) {
     for (var field : options) {
       String id = text(field, "id"), type = text(field, "type");
       JsonNode rule = field.path("fill_rule"), v = values.path(id);
@@ -24,7 +30,7 @@ public final class FieldValidation {
               ? Truth.NO
               : parent == Truth.UNKNOWN || own == Truth.UNKNOWN ? Truth.UNKNOWN : Truth.YES;
       if (type.equals("group")) {
-        validate(field.path("options"), active, values, issues);
+        validate(field.path("options"), active, values, issues, localFiles);
         continue;
       }
       if (active == Truth.NO) {
@@ -40,14 +46,19 @@ public final class FieldValidation {
         values.remove(id);
         continue;
       }
-      if (missing(v) && !by.autopost.rental.model.SchemaFields.isEmptyChoice(field, v)) {
+      int localCount = type.equals("files") ? localFiles.getOrDefault(id, 0) : 0;
+      if (missing(v) && localCount == 0 && !by.autopost.rental.model.SchemaFields.isEmptyChoice(field, v)) {
         if (rule.path("required").asBoolean(false)
             && list(issues).stream().noneMatch(i -> text(i, "field").equals(id)))
           issue(issues, id, "required", "Заполните: " + text(field, "name"));
         continue;
       }
       try {
-        validateValue(field, v);
+        validateValue(field, missing(v) && localCount > 0 ? array() : v, localCount);
+        if (localCount > 0 && list(issues).stream().noneMatch(i ->
+            text(i, "field").equals(id) && text(i, "code").equals("file_acceptance")))
+          issue(issues, id, "file_acceptance",
+              "Файлы выбраны в браузере. Проверьте их принятие площадкой после переноса.");
         if (type.equals("enum") || type.equals("multi_enum")) {
           for (var selected : type.equals("enum") ? List.of(v) : list(v)) {
             var matching =
@@ -67,6 +78,10 @@ public final class FieldValidation {
   }
 
   public static void validateValue(JsonNode field, JsonNode v) {
+    validateValue(field, v, 0);
+  }
+
+  private static void validateValue(JsonNode field, JsonNode v, int localCount) {
     String type = text(field, "type");
     JsonNode validation = field.path("fill_rule").path("validation");
     boolean ok =
@@ -107,7 +122,7 @@ public final class FieldValidation {
                 "значение не соответствует ограничению " + key + "=" + bound.toPlainString() + ".");
         }
     }
-    int length = v.isArray() ? v.size() : v.isTextual() ? v.asText().length() : 0;
+    int length = v.isArray() ? v.size() + localCount : v.isTextual() ? v.asText().length() : 0;
     String min = v.isArray() ? "min_items" : "min_length",
         max = v.isArray() ? "max_items" : "max_length";
     if (validation.path(min).isNumber() && length < validation.get(min).asInt()

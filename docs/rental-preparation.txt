@@ -71,10 +71,17 @@ API внутри кабинета, с обычной сессией/Origin и X-
   POST /api/workspace/categories/{category}/address/suggest — {query};
   POST /api/workspace/categories/{category}/address/select — {id} из подсказки этого кабинета;
   POST /api/workspace/categories/{category}/extension-config — {id,revision,card}, текущие данные формы;
-  POST /api/workspace/categories/{category}/prepare — {schemaVersion,values,extras,platforms,address}.
+  POST /api/workspace/categories/{category}/prepare — {schemaVersion,values,extras,platforms,address,localFileCounts?}.
 values — словарь common Option.id → строка либо files-массив.
 extras — словарь platform → source Option.id → типизированный код/значение;
 числовые строки уточнений разбираются на сервере через BigDecimal.
+localFileCounts — необязательный словарь common files Option.id → количество локальных
+файлов, ещё не представленных ссылками в values. Например, {"media.images":2} для
+двух выбранных с диска фото. Импортированная ссылка учитывается только один раз.
+Этот же словарь допускается внутри card запроса extension-config. Байты изображений
+остаются в браузере: счётчик не является загрузкой, URL или подтверждением площадки.
+Сервер сопоставляет только files-поля по своим планам, проверяет обязательность и
+суммарный min_items/max_items; замечание file_acceptance остаётся до проверки площадки.
 Ошибки не включают тела ответов провайдера, ключ или данные чужого профиля.
 
 Runtime-план (отдельный от статического parsing_format_rule v1.2)

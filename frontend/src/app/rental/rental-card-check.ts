@@ -7,6 +7,7 @@ type Context = {
   id: string;
   version: number;
   card: RentalCard;
+  localFileCounts?: Record<string, number>;
   destroyed: boolean;
 };
 
@@ -55,7 +56,7 @@ export class RentalCardCheck {
         before.workspace,
         before.category,
         "prepare",
-        structuredClone(before.card),
+        {...structuredClone(before.card), localFileCounts:before.localFileCounts || {}},
       );
       if (current()) {
         this.results = result.platforms;

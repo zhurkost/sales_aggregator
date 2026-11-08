@@ -5,6 +5,7 @@ import static by.autopost.shared.Json.*;
 import by.autopost.rental.card.*;
 import by.autopost.rental.catalog.*;
 import by.autopost.rental.preparation.PreparationEngine;
+import by.autopost.rental.preparation.LocalFileSelection;
 import by.autopost.shared.ApiException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -81,6 +82,7 @@ public class RentalCatalog {
   private ObjectNode prepare(ReferenceSnapshot snapshot, JsonNode input) {
     if (!text(input, "schemaVersion").equals(snapshot.version()))
       throw new ApiException(409, "Правила обновились. Обновите поля карточки.");
+    var localFiles = LocalFileSelection.read(input.path("localFileCounts"), snapshot.common());
     input = normalize(snapshot, input);
     ObjectNode values =
         input.path("values").isObject() ? (ObjectNode) input.get("values").deepCopy() : object();
@@ -106,7 +108,7 @@ public class RentalCatalog {
                   plan,
                   values,
                   specific.isObject() ? (ObjectNode) specific : object(),
-                  input.path("address"));
+                  input.path("address"), localFiles);
       CardProjection.annotate(prepared, plan, input, snapshot.card());
       output.add(prepared);
     }

@@ -29,6 +29,37 @@
       mode: b.mode,
     })),
   });
+  async function refreshTabState(batch) {
+    let changed = false;
+    await Promise.all(batch.jobs.map(async job => {
+      if (["stopped", "submitted"].includes(job.status) || !Number.isInteger(job.tabId)) return;
+      let reason = "", message = "";
+      try {
+        const tab = await chrome.tabs.get(job.tabId);
+        const url = new URL(tab.url || job.recipe.startUrl);
+        if (job.recipe.platform === "onliner" && url.protocol === "https:"
+            && url.hostname === "profile.onliner.by" && /^\/login\/?$/.test(url.pathname)) {
+          reason = "login";
+          message = "Войдите в аккаунт Onliner в открытой вкладке. После входа заполнение продолжится.";
+        }
+      } catch {
+        reason = "closed";
+        message = "Вкладка площадки закрыта. Нажмите «Открыть», чтобы продолжить заполнение.";
+      }
+      if (reason && job.browserNotice?.reason !== reason) {
+        const previous = job.browserNotice?.previous || {status:job.status, message:job.message};
+        job.browserNotice = {reason, previous};
+        job.status = "needs_action";
+        job.message = message;
+        changed = true;
+      } else if (!reason && job.browserNotice) {
+        Object.assign(job, job.browserNotice.previous);
+        delete job.browserNotice;
+        changed = true;
+      }
+    }));
+    return changed;
+  }
   async function handle(message, sender) {
     const rows = await load(),
       payload = message.payload || {},
@@ -46,11 +77,13 @@
           b.profileId === payload.profileId &&
           b.id === payload.id,
       );
-      if (message.type === "RENTAL_STATUS")
+      if (message.type === "RENTAL_STATUS") {
+        if (own.length && await refreshTabState(own.at(-1))) await save(rows);
         return {
           jobs: own.length ? summary(own.at(-1)).jobs : [],
           revision: own.at(-1)?.revision,
         };
+      }
       if (!message.userGesture) throw new Error("Нажмите кнопку в Автопосте.");
       if (message.type === "RENTAL_OPEN") {
         const b = own.find((b) => b.jobs.some((j) => j.id === payload.jobId)),
@@ -67,7 +100,11 @@
           j.tabId = tab.id;
           root.AutopostCore.armFill(j);
           j.photoSent = false;
-          if (j.status !== "stopped") j.status = "running";
+          delete j.browserNotice;
+          if (j.status !== "stopped") {
+            j.status = "running";
+            j.message = "Открываем форму для заполнения";
+          }
           await save(rows);
         }
         return { ok: true };
@@ -75,6 +112,7 @@
       if (message.type === "RENTAL_STOP") {
         for (const b of own)
           for (const j of b.jobs) {
+            delete j.browserNotice;
             j.status = "stopped";
             j.message = "Остановлено в Автопосте";
           }
@@ -92,6 +130,7 @@
           old.sourceTabId = sender.tab.id;
           old.mode = data.mode;
           for (const j of old.jobs) {
+            delete j.browserNotice;
             j.status = "running";
             j.message = "Возобновляем заполнение";
             // A deliberate Stop -> Publish starts a fresh form. Never reuse
@@ -233,6 +272,7 @@
       return { ok: true };
     }
     if (message.type === "REPORT") {
+      delete j.browserNotice;
       j.status = ["running", "needs_action", "submitted"].includes(
         payload.status,
       )

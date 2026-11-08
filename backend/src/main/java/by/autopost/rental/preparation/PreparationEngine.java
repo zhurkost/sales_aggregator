@@ -24,6 +24,12 @@ public final class PreparationEngine {
 
   public ObjectNode prepare(
       JsonNode schema, JsonNode plan, ObjectNode common, ObjectNode extras, JsonNode address) {
+    return prepare(schema, plan, common, extras, address, Map.of());
+  }
+
+  public ObjectNode prepare(
+      JsonNode schema, JsonNode plan, ObjectNode common, ObjectNode extras, JsonNode address,
+      Map<String, Integer> localFileCounts) {
     if (!text(plan, "runtime_version").equals(VERSION))
       throw new ApiException(409, "Версия правил подготовки не поддерживается.");
     Map<String, JsonNode> fields = fields(schema);
@@ -76,8 +82,9 @@ public final class PreparationEngine {
     for (String target : rules.keySet())
       new RuleExecutor().apply(target, rules, fields, common, values, issues, visiting, done);
     new AddressPreparation().apply(plan, fields, common, values, issues, address);
+    var localFiles = LocalFileSelection.targets(plan, fields, localFileCounts);
     for (var c : schema)
-      new FieldValidation().validate(c.path("options"), Truth.YES, values, issues);
+      new FieldValidation().validate(c.path("options"), Truth.YES, values, issues, localFiles);
     for (var check : plan.path("checks")) new FieldValidation().crossCheck(check, values, issues);
     for (var block : plan.path("review")) {
       String id = text(block, "field");

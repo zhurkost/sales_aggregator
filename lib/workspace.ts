@@ -112,7 +112,11 @@ export async function optimizePhoto(file: File): Promise<Photo> {
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(image.width * scale));
   canvas.height = Math.max(1, Math.round(image.height * scale));
-  canvas.getContext("2d")!.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const context = canvas.getContext("2d")!;
+  // JPEG has no alpha channel; keep transparent floor plans readable.
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
   image.close();
   let quality = 0.8;
   let dataUrl = canvas.toDataURL("image/jpeg", quality);

@@ -15,15 +15,38 @@ export class RentalFormStore {
   error = "";
   busy = false;
   destroyed = false;
+  private localFiles: Record<string, (string | undefined)[]> = {};
   private timer?: ReturnType<typeof setTimeout>;
   readonly check = new RentalCardCheck(() => ({workspace:this.workspaceId(), category:this.category(), id:this.id,
-    version:this.editVersion, card:this.card, destroyed:this.destroyed}));
+    version:this.editVersion, card:this.card, localFileCounts:this.localFileCounts(), destroyed:this.destroyed}));
   readonly applicability = new RentalApplicability(() => ({workspace:this.workspaceId(), category:this.category(), id:this.id,
     version:this.editVersion, schemaVersion:this.schema?.version, enabled:!!this.schema?.serverApplicability,
     card:this.card, destroyed:this.destroyed}));
   get results() { return this.check.results; }
   set results(value: Prepared[]) { this.check.results = value; }
   get platforms() { return Object.keys(this.schema?.platforms || {}); }
+  /** File bytes stay in the browser. Preparation only needs their presence/count. */
+  setLocalFiles(field: string, files: {sourceUrl?: string}[]) {
+    this.localFiles[field] = files.map(file => file.sourceUrl);
+    this.changed();
+  }
+  localFileCounts(): Record<string, number> {
+    const counts: Record<string, number> = {};
+    for (const [field, sources] of Object.entries(this.localFiles)) {
+      const links = Array.isArray(this.card.values[field]) ? [...this.card.values[field]] : [];
+      let local = 0;
+      for (const source of sources) {
+        const index = source ? links.indexOf(source) : -1;
+        if (index >= 0) links.splice(index, 1);
+        else local++;
+      }
+      if (local) counts[field] = local;
+    }
+    return counts;
+  }
+  preparationInput() {
+    return {...structuredClone(this.card), localFileCounts:this.localFileCounts()};
+  }
   async load() {
     try {
       this.schema = await rentalApi<EditorSchema>(this.workspaceId(), this.category(), "editor");

@@ -3,7 +3,7 @@ import {importRentalPhotoLinks} from "./rental-photos";
 const bitmap=vi.fn(async()=>({width:800,height:600,close:()=>{}}));
 beforeEach(()=>{
   vi.stubGlobal("createImageBitmap",bitmap);
-  vi.spyOn(HTMLCanvasElement.prototype,"getContext").mockReturnValue({drawImage:()=>{}} as unknown as CanvasRenderingContext2D);
+  vi.spyOn(HTMLCanvasElement.prototype,"getContext").mockReturnValue({drawImage:()=>{},fillRect:()=>{}} as unknown as CanvasRenderingContext2D);
   vi.spyOn(HTMLCanvasElement.prototype,"toDataURL").mockReturnValue("data:image/jpeg;base64,AAAA");
 });
 afterEach(() => {vi.unstubAllGlobals();vi.restoreAllMocks();vi.clearAllMocks();});

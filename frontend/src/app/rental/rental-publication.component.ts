@@ -44,6 +44,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     this.timer = undefined;
     this.jobs = [];
     this.photos = [];
+    this.store.setLocalFiles("media.images", []);
     this.error = "";
     this.ready = false;
     this.connectionMessage = "";
@@ -118,7 +119,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
       id: this.sessionId,
       revision: this.store.editVersion + 1,
       categoryId: this.store.category(), profileId: this.workspaceId,
-      card: structuredClone(this.store.card),
+      card: this.store.preparationInput(),
       mode: this.mode,
       photos: this.photos,
     };
@@ -182,7 +183,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
       const photos = await this.gateway.importLinks(this.photos, this.pendingPhotoLinks());
       if (generation === this.generation && !this.destroyed) {
         this.photos = photos;
-        this.store.changed();
+        this.store.setLocalFiles("media.images", photos);
       }
     } catch (e) {
       if (generation === this.generation) this.error = (e as Error).message;
@@ -197,7 +198,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
       const photos = await this.gateway.add(this.photos, files);
       if (generation === this.generation) {
         this.photos = photos;
-        this.store.changed();
+        this.store.setLocalFiles("media.images", photos);
       }
     } catch (e) {
       this.error = (e as Error).message;
@@ -231,7 +232,7 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
           if (index >= 0) links.splice(index, 1);
           this.store.card.values["media.images"] = links;
         }
-        this.store.changed();
+        this.store.setLocalFiles("media.images", photos);
       }
     } catch (e) {
       this.error = (e as Error).message;

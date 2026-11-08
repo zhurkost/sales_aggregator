@@ -67,7 +67,7 @@ try {
     await writeFile(file, (await readFile(file, "utf8")).replace("form = new api.Form(", "form = globalThis.__autopostTestForm = new api.Form("));
   }
   browser = await chromium.launchPersistentContext(path.join(scratch, "chrome"), {
-    channel: "chromium", headless: true, locale: "ru-RU",
+    channel: "chromium", headless: !process.argv.includes('--headed'), locale: "ru-RU",
     viewport: {width: 1400, height: 1100},
     args: ["--disable-extensions-except=" + extension, "--load-extension=" + extension],
   });
@@ -184,13 +184,31 @@ try {
   }
   const imagePage = await browser.newPage();
   await imagePage.setContent('<body style="margin:0;background:#dde7f2"><h1>Автопост — тестовое фото</h1>');
-  const photo = await imagePage.screenshot({clip:{x:0,y:0,width:800,height:600}});
+  const photo = process.argv.includes('--check-transparent-photo')
+    ? Buffer.from((await imagePage.evaluate(() => {
+      const c=document.createElement('canvas');c.width=800;c.height=600;
+      const x=c.getContext('2d');x.strokeStyle='black';x.lineWidth=8;x.strokeRect(70,70,650,460);
+      x.font='36px sans-serif';x.fillText('План квартиры',110,130);
+      return c.toDataURL('image/png');
+    })).split(',')[1], 'base64')
+    : await imagePage.screenshot({clip:{x:0,y:0,width:800,height:600}});
   testPhoto = photo;
   await imagePage.close();
   const photoCount = scenario?.photos ?? 1;
   if (photoCount) await page.locator('input[type=file]').setInputFiles(
     Array.from({length:photoCount}, (_, i) => ({name:"browser-qa-"+i+".png", mimeType:"image/png", buffer:photo})));
   await page.bringToFront();
+  if (process.argv.includes('--check-transparent-photo')) {
+    const preview=page.locator('.photo img').first();
+    await preview.waitFor();
+    const pixels=await preview.evaluate(async img => {
+      await img.decode();const c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+      const x=c.getContext('2d');x.drawImage(img,0,0);
+      return {background:[...x.getImageData(0,0,1,1).data],line:[...x.getImageData(70,300,1,1).data]};
+    });
+    assert.ok(pixels.background.slice(0,3).every(v=>v>245),'Transparent photo background must stay readable after JPEG conversion');
+    assert.ok(pixels.line.slice(0,3).every(v=>v<30),'Floor-plan lines must remain visible');
+  }
   if (scenario?.fields?.["media.images"] || scenario?.extras?.["media.images"]) {
     await page.getByRole("button", {name:"Загрузить фото по ссылкам", exact:true}).click();
     await until(async () => await page.locator(".photo img").count() > photoCount,
@@ -202,6 +220,25 @@ try {
     const response = await prepared;
     await writeFile(path.join(output, "prepared.json"), JSON.stringify(await response.json(), null, 2));
     await writeFile(path.join(output, "source.json"), JSON.stringify(scenario, null, 2));
+    if (process.argv.includes('--check-photo-validation')) {
+      await until(() => page.getByRole('button',{name:'Проверить карточку',exact:true}).isEnabled(),
+        'Card check did not finish');
+      assert.ok(await page.locator('.photo img').count() > 0, 'Test requires a local photo');
+      assert.equal(await page.getByText('Заполните «Фотографии квартиры».',{exact:true}).count(),0,
+        'Already attached local photos must not be reported as missing');
+      // Removing the last preview must restore required-file validation.
+      while (await page.locator('.photo button').count()) await page.locator('.photo button').first().click();
+      await page.getByRole('button',{name:'Проверить карточку',exact:true}).click();
+      await until(async () => await page.getByText('Заполните «Фотографии квартиры».',{exact:true}).count() > 0,
+        'Removing all local photos must restore the required warning');
+      await page.locator('input[type=file]').setInputFiles(
+        Array.from({length:photoCount}, (_, i) => ({name:'browser-qa-'+i+'.png',mimeType:'image/png',buffer:photo})));
+      await until(() => page.getByRole('button',{name:'Опубликовать',exact:true}).isEnabled(), 'Photo processing did not finish');
+      await page.getByRole('button',{name:'Проверить карточку',exact:true}).click();
+      await until(async () => await page.getByText('Заполните «Фотографии квартиры».',{exact:true}).count() === 0,
+        'Reattaching local photos must clear the required warning');
+      results.push('Local photo presence, removal, and reattachment agree with backend validation');
+    }
   }
   const launchPagesBefore = new Set(browser.pages());
   await page.getByRole("button", {name:"Опубликовать", exact:true}).click();
@@ -231,7 +268,12 @@ try {
           results.push(error.message);
         });
       }
-      const status = (await jobs()).find(j => j.id === job.id);
+      let status = (await jobs()).find(j => j.id === job.id);
+      if (needsLogin && process.argv.includes('--check-login-status')) {
+        await until(async () => (await jobs()).find(j=>j.id===job.id)?.status==='needs_action',
+          'Onliner login must be reported as requiring user action', 15000);
+        status = (await jobs()).find(j => j.id === job.id);
+      }
       const observed = await tab.evaluate(controls => controls.map(c => {
         let elements = [...document.querySelectorAll(c.selector)];
         if (c.headingSelector) elements = elements.filter(el =>
@@ -272,12 +314,28 @@ try {
         "; remaining=" + JSON.stringify(status?.remaining || []);
       results.push(message);
       console.log(message);
+      if (needsLogin && process.argv.includes('--check-closed-status')) {
+        await tab.close();
+        await page.bringToFront();
+        await until(async () => {
+          const current = (await jobs()).find(j => j.id === job.id);
+          return current?.status === 'needs_action' && current.message.includes('закрыта');
+        }, 'Closing the login tab must replace the login notice with a closed-tab notice', 15000);
+        await until(async () => (await page.locator('.job').allTextContents()).some(t=>t.includes('закрыта')),
+          'Cabinet must display the closed-tab notice');
+        results.push('Closed Onliner tab is actionable in extension storage and the cabinet');
+      }
       if (job.recipe.platform === 'realt' && (scenario?.failRealtUpload || scenario?.failRealtAfter)) {
         const photoField = job.recipe.controls.find(c => c.action === 'files');
         assert.ok(photos[0].acceptedRealtPhotos < photoCount, 'The test must reproduce an incomplete upload');
         assert.ok(status.remaining.includes(photoField.name || photoField.field),
           'Incomplete Realt uploads must remain visible as unfilled photos');
       }
+    }
+    if (process.argv.includes('--check-closed-status')) {
+      await page.getByRole('button',{name:'Остановить задания',exact:true}).click();
+      await until(async () => (await jobs()).every(job=>job.status==='stopped'), 'Stop must override browser notices');
+      results.push('Stop preserves the stopped state after a browser notice');
     }
   } else {
   await until(() => browser.pages().some(p => new URL(p.url()).hostname.endsWith("onliner.by")),
