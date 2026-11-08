@@ -8,6 +8,7 @@ import { RentalEditorComponent } from "./rental/rental-editor.component";
 class RentalStub {
   @Input() category = "";
   @Input() deal: "rent" | "sale" = "rent";
+  @Input() objectKind: "apartment" | "house" = "apartment";
   @Input() workspaceId = "";
   @Input() profileDefaults = {};
 }
@@ -28,6 +29,9 @@ describe("Real estate workspace",()=>{
     vi.spyOn(app, "checkExtension").mockResolvedValue();
     await app.session();
     expect(app.deal).toBe("sale");
+    app.selectDeal("house-rent");
+    await app.session();
+    expect(app.deal).toBe("house-rent");
     app.selectDeal("rent");
     await app.session();
     expect(app.deal).toBe("rent");
@@ -68,6 +72,11 @@ describe("Real estate workspace",()=>{
         card:{version:2, addressDependentFacts:[], mainFields:["sale.price"]}});
       if (url === "/api/workspace/categories/apartments_sale/analyze") return response({schemaVersion:"1",
         suggestions:[{field:"sale.price", value:"85000", quote:"85 000 USD"}], questions:[]});
+      if (url === "/api/workspace/categories/houses_long_term_rent/editor") return response({...schema, publicationEnabled:true,
+        category:{options:[{id:"group.house", name:"Дом", options:[{id:"house.land_area", name:"Площадь участка, соток", type:"number", options:[]}]}]},
+        card:{version:2, addressDependentFacts:[], mainFields:["house.land_area"]}});
+      if (url === "/api/workspace/categories/houses_long_term_rent/analyze") return response({schemaVersion:"1",
+        suggestions:[{field:"house.land_area", value:"10", quote:"10 соток"}], questions:[]});
       throw new Error("Unexpected request: " + url);
     });
     vi.stubGlobal("fetch",fetcher);
@@ -81,7 +90,7 @@ describe("Real estate workspace",()=>{
     fixture.detectChanges();
     try {
       await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
-      expect(Array.from(root.querySelectorAll('[role="tab"]'), t => t.textContent?.trim())).toEqual(["Аренда квартир", "Продажа квартир"]);
+      expect(Array.from(root.querySelectorAll('[role="tab"]'), t => t.textContent?.trim())).toEqual(["Аренда квартир", "Продажа квартир", "Аренда домов"]);
       expect(root.querySelector("button.publish")).not.toBeNull();
       enter("Первое объявление");
       select(1);
@@ -96,8 +105,22 @@ describe("Real estate workspace",()=>{
       expect(price()).toBeNull();
       select(1); expect(textarea()!.value).toBe("Продам квартиру за 85 000 USD");
       expect(price()?.value).toBe("85000");
+      select(2);
+      await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
+      expect(textarea()!.value).toBe("");
+      expect(root.textContent).toContain("Сдать дом");
+      expect(root.textContent).toContain("Площадь участка, соток");
+      expect(root.textContent).not.toContain("соток, м²");
+      expect(root.querySelector("button.publish")).not.toBeNull();
+      enter("Сдам дом, участок 10 соток");
+      root.querySelector<HTMLButtonElement>("button.ai-button")!.click();
+      const plot = () => root.querySelector<HTMLInputElement>('[id="rental-house.land_area"]');
+      await vi.waitFor(() => { fixture.detectChanges(); expect(plot()?.value).toBe("10"); });
+      select(1); expect(price()?.value).toBe("85000"); expect(plot()).toBeNull();
+      select(0); expect(textarea()!.value).toBe("Первое объявление");
+      select(2); expect(textarea()!.value).toBe("Сдам дом, участок 10 соток"); expect(plot()?.value).toBe("10");
       expect(root.querySelectorAll("textarea.source-description")).toHaveLength(1);
-      for (const category of ["apartments_long_term_rent", "apartments_sale"])
+      for (const category of ["apartments_long_term_rent", "apartments_sale", "houses_long_term_rent"])
         expect(fetcher.mock.calls.filter(([url]) => url === "/api/workspace/categories/" + category + "/editor")).toHaveLength(1);
     } finally { fixture.destroy(); }
   });

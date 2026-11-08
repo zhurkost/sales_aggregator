@@ -1,0 +1,334 @@
+{
+  "version": 2,
+  "platforms": {
+    "realt": {
+      "name": "Realt"
+    },
+    "kufar": {
+      "name": "Kufar"
+    },
+    "domovita": {
+      "name": "Domovita"
+    },
+    "onliner": {
+      "name": "Onliner"
+    }
+  },
+  "canonicalValues": {
+    "rental.currency": [
+      "BYN",
+      "USD",
+      "EUR",
+      "RUB"
+    ],
+    "rental.monthly_price": [],
+    "house.kind": [
+      "Дом",
+      "Коттедж",
+      "Дача"
+    ],
+    "house.rooms": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10 и более"
+    ],
+    "house.total_area": [],
+    "house.land_area": [],
+    "house.levels": [],
+    "house.building_year": [],
+    "house.capacity": [],
+    "house.heating": [
+      "Нет",
+      "Центральное",
+      "Паровое",
+      "Паровое на газу",
+      "Печное",
+      "Электрическое",
+      "Газовое",
+      "Твердотопливное"
+    ],
+    "house.water": [
+      "Нет",
+      "Горячая",
+      "Холодная",
+      "Колодец",
+      "Водопровод",
+      "Центральный водопровод",
+      "Скважина",
+      "Сезонная"
+    ],
+    "house.sewer": [
+      "Есть",
+      "Нет",
+      "С/у на улице",
+      "Центральная",
+      "Местная",
+      "Выгребная яма",
+      "Септик",
+      "Биологическая очистка"
+    ],
+    "house.gas": [
+      "Нет",
+      "Есть",
+      "Баллон",
+      "Магистральный",
+      "В посёлке",
+      "В доме"
+    ],
+    "house.electricity": [
+      "Нет",
+      "Есть",
+      "Рядом"
+    ],
+    "house.landline": [
+      "Нет",
+      "Есть",
+      "2 телефона",
+      "3 телефона"
+    ],
+    "listing.description": [],
+    "listing.title": [],
+    "media.images": [],
+    "media.video_url": [],
+    "contact.name": [],
+    "contact.phone": [],
+    "amenity.furniture": [],
+    "amenity.internet": [],
+    "amenity.tv": [],
+    "amenity.refrigerator": [],
+    "amenity.washing_machine": [],
+    "amenity.air_conditioner": [],
+    "amenity.fireplace": [],
+    "amenity.sauna": [],
+    "amenity.pool": [],
+    "amenity.gazebo": [],
+    "amenity.garage": [],
+    "amenity.shower": [],
+    "amenity.jacuzzi": [],
+    "location.settlement": [],
+    "location.street": [],
+    "location.house": [],
+    "location.block": [],
+    "location.label": [],
+    "specific.realt.area.living": [],
+    "specific.realt.area.kitchen": [],
+    "specific.realt.apartment.toilet": [
+      "Раздельный",
+      "Совмещенный",
+      "2 и более"
+    ],
+    "specific.realt.house.wallsMaterial": [
+      "Кирпичный",
+      "Панельный",
+      "Блок-комнаты",
+      "Бревенчатый",
+      "Силикатные блоки",
+      "Монолитно-каркасный"
+    ],
+    "specific.realt.additional.appliance.294e6b29": [],
+    "specific.realt.additional.appliance.22aa1b07": [],
+    "specific.realt.additional.appliance.d90409f0": [],
+    "specific.realt.additional.parking": [
+      "1-2",
+      "3-5",
+      "6-10",
+      "> 10",
+      "Нет"
+    ],
+    "specific.realt.additional.infrastructure.dd13cd83": [],
+    "specific.realt.additional.infrastructure.f6ef524e": [],
+    "specific.realt.additional.infrastructure.f9d2cef1": [],
+    "specific.realt.additional.infrastructure.853f64a3": [],
+    "specific.realt.additional.applianceRental.9f76d3f6": [],
+    "specific.realt.additional.applianceRental.bf6aa5ad": [],
+    "specific.realt.termsOfDeal.rentPeriod": [
+      "Месяц",
+      "2 Месяца",
+      "3 Месяца",
+      "Полгода",
+      "Год",
+      "Длительный"
+    ],
+    "specific.realt.termsOfDeal.bargain": [],
+    "specific.realt.media.planning": [],
+    "specific.realt.media.tour3d": [],
+    "specific.realt.description.shortDescription": [],
+    "specific.kufar.contact_person": [],
+    "specific.kufar.phone_hidden": [
+      "Звонки и сообщения",
+      "Только сообщения"
+    ],
+    "specific.kufar.re_contract": [],
+    "specific.kufar.house_rent_near_area": [
+      "Водоем, река, озеро",
+      "Лес, пуща",
+      "Горнолыжный центр",
+      "Достопримечательности",
+      "Живописное место"
+    ],
+    "specific.kufar.re_hot_water": [
+      "Да",
+      "-"
+    ],
+    "specific.kufar.house_rent_services": [
+      "Бильярд, боулинг",
+      "Велосипеды",
+      "Десткая кровать/стульчик",
+      "Кальян",
+      "Караоке",
+      "Квадроциклы",
+      "Конные прогулки",
+      "Конференц-зал",
+      "Лыжи",
+      "Оздоровление, лечение",
+      "Организация питания",
+      "Охота",
+      "Пейнтбол, лазертаг",
+      "Прокат лодки",
+      "Рыбалка",
+      "Теннис",
+      "Тренажерный зал",
+      "Экскурсии",
+      "Яхта, катер"
+    ],
+    "specific.kufar.house_improvements.810ef972": [],
+    "specific.kufar.house_improvements.084f0d30": [],
+    "specific.kufar.house_improvements.4c1a0c87": [],
+    "specific.kufar.house_improvements.307ab0c9": [],
+    "specific.kufar.house_improvements.441a9a5f": [],
+    "specific.kufar.house_improvements.f1de1de0": [],
+    "specific.kufar.house_rent_area.0fb33a69": [],
+    "specific.kufar.house_rent_area.6d21e527": [],
+    "specific.kufar.house_rent_area.815f35ab": [],
+    "specific.kufar.house_rent_area.9c27fc56": [],
+    "specific.kufar.house_rent_area.dc777be2": [],
+    "specific.kufar.house_rent_area.cc78f3ce": [],
+    "specific.kufar.house_rent_area.7ddcfc5f": [],
+    "specific.kufar.house_rent_area.3ec30fdc": [],
+    "specific.kufar.condition": [
+      "Новое",
+      "Вторичное"
+    ],
+    "specific.kufar.house_rent_for_whom": [
+      "Можно с питомцами",
+      "Можно большой компанией",
+      "Проведение мероприятий, банкета"
+    ],
+    "specific.kufar.negotiable_price": [],
+    "specific.domovita.email": [],
+    "specific.domovita.prepayment": [
+      "нет",
+      "месяц",
+      "2 месяца",
+      "3 месяца",
+      "полгода"
+    ],
+    "specific.onliner.facilities.7edaaee6": [],
+    "specific.onliner.facilities.fd2abc32": [],
+    "specific.onliner.facilities.387e96be": [],
+    "specific.onliner.rent_rules": [
+      "Не студентам",
+      "Без детей",
+      "Без животных"
+    ],
+    "specific.onliner.contact_owner": [
+      "Собственник",
+      "Агентство"
+    ],
+    "specific.onliner.agency_name": [],
+    "specific.onliner.agency_unp": [],
+    "specific.onliner.agency_contract_number": [],
+    "specific.onliner.agency_contract_date": [],
+    "specific.onliner.agency_licence_number": [],
+    "specific.onliner.agency_licence_date": [],
+    "specific.onliner.call_time_from": [
+      "0:00",
+      "1:00",
+      "2:00",
+      "3:00",
+      "4:00",
+      "5:00",
+      "6:00",
+      "7:00",
+      "8:00",
+      "9:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00"
+    ],
+    "specific.onliner.call_time_to": [
+      "0:00",
+      "1:00",
+      "2:00",
+      "3:00",
+      "4:00",
+      "5:00",
+      "6:00",
+      "7:00",
+      "8:00",
+      "9:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00"
+    ]
+  },
+  "valueLabels": {},
+  "mainFields": [
+    "house.kind",
+    "rental.monthly_price",
+    "rental.currency",
+    "house.rooms",
+    "house.total_area",
+    "house.land_area",
+    "house.levels",
+    "house.capacity",
+    "media.images"
+  ],
+  "profileDefaults": [
+    {
+      "setting": "phone",
+      "field": "contact.phone"
+    },
+    {
+      "setting": "contactPerson",
+      "field": "contact.name"
+    }
+  ],
+  "addressProjection": {
+    "location.settlement": "settlement",
+    "location.street": "street",
+    "location.house": "house",
+    "location.block": "block",
+    "location.label": "label"
+  },
+  "addressDependentFacts": []
+}

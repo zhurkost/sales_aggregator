@@ -65,7 +65,7 @@ public final class CardProjection {
             .put(
                 "message",
                 text(input.path("address"), "label").isBlank()
-                    ? "Укажите адрес квартиры в едином блоке адреса."
+                    ? "Укажите адрес объекта в едином блоке адреса."
                     : "Адрес сохранён один раз. Его сопоставление со справочником этой площадки"
                         + " пока требует проверки на площадке.");
       else if (plan.path("deferred_fields").has(field))

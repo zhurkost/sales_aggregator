@@ -23,7 +23,7 @@ public class RentalAiService {
 
   public ObjectNode analyze(RentalCatalog catalog, String profile, String identity, String workspace, JsonNode input) {
     if (!input.isObject() || !input.path("text").isTextual() || input.toString().length() > 18000)
-      throw new ApiException(400, "Введите описание квартиры.");
+      throw new ApiException(400, "Введите описание объявления.");
     String source = input.path("text").asText().trim();
     if (source.length() < 10 || source.length() > 8000)
       throw new ApiException(400, "Описание должно содержать от 10 до 8000 символов.");

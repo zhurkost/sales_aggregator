@@ -1,0 +1,208 @@
+{
+  "startUrl": "https://domovita.by/new/add/cottages/rent",
+  "setup": [
+    {
+      "action": "click",
+      "selector": "label",
+      "text": "Сдаче длительно"
+    },
+    {
+      "action": "click",
+      "selector": "label",
+      "text": "Коттеджи/Дома"
+    }
+  ],
+  "controls": [
+    {
+      "field": "domovita.contact_name",
+      "action": "text",
+      "selector": "input[name=\"contact_name\"]"
+    },
+    {
+      "field": "domovita.phones.0.contact_phone",
+      "action": "text",
+      "selector": "input[name=\"phones.0.contact_phone\"]"
+    },
+    {
+      "field": "domovita.email",
+      "action": "text",
+      "selector": "input[name=\"email\"]"
+    },
+    {
+      "field": "domovita.area_total",
+      "action": "text",
+      "selector": "input[name=\"area_total\"]"
+    },
+    {
+      "field": "domovita.price",
+      "action": "text",
+      "selector": "input[name=\"price\"]",
+      "after": "domovita.price_currency_text"
+    },
+    {
+      "field": "domovita.rooms",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Количество комнат"
+    },
+    {
+      "field": "domovita.description",
+      "action": "richtext",
+      "selector": ".tiptap[contenteditable=\"true\"]",
+      "index": 0
+    },
+    {
+      "field": "domovita.images",
+      "action": "files",
+      "selector": "input[type=\"file\"]",
+      "blockedSelector": "[class*=\"image-upload-dropzone-disabled\"]",
+      "blockedMessage": "Подтвердите телефон на Domovita. После разблокировки загрузки фотографии перенесутся автоматически."
+    },
+    {
+      "field": "domovita.price_currency_text",
+      "action": "dropdown",
+      "selector": "div:has(> input[name=\"price_currency_text\"])",
+      "triggerSelector": ".custom-select__control",
+      "triggerEvent": "mousedown",
+      "displaySelector": ".custom-select__single-value",
+      "optionsSelector": "[role=\"option\"]"
+    },
+    {
+      "field": "domovita.town_id",
+      "action": "autocomplete",
+      "selector": "div:has(> input[name=\"town_id\"]) input[role=\"combobox\"]",
+      "addressPart": "settlement",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "settlement",
+        "scopeSelector": "div:has(> .custom-select__control)",
+        "optionSelector": "[role=\"option\"]",
+        "busySelector": ".custom-select__menu-notice--loading",
+        "selectedValueSelector": ".custom-select__single-value",
+        "confirm": "display-and-closed",
+        "labelFormat": "settlement-region-district",
+        "contextParts": [
+          "region",
+          "district"
+        ]
+      }
+    },
+    {
+      "field": "domovita.street_name",
+      "action": "autocomplete",
+      "selector": "div:has(> input[name=\"street_name\"]) input[role=\"combobox\"]",
+      "addressPart": "street",
+      "after": "domovita.town_id",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "street",
+        "scopeSelector": "div:has(> .custom-select__control)",
+        "optionSelector": "[role=\"option\"]",
+        "busySelector": ".custom-select__menu-notice--loading",
+        "selectedValueSelector": ".custom-select__single-value",
+        "confirm": "display-and-closed"
+      }
+    },
+    {
+      "field": "domovita.house_number",
+      "action": "autocomplete",
+      "selector": "div:has(> input[name=\"house_number\"]) input[role=\"combobox\"]",
+      "addressPart": "house",
+      "after": "domovita.street_name",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "house",
+        "scopeSelector": "div:has(> .custom-select__control)",
+        "optionSelector": "[role=\"option\"]",
+        "busySelector": ".custom-select__menu-notice--loading",
+        "selectedValueSelector": ".custom-select__single-value",
+        "confirm": "display-and-closed",
+        "retryClearedQuery": true
+      }
+    },
+    {
+      "field": "domovita.building_year",
+      "action": "text",
+      "selector": "input[name=\"building_year\"]"
+    },
+    {
+      "field": "domovita.area_ground",
+      "action": "text",
+      "selector": "input[name=\"area_ground\"]"
+    },
+    {
+      "field": "domovita.buiding_levels",
+      "action": "text",
+      "selector": "input[name=\"buiding_levels\"]"
+    },
+    {
+      "field": "domovita.youtube_link",
+      "action": "text",
+      "selector": "input[name=\"youtube_link\"]"
+    },
+    {
+      "field": "domovita.phone",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Телефон"
+    },
+    {
+      "field": "domovita.heating",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Отопление"
+    },
+    {
+      "field": "domovita.gas",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Газ"
+    },
+    {
+      "field": "domovita.electro",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Электричество"
+    },
+    {
+      "field": "domovita.prepayment",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Предоплата"
+    },
+    {
+      "field": "domovita.extra_info_comments",
+      "action": "choices",
+      "selector": "[class*=\"form-item-horizontal\"]",
+      "mountedChoice": true,
+      "headingSelector": "[class*=\"form-item-label\"] > span:first-child",
+      "heading": "Дополнительные опции"
+    }
+  ],
+  "next": [],
+  "submit": [],
+  "format": 1,
+  "platform": "domovita",
+  "observedAt": "2026-11-08",
+  "note": "Длительная аренда дома целиком. После заполнения пользователь проверяет форму и сам выполняет переходы и окончательную отправку.",
+  "ready": [
+    {
+      "selector": "input[name=\"action\"][value=\"rent\"]:checked"
+    },
+    {
+      "selector": "input[name=\"type\"][value=\"cottages\"]:checked"
+    }
+  ]
+}

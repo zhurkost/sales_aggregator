@@ -1,0 +1,279 @@
+{
+  "category_id": "houses_long_term_rent",
+  "platform": "realt",
+  "fields": [
+    {
+      "option_id": "realt.object_type",
+      "status": "needs_review",
+      "reason": "Переходы Дом / Коттедж / Дача проверены по заголовкам формы, коды взяты из props маршрута. Устойчивый CSS-селектор выбора и проверка повторного запуска не проверены."
+    },
+    {
+      "option_id": "realt.location.settlement",
+      "status": "needs_review",
+      "reason": "Динамический геокодер. Выбор подсказки, её уникальность, зависимые поля и изменение точки на карте не проверены.",
+      "target": {
+        "selectors": [
+          "input[id=\"location.settlement\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.location.street",
+      "status": "needs_review",
+      "reason": "Динамический геокодер. Выбор подсказки, её уникальность, зависимые поля и изменение точки на карте не проверены.",
+      "target": {
+        "selectors": [
+          "input[id=\"location.street\"]"
+        ]
+      },
+      "depends_on": [
+        "realt.location.settlement"
+      ]
+    },
+    {
+      "option_id": "realt.location.houseNumber",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"location.houseNumber\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.location.buildingNumber",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"location.buildingNumber\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.apartment.capacity",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"apartment.capacity\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.apartment.buildingYear",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"apartment.buildingYear\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.apartment.buildingLevels",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"apartment.buildingLevels\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.area.total",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"area.total\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.area.living",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"area.living\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.area.ground",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"area.ground\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.area.kitchen",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"area.kitchen\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.apartment.toilet",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.plot.sewer",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.plot.water",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.plot.gas",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.apartment.electricity",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.apartment.heating",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.house.wallsMaterial",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.additional.appliance",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.additional.parking",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.additional.infrastructure",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.additional.phone",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.additional.applianceRental",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.termsOfDeal.currency",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.termsOfDeal.rentPeriod",
+      "status": "needs_review",
+      "reason": "Коды и состав вариантов прочитаны из компонента; выбор каждого варианта, множественный выбор и чтение результата не проверены."
+    },
+    {
+      "option_id": "realt.additional.furniture",
+      "status": "needs_review",
+      "reason": "Переключатель виден, но не переключался; нативное сохраняемое значение returnValue и устойчивая привязка не подтверждены."
+    },
+    {
+      "option_id": "realt.termsOfDeal.price",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"termsOfDeal.price\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.termsOfDeal.bargain",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"termsOfDeal.bargain\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.media.photos",
+      "status": "needs_review",
+      "reason": "Загрузка по заданию не выполнялась. Принятие сервером, порядок/обложка, размер в точных байтах и доступность GIF не проверены."
+    },
+    {
+      "option_id": "realt.media.planning",
+      "status": "needs_review",
+      "reason": "Загрузка по заданию не выполнялась. Принятие сервером, порядок/обложка, размер в точных байтах и доступность GIF не проверены."
+    },
+    {
+      "option_id": "realt.media.youtube",
+      "status": "needs_review",
+      "reason": "Поле помечено как доступное со Спецпредложением. Пакет не выбирали; редактирование и принятие не проверены.",
+      "target": {
+        "selectors": [
+          "[id=\"media.youtube\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.media.tour3d",
+      "status": "needs_review",
+      "reason": "Поле помечено как доступное со Спецпредложением. Пакет не выбирали; редактирование и принятие не проверены.",
+      "target": {
+        "selectors": [
+          "[id=\"media.tour3d\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.description.title",
+      "status": "needs_review",
+      "reason": "Поле помечено как доступное со Спецпредложением. Пакет не выбирали; редактирование и принятие не проверены.",
+      "target": {
+        "selectors": [
+          "[id=\"description.title\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.description.shortDescription",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "[id=\"description.shortDescription\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "realt.description.description",
+      "status": "needs_review",
+      "reason": "Поле помечено как доступное со Спецпредложением. Пакет не выбирали; редактирование и принятие не проверены.",
+      "target": {
+        "selectors": [
+          "[id=\"description.description\"]"
+        ]
+      }
+    }
+  ]
+}

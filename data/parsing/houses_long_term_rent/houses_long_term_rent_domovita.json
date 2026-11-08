@@ -1,0 +1,911 @@
+[
+  {
+    "id": "houses_long_term_rent",
+    "name": "Длительная аренда домов",
+    "description": "Длительная аренда дома целиком в Беларуси. Исследовательский снимок этапа A, контракт 2.1; неполнота и основания в report_houses_long_term_rent_domovita.txt.",
+    "categories": [],
+    "options": [
+      {
+        "id": "domovita.action",
+        "name": "Подать объявление о",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. В задании разрешено только action=rent и type=cottages. Остальные варианты маршрута сохранены как наблюдение, но их формы не исследовались.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.action.v_0228ca401bc0",
+            "name": "Продаже",
+            "description": "",
+            "type": "choice",
+            "value": "sale",
+            "options": []
+          },
+          {
+            "id": "domovita.action.v_3fec4c270da0",
+            "name": "Сдаче длительно",
+            "description": "",
+            "type": "choice",
+            "value": "rent",
+            "options": []
+          },
+          {
+            "id": "domovita.action.v_2aa3267d1fee",
+            "name": "Сдаче посуточно",
+            "description": "",
+            "type": "choice",
+            "value": "daily",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.type",
+        "name": "Тип недвижимости",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. В задании разрешено только action=rent и type=cottages. Остальные варианты маршрута сохранены как наблюдение, но их формы не исследовались.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.type.v_aead2b957d95",
+            "name": "Квартиры",
+            "description": "",
+            "type": "choice",
+            "value": "flats",
+            "options": []
+          },
+          {
+            "id": "domovita.type.v_fb8ca5f220d3",
+            "name": "Комнаты",
+            "description": "",
+            "type": "choice",
+            "value": "room",
+            "options": []
+          },
+          {
+            "id": "domovita.type.v_0dabce8a867c",
+            "name": "Коттеджи/Дома",
+            "description": "",
+            "type": "choice",
+            "value": "cottages",
+            "options": []
+          },
+          {
+            "id": "domovita.type.v_c45dbeb07b61",
+            "name": "Гаражи",
+            "description": "",
+            "type": "choice",
+            "value": "garage",
+            "options": []
+          },
+          {
+            "id": "domovita.type.v_5ac9b203d2cb",
+            "name": "Коммерческая",
+            "description": "",
+            "type": "choice",
+            "value": "commercial",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.town_id",
+        "name": "Населённый пункт",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. React Select name=town_id. Список пуст в начальном состоянии; это не отсутствие адресов. Сгенерированный react-select-N-input не считается устойчивым селектором.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.street_name",
+        "name": "Улица",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. React Select name=street_name. Список пуст в начальном состоянии; это не отсутствие адресов. Сгенерированный react-select-N-input не считается устойчивым селектором.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.house_number",
+        "name": "Дом",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. React Select name=house_number. Список пуст в начальном состоянии; это не отсутствие адресов. Сгенерированный react-select-N-input не считается устойчивым селектором.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.contact_name",
+        "name": "Как обращаться",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=contact_name.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.phones.0.contact_phone",
+        "name": "Телефон для связи",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=phones.0.contact_phone.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "format": "phone"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.email",
+        "name": "Эл. почта",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=email.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "format": "email"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.building_year",
+        "name": "Год постройки",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=building_year. Наблюдался input type=text; числовой валидатор и тип сохраняемого значения не установлены. Пока сохранён подтверждённый текстовый ввод; кандидат на integer/number требует проверки, пределы и точность неизвестны.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_ground",
+        "name": "Участок (сотки)",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=area_ground. Наблюдался input type=text; числовой валидатор и тип сохраняемого значения не установлены. Пока сохранён подтверждённый текстовый ввод; кандидат на integer/number требует проверки, пределы и точность неизвестны.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.buiding_levels",
+        "name": "Кол-во уровней",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=buiding_levels. Опечатка buiding_levels сохранена точно как в name площадки. Наблюдался input type=text; числовой валидатор и тип сохраняемого значения не установлены. Пока сохранён подтверждённый текстовый ввод; кандидат на integer/number требует проверки, пределы и точность неизвестны.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_total",
+        "name": "Площадь м²",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=area_total. Наблюдался input type=text; числовой валидатор и тип сохраняемого значения не установлены. Пока сохранён подтверждённый текстовый ввод; кандидат на integer/number требует проверки, пределы и точность неизвестны.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.youtube_link",
+        "name": "Ссылка на видео с YouTube",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=youtube_link.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "format": "uri"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.price",
+        "name": "Общая цена",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=price. Наблюдался input type=text; числовой валидатор и тип сохраняемого значения не установлены. Пока сохранён подтверждённый текстовый ввод; кандидат на integer/number требует проверки, пределы и точность неизвестны.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.rooms",
+        "name": "Количество комнат",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=rooms; props.options.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.rooms.v_04debd2ba16f",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_b158b3bd4705",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_2784cfb32678",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_dff91e350bca",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_967f264871aa",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_12266593cede",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "domovita.rooms.v_6517c63c1dba",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.phone",
+        "name": "Телефон",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=phone; props.options. Телефон здесь — наличие стационарной связи в доме, не контактный номер.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.phone.v_b369df199865",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": "Есть",
+            "options": []
+          },
+          {
+            "id": "domovita.phone.v_edd9b7273000",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": "Нет",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.heating",
+        "name": "Отопление",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=heating; props.options.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.heating.v_cc02dca00434",
+            "name": "газовое",
+            "description": "",
+            "type": "choice",
+            "value": "газовое",
+            "options": []
+          },
+          {
+            "id": "domovita.heating.v_38a29a4b58c2",
+            "name": "центральное",
+            "description": "",
+            "type": "choice",
+            "value": "центральное",
+            "options": []
+          },
+          {
+            "id": "domovita.heating.v_4e7a8bcd687f",
+            "name": "электрическое",
+            "description": "",
+            "type": "choice",
+            "value": "электрическое",
+            "options": []
+          },
+          {
+            "id": "domovita.heating.v_f958970e5fff",
+            "name": "печное",
+            "description": "",
+            "type": "choice",
+            "value": "печное",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.gas",
+        "name": "Газ",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=gas; props.options.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.gas.v_b672ce4a7ef8",
+            "name": "В посёлке",
+            "description": "",
+            "type": "choice",
+            "value": "В посёлке",
+            "options": []
+          },
+          {
+            "id": "domovita.gas.v_00bb63292d0f",
+            "name": "В доме",
+            "description": "",
+            "type": "choice",
+            "value": "В доме",
+            "options": []
+          },
+          {
+            "id": "domovita.gas.v_edd9b7273000",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": "Нет",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.electro",
+        "name": "Электричество",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=electro; props.options.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.electro.v_a684880648dd",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "domovita.electro.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.price_currency_text",
+        "name": "Валюта",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=price_currency_text; props.options.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.price_currency_text.v_39ae2e98a56f",
+            "name": "USD",
+            "description": "",
+            "type": "choice",
+            "value": "USD",
+            "options": []
+          },
+          {
+            "id": "domovita.price_currency_text.v_9fcf11a2ec62",
+            "name": "EUR",
+            "description": "",
+            "type": "choice",
+            "value": "EUR",
+            "options": []
+          },
+          {
+            "id": "domovita.price_currency_text.v_3f0145730b18",
+            "name": "BYN",
+            "description": "",
+            "type": "choice",
+            "value": "BYN",
+            "options": []
+          },
+          {
+            "id": "domovita.price_currency_text.v_8d7c96957e8b",
+            "name": "RUB",
+            "description": "",
+            "type": "choice",
+            "value": "RUB",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.prepayment",
+        "name": "Предоплата",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=prepayment; props.options.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.prepayment.v_6540b161ebbf",
+            "name": "нет",
+            "description": "",
+            "type": "choice",
+            "value": "нет",
+            "options": []
+          },
+          {
+            "id": "domovita.prepayment.v_5ee96854908b",
+            "name": "месяц",
+            "description": "",
+            "type": "choice",
+            "value": "месяц",
+            "options": []
+          },
+          {
+            "id": "domovita.prepayment.v_fcc095a23856",
+            "name": "2 месяца",
+            "description": "",
+            "type": "choice",
+            "value": "2 месяца",
+            "options": []
+          },
+          {
+            "id": "domovita.prepayment.v_9db3570ad117",
+            "name": "3 месяца",
+            "description": "",
+            "type": "choice",
+            "value": "3 месяца",
+            "options": []
+          },
+          {
+            "id": "domovita.prepayment.v_6adc75900dc5",
+            "name": "полгода",
+            "description": "",
+            "type": "choice",
+            "value": "полгода",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.extra_info_comments",
+        "name": "Дополнительные опции",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Видимые чипы; props.name=extra_info_comments.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "domovita.extra_info_comments.v_f1c12e659aa7",
+            "name": "Кондиционер",
+            "description": "",
+            "type": "choice",
+            "value": "kondicioner",
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_2a27b9c84852",
+            "name": "Сигнализация",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_7e9b0b202a1d",
+            "name": "Видеонаблюдение",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_ff052eb3069d",
+            "name": "Интернет",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_2ecd1d498e1b",
+            "name": "Баня",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_069901f7abb4",
+            "name": "Лес",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_c9457a9bb434",
+            "name": "Водоем",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_0d3ab89199bf",
+            "name": "Магазин",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_919606c08d1b",
+            "name": "Гараж",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_9ee03439c5f8",
+            "name": "Камин",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          },
+          {
+            "id": "domovita.extra_info_comments.v_f459548e0521",
+            "name": "Басcейн",
+            "description": "",
+            "type": "choice",
+            "value": null,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.images",
+        "name": "Фотографии",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Блок фотографий с условием подтверждения телефона. Интерфейс предлагает перетаскивание для сортировки. Телефон сам по себе не означает подтверждение; ложное when=exists(phone) не добавлено.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.description",
+        "name": "Описание",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Видимый contenteditable-редактор под заголовком «Описание».",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "rent"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

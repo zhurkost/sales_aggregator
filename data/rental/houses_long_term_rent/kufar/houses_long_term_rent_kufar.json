@@ -1,0 +1,2013 @@
+[
+  {
+    "id": "houses_long_term_rent",
+    "name": "Длительная аренда домов",
+    "description": "Длительная аренда дома целиком в Беларуси. Исследовательский снимок этапа A, контракт 2.1; неполнота и основания в report_houses_long_term_rent_kufar.txt.",
+    "categories": [],
+    "options": [
+      {
+        "id": "kufar.category",
+        "name": "Подкатегория",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1591]. source type=int; multi=false; validators=v_category,v_required,v_single. В целевой ветви допустимы category=\"1020\", type=\"let\"; другие варианты сохранены как справочник маршрута, их формы вне задания.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.category.v_60a0cf138485",
+            "name": "Новостройки",
+            "description": "",
+            "type": "choice",
+            "value": "1120",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_7531d5319cba",
+            "name": "Квартиры",
+            "description": "",
+            "type": "choice",
+            "value": "1010",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_cf066ded9879",
+            "name": "Комнаты",
+            "description": "",
+            "type": "choice",
+            "value": "1040",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_785b9a75a0bd",
+            "name": "Дома, агроусадьбы, коттеджи",
+            "description": "",
+            "type": "choice",
+            "value": "1020",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_9b9456f87449",
+            "name": "Гаражи и стоянки",
+            "description": "",
+            "type": "choice",
+            "value": "1030",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_c7a4e702a629",
+            "name": "Участки",
+            "description": "",
+            "type": "choice",
+            "value": "1080",
+            "options": []
+          },
+          {
+            "id": "kufar.category.v_4876d3fe6e8a",
+            "name": "Коммерческая",
+            "description": "",
+            "type": "choice",
+            "value": "1050",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false
+      },
+      {
+        "id": "kufar.type",
+        "name": "Тип сделки",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1442]. source type=string; multi=false; validators=v_type,v_required,v_single. В целевой ветви допустимы category=\"1020\", type=\"let\"; другие варианты сохранены как справочник маршрута, их формы вне задания.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.type.v_89e9226c9845",
+            "name": "Продажа",
+            "description": "",
+            "type": "choice",
+            "value": "sell",
+            "options": []
+          },
+          {
+            "id": "kufar.type.v_e24df605209b",
+            "name": "Долгосрочная аренда",
+            "description": "",
+            "type": "choice",
+            "value": "let",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false,
+        "when": {
+          "option_id": "kufar.category",
+          "operator": "equals",
+          "value": "1020"
+        }
+      },
+      {
+        "id": "kufar.subject",
+        "name": "Название товара/услуги",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1512]. source type=string; multi=false; validators=m_subject,v_subject,v_required,v_single,v_length.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 2,
+          "max_length": 100
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.address",
+        "name": "Адрес",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1595]. source type=string; multi=false; validators=v_string,v_single.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.body",
+        "name": "Описание",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[10911]. source type=string; multi=false; validators=m_body,v_body,v_required,v_single,v_length.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 20,
+          "max_length": 5000
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.images",
+        "name": "Фотографии",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1774]. source type=string; multi=false; validators=v_photo_count. UI: JPEG/JPG/PNG до 10 МБ; точные байты/число файлов неизвестны. required=false в metadata, официальные правила требуют реальное фото объекта; противоречие отражено в отчёте.",
+        "type": "files",
+        "options": [],
+        "required": false,
+        "file_role": "product_image",
+        "validation": {
+          "extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+          ],
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ],
+          "max_file_size_bytes": null
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.currency",
+        "name": "Выбор валюты",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1775]. source type=string; multi=false; validators=v_currency,v_single. Белорусская валюта кодируется строкой BYR, подпись «р.»; это не повод подставлять BYN вместо нативного кода.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.currency.v_e3a8cd6bd72e",
+            "name": "р.",
+            "description": "",
+            "type": "choice",
+            "value": "BYR",
+            "options": []
+          },
+          {
+            "id": "kufar.currency.v_ceac5fc9dce9",
+            "name": "$",
+            "description": "",
+            "type": "choice",
+            "value": "USD",
+            "options": []
+          },
+          {
+            "id": "kufar.currency.v_d341f7a797a7",
+            "name": "€",
+            "description": "",
+            "type": "choice",
+            "value": "EUR",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.contact_person",
+        "name": "Контактное лицо",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1519]. source type=string; multi=false; validators=v_string,v_single.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.phone",
+        "name": "Телефон",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1515]. source type=string; multi=false; validators=m_phone,v_required,v_phone,v_single.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "format": "phone"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.phone_hidden",
+        "name": "Способ связи",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[9247]. source type=bool; multi=false; validators=v_boolean,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.phone_hidden.v_b10d0aa6e60d",
+            "name": "Звонки и сообщения",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          },
+          {
+            "id": "kufar.phone_hidden.v_dced30804567",
+            "name": "Только сообщения",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.name",
+        "name": "Имя",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[2116]. source type=string; multi=false; validators=v_name,v_required,v_single,v_length.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 2,
+          "max_length": 100
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.content_video",
+        "name": "Видео на YouTube",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[6011]. source type=string; multi=false; validators=v_url,v_length,v_youtube_url.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "format": "uri",
+          "min_length": 2,
+          "max_length": 150
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.re_contract",
+        "name": "Номер и дата договора",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[7288]. source type=string; multi=false; validators=v_length.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min_length": 2,
+          "max_length": 150
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.region",
+        "name": "Регион",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[9121]. source type=int; multi=false; validators=v_region,v_required,v_single. Географическая метаинформация адреса; отдельный ручной ввод в выбранной форме не показан. Не дублировать вопрос об адресе на фронте без исследования.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.region.v_101c315a9f1e",
+            "name": "Минск",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_50746f746d9e",
+            "name": "Брестская область",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_3c433888e27c",
+            "name": "Гомельская область",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_c4f0fd41e307",
+            "name": "Гродненская область",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_f4108d59435d",
+            "name": "Могилевская область",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_1a5c2f3eb4cc",
+            "name": "Минская область",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.region.v_a6c5e99e9974",
+            "name": "Витебская область",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.area",
+        "name": "Город / Район",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[9122]. source type=int; multi=false; validators=v_area,v_required,v_single. Географическая метаинформация адреса; отдельный ручной ввод в выбранной форме не показан. Не дублировать вопрос об адресе на фронте без исследования.",
+        "type": "enum",
+        "options": [],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.re_heating",
+        "name": "Отопление",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5014]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_heating.v_555edd121f85",
+            "name": "Газовое",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_heating.v_07c4f7e24745",
+            "name": "Центральное",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_heating.v_6215c4f5d2ba",
+            "name": "Электрическое",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_heating.v_a9c5bbec0d45",
+            "name": "Печное",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_heating.v_af1c53fbe576",
+            "name": "Твердотопливное",
+            "description": "",
+            "type": "choice",
+            "value": "17",
+            "options": []
+          },
+          {
+            "id": "kufar.re_heating.v_79b886017231",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.re_water",
+        "name": "Вода",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5023]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_water.v_ad1bd35c3971",
+            "name": "Сезонная",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_water.v_12033cab41ef",
+            "name": "Скважина",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_water.v_9804c7baf188",
+            "name": "Колодец",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_water.v_a5b023991f3b",
+            "name": "Центральная",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_water.v_79b886017231",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.re_sewage",
+        "name": "Канализация",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5035]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_sewage.v_cfce969e1b61",
+            "name": "Центральная",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_sewage.v_0ab03a7641dc",
+            "name": "Выгребная яма",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.re_sewage.v_e64ab4fe9dba",
+            "name": "Септик",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.re_sewage.v_f7c1dd37296d",
+            "name": "Биологическая очистка",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.re_sewage.v_68994e8ac740",
+            "name": "С/у на улице",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.re_sewage.v_8e835c331fb2",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_near_area",
+        "name": "Рядом с территорией",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5062]. source type=int; multi=true; validators=v_integer.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_near_area.v_94d569bfacfe",
+            "name": "Водоем, река, озеро",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_near_area.v_0943bb83691b",
+            "name": "Лес, пуща",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_near_area.v_939c12025f01",
+            "name": "Горнолыжный центр",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_near_area.v_8059ad896408",
+            "name": "Достопримечательности",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_near_area.v_5c8ad75a431c",
+            "name": "Живописное место",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.gaz",
+        "name": "Газ",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[766]. source type=bool; multi=false; validators=v_boolean,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.gaz.v_45b7438af8ff",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.gaz.v_b2d64e91d915",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_type_for_rent",
+        "name": "Вид объекта",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5069]. source type=int; multi=false; validators=v_integer,v_single. Целые Дом/Дача входят в задание. Часть дома исключена; Агроусадьба/База отдыха/Гостиница/Прочее не исследованы как жилой дом целиком.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_type_for_rent.v_54888346ee13",
+            "name": "Дом",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type_for_rent.v_f9f8d732b368",
+            "name": "Дача",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type_for_rent.v_99c6a9ea9d1d",
+            "name": "Агроусадьба",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type_for_rent.v_9e632cbcf471",
+            "name": "Часть дома",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type_for_rent.v_2f512957b63f",
+            "name": "База отдыха",
+            "description": "",
+            "type": "choice",
+            "value": "20",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type_for_rent.v_87cf37f8a47d",
+            "name": "Гостиница",
+            "description": "",
+            "type": "choice",
+            "value": "25",
+            "options": []
+          },
+          {
+            "id": "kufar.house_type_for_rent.v_910a6ea8cde0",
+            "name": "Прочее",
+            "description": "",
+            "type": "choice",
+            "value": "30",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_rooms",
+        "name": "Комнат",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5077]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_rooms.v_c8c6ac7dde31",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_21a0af70f90e",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_f5ee8a1a1371",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_584a1a2a5a2a",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_fec1fa122d37",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_65c87b14b9f7",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_ad27f24237ed",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_f1bd189ece00",
+            "name": "8",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_8ee31ccd5078",
+            "name": "9",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_rooms.v_1d427af0a4de",
+            "name": "10 и более",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_couchettes",
+        "name": "Количество гостей",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5081]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_couchettes.v_c8c6ac7dde31",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_21a0af70f90e",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_f5ee8a1a1371",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_584a1a2a5a2a",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_fec1fa122d37",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_65c87b14b9f7",
+            "name": "6",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_ad27f24237ed",
+            "name": "7",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_f1bd189ece00",
+            "name": "8",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_8ee31ccd5078",
+            "name": "9",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_4be359b222bb",
+            "name": "10",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_b65015b057ba",
+            "name": "11",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_7f187f2553cd",
+            "name": "12",
+            "description": "",
+            "type": "choice",
+            "value": "12",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_3502958dec6c",
+            "name": "13",
+            "description": "",
+            "type": "choice",
+            "value": "13",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_3b7a52f00a36",
+            "name": "14",
+            "description": "",
+            "type": "choice",
+            "value": "14",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_212622a58452",
+            "name": "15 - 20",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_11402802f666",
+            "name": "21 - 30",
+            "description": "",
+            "type": "choice",
+            "value": "16",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_7f47afbe42b8",
+            "name": "31 - 40",
+            "description": "",
+            "type": "choice",
+            "value": "17",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_couchettes.v_9a700b96c586",
+            "name": "больше 40",
+            "description": "",
+            "type": "choice",
+            "value": "18",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.re_hot_water",
+        "name": "Горячая вода",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5398]. source type=bool; multi=false; validators=v_boolean,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_hot_water.v_45b7438af8ff",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.re_hot_water.v_b2d64e91d915",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "value": "0",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_services",
+        "name": "Услуги и развлечения",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5056]. source type=int; multi=true; validators=v_integer.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_services.v_b188183e852a",
+            "name": "Бильярд, боулинг",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_0a05825f32aa",
+            "name": "Велосипеды",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_5a943439549a",
+            "name": "Десткая кровать/стульчик",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_c0d799765b7c",
+            "name": "Кальян",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_86b3f0280966",
+            "name": "Караоке",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_c1e4cc717198",
+            "name": "Квадроциклы",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_0fed5da34afc",
+            "name": "Конные прогулки",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_ec05ba165ed3",
+            "name": "Конференц-зал",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_932ec1c6320d",
+            "name": "Лыжи",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_f1ef9ece44fb",
+            "name": "Оздоровление, лечение",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_b8e63d3550d3",
+            "name": "Организация питания",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_5284e81a8d7c",
+            "name": "Охота",
+            "description": "",
+            "type": "choice",
+            "value": "12",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_b6a06bd1e077",
+            "name": "Пейнтбол, лазертаг",
+            "description": "",
+            "type": "choice",
+            "value": "13",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_d18a19aae62d",
+            "name": "Прокат лодки",
+            "description": "",
+            "type": "choice",
+            "value": "14",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_221de87076ba",
+            "name": "Рыбалка",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_60bc105a7214",
+            "name": "Теннис",
+            "description": "",
+            "type": "choice",
+            "value": "16",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_8769be174e72",
+            "name": "Тренажерный зал",
+            "description": "",
+            "type": "choice",
+            "value": "17",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_b61d5f128124",
+            "name": "Экскурсии",
+            "description": "",
+            "type": "choice",
+            "value": "18",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_services.v_048d141b7bf9",
+            "name": "Яхта, катер",
+            "description": "",
+            "type": "choice",
+            "value": "19",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.size",
+        "name": "Общая площадь, м²",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1455]. source type=int; multi=false; validators=v_float,v_single,v_size.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.size_area",
+        "name": "Площадь участка, соток",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1461]. source type=int; multi=false; validators=v_float,v_single,v_size.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_period",
+        "name": "Тип аренды",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5074]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_period.v_8aab1ad48694",
+            "name": "Долгосрочная",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_improvements",
+        "name": "Удобства",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5041]. source type=int; multi=true; validators=v_integer.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_improvements.v_c8385d4dfa16",
+            "name": "Интернет",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_e43242db7189",
+            "name": "Телевизор",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_f6b077ea048b",
+            "name": "Телефон",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_9936b2116acd",
+            "name": "Кондиционер",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_79f40ac0be17",
+            "name": "Обустроенная кухня",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_db720ca46fa4",
+            "name": "Обустроенный туалет",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_e172269414a3",
+            "name": "Мебель",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_e3dc4405130a",
+            "name": "Камин",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_e176c0321b1f",
+            "name": "Ванная комната",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_d465ee5c8114",
+            "name": "Стиральная машина",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_44e3d38c24bf",
+            "name": "Джакузи",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_8d11b029359c",
+            "name": "Душевая кабина",
+            "description": "",
+            "type": "choice",
+            "value": "12",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_9dc706710717",
+            "name": "Парковка",
+            "description": "",
+            "type": "choice",
+            "value": "13",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_ba078f61b520",
+            "name": "Гараж",
+            "description": "",
+            "type": "choice",
+            "value": "14",
+            "options": []
+          },
+          {
+            "id": "kufar.house_improvements.v_d6a827b9c3fb",
+            "name": "Сигнализация",
+            "description": "",
+            "type": "choice",
+            "value": "15",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_area",
+        "name": "На территории",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5059]. source type=int; multi=true; validators=v_integer.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_area.v_ac7f2edbfcc0",
+            "name": "Баня",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_bf37d04a9a16",
+            "name": "Бассейн",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_2ec257e37832",
+            "name": "Беседка",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_f5821543b4d9",
+            "name": "Мангал",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_20b29069b2ef",
+            "name": "Ландшафтный дизайн",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_17ddd355ac27",
+            "name": "Сад, огород",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_1dcd539aaa0d",
+            "name": "Детская площадка",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_5b7e1e95ea3d",
+            "name": "Батут",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_5b445bafc8be",
+            "name": "Гамак",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_08c3f05060be",
+            "name": "Площадка для спортивных игр",
+            "description": "",
+            "type": "choice",
+            "value": "10",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_area.v_25a91dd72d02",
+            "name": "Кемпинг",
+            "description": "",
+            "type": "choice",
+            "value": "11",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.condition",
+        "name": "Состояние",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1892]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.condition.v_aecb76addb87",
+            "name": "Новое",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.condition.v_482132487b2c",
+            "name": "Вторичное",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.house_rent_for_whom",
+        "name": "Кому сдается",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5065]. source type=int; multi=true; validators=v_integer.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_rent_for_whom.v_eb28b9dc9157",
+            "name": "Можно с питомцами",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_for_whom.v_d32e3b306fe9",
+            "name": "Можно большой компанией",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.house_rent_for_whom.v_09e8f9f249ef",
+            "name": "Проведение мероприятий, банкета",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.price",
+        "name": "Цена за месяц",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5856]. source type=int; multi=false; validators=v_price,v_single.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.country_direction",
+        "name": "Направление",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1498]. source type=int; multi=false; validators=v_integer,v_single.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.country_direction.v_ec36b40e5a0a",
+            "name": "Брестское",
+            "description": "",
+            "type": "choice",
+            "value": "1",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_9f36453c98ea",
+            "name": "Логойское",
+            "description": "",
+            "type": "choice",
+            "value": "2",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_7a748cc02a04",
+            "name": "Могилевское",
+            "description": "",
+            "type": "choice",
+            "value": "3",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_3c64accbd2ff",
+            "name": "Молодечненское",
+            "description": "",
+            "type": "choice",
+            "value": "4",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_bd5d60a8acc2",
+            "name": "Московское",
+            "description": "",
+            "type": "choice",
+            "value": "5",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_4e0921a7c893",
+            "name": "Мядельское",
+            "description": "",
+            "type": "choice",
+            "value": "6",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_86ed126a8e31",
+            "name": "Пуховичское",
+            "description": "",
+            "type": "choice",
+            "value": "7",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_2f22034ed250",
+            "name": "Раковское",
+            "description": "",
+            "type": "choice",
+            "value": "8",
+            "options": []
+          },
+          {
+            "id": "kufar.country_direction.v_45c60b035634",
+            "name": "Слуцкое",
+            "description": "",
+            "type": "choice",
+            "value": "9",
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "all": [
+                {
+                  "option_id": "kufar.category",
+                  "operator": "equals",
+                  "value": "1020"
+                },
+                {
+                  "option_id": "kufar.type",
+                  "operator": "equals",
+                  "value": "let"
+                }
+              ]
+            },
+            {
+              "option_id": "kufar.region",
+              "operator": "equals",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.distance_ringway",
+        "name": "Расстояние от МКАД, км",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1499]. source type=int; multi=false; validators=v_integer,v_single,v_mileage.",
+        "type": "integer",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "all": [
+                {
+                  "option_id": "kufar.category",
+                  "operator": "equals",
+                  "value": "1020"
+                },
+                {
+                  "option_id": "kufar.type",
+                  "operator": "equals",
+                  "value": "let"
+                }
+              ]
+            },
+            {
+              "option_id": "kufar.region",
+              "operator": "equals",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.negotiable_price",
+        "name": "Договорная цена",
+        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. Видимый переключатель рядом с ценой. negotiable_price — исследовательский ID наблюдаемого UI-факта, не подтверждённое имя в API. Обязательность суммы и правила её очистки при включении неизвестны.",
+        "type": "boolean",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "let"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

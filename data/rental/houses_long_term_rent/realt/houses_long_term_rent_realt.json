@@ -1,0 +1,1429 @@
+[
+  {
+    "id": "houses_long_term_rent",
+    "name": "Длительная аренда домов",
+    "description": "Длительная аренда дома целиком в Беларуси. Исследовательский снимок этапа A, контракт 2.1; неполнота и основания в report_houses_long_term_rent_realt.txt.",
+    "categories": [],
+    "options": [
+      {
+        "id": "realt.object_type",
+        "name": "Вид недвижимости",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры».",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.object_type.v_1944dc3cae91",
+            "name": "Квартира",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "Apartment",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_12f9c4841ad5",
+            "name": "Комната",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "Room",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_ef7f65883788",
+            "name": "Дом",
+            "description": "Входит в задание.",
+            "type": "choice",
+            "value": "House",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_4f6eb6a5b3df",
+            "name": "Коттедж",
+            "description": "Входит в задание.",
+            "type": "choice",
+            "value": "Cottage",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_7fbcfa89d5ed",
+            "name": "Дача",
+            "description": "Входит в задание.",
+            "type": "choice",
+            "value": "Dacha",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_dbca2b6c0a48",
+            "name": "Агроусадьба",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "AgroUsadba",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_49bb496cce30",
+            "name": "Сауна/баня",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "Sauna",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_8782d30b04c3",
+            "name": "База отдыха",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "HolidayBase",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_7c57a34e2b82",
+            "name": "Жилье для строителей",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "HousingForConstruction",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_d7996311f69c",
+            "name": "Гостиница",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "Hotel",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_84335f6396e4",
+            "name": "Полдома",
+            "description": "Наблюдавшийся вариант маршрута вне границ задания; его форму не исследовали.",
+            "type": "choice",
+            "value": "HalfHouse",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.settlement",
+        "name": "Адрес — населённый пункт",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Загруженные варианты props адресного компонента. Полный справочник не выгружался. Подсказки населённых пунктов взяты из загруженного компонента; не являются значениями объявления.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.settlement.v_ef6d41bfbc5e",
+            "name": "г. Минск",
+            "description": "",
+            "type": "choice",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_901ae6aa31b3",
+            "name": "г. Брест",
+            "description": "",
+            "type": "choice",
+            "value": "4c8f8db2-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_00610eaf8baf",
+            "name": "г. Витебск",
+            "description": "",
+            "type": "choice",
+            "value": "4c9236d8-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_76b65894fc1f",
+            "name": "г. Гомель",
+            "description": "",
+            "type": "choice",
+            "value": "4c95d414-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_286ea2eaa787",
+            "name": "г. Гродно",
+            "description": "",
+            "type": "choice",
+            "value": "4c97eac6-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_4a944b240658",
+            "name": "г. Могилев",
+            "description": "",
+            "type": "choice",
+            "value": "4cb0e950-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.location.street",
+        "name": "Улица",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Загруженные варианты props адресного компонента. Начальное поле отключено. Кэшированные улицы не включены: привязка к выбранному населённому пункту не подтверждена.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.location.houseNumber",
+        "name": "Дом",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=location.houseNumber; props поля. DOM type=tel; номер адреса сохраняется текстом. В props также замечены числовые границы 1..999, их применимость к литерам не проверена.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 255
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.location.buildingNumber",
+        "name": "Корпус",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=location.buildingNumber; props поля.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.apartment.capacity",
+        "name": "Вместимость человек",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=apartment.capacity; props поля.",
+        "type": "integer",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 999
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.apartment.buildingYear",
+        "name": "Год постройки",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=apartment.buildingYear; props поля.",
+        "type": "integer",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1700,
+          "max": 2100
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.apartment.buildingLevels",
+        "name": "Уровней в доме",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=apartment.buildingLevels; props поля.",
+        "type": "integer",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1,
+          "max": 10
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.area.total",
+        "name": "Площадь общая, м²",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=area.total; props поля.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.area.living",
+        "name": "Площадь жилая, м²",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=area.living; props поля.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.area.ground",
+        "name": "Площадь участка, соток",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=area.ground; props поля.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.area.kitchen",
+        "name": "Площадь кухни, м²",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=area.kitchen; props поля.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.apartment.toilet",
+        "name": "Санузел",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент apartment.toilet; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.toilet.v_d800de1b9bd4",
+            "name": "Раздельный",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.toilet.v_a81c0eb3d330",
+            "name": "Совмещенный",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.toilet.v_03209eb7afd5",
+            "name": "2 и более",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.plot.sewer",
+        "name": "Канализация",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент plot.sewer; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.plot.sewer.v_a684880648dd",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.plot.sewer.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.plot.sewer.v_09433d1dec60",
+            "name": "С/у на улице",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.plot.sewer.v_91aa0ffe097b",
+            "name": "Центральная",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.plot.sewer.v_550a53dbebde",
+            "name": "Местная",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.plot.water",
+        "name": "Водоснабжение",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент plot.water; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.plot.water.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.plot.water.v_1ecc5a11450c",
+            "name": "Горячая",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.plot.water.v_d4fd54c2959e",
+            "name": "Холодная",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.plot.water.v_b20ce791f008",
+            "name": "Колодец",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "realt.plot.water.v_298659e2bfed",
+            "name": "Водопровод",
+            "description": "",
+            "type": "choice",
+            "value": 11,
+            "options": []
+          },
+          {
+            "id": "realt.plot.water.v_cd8e6d79f824",
+            "name": "Центральный водопровод",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          },
+          {
+            "id": "realt.plot.water.v_e6026899e059",
+            "name": "Скважина",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.plot.gas",
+        "name": "Газоснабжение",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент plot.gas; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.plot.gas.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.plot.gas.v_a684880648dd",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.plot.gas.v_883c8ac09faf",
+            "name": "Баллон",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.plot.gas.v_8156aa43bd6d",
+            "name": "Магистральный",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.apartment.electricity",
+        "name": "Электричество",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент apartment.electricity; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.electricity.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.electricity.v_a684880648dd",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.electricity.v_f6eadd1e59bc",
+            "name": "Рядом",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.apartment.heating",
+        "name": "Отопление",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент apartment.heating; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.heating.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.heating.v_2abd15babd87",
+            "name": "Центральное",
+            "description": "",
+            "type": "choice",
+            "value": 10,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.heating.v_fd75424d094b",
+            "name": "Паровое",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.heating.v_20dc98486719",
+            "name": "Паровое на газу",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.heating.v_0d661fb24604",
+            "name": "Печное",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          },
+          {
+            "id": "realt.apartment.heating.v_2c4ebc7163df",
+            "name": "Электрическое",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.house.wallsMaterial",
+        "name": "Материал стен",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент house.wallsMaterial; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.house.wallsMaterial.v_351312c37ae7",
+            "name": "Кирпичный",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_8bd33932e5b7",
+            "name": "Панельный",
+            "description": "",
+            "type": "choice",
+            "value": 17,
+            "options": []
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_36ea36ffaece",
+            "name": "Блок-комнаты",
+            "description": "",
+            "type": "choice",
+            "value": 22,
+            "options": []
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_15883ddc6ea9",
+            "name": "Бревенчатый",
+            "description": "",
+            "type": "choice",
+            "value": 21,
+            "options": []
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_06550867abc7",
+            "name": "Силикатные блоки",
+            "description": "",
+            "type": "choice",
+            "value": 23,
+            "options": []
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_0be76d0b5d96",
+            "name": "Монолитно-каркасный",
+            "description": "",
+            "type": "choice",
+            "value": 20,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.additional.appliance",
+        "name": "Удобства",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент additional.appliance; props.group, нативные коды. Выгружены варианты из props; полное раскрытие списка и множественный выбор не проверены, options_complete=false.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.appliance.v_6e0c19d9ed75",
+            "name": "душевая кабина",
+            "description": "",
+            "type": "choice",
+            "value": 611,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_8a78b1773b55",
+            "name": "интернет",
+            "description": "",
+            "type": "choice",
+            "value": 607,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_20c24bea81d1",
+            "name": "камин",
+            "description": "",
+            "type": "choice",
+            "value": 603,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_56705127dc0f",
+            "name": "бассейн",
+            "description": "",
+            "type": "choice",
+            "value": 613,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_6ed7ee2a770d",
+            "name": "баня",
+            "description": "",
+            "type": "choice",
+            "value": 612,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_335a849c1606",
+            "name": "джакузи",
+            "description": "",
+            "type": "choice",
+            "value": 614,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_dc3b4840ab6e",
+            "name": "беседка",
+            "description": "",
+            "type": "choice",
+            "value": 615,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_c134b116e74f",
+            "name": "место для шашлыков",
+            "description": "",
+            "type": "choice",
+            "value": 617,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_550772469dd6",
+            "name": "бильярд",
+            "description": "",
+            "type": "choice",
+            "value": 619,
+            "options": []
+          },
+          {
+            "id": "realt.additional.appliance.v_36a60d04a453",
+            "name": "настольный теннис",
+            "description": "",
+            "type": "choice",
+            "value": 620,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.additional.parking",
+        "name": "Мест для парковки",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент additional.parking; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.additional.parking.v_33aa68725761",
+            "name": "1-2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_47c4afa733a8",
+            "name": "3-5",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_a75d4282a4d3",
+            "name": "6-10",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_9304a990aaaf",
+            "name": "> 10",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "realt.additional.parking.v_038168f73a49",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.additional.infrastructure",
+        "name": "Инфраструктура",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент additional.infrastructure; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.infrastructure.v_cb89e520eb3c",
+            "name": "Ландшафтный дизайн",
+            "description": "",
+            "type": "choice",
+            "value": 719,
+            "options": []
+          },
+          {
+            "id": "realt.additional.infrastructure.v_8d0ecc59fc13",
+            "name": "Охрана",
+            "description": "",
+            "type": "choice",
+            "value": 703,
+            "options": []
+          },
+          {
+            "id": "realt.additional.infrastructure.v_88bcd2340bd6",
+            "name": "Водоем",
+            "description": "",
+            "type": "choice",
+            "value": 724,
+            "options": []
+          },
+          {
+            "id": "realt.additional.infrastructure.v_f518befa9769",
+            "name": "Рядом лес",
+            "description": "",
+            "type": "choice",
+            "value": 722,
+            "options": []
+          },
+          {
+            "id": "realt.additional.infrastructure.v_1e98f8c7320d",
+            "name": "Гараж",
+            "description": "",
+            "type": "choice",
+            "value": 744,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.additional.phone",
+        "name": "Количество телефонов",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент additional.phone; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.additional.phone.v_9c11e5d013e7",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "realt.additional.phone.v_a684880648dd",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "realt.additional.phone.v_88aca42e466e",
+            "name": "2 телефона",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "realt.additional.phone.v_897290ef6541",
+            "name": "3 телефона",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.additional.applianceRental",
+        "name": "Бытовая техника",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент additional.applianceRental; props.group, нативные коды. Выгружены варианты из props; полное раскрытие списка и множественный выбор не проверены, options_complete=false.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.applianceRental.v_fe7ac1a5a145",
+            "name": "телевизор",
+            "description": "",
+            "type": "choice",
+            "value": 507,
+            "options": []
+          },
+          {
+            "id": "realt.additional.applianceRental.v_c217c9b784a7",
+            "name": "домашний кинотеатр",
+            "description": "",
+            "type": "choice",
+            "value": 511,
+            "options": []
+          },
+          {
+            "id": "realt.additional.applianceRental.v_803e4bf80f1d",
+            "name": "холодильник",
+            "description": "",
+            "type": "choice",
+            "value": 503,
+            "options": []
+          },
+          {
+            "id": "realt.additional.applianceRental.v_06a972b3cc93",
+            "name": "компьютер",
+            "description": "",
+            "type": "choice",
+            "value": 512,
+            "options": []
+          }
+        ],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.termsOfDeal.currency",
+        "name": "Цена",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент termsOfDeal.currency; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.currency.v_2ee42fe872af",
+            "name": "BYN",
+            "description": "",
+            "type": "choice",
+            "value": "933",
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.currency.v_ee06145f9d8d",
+            "name": "USD",
+            "description": "",
+            "type": "choice",
+            "value": "840",
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.currency.v_7da92adc0f7e",
+            "name": "EUR",
+            "description": "",
+            "type": "choice",
+            "value": "978",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.termsOfDeal.rentPeriod",
+        "name": "Срок сдачи",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент termsOfDeal.rentPeriod; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.rentPeriod.v_ee227d1ef8a8",
+            "name": "Месяц",
+            "description": "",
+            "type": "choice",
+            "value": 30,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.rentPeriod.v_ab0a54bea501",
+            "name": "2 Месяца",
+            "description": "",
+            "type": "choice",
+            "value": 60,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.rentPeriod.v_e346fc1298e6",
+            "name": "3 Месяца",
+            "description": "",
+            "type": "choice",
+            "value": 90,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.rentPeriod.v_34c7ab4a56bc",
+            "name": "Полгода",
+            "description": "",
+            "type": "choice",
+            "value": 180,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.rentPeriod.v_c0189b0b0cbe",
+            "name": "Год",
+            "description": "",
+            "type": "choice",
+            "value": 365,
+            "options": []
+          },
+          {
+            "id": "realt.termsOfDeal.rentPeriod.v_d5b827a45005",
+            "name": "Длительный",
+            "description": "",
+            "type": "choice",
+            "value": 999,
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.additional.furniture",
+        "name": "Мебель",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Наблюдаемая кнопка role=switch, aria-checked; props.name=additional.furniture.",
+        "type": "boolean",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.termsOfDeal.price",
+        "name": "За месяц",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=termsOfDeal.price; props поля. Сумма в валюте termsOfDeal.currency. Разрешённость дробной части не проверялась; multiple_of не задан.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 999999999
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.termsOfDeal.bargain",
+        "name": "Возможен торг",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=termsOfDeal.bargain; props поля.",
+        "type": "boolean",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.media.photos",
+        "name": "Фото",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Блок «Медиа», input[type=file]. Фото: интерфейс сообщает до 20 фото JPG/PNG по 20 МБ, со Спецпредложением до 50; исследована бесплатная ветвь. DOM accept дополнительно содержит GIF, противоречие оставлено на проверку.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "validation": {
+          "max_items": 20,
+          "extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+          ],
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ],
+          "max_file_size_bytes": null
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.media.planning",
+        "name": "Фото планировки",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Блок «Медиа», input[type=file]. Отдельное вложение планировки; input multiple=false. Ограничение размера и перенос правил основного загрузчика не подтверждены.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "validation": {
+          "max_items": 1,
+          "extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+          ],
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ],
+          "max_file_size_bytes": null
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.media.youtube",
+        "name": "Ссылка на видео YouTube",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=media.youtube; props поля. Доступно при подключении Спецпредложения; платную опцию не включали.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        },
+        "validation": {
+          "format": "uri"
+        }
+      },
+      {
+        "id": "realt.media.tour3d",
+        "name": "3D тур",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=media.tour3d; props поля. Доступно при подключении Спецпредложения; платную опцию не включали.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        },
+        "validation": {
+          "format": "uri"
+        }
+      },
+      {
+        "id": "realt.description.title",
+        "name": "Заголовок",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=description.title; props поля. Доступно при подключении Спецпредложения; платную опцию не включали.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.description.shortDescription",
+        "name": "Краткое описание",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=description.shortDescription; props поля.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "max_length": 500
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      },
+      {
+        "id": "realt.description.description",
+        "name": "Подробное описание",
+        "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=description.description; props поля. Доступно при подключении Спецпредложения; платную опцию не включали.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "max_length": 5000
+        },
+        "when": {
+          "option_id": "realt.object_type",
+          "operator": "in",
+          "value": [
+            "House",
+            "Cottage",
+            "Dacha"
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -7,6 +7,7 @@
     domovita: "https://domovita.by/new/add",
   });
   const saleStarts = Object.freeze({ ...starts, onliner: "https://r.onliner.by/pk/apartments/create" });
+  const houseStarts = Object.freeze({ ...starts, domovita: "https://domovita.by/new/add/cottages/rent" });
   const object = (v) => v && typeof v === "object" && !Array.isArray(v);
   const id = (v) => typeof v === "string" && /^[a-zA-Z0-9_.:-]{1,120}$/.test(v);
   function origin(platform, url) {
@@ -35,7 +36,7 @@
       throw new Error("Выберите площадки.");
     if (JSON.stringify(payload).length > 6000000)
       throw new Error("Слишком большой пакет фотографий.");
-    const allowedStarts = payload.categoryId === "apartments_sale" ? saleStarts : starts;
+    const allowedStarts = payload.categoryId === "apartments_sale" ? saleStarts : payload.categoryId === "houses_long_term_rent" ? houseStarts : starts;
     for (const job of payload.jobs) {
       if (
         !object(job) ||

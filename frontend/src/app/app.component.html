@@ -130,7 +130,7 @@
         </div>
         @for (tab of deals; track tab.id) {
           <section role="tabpanel" [id]="'panel-' + tab.id" [attr.aria-labelledby]="'tab-' + tab.id" [hidden]="deal !== tab.id">
-            <app-rental-editor *retainedPanel="deal === tab.id" [deal]="tab.id" [category]="tab.category" [workspaceId]="profile.id" [profileDefaults]="settings" />
+            <app-rental-editor *retainedPanel="deal === tab.id" [deal]="tab.deal" [objectKind]="tab.objectKind" [category]="tab.category" [workspaceId]="profile.id" [profileDefaults]="settings" />
           </section>
         }
         <footer><span class="brand">Автопост<span class="brand-period">.</span></span><button (click)="showExtension = true">Помощь с расширением</button></footer>

@@ -18,8 +18,9 @@ export class RentalFieldsComponent {
   @Input() disabled = false;
   @Output() edit = new EventEmitter<{field: Field; value: JsonValue}>();
   name(field: Field) {
-    if (field.id === "media.images" && field.type === "files") return "Ссылки на фотографии квартиры";
-    return field.id.includes("area") && !field.name.includes("м²") ? field.name + ", м²" : field.name;
+    if (field.id === "media.images" && field.type === "files") return "Ссылки на фотографии";
+    // Legacy apartment labels omit units; other categories supply their own labels and units.
+    return /^(rental|apartment)\.[a-z_]*area$/.test(field.id) && !field.name.includes("м²") ? field.name + ", м²" : field.name;
   }
   label(value: string) { return this.labels[value] || value; }
   value(field: Field) {

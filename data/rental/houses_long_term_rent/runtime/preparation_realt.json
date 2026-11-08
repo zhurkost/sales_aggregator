@@ -1,0 +1,821 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "houses_long_term_rent",
+  "platform": "realt",
+  "fields": [
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "realt.termsOfDeal.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "933"
+          },
+          {
+            "from": "USD",
+            "to": "840"
+          },
+          {
+            "from": "EUR",
+            "to": "978"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.monthly_price",
+      "platform_option_id": "realt.termsOfDeal.price",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number",
+        "requires": [
+          "realt.termsOfDeal.currency"
+        ],
+        "currency_field": "realt.termsOfDeal.currency"
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "realt.object_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": "House"
+          },
+          {
+            "from": "Коттедж",
+            "to": "Cottage"
+          },
+          {
+            "from": "Дача",
+            "to": "Dacha"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.total_area",
+      "platform_option_id": "realt.area.total",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.land_area",
+      "platform_option_id": "realt.area.ground",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.levels",
+      "platform_option_id": "realt.apartment.buildingLevels",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "house.building_year",
+      "platform_option_id": "realt.apartment.buildingYear",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "house.capacity",
+      "platform_option_id": "realt.apartment.capacity",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "realt.apartment.heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Центральное",
+            "to": 10
+          },
+          {
+            "from": "Паровое",
+            "to": 8
+          },
+          {
+            "from": "Паровое на газу",
+            "to": 6
+          },
+          {
+            "from": "Печное",
+            "to": 9
+          },
+          {
+            "from": "Электрическое",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.water",
+      "platform_option_id": "realt.plot.water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Горячая",
+            "to": 2
+          },
+          {
+            "from": "Холодная",
+            "to": 3
+          },
+          {
+            "from": "Колодец",
+            "to": 7
+          },
+          {
+            "from": "Водопровод",
+            "to": 11
+          },
+          {
+            "from": "Центральный водопровод",
+            "to": 9
+          },
+          {
+            "from": "Скважина",
+            "to": 8
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.sewer",
+      "platform_option_id": "realt.plot.sewer",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "С/у на улице",
+            "to": 4
+          },
+          {
+            "from": "Центральная",
+            "to": 2
+          },
+          {
+            "from": "Местная",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "realt.plot.gas",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Баллон",
+            "to": 3
+          },
+          {
+            "from": "Магистральный",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.electricity",
+      "platform_option_id": "realt.apartment.electricity",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Рядом",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.landline",
+      "platform_option_id": "realt.additional.phone",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "2 телефона",
+            "to": 3
+          },
+          {
+            "from": "3 телефона",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "realt.description.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "realt.description.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "realt.media.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "realt.media.youtube",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "amenity.furniture",
+      "platform_option_id": "realt.additional.furniture",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "location.house",
+      "platform_option_id": "realt.location.houseNumber",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "location.block",
+      "platform_option_id": "realt.location.buildingNumber",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.area.living",
+      "platform_option_id": "realt.area.living",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.area.kitchen",
+      "platform_option_id": "realt.area.kitchen",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.apartment.toilet",
+      "platform_option_id": "realt.apartment.toilet",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Раздельный",
+            "to": 0
+          },
+          {
+            "from": "Совмещенный",
+            "to": 1
+          },
+          {
+            "from": "2 и более",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.house.wallsMaterial",
+      "platform_option_id": "realt.house.wallsMaterial",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Кирпичный",
+            "to": 1
+          },
+          {
+            "from": "Панельный",
+            "to": 17
+          },
+          {
+            "from": "Блок-комнаты",
+            "to": 22
+          },
+          {
+            "from": "Бревенчатый",
+            "to": 21
+          },
+          {
+            "from": "Силикатные блоки",
+            "to": 23
+          },
+          {
+            "from": "Монолитно-каркасный",
+            "to": 20
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.additional.parking",
+      "platform_option_id": "realt.additional.parking",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1-2",
+            "to": 2
+          },
+          {
+            "from": "3-5",
+            "to": 3
+          },
+          {
+            "from": "6-10",
+            "to": 4
+          },
+          {
+            "from": "> 10",
+            "to": 5
+          },
+          {
+            "from": "Нет",
+            "to": 1
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.termsOfDeal.rentPeriod",
+      "platform_option_id": "realt.termsOfDeal.rentPeriod",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Месяц",
+            "to": 30
+          },
+          {
+            "from": "2 Месяца",
+            "to": 60
+          },
+          {
+            "from": "3 Месяца",
+            "to": 90
+          },
+          {
+            "from": "Полгода",
+            "to": 180
+          },
+          {
+            "from": "Год",
+            "to": 365
+          },
+          {
+            "from": "Длительный",
+            "to": 999
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.termsOfDeal.bargain",
+      "platform_option_id": "realt.termsOfDeal.bargain",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.media.planning",
+      "platform_option_id": "realt.media.planning",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.media.tour3d",
+      "platform_option_id": "realt.media.tour3d",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.realt.description.shortDescription",
+      "platform_option_id": "realt.description.shortDescription",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.internet",
+        "amenity.fireplace",
+        "amenity.sauna",
+        "amenity.pool",
+        "amenity.gazebo",
+        "amenity.shower",
+        "amenity.jacuzzi",
+        "specific.realt.additional.appliance.294e6b29",
+        "specific.realt.additional.appliance.22aa1b07",
+        "specific.realt.additional.appliance.d90409f0"
+      ],
+      "platform_option_id": "realt.additional.appliance",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.internet",
+            "values": [
+              {
+                "from": true,
+                "to": 607
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.fireplace",
+            "values": [
+              {
+                "from": true,
+                "to": 603
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.sauna",
+            "values": [
+              {
+                "from": true,
+                "to": 612
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.pool",
+            "values": [
+              {
+                "from": true,
+                "to": 613
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.gazebo",
+            "values": [
+              {
+                "from": true,
+                "to": 615
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.shower",
+            "values": [
+              {
+                "from": true,
+                "to": 611
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.jacuzzi",
+            "values": [
+              {
+                "from": true,
+                "to": 614
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.appliance.294e6b29",
+            "values": [
+              {
+                "from": true,
+                "to": 617
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.appliance.22aa1b07",
+            "values": [
+              {
+                "from": true,
+                "to": 619
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.appliance.d90409f0",
+            "values": [
+              {
+                "from": true,
+                "to": 620
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.tv",
+        "amenity.refrigerator",
+        "specific.realt.additional.applianceRental.9f76d3f6",
+        "specific.realt.additional.applianceRental.bf6aa5ad"
+      ],
+      "platform_option_id": "realt.additional.applianceRental",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.tv",
+            "values": [
+              {
+                "from": true,
+                "to": 507
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.refrigerator",
+            "values": [
+              {
+                "from": true,
+                "to": 503
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.applianceRental.9f76d3f6",
+            "values": [
+              {
+                "from": true,
+                "to": 511
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.applianceRental.bf6aa5ad",
+            "values": [
+              {
+                "from": true,
+                "to": 512
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.garage",
+        "specific.realt.additional.infrastructure.dd13cd83",
+        "specific.realt.additional.infrastructure.f6ef524e",
+        "specific.realt.additional.infrastructure.f9d2cef1",
+        "specific.realt.additional.infrastructure.853f64a3"
+      ],
+      "platform_option_id": "realt.additional.infrastructure",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.garage",
+            "values": [
+              {
+                "from": true,
+                "to": 744
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.infrastructure.dd13cd83",
+            "values": [
+              {
+                "from": true,
+                "to": 719
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.infrastructure.f6ef524e",
+            "values": [
+              {
+                "from": true,
+                "to": 703
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.infrastructure.f9d2cef1",
+            "values": [
+              {
+                "from": true,
+                "to": 724
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.realt.additional.infrastructure.853f64a3",
+            "values": [
+              {
+                "from": true,
+                "to": 722
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    }
+  ],
+  "constants": {},
+  "addresses": [
+    {
+      "platform_option_id": "realt.location.settlement",
+      "part": "settlement",
+      "scalar_verified": false
+    },
+    {
+      "platform_option_id": "realt.location.street",
+      "part": "street",
+      "scalar_verified": false
+    }
+  ],
+  "address_bound_fields": [
+    "realt.location.settlement",
+    "realt.location.street",
+    "realt.location.houseNumber",
+    "realt.location.buildingNumber"
+  ],
+  "review": [],
+  "schema_hash": "3688cbe88eadda668c53abd93c1c6ff24567c4fb88ac1030a208684e398035e1",
+  "common_hash": "dd3d3b71c4ebb989f273e499e33c723489d2c572e2b45ce4f2da6b32a774b70d"
+}

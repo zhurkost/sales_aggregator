@@ -550,9 +550,9 @@
       const beforeProgress = this.progress;
       // Choose category before touching any values in a potentially unrelated form.
       if (!this.ready()) {
-        // Kufar may ask for the apartment address before showing the deal selector.
+        // Kufar may ask for the address before showing the deal selector.
         if (this.recipe.addressBeforeDeal && this.recipe.platform === "kufar" &&
-            query('[data-testid="name_selected_category"]').some(e => visible(e) && norm(e.textContent).includes("квартиры")) &&
+            query('[data-testid="name_selected_category"]').some(e => visible(e) && norm(e.textContent).includes(norm(this.recipe.addressCategoryText || "Квартиры"))) &&
             !query('[data-testid="kufar-chose-category-popup"],[data-name="type"]').some(visible)) {
           const address = this.recipe.controls.find(c => c.action === "autocomplete" && c.addressPart === "label");
           if (address) await this.fill(address);

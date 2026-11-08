@@ -82,6 +82,20 @@ function rentalPayload(photos = []) {
   return {id:'card',profileId:'owner',revision:1,mode:'assist',card:{values:{}},photos,
     jobs:[{...JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/apartments_long_term_rent/runtime/browser_realt.json'),'utf8')),controls:[]}]};
 }
+
+test('house launch opens all four sites with the separate Domovita route', async () => {
+  const worker = createWorker();
+  const jobs = ['kufar', 'onliner', 'realt', 'domovita'].map(site =>
+    JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/rental/houses_long_term_rent/runtime/browser_' + site + '.json'), 'utf8')));
+  const payload = { ...rentalPayload(), categoryId:'houses_long_term_rent', jobs };
+  const run = await worker.request({kind:'RENTAL_REQUEST', type:'RENTAL_RUN', payload, userGesture:true});
+  assert.equal(run.jobs.length, 4);
+  assert.deepEqual(worker.created.map(tab => tab.url), jobs.map(job => job.startUrl));
+  assert.equal(worker.created[3].url, 'https://domovita.by/new/add/cottages/rent');
+  const wrongCategory = await createWorker().request({kind:'RENTAL_REQUEST', type:'RENTAL_RUN',
+    payload:{...payload,categoryId:'apartments_long_term_rent'},userGesture:true});
+  assert.ok(wrongCategory.error);
+});
 test('worker rejects retired commands and messages from foreign origins or frames', async () => {
   const w=createWorker();
   assert.equal(await w.request({kind:'APP_REQUEST',type:'RUN',userGesture:true}),undefined);

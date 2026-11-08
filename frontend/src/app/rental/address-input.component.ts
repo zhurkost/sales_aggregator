@@ -24,8 +24,8 @@ import { RentalAddressGateway } from "./rental-address.gateway";
     </div>
     }
     @if (!manual) {
-      <label class="full-label" [class.compact-input]="compact">@if (!compact) { Адрес квартиры }
-        <input id="rental-address" aria-label="Поиск адреса квартиры" [disabled]="disabled" [ngModel]="query"
+      <label class="full-label" [class.compact-input]="compact">@if (!compact) { Адрес объекта }
+        <input id="rental-address" aria-label="Поиск адреса объекта" [disabled]="disabled" [ngModel]="query"
           (ngModelChange)="search($event)" (focus)="suggestCurrent()" autocomplete="off" maxlength="300" placeholder="Город, улица, дом" />
       </label>
       @if (busy) { <p role="status">Ищем адрес…</p> }

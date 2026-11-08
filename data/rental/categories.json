@@ -4,6 +4,11 @@
     "analysis": "apartment_rental",
     "publication": true
   },
+  "houses_long_term_rent": {
+    "reference": "houses_long_term_rent",
+    "analysis": "house_rental",
+    "publication": true
+  },
   "apartments_sale": {
     "reference": "apartments_sale",
     "analysis": "apartment_sale",

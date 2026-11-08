@@ -1,0 +1,258 @@
+{
+  "category_id": "houses_long_term_rent",
+  "platform": "realt",
+  "fields": [
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "realt.termsOfDeal.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "933"
+          },
+          {
+            "from": "USD",
+            "to": "840"
+          },
+          {
+            "from": "EUR",
+            "to": "978"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "realt.object_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": "House"
+          },
+          {
+            "from": "Коттедж",
+            "to": "Cottage"
+          },
+          {
+            "from": "Дача",
+            "to": "Dacha"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "realt.apartment.heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Центральное",
+            "to": 10
+          },
+          {
+            "from": "Паровое",
+            "to": 8
+          },
+          {
+            "from": "Паровое на газу",
+            "to": 6
+          },
+          {
+            "from": "Печное",
+            "to": 9
+          },
+          {
+            "from": "Электрическое",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.water",
+      "platform_option_id": "realt.plot.water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Горячая",
+            "to": 2
+          },
+          {
+            "from": "Холодная",
+            "to": 3
+          },
+          {
+            "from": "Колодец",
+            "to": 7
+          },
+          {
+            "from": "Водопровод",
+            "to": 11
+          },
+          {
+            "from": "Центральный водопровод",
+            "to": 9
+          },
+          {
+            "from": "Скважина",
+            "to": 8
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.sewer",
+      "platform_option_id": "realt.plot.sewer",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "С/у на улице",
+            "to": 4
+          },
+          {
+            "from": "Центральная",
+            "to": 2
+          },
+          {
+            "from": "Местная",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "realt.plot.gas",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Баллон",
+            "to": 3
+          },
+          {
+            "from": "Магистральный",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.electricity",
+      "platform_option_id": "realt.apartment.electricity",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Рядом",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.landline",
+      "platform_option_id": "realt.additional.phone",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "2 телефона",
+            "to": 3
+          },
+          {
+            "from": "3 телефона",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "realt.description.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "realt.description.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "realt.media.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "realt.media.youtube",
+      "conversion": {
+        "kind": "identity"
+      }
+    }
+  ]
+}

@@ -1,0 +1,778 @@
+[
+  {
+    "id": "houses_long_term_rent",
+    "name": "Длительная аренда домов",
+    "description": "Рабочая карточка домов: общие сведения и отдельные поля площадок.",
+    "categories": [],
+    "options": [
+      {
+        "id": "group.main",
+        "name": "Основные характеристики",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "rental.currency",
+            "name": "Валюта",
+            "description": "Валюта",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "rental.monthly_price",
+            "name": "Цена за месяц",
+            "description": "Сумма за один месяц в выбранной валюте. Не залог, не предоплата, не цена за сутки. Без пересчёта валют.",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "house.kind",
+            "name": "Вид объекта",
+            "description": "Дом целиком, коттедж или дача для длительного проживания. Части дома и посуточное размещение исключены.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.rooms",
+            "name": "Количество комнат",
+            "description": "Количество комнат",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.total_area",
+            "name": "Общая площадь, м²",
+            "description": "Общая площадь, м²",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "house.land_area",
+            "name": "Площадь участка, соток",
+            "description": "Площадь земельного участка в сотках, не площадь дома. 1 гектар = 100 соток; 100 м² земли = 1 сотка.",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "house.levels",
+            "name": "Уровней в доме",
+            "description": "Количество уровней/этажей всего дома. Не этаж квартиры.",
+            "type": "integer",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.house",
+        "name": "Дом",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "house.building_year",
+            "name": "Год постройки",
+            "description": "Год постройки",
+            "type": "integer",
+            "options": []
+          },
+          {
+            "id": "house.capacity",
+            "name": "Вместимость, человек",
+            "description": "Количество проживающих или гостей, не число комнат.",
+            "type": "integer",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.utilities",
+        "name": "Коммуникации",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "house.heating",
+            "name": "Отопление",
+            "description": "Отопление",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.water",
+            "name": "Водоснабжение",
+            "description": "Водоснабжение",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.sewer",
+            "name": "Канализация",
+            "description": "Канализация",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.gas",
+            "name": "Газоснабжение",
+            "description": "Газоснабжение",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.electricity",
+            "name": "Электричество",
+            "description": "Электричество",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "house.landline",
+            "name": "Стационарный телефон",
+            "description": "Стационарный телефон",
+            "type": "enum",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.listing",
+        "name": "Объявление",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "listing.description",
+            "name": "Описание дома",
+            "description": "Исходный текст пользователя. Не генерировать и не заменять автоматически.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "listing.title",
+            "name": "Заголовок",
+            "description": "Заголовок до 100 символов, только подтверждённые текстом преимущества дома.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.media",
+        "name": "Фото и видео",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "media.images",
+            "name": "Фотографии",
+            "description": "Фотографии",
+            "type": "files",
+            "options": []
+          },
+          {
+            "id": "media.video_url",
+            "name": "Ссылка на YouTube",
+            "description": "Ссылка на YouTube",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.contacts",
+        "name": "Контакты",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "contact.name",
+            "name": "Контактное лицо",
+            "description": "Контактное лицо",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.phone",
+            "name": "Телефон для связи",
+            "description": "Телефон для связи",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.amenities",
+        "name": "Удобства",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "amenity.furniture",
+            "name": "Мебель",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.internet",
+            "name": "Интернет",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.tv",
+            "name": "Телевизор",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.refrigerator",
+            "name": "Холодильник",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.washing_machine",
+            "name": "Стиральная машина",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.air_conditioner",
+            "name": "Кондиционер",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.fireplace",
+            "name": "Камин",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.sauna",
+            "name": "Баня",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.pool",
+            "name": "Бассейн",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.gazebo",
+            "name": "Беседка",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.garage",
+            "name": "Гараж",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.shower",
+            "name": "Душевая кабина",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "amenity.jacuzzi",
+            "name": "Джакузи",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "boolean",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.address_projection",
+        "name": "Компоненты адреса",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "location.settlement",
+            "name": "settlement",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.street",
+            "name": "street",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.house",
+            "name": "house",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.block",
+            "name": "block",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.label",
+            "name": "label",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.specific.realt",
+        "name": "Дополнительно · Realt",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.realt.area.living",
+            "name": "Площадь жилая, м²",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=area.living; props поля.",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "specific.realt.area.kitchen",
+            "name": "Площадь кухни, м²",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=area.kitchen; props поля.",
+            "type": "number",
+            "options": []
+          },
+          {
+            "id": "specific.realt.apartment.toilet",
+            "name": "Санузел",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент apartment.toilet; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.realt.house.wallsMaterial",
+            "name": "Материал стен",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент house.wallsMaterial; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.appliance.294e6b29",
+            "name": "место для шашлыков",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.appliance.22aa1b07",
+            "name": "бильярд",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.appliance.d90409f0",
+            "name": "настольный теннис",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.parking",
+            "name": "Мест для парковки",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент additional.parking; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.infrastructure.dd13cd83",
+            "name": "Ландшафтный дизайн",
+            "description": "Уникальный вариант Инфраструктура",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.infrastructure.f6ef524e",
+            "name": "Охрана",
+            "description": "Уникальный вариант Инфраструктура",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.infrastructure.f9d2cef1",
+            "name": "Водоем",
+            "description": "Уникальный вариант Инфраструктура",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.infrastructure.853f64a3",
+            "name": "Рядом лес",
+            "description": "Уникальный вариант Инфраструктура",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.applianceRental.9f76d3f6",
+            "name": "домашний кинотеатр",
+            "description": "Уникальный вариант Бытовая техника",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.additional.applianceRental.bf6aa5ad",
+            "name": "компьютер",
+            "description": "Уникальный вариант Бытовая техника",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.termsOfDeal.rentPeriod",
+            "name": "Срок сдачи",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Компонент termsOfDeal.rentPeriod; props.group, нативные коды. Чипы полностью видны в раскрытом блоке. Нативные коды взяты из props; подписи соответствуют отображению с заглавной первой буквой.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.realt.termsOfDeal.bargain",
+            "name": "Возможен торг",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=termsOfDeal.bargain; props поля.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.realt.media.planning",
+            "name": "Фото планировки",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». Блок «Медиа», input[type=file]. Отдельное вложение планировки; input multiple=false. Ограничение размера и перенос правил основного загрузчика не подтверждены.",
+            "type": "files",
+            "options": []
+          },
+          {
+            "id": "specific.realt.media.tour3d",
+            "name": "3D тур",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=media.tour3d; props поля. Доступно при подключении Спецпредложения; платную опцию не включали.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.realt.description.shortDescription",
+            "name": "Краткое описание",
+            "description": "https://realt.by/podat-obyavlenie/ | 2026-11-08T18:08:55.729Z | Сдать длительно → Жилая → Дом; раскрыты оба блока «Все параметры». DOM id=description.shortDescription; props поля.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.specific.kufar",
+        "name": "Дополнительно · Kufar",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.kufar.contact_person",
+            "name": "Контактное лицо",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1519]. source type=string; multi=false; validators=v_string,v_single.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.phone_hidden",
+            "name": "Способ связи",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[9247]. source type=bool; multi=false; validators=v_boolean,v_single.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.re_contract",
+            "name": "Номер и дата договора",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[7288]. source type=string; multi=false; validators=v_length.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_near_area",
+            "name": "Рядом с территорией",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5062]. source type=int; multi=true; validators=v_integer.",
+            "type": "multi_enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.re_hot_water",
+            "name": "Горячая вода",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5398]. source type=bool; multi=false; validators=v_boolean,v_single.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_services",
+            "name": "Услуги и развлечения",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5056]. source type=int; multi=true; validators=v_integer.",
+            "type": "multi_enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_improvements.810ef972",
+            "name": "Телефон",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_improvements.084f0d30",
+            "name": "Обустроенная кухня",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_improvements.4c1a0c87",
+            "name": "Обустроенный туалет",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_improvements.307ab0c9",
+            "name": "Ванная комната",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_improvements.441a9a5f",
+            "name": "Парковка",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_improvements.f1de1de0",
+            "name": "Сигнализация",
+            "description": "Уникальный вариант Удобства",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.0fb33a69",
+            "name": "Мангал",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.6d21e527",
+            "name": "Ландшафтный дизайн",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.815f35ab",
+            "name": "Сад, огород",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.9c27fc56",
+            "name": "Детская площадка",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.dc777be2",
+            "name": "Батут",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.cc78f3ce",
+            "name": "Гамак",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.7ddcfc5f",
+            "name": "Площадка для спортивных игр",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_area.3ec30fdc",
+            "name": "Кемпинг",
+            "description": "Уникальный вариант На территории",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.condition",
+            "name": "Состояние",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1892]. source type=int; multi=false; validators=v_integer,v_single.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_rent_for_whom",
+            "name": "Кому сдается",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[5065]. source type=int; multi=true; validators=v_integer.",
+            "type": "multi_enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.negotiable_price",
+            "name": "Договорная цена",
+            "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. Видимый переключатель рядом с ценой. negotiable_price — исследовательский ID наблюдаемого UI-факта, не подтверждённое имя в API. Обязательность суммы и правила её очистки при включении неизвестны.",
+            "type": "boolean",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.specific.domovita",
+        "name": "Дополнительно · Domovita",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.domovita.email",
+            "name": "Эл. почта",
+            "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=email.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.domovita.prepayment",
+            "name": "Предоплата",
+            "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=prepayment; props.options.",
+            "type": "enum",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.specific.onliner",
+        "name": "Дополнительно · Onliner",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "specific.onliner.facilities.7edaaee6",
+            "name": "Кухонная мебель",
+            "description": "Уникальный вариант Какие удобства есть в доме?",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.facilities.fd2abc32",
+            "name": "Плита",
+            "description": "Уникальный вариант Какие удобства есть в доме?",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.facilities.387e96be",
+            "name": "Лоджия или балкон",
+            "description": "Уникальный вариант Какие удобства есть в доме?",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.rent_rules",
+            "name": "Условия аренды",
+            "description": "Из шаблона аренды квартир: Коллекция rentRules из трёх отрицательных условий. Все включения/выключения проверены, дополнительных полей нет. Переход к контактам выполнен без выбранных условий. Снятый флажок не означает явное разрешение.",
+            "type": "multi_enum",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.contact_owner",
+            "name": "Собственник / Агентство",
+            "description": "Из шаблона аренды квартир: Роль задаётся в объявлении: bool checkedValue true — собственник, false — агентство. Оба состояния проверены. Агентство добавляет шесть реквизитов; возврат к собственнику скрывает их и удаляет четыре динамических контрола из DOM.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.agency_name",
+            "name": "Юридическое наименование",
+            "description": "Из шаблона аренды квартир: Юридическое наименование agencyInfo.name. Появление/скрытие и ввод/очистка помеченного теста проверены при contact_owner=false. Required и серверная проверка не установлены.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.agency_unp",
+            "name": "УНП",
+            "description": "Из шаблона аренды квартир: Строковый УНП agencyInfo.unp; ведущие нули не отбрасываются. Ветка агентства, ввод/очистка тестового маркера проверены. Это не подтверждение валидности маркера или правила УНП.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.agency_contract_number",
+            "name": "Номер договора",
+            "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.contract.number. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=text, maxlength=100; строковые номера сохраняют ведущие нули. Обязательность финальной формы не проверена.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.agency_contract_date",
+            "name": "Дата заключения договора",
+            "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.contract.date. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=date, значение YYYY-MM-DD. Границы дат неизвестны. Обязательность финальной формы не проверена.",
+            "type": "date",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.agency_licence_number",
+            "name": "Номер лицензии",
+            "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.licence.number. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=text, maxlength=100; строковые номера сохраняют ведущие нули. Обязательность финальной формы не проверена.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.agency_licence_date",
+            "name": "Дата выдачи лицензии",
+            "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.licence.date. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=date, значение YYYY-MM-DD. Границы дат неизвестны. Обязательность финальной формы не проверена.",
+            "type": "date",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.call_time_from",
+            "name": "Звонить с",
+            "description": "Из шаблона аренды квартир: Select contact.callTime[0], полный HTML-список строковых кодов 0..23. Проверены 7, 0, 9; «В любое время» устанавливает пару 0/0. Исходные 9/18 восстановлены. Тип внутренней модели не устанавливался.",
+            "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.onliner.call_time_to",
+            "name": "Звонить до",
+            "description": "Из шаблона аренды квартир: Select contact.callTime[1], полный HTML-список строковых кодов 0..23. Проверены 21, 0, 18; «В любое время» устанавливает пару 0/0. Часы остаются видимыми. Тип внутренней модели не устанавливался.",
+            "type": "enum",
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]

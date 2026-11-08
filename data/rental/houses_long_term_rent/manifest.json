@@ -1,0 +1,33 @@
+{
+  "format_version": 1,
+  "source_schema_version": "2.1",
+  "category_id": "houses_long_term_rent",
+  "common": "integration/houses_long_term_rent_common.json",
+  "card": "runtime/card.json",
+  "platforms": {
+    "realt": {
+      "schema": "realt/houses_long_term_rent_realt.json",
+      "binding": "realt/binding_houses_long_term_rent_realt.json",
+      "plan": "runtime/preparation_realt.json",
+      "browser": "runtime/browser_realt.json"
+    },
+    "kufar": {
+      "schema": "kufar/houses_long_term_rent_kufar.json",
+      "binding": "kufar/binding_houses_long_term_rent_kufar.json",
+      "plan": "runtime/preparation_kufar.json",
+      "browser": "runtime/browser_kufar.json"
+    },
+    "domovita": {
+      "schema": "domovita/houses_long_term_rent_domovita.json",
+      "binding": "domovita/binding_houses_long_term_rent_domovita.json",
+      "plan": "runtime/preparation_domovita.json",
+      "browser": "runtime/browser_domovita.json"
+    },
+    "onliner": {
+      "schema": "onliner/houses_long_term_rent_onliner.json",
+      "binding": "onliner/binding_houses_long_term_rent_onliner.json",
+      "plan": "runtime/preparation_onliner.json",
+      "browser": "runtime/browser_onliner.json"
+    }
+  }
+}

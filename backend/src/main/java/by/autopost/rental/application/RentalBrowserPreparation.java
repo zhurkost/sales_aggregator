@@ -21,6 +21,19 @@ final class RentalBrowserPreparation {
       var controls = array();
       var unsupported = array();
       var supported = new java.util.HashSet<String>();
+      // Resolve category choices on the server; the extension receives only fixed UI steps.
+      for (String phase : java.util.List.of("setup", "ready")) {
+        for (var step : recipe.path(phase)) {
+          String id = text(step, "valueField");
+          if (id.isBlank()) continue;
+          String selectedText = text(step.path("textByValue"), text(result.path("values"), id));
+          if (selectedText.isBlank())
+            throw new by.autopost.shared.ApiException(400, "Для запуска на " + platform + " выберите «" + text(fields.get(id), "name") + "».");
+          ((ObjectNode) step).put("text", selectedText);
+          ((ObjectNode) step).remove(java.util.List.of("valueField", "textByValue"));
+          supported.add(id);
+        }
+      }
       for (var source : recipe.path("controls")) {
         String id = text(source, "field");
         supported.add(id);

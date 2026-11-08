@@ -1,0 +1,815 @@
+[
+  {
+    "id": "houses_long_term_rent",
+    "name": "Длительная аренда домов",
+    "description": "Onliner: копия рабочего шаблона аренды квартир для категории houses_long_term_rent по прямому указанию пользователя от 2026-11-08. Поля, варианты, нативные коды и привязки унаследованы; отдельная форма домов не исследована. Контракт результата 2.1. Происхождение и ограничения указаны в report_houses_long_term_rent_onliner.txt.",
+    "categories": [],
+    "options": [
+      {
+        "id": "onliner.images",
+        "name": "Фотографии дома",
+        "description": "Из шаблона аренды квартир: Локальные фото: выбор файлов или перетаскивание, multiple, accept GIF/JPEG/PNG. Тестовый JPEG 1920×1440 принят, получил серверный URL и позволил открыть следующий шаг. Первое фото помечено «Заглавное фото». Максимумы, GIF/PNG и перестановка не проверены. Тест удалён из формы; физическое удаление из хранилища/CDN не подтверждено.",
+        "type": "files",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_items": 1,
+          "mime_types": [
+            "image/gif",
+            "image/jpeg",
+            "image/png"
+          ]
+        },
+        "file_role": "product_image"
+      },
+      {
+        "id": "onliner.rent_type",
+        "name": "Что сдаете в аренду?",
+        "description": "Из шаблона аренды квартир: Нативный переключатель rent_type. Для apartments_long_term_rent используется flat — квартира целиком. room сохранён как точный вариант исходного списка, находится вне объёма категории и не исследовался.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.rent_type.flat",
+            "name": "Квартиру",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "flat"
+          },
+          {
+            "id": "onliner.rent_type.room",
+            "name": "Комнату (вне объёма категории)",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "room"
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.room_count",
+        "name": "Количество комнат",
+        "description": "Из шаблона аренды квартир: Полный нативный список строковых кодов 1_room, 2_rooms ... 6_rooms. Все шесть checked-состояний проверены на активном шаге: новые поля не появлялись. Отдельной студии в проверенной форме нет.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.room_count.1_rooms",
+            "name": "1",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "1_room"
+          },
+          {
+            "id": "onliner.room_count.2_rooms",
+            "name": "2",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "2_rooms"
+          },
+          {
+            "id": "onliner.room_count.3_rooms",
+            "name": "3",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "3_rooms"
+          },
+          {
+            "id": "onliner.room_count.4_rooms",
+            "name": "4",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "4_rooms"
+          },
+          {
+            "id": "onliner.room_count.5_rooms",
+            "name": "5",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "5_rooms"
+          },
+          {
+            "id": "onliner.room_count.6_rooms",
+            "name": "6",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "6_rooms"
+          }
+        ],
+        "required": null,
+        "when": {
+          "option_id": "onliner.rent_type",
+          "operator": "equals",
+          "value": "flat"
+        },
+        "options_complete": false
+      },
+      {
+        "id": "onliner.address_query",
+        "name": "Город, улица, номер дома: поисковый ввод",
+        "description": "Из шаблона аренды квартир: Строка user_address в составном геокодировании. Проверены запрос, подсказка и выбор для Минска, Бреста, Смолевичей и полного адреса из placeholder формы; после выбора появляется метка. Пустой ввод показал «Поле обязательно для заполнения». Это поисковый ввод, не весь окончательный адрес: принятый объект геокодера/ID и координаты не установлены.",
+        "type": "text",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "onliner.facilities",
+        "name": "Какие удобства есть в доме?",
+        "description": "Из шаблона аренды квартир: Коллекция facilities из девяти checkbox. Все включения/выключения проверены, дополнительных полей нет. Шаг пройден со всеми снятыми флажками. Неуказанное удобство не равно доказанному отсутствию.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "onliner.facilities.furniture",
+            "name": "Мебель",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "furniture"
+          },
+          {
+            "id": "onliner.facilities.kitchen_furniture",
+            "name": "Кухонная мебель",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "kitchen_furniture"
+          },
+          {
+            "id": "onliner.facilities.stove",
+            "name": "Плита",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "stove"
+          },
+          {
+            "id": "onliner.facilities.refrigerator",
+            "name": "Холодильник",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "refrigerator"
+          },
+          {
+            "id": "onliner.facilities.washing_machine",
+            "name": "Стиральная машина",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "washing_machine"
+          },
+          {
+            "id": "onliner.facilities.tv",
+            "name": "Телевизор",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "tv"
+          },
+          {
+            "id": "onliner.facilities.internet",
+            "name": "Интернет",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "internet"
+          },
+          {
+            "id": "onliner.facilities.balcony",
+            "name": "Лоджия или балкон",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "balcony"
+          },
+          {
+            "id": "onliner.facilities.conditioner",
+            "name": "Кондиционер",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "conditioner"
+          }
+        ],
+        "required": false,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.description",
+        "name": "Подробное описание",
+        "description": "Из шаблона аренды квартир: Textarea data.description. Пустое описание пропустило промежуточный шаг; ввод и очистка помеченного тестового текста проверены. Это техническая необязательность шага, а не отмена содержательных правил публикации.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "onliner.rent_rules",
+        "name": "Условия аренды",
+        "description": "Из шаблона аренды квартир: Коллекция rentRules из трёх отрицательных условий. Все включения/выключения проверены, дополнительных полей нет. Переход к контактам выполнен без выбранных условий. Снятый флажок не означает явное разрешение.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "onliner.rent_rules.not_student",
+            "name": "Не студентам",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "not_student"
+          },
+          {
+            "id": "onliner.rent_rules.without_children",
+            "name": "Без детей",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "without_children"
+          },
+          {
+            "id": "onliner.rent_rules.without_animals",
+            "name": "Без животных",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "without_animals"
+          }
+        ],
+        "required": false,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.price_amount",
+        "name": "Стоимость аренды в месяц",
+        "description": "Из шаблона аренды квартир: Месячная сумма, семантический number; HTML #price-input type=text maxlength=11. Пустое поле показывает ошибку обязательности. Проверено: USD ввод 123.45 после blur стал 123; BYN 123,45 сохранился и позволил переход к контактам. При смене валюты нет наблюдаемого пересчёта по курсу: меняется числовое представление. Формат и допустимую точность необходимо проверять до заполнения; молчаливое усечение не разрешается.",
+        "type": "number",
+        "options": [],
+        "required": true
+      },
+      {
+        "id": "onliner.price_currency",
+        "name": "Валюта ввода стоимости",
+        "description": "Из шаблона аренды квартир: Нативный select data.price.currency: USD/BYN, оба переключения проверены. BYN показывает placeholder 0,00; USD — 0. Текст периода фиксирован «в месяц». Это валюта ввода, не доказанный формат сохранённой публикации.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.price_currency.USD",
+            "name": "Доллары США",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "USD"
+          },
+          {
+            "id": "onliner.price_currency.BYN",
+            "name": "Белорусские рубли",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "BYN"
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.contact_owner",
+        "name": "Собственник / Агентство",
+        "description": "Из шаблона аренды квартир: Роль задаётся в объявлении: bool checkedValue true — собственник, false — агентство. Оба состояния проверены. Агентство добавляет шесть реквизитов; возврат к собственнику скрывает их и удаляет четыре динамических контрола из DOM.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.contact_owner.owner",
+            "name": "Собственник",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": true
+          },
+          {
+            "id": "onliner.contact_owner.agency",
+            "name": "Агентство",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": false
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.agency_name",
+        "name": "Юридическое наименование",
+        "description": "Из шаблона аренды квартир: Юридическое наименование agencyInfo.name. Появление/скрытие и ввод/очистка помеченного теста проверены при contact_owner=false. Required и серверная проверка не установлены.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.contact_owner",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "onliner.agency_unp",
+        "name": "УНП",
+        "description": "Из шаблона аренды квартир: Строковый УНП agencyInfo.unp; ведущие нули не отбрасываются. Ветка агентства, ввод/очистка тестового маркера проверены. Это не подтверждение валидности маркера или правила УНП.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.contact_owner",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "onliner.agency_contract_number",
+        "name": "Номер договора",
+        "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.contract.number. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=text, maxlength=100; строковые номера сохраняют ведущие нули. Обязательность финальной формы не проверена.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 100
+        },
+        "when": {
+          "option_id": "onliner.contact_owner",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "onliner.agency_contract_date",
+        "name": "Дата заключения договора",
+        "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.contract.date. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=date, значение YYYY-MM-DD. Границы дат неизвестны. Обязательность финальной формы не проверена.",
+        "type": "date",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.contact_owner",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "onliner.agency_licence_number",
+        "name": "Номер лицензии",
+        "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.licence.number. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=text, maxlength=100; строковые номера сохраняют ведущие нули. Обязательность финальной формы не проверена.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 100
+        },
+        "when": {
+          "option_id": "onliner.contact_owner",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "onliner.agency_licence_date",
+        "name": "Дата выдачи лицензии",
+        "description": "Из шаблона аренды квартир: Динамическое поле ветки агентства agencyInfo.licence.date. Появление/скрытие, ввод и очистка тестового значения проверены. HTML type=date, значение YYYY-MM-DD. Границы дат неизвестны. Обязательность финальной формы не проверена.",
+        "type": "date",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.contact_owner",
+          "operator": "equals",
+          "value": false
+        }
+      },
+      {
+        "id": "onliner.contact_name",
+        "name": "Ваше имя",
+        "description": "Из шаблона аренды квартир: Контактное имя data.contact.name. Исследована только структура; значения профиля не собирались, ввод имени не выполнялся, финальная валидация не запускалась.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.contact_phone",
+        "name": "Номер телефона в международном формате",
+        "description": "Из шаблона аренды квартир: Один элемент повторяемого phone.number в contact.phones. Проверено добавление второго пустого поля, без ввода номеров. Отдельной кнопки удаления не обнаружено; максимум и обязательность неизвестны. Контракт не описывает коллекцию повторяемых scalar Option: это шаблон элемента, не готовый массив телефонов.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "format": "phone"
+        }
+      },
+      {
+        "id": "onliner.call_time_from",
+        "name": "Звонить с",
+        "description": "Из шаблона аренды квартир: Select contact.callTime[0], полный HTML-список строковых кодов 0..23. Проверены 7, 0, 9; «В любое время» устанавливает пару 0/0. Исходные 9/18 восстановлены. Тип внутренней модели не устанавливался.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.call_time_from.hour_0",
+            "name": "0:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "0"
+          },
+          {
+            "id": "onliner.call_time_from.hour_1",
+            "name": "1:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "onliner.call_time_from.hour_2",
+            "name": "2:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "onliner.call_time_from.hour_3",
+            "name": "3:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "onliner.call_time_from.hour_4",
+            "name": "4:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "onliner.call_time_from.hour_5",
+            "name": "5:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "onliner.call_time_from.hour_6",
+            "name": "6:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          },
+          {
+            "id": "onliner.call_time_from.hour_7",
+            "name": "7:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "onliner.call_time_from.hour_8",
+            "name": "8:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "8"
+          },
+          {
+            "id": "onliner.call_time_from.hour_9",
+            "name": "9:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "9"
+          },
+          {
+            "id": "onliner.call_time_from.hour_10",
+            "name": "10:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "onliner.call_time_from.hour_11",
+            "name": "11:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "11"
+          },
+          {
+            "id": "onliner.call_time_from.hour_12",
+            "name": "12:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "12"
+          },
+          {
+            "id": "onliner.call_time_from.hour_13",
+            "name": "13:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "13"
+          },
+          {
+            "id": "onliner.call_time_from.hour_14",
+            "name": "14:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "14"
+          },
+          {
+            "id": "onliner.call_time_from.hour_15",
+            "name": "15:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "onliner.call_time_from.hour_16",
+            "name": "16:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "16"
+          },
+          {
+            "id": "onliner.call_time_from.hour_17",
+            "name": "17:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "17"
+          },
+          {
+            "id": "onliner.call_time_from.hour_18",
+            "name": "18:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "18"
+          },
+          {
+            "id": "onliner.call_time_from.hour_19",
+            "name": "19:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "19"
+          },
+          {
+            "id": "onliner.call_time_from.hour_20",
+            "name": "20:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          },
+          {
+            "id": "onliner.call_time_from.hour_21",
+            "name": "21:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "21"
+          },
+          {
+            "id": "onliner.call_time_from.hour_22",
+            "name": "22:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "22"
+          },
+          {
+            "id": "onliner.call_time_from.hour_23",
+            "name": "23:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "23"
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.call_time_to",
+        "name": "Звонить до",
+        "description": "Из шаблона аренды квартир: Select contact.callTime[1], полный HTML-список строковых кодов 0..23. Проверены 21, 0, 18; «В любое время» устанавливает пару 0/0. Часы остаются видимыми. Тип внутренней модели не устанавливался.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.call_time_to.hour_0",
+            "name": "0:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "0"
+          },
+          {
+            "id": "onliner.call_time_to.hour_1",
+            "name": "1:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "onliner.call_time_to.hour_2",
+            "name": "2:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "onliner.call_time_to.hour_3",
+            "name": "3:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "onliner.call_time_to.hour_4",
+            "name": "4:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "onliner.call_time_to.hour_5",
+            "name": "5:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "onliner.call_time_to.hour_6",
+            "name": "6:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          },
+          {
+            "id": "onliner.call_time_to.hour_7",
+            "name": "7:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "onliner.call_time_to.hour_8",
+            "name": "8:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "8"
+          },
+          {
+            "id": "onliner.call_time_to.hour_9",
+            "name": "9:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "9"
+          },
+          {
+            "id": "onliner.call_time_to.hour_10",
+            "name": "10:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "onliner.call_time_to.hour_11",
+            "name": "11:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "11"
+          },
+          {
+            "id": "onliner.call_time_to.hour_12",
+            "name": "12:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "12"
+          },
+          {
+            "id": "onliner.call_time_to.hour_13",
+            "name": "13:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "13"
+          },
+          {
+            "id": "onliner.call_time_to.hour_14",
+            "name": "14:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "14"
+          },
+          {
+            "id": "onliner.call_time_to.hour_15",
+            "name": "15:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "onliner.call_time_to.hour_16",
+            "name": "16:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "16"
+          },
+          {
+            "id": "onliner.call_time_to.hour_17",
+            "name": "17:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "17"
+          },
+          {
+            "id": "onliner.call_time_to.hour_18",
+            "name": "18:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "18"
+          },
+          {
+            "id": "onliner.call_time_to.hour_19",
+            "name": "19:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "19"
+          },
+          {
+            "id": "onliner.call_time_to.hour_20",
+            "name": "20:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          },
+          {
+            "id": "onliner.call_time_to.hour_21",
+            "name": "21:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; соответствующее состояние проверено в активной форме.",
+            "type": "choice",
+            "options": [],
+            "value": "21"
+          },
+          {
+            "id": "onliner.call_time_to.hour_22",
+            "name": "22:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "22"
+          },
+          {
+            "id": "onliner.call_time_to.hour_23",
+            "name": "23:00",
+            "description": "Из шаблона аренды квартир: Точный код из DOM; отдельное переключение этого варианта не проверялось.",
+            "type": "choice",
+            "options": [],
+            "value": "23"
+          }
+        ],
+        "required": null,
+        "options_complete": false
+      }
+    ]
+  }
+]

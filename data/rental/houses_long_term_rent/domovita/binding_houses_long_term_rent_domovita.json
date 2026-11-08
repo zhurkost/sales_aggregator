@@ -1,0 +1,178 @@
+{
+  "category_id": "houses_long_term_rent",
+  "platform": "domovita",
+  "fields": [
+    {
+      "option_id": "domovita.action",
+      "status": "needs_review",
+      "reason": "Целевая ветвь открыта через эти переключатели; стабильность CSS-привязки и повторная установка не проверены."
+    },
+    {
+      "option_id": "domovita.type",
+      "status": "needs_review",
+      "reason": "Целевая ветвь открыта через эти переключатели; стабильность CSS-привязки и повторная установка не проверены."
+    },
+    {
+      "option_id": "domovita.town_id",
+      "status": "needs_review",
+      "reason": "Динамические подсказки не запрашивались; варианты, выбор адреса и обновление карты не проверены."
+    },
+    {
+      "option_id": "domovita.street_name",
+      "status": "needs_review",
+      "reason": "Динамические подсказки не запрашивались; варианты, выбор адреса и обновление карты не проверены.",
+      "depends_on": [
+        "domovita.town_id"
+      ]
+    },
+    {
+      "option_id": "domovita.house_number",
+      "status": "needs_review",
+      "reason": "Динамические подсказки не запрашивались; варианты, выбор адреса и обновление карты не проверены.",
+      "depends_on": [
+        "domovita.town_id",
+        "domovita.street_name"
+      ]
+    },
+    {
+      "option_id": "domovita.contact_name",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"contact_name\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.phones.0.contact_phone",
+      "status": "needs_review",
+      "reason": "Телефон не вводили и код подтверждения не запрашивали; маска, формат сохранения и подтверждение не проверены.",
+      "target": {
+        "selectors": [
+          "input[name=\"phones.0.contact_phone\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.email",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"email\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.building_year",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"building_year\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.area_ground",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"area_ground\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.buiding_levels",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"buiding_levels\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.area_total",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"area_total\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.youtube_link",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"youtube_link\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.price",
+      "status": "needs_review",
+      "reason": "Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.",
+      "target": {
+        "selectors": [
+          "input[name=\"price\"]"
+        ]
+      }
+    },
+    {
+      "option_id": "domovita.rooms",
+      "status": "needs_review",
+      "reason": "Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены."
+    },
+    {
+      "option_id": "domovita.phone",
+      "status": "needs_review",
+      "reason": "Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены."
+    },
+    {
+      "option_id": "domovita.heating",
+      "status": "needs_review",
+      "reason": "Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены."
+    },
+    {
+      "option_id": "domovita.gas",
+      "status": "needs_review",
+      "reason": "Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены."
+    },
+    {
+      "option_id": "domovita.electro",
+      "status": "needs_review",
+      "reason": "Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены."
+    },
+    {
+      "option_id": "domovita.price_currency_text",
+      "status": "needs_review",
+      "reason": "USD/EUR/BYN/RUB найдены в props. Выпадающий список и смена валюты вместе с ценой не проверены."
+    },
+    {
+      "option_id": "domovita.prepayment",
+      "status": "needs_review",
+      "reason": "Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены."
+    },
+    {
+      "option_id": "domovita.extra_info_comments",
+      "status": "needs_review",
+      "reason": "Видны все 11 подписей. Код kondicioner наблюдён у Кондиционера, остальные 10 кодов неизвестны. Множественный выбор не проверен."
+    },
+    {
+      "option_id": "domovita.images",
+      "status": "needs_review",
+      "reason": "Загрузчик закрыт до заполнения контактов и подтверждения телефона. Файлы не загружались; количество, MIME, размеры, обложка и серверное принятие неизвестны."
+    },
+    {
+      "option_id": "domovita.description",
+      "status": "needs_review",
+      "reason": "Редактор наблюдался, нативное имя сохраняемого поля и установка текста с подтверждением не проверены. description — исследовательский ID."
+    }
+  ]
+}

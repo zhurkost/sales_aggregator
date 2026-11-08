@@ -1,0 +1,347 @@
+{
+  "category_id": "houses_long_term_rent",
+  "platform": "onliner",
+  "fields": [
+    {
+      "option_id": "onliner.images",
+      "target": {
+        "selectors": [
+          "label:has(input.new-photos__input-file[name=\"file\"])"
+        ]
+      },
+      "action": "upload_files",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "files_accepted"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась."
+    },
+    {
+      "option_id": "onliner.rent_type",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.room_count",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман.",
+      "depends_on": [
+        "onliner.rent_type"
+      ]
+    },
+    {
+      "option_id": "onliner.address_query",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.facilities",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.description",
+      "target": {
+        "selectors": [
+          "textarea[placeholder=\"Подробное описание\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась."
+    },
+    {
+      "option_id": "onliner.rent_rules",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.price_amount",
+      "target": {
+        "selectors": [
+          "#price-input"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.price_currency"
+      ]
+    },
+    {
+      "option_id": "onliner.price_currency",
+      "target": {
+        "selectors": [
+          "select[data-bind=\"value: $root.data.price.currency\"]"
+        ]
+      },
+      "action": "select_option",
+      "events": [
+        "change"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась."
+    },
+    {
+      "option_id": "onliner.contact_owner",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.agency_name",
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Юридическое наименование\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.contact_owner"
+      ]
+    },
+    {
+      "option_id": "onliner.agency_unp",
+      "target": {
+        "selectors": [
+          "input[placeholder=\"УНП\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.contact_owner"
+      ]
+    },
+    {
+      "option_id": "onliner.agency_contract_number",
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Номер договора\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.contact_owner"
+      ]
+    },
+    {
+      "option_id": "onliner.agency_contract_date",
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Дата заключения договора\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.contact_owner"
+      ]
+    },
+    {
+      "option_id": "onliner.agency_licence_number",
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Номер лицензии\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.contact_owner"
+      ]
+    },
+    {
+      "option_id": "onliner.agency_licence_date",
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Дата выдачи лицензии\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "value_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась.",
+      "depends_on": [
+        "onliner.contact_owner"
+      ]
+    },
+    {
+      "option_id": "onliner.contact_name",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.contact_phone",
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась. В исходном binding нет записи этого поля; исполнитель не придуман."
+    },
+    {
+      "option_id": "onliner.call_time_from",
+      "target": {
+        "selectors": [
+          "select[data-bind*=\"value: $root.data.contact.callTime[0]\"]"
+        ]
+      },
+      "action": "select_option",
+      "events": [
+        "change"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась."
+    },
+    {
+      "option_id": "onliner.call_time_to",
+      "target": {
+        "selectors": [
+          "select[data-bind*=\"value: $root.data.contact.callTime[1]\"]"
+        ]
+      },
+      "action": "select_option",
+      "events": [
+        "change"
+      ],
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "timeout_ms": 10000,
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "status": "needs_review",
+      "reason": "Скопировано из рабочего комплекта аренды квартир по указанию пользователя 2026-11-08. Подтверждения исходника относятся к квартирной форме; отдельная проверка категории домов не выполнялась."
+    }
+  ]
+}

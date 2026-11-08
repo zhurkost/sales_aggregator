@@ -24,7 +24,7 @@
   style.textContent =
     ":host{position:fixed;right:16px;bottom:16px;z-index:2147483647;max-width:340px;font:14px/1.4 system-ui;color:#172236;background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:16px;box-shadow:0 4px 24px #0002}button{padding:8px;margin:8px 8px 0 0;cursor:pointer}p{margin:8px 0}";
   const title = document.createElement("strong");
-  title.textContent = task.categoryId === "apartments_sale" ? "Автопост · продажа квартиры" : "Автопост · аренда квартиры";
+  title.textContent = task.categoryId === "houses_long_term_rent" ? "Автопост · аренда дома" : task.categoryId === "apartments_sale" ? "Автопост · продажа квартиры" : "Автопост · аренда квартиры";
   const status = document.createElement("p"),
     detail = document.createElement("p"),
     retry = document.createElement("button"),

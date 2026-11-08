@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RetainedPanelDirective } from "./retained-panel.directive";
-import { APARTMENT_RENT, APARTMENT_SALE } from "./listing-categories";
+import { LISTING_TABS, type ListingTabId } from "./listing-categories";
 import { IconComponent } from "./icon.component";
 import { RentalEditorComponent } from "./rental/rental-editor.component";
 import type { RentalProfile } from "./rental/rental-profile-defaults";
@@ -17,15 +17,17 @@ import { WorkspaceGateway } from "./workspace.gateway";
 })
 export class AppComponent implements OnInit, OnDestroy {
   constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
-  readonly deals = [{ id: "rent", category: APARTMENT_RENT, label: "Аренда квартир" }, { id: "sale", category: APARTMENT_SALE, label: "Продажа квартир" }] as const;
-  deal: "rent" | "sale" = "rent";
-  selectDeal(deal: "rent" | "sale") {
+  readonly deals = LISTING_TABS;
+  deal: ListingTabId = "rent";
+  selectDeal(deal: ListingTabId) {
     this.deal = deal;
     if (this.profile) this.workspace.rememberDeal(this.profile.id, deal);
   }
   tabKey(event: KeyboardEvent, index: number) {
-    const next = event.key === "Home" ? 0 : event.key === "End" ? 1 :
-      ["ArrowLeft", "ArrowRight"].includes(event.key) ? 1 - index : -1;
+    const count = this.deals.length;
+    const next = event.key === "Home" ? 0 : event.key === "End" ? count - 1 :
+      event.key === "ArrowLeft" ? (index + count - 1) % count :
+      event.key === "ArrowRight" ? (index + 1) % count : -1;
     if (next < 0) return;
     event.preventDefault();
     this.selectDeal(this.deals[next].id);

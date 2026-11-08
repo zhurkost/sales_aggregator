@@ -1,0 +1,362 @@
+Сопоставление houses_long_term_rent, этап B, 2026-11-08.
+Авторизация: пользователь запросил вкладку с отдельными полями домов, общим справочником и маппингом. Нового обхода площадок на этапе B не было.
+Общие поля подтверждаются минимум двумя source-схемами. Onliner скопирован из квартир по указанию пользователя; он не является независимым наблюдением формы домов.
+Рабочая карточка содержит типизированные поля и уникальные specific.*; исследовательский common — только text/files с минимум двумя источниками. Адресные проекции не считаются самостоятельным общим вводом.
+Семантические связи не доказывают готовность браузерного заполнения. Publication=false; browser-рецепты не создавались.
+Неизвестные коды null не маппятся. Нет ближайших замен для коттеджа в Kufar, непредставленного отопления или комнат. Фото сохраняют порядок; операции преобразования не добавлены.
+Числа используют существующий runtime decimal; композитные удобства — multi_lookup. Для исследовательского формата это кандидаты реализации, перечисленные ниже, а не притворный identity. Домовита сохраняет числовой ввод текстом согласно исходной схеме.
+Цена и валюта обрабатываются вместе, без курсовой конвертации. Контактный телефон отличается от наличия стационарного телефона. Вместимость не равна количеству комнат. Участок в сотках не равен площади дома в м².
+
+realt: source SHA-256 abecb66b800b6c9aaa8924bda92fb81e7b63fd688891954d51fd23ef8eed8cec; binding SHA-256 a98a4662a6ae151fffba6e1af953c915d6fa91b923848cb713a9ce40910e1b4f
+realt.object_type | Вид недвижимости | house.kind
+realt.location.settlement | Адрес — населённый пункт | address
+realt.location.street | Улица | address
+realt.location.houseNumber | Дом | location.house
+realt.location.buildingNumber | Корпус | location.block
+realt.apartment.capacity | Вместимость человек | house.capacity
+realt.apartment.buildingYear | Год постройки | house.building_year
+realt.apartment.buildingLevels | Уровней в доме | house.levels
+realt.area.total | Площадь общая, м² | house.total_area
+realt.area.living | Площадь жилая, м² | specific.realt.area.living
+realt.area.ground | Площадь участка, соток | house.land_area
+realt.area.kitchen | Площадь кухни, м² | specific.realt.area.kitchen
+realt.apartment.toilet | Санузел | specific.realt.apartment.toilet
+realt.plot.sewer | Канализация | house.sewer
+realt.plot.water | Водоснабжение | house.water
+realt.plot.gas | Газоснабжение | house.gas
+realt.apartment.electricity | Электричество | house.electricity
+realt.apartment.heating | Отопление | house.heating
+realt.house.wallsMaterial | Материал стен | specific.realt.house.wallsMaterial
+realt.additional.appliance | Удобства | composite
+realt.additional.parking | Мест для парковки | specific.realt.additional.parking
+realt.additional.infrastructure | Инфраструктура | composite
+realt.additional.phone | Количество телефонов | house.landline
+realt.additional.applianceRental | Бытовая техника | composite
+realt.termsOfDeal.currency | Цена | rental.currency
+realt.termsOfDeal.rentPeriod | Срок сдачи | specific.realt.termsOfDeal.rentPeriod
+realt.additional.furniture | Мебель | amenity.furniture
+realt.termsOfDeal.price | За месяц | rental.monthly_price
+realt.termsOfDeal.bargain | Возможен торг | specific.realt.termsOfDeal.bargain
+realt.media.photos | Фото | media.images
+realt.media.planning | Фото планировки | specific.realt.media.planning
+realt.media.youtube | Ссылка на видео YouTube | media.video_url
+realt.media.tour3d | 3D тур | specific.realt.media.tour3d
+realt.description.title | Заголовок | listing.title
+realt.description.shortDescription | Краткое описание | specific.realt.description.shortDescription
+realt.description.description | Подробное описание | listing.description
+{"common_option_id":"rental.currency","platform_option_id":"realt.termsOfDeal.currency","conversion":{"kind":"lookup","values":[{"from":"BYN","to":"933"},{"from":"USD","to":"840"},{"from":"EUR","to":"978"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"rental.monthly_price","platform_option_id":"realt.termsOfDeal.price","conversion":{"kind":"decimal","target":"number","requires":["realt.termsOfDeal.currency"],"currency_field":"realt.termsOfDeal.currency"}}
+{"common_option_id":"house.kind","platform_option_id":"realt.object_type","conversion":{"kind":"lookup","values":[{"from":"Дом","to":"House"},{"from":"Коттедж","to":"Cottage"},{"from":"Дача","to":"Dacha"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.total_area","platform_option_id":"realt.area.total","conversion":{"kind":"decimal","target":"number"}}
+{"common_option_id":"house.land_area","platform_option_id":"realt.area.ground","conversion":{"kind":"decimal","target":"number"}}
+{"common_option_id":"house.levels","platform_option_id":"realt.apartment.buildingLevels","conversion":{"kind":"decimal","target":"integer"}}
+{"common_option_id":"house.building_year","platform_option_id":"realt.apartment.buildingYear","conversion":{"kind":"decimal","target":"integer"}}
+{"common_option_id":"house.capacity","platform_option_id":"realt.apartment.capacity","conversion":{"kind":"decimal","target":"integer"}}
+{"common_option_id":"house.heating","platform_option_id":"realt.apartment.heating","conversion":{"kind":"lookup","values":[{"from":"Нет","to":0},{"from":"Центральное","to":10},{"from":"Паровое","to":8},{"from":"Паровое на газу","to":6},{"from":"Печное","to":9},{"from":"Электрическое","to":4}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.water","platform_option_id":"realt.plot.water","conversion":{"kind":"lookup","values":[{"from":"Нет","to":0},{"from":"Горячая","to":2},{"from":"Холодная","to":3},{"from":"Колодец","to":7},{"from":"Водопровод","to":11},{"from":"Центральный водопровод","to":9},{"from":"Скважина","to":8}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.sewer","platform_option_id":"realt.plot.sewer","conversion":{"kind":"lookup","values":[{"from":"Есть","to":1},{"from":"Нет","to":0},{"from":"С/у на улице","to":4},{"from":"Центральная","to":2},{"from":"Местная","to":3}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.gas","platform_option_id":"realt.plot.gas","conversion":{"kind":"lookup","values":[{"from":"Нет","to":0},{"from":"Есть","to":1},{"from":"Баллон","to":3},{"from":"Магистральный","to":4}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.electricity","platform_option_id":"realt.apartment.electricity","conversion":{"kind":"lookup","values":[{"from":"Нет","to":0},{"from":"Есть","to":1},{"from":"Рядом","to":2}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.landline","platform_option_id":"realt.additional.phone","conversion":{"kind":"lookup","values":[{"from":"Нет","to":0},{"from":"Есть","to":1},{"from":"2 телефона","to":3},{"from":"3 телефона","to":4}],"on_unmapped":"needs_review"}}
+{"common_option_id":"listing.description","platform_option_id":"realt.description.description","conversion":{"kind":"identity"}}
+{"common_option_id":"listing.title","platform_option_id":"realt.description.title","conversion":{"kind":"identity"}}
+{"common_option_id":"media.images","platform_option_id":"realt.media.photos","conversion":{"kind":"files","preparation":{"operations":[]},"on_incompatible":"needs_review"}}
+{"common_option_id":"media.video_url","platform_option_id":"realt.media.youtube","conversion":{"kind":"identity"}}
+{"common_option_id":"amenity.furniture","platform_option_id":"realt.additional.furniture","conversion":{"kind":"identity"}}
+{"common_option_id":"location.house","platform_option_id":"realt.location.houseNumber","conversion":{"kind":"identity"}}
+{"common_option_id":"location.block","platform_option_id":"realt.location.buildingNumber","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.realt.area.living","platform_option_id":"realt.area.living","conversion":{"kind":"decimal","target":"number"}}
+{"common_option_id":"specific.realt.area.kitchen","platform_option_id":"realt.area.kitchen","conversion":{"kind":"decimal","target":"number"}}
+{"common_option_id":"specific.realt.apartment.toilet","platform_option_id":"realt.apartment.toilet","conversion":{"kind":"lookup","values":[{"from":"Раздельный","to":0},{"from":"Совмещенный","to":1},{"from":"2 и более","to":2}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.realt.house.wallsMaterial","platform_option_id":"realt.house.wallsMaterial","conversion":{"kind":"lookup","values":[{"from":"Кирпичный","to":1},{"from":"Панельный","to":17},{"from":"Блок-комнаты","to":22},{"from":"Бревенчатый","to":21},{"from":"Силикатные блоки","to":23},{"from":"Монолитно-каркасный","to":20}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.realt.additional.parking","platform_option_id":"realt.additional.parking","conversion":{"kind":"lookup","values":[{"from":"1-2","to":2},{"from":"3-5","to":3},{"from":"6-10","to":4},{"from":"> 10","to":5},{"from":"Нет","to":1}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.realt.termsOfDeal.rentPeriod","platform_option_id":"realt.termsOfDeal.rentPeriod","conversion":{"kind":"lookup","values":[{"from":"Месяц","to":30},{"from":"2 Месяца","to":60},{"from":"3 Месяца","to":90},{"from":"Полгода","to":180},{"from":"Год","to":365},{"from":"Длительный","to":999}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.realt.termsOfDeal.bargain","platform_option_id":"realt.termsOfDeal.bargain","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.realt.media.planning","platform_option_id":"realt.media.planning","conversion":{"kind":"files","preparation":{"operations":[]},"on_incompatible":"needs_review"}}
+{"common_option_id":"specific.realt.media.tour3d","platform_option_id":"realt.media.tour3d","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.realt.description.shortDescription","platform_option_id":"realt.description.shortDescription","conversion":{"kind":"identity"}}
+{"common_option_ids":["amenity.internet","amenity.fireplace","amenity.sauna","amenity.pool","amenity.gazebo","amenity.shower","amenity.jacuzzi","specific.realt.additional.appliance.294e6b29","specific.realt.additional.appliance.22aa1b07","specific.realt.additional.appliance.d90409f0"],"platform_option_id":"realt.additional.appliance","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.internet","values":[{"from":true,"to":607},{"from":false,"to":null}]},{"common_option_id":"amenity.fireplace","values":[{"from":true,"to":603},{"from":false,"to":null}]},{"common_option_id":"amenity.sauna","values":[{"from":true,"to":612},{"from":false,"to":null}]},{"common_option_id":"amenity.pool","values":[{"from":true,"to":613},{"from":false,"to":null}]},{"common_option_id":"amenity.gazebo","values":[{"from":true,"to":615},{"from":false,"to":null}]},{"common_option_id":"amenity.shower","values":[{"from":true,"to":611},{"from":false,"to":null}]},{"common_option_id":"amenity.jacuzzi","values":[{"from":true,"to":614},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.appliance.294e6b29","values":[{"from":true,"to":617},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.appliance.22aa1b07","values":[{"from":true,"to":619},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.appliance.d90409f0","values":[{"from":true,"to":620},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+{"common_option_ids":["amenity.tv","amenity.refrigerator","specific.realt.additional.applianceRental.9f76d3f6","specific.realt.additional.applianceRental.bf6aa5ad"],"platform_option_id":"realt.additional.applianceRental","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.tv","values":[{"from":true,"to":507},{"from":false,"to":null}]},{"common_option_id":"amenity.refrigerator","values":[{"from":true,"to":503},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.applianceRental.9f76d3f6","values":[{"from":true,"to":511},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.applianceRental.bf6aa5ad","values":[{"from":true,"to":512},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+{"common_option_ids":["amenity.garage","specific.realt.additional.infrastructure.dd13cd83","specific.realt.additional.infrastructure.f6ef524e","specific.realt.additional.infrastructure.f9d2cef1","specific.realt.additional.infrastructure.853f64a3"],"platform_option_id":"realt.additional.infrastructure","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.garage","values":[{"from":true,"to":744},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.infrastructure.dd13cd83","values":[{"from":true,"to":719},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.infrastructure.f6ef524e","values":[{"from":true,"to":703},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.infrastructure.f9d2cef1","values":[{"from":true,"to":724},{"from":false,"to":null}]},{"common_option_id":"specific.realt.additional.infrastructure.853f64a3","values":[{"from":true,"to":722},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+
+kufar: source SHA-256 9fdf2b2e035ba40e7e77c674518efe2cf8a76cfea25d98c5c437815e48c1e49d; binding SHA-256 7a92c2876d232b1efe029b25ebe0131f9f5fc16017ee48a6e9fa50aca65e94ec
+kufar.category | Подкатегория | route constant
+kufar.type | Тип сделки | route constant
+kufar.subject | Название товара/услуги | listing.title
+kufar.address | Адрес | location.label
+kufar.body | Описание | listing.description
+kufar.images | Фотографии | media.images
+kufar.currency | Выбор валюты | rental.currency
+kufar.contact_person | Контактное лицо | specific.kufar.contact_person
+kufar.phone | Телефон | contact.phone
+kufar.phone_hidden | Способ связи | specific.kufar.phone_hidden
+kufar.name | Имя | contact.name
+kufar.content_video | Видео на YouTube | media.video_url
+kufar.re_contract | Номер и дата договора | specific.kufar.re_contract
+kufar.region | Регион | Регион/направление и расстояние требуют подтверждённого адреса площадки; не подменять кодами геопровайдера.
+kufar.area | Город / Район | Регион/направление и расстояние требуют подтверждённого адреса площадки; не подменять кодами геопровайдера.
+kufar.re_heating | Отопление | house.heating
+kufar.re_water | Вода | house.water
+kufar.re_sewage | Канализация | house.sewer
+kufar.house_rent_near_area | Рядом с территорией | specific.kufar.house_rent_near_area
+kufar.gaz | Газ | house.gas
+kufar.house_type_for_rent | Вид объекта | house.kind
+kufar.house_rent_rooms | Комнат | house.rooms
+kufar.house_rent_couchettes | Количество гостей | house.capacity
+kufar.re_hot_water | Горячая вода | specific.kufar.re_hot_water
+kufar.house_rent_services | Услуги и развлечения | specific.kufar.house_rent_services
+kufar.size | Общая площадь, м² | house.total_area
+kufar.size_area | Площадь участка, соток | house.land_area
+kufar.house_rent_period | Тип аренды | route constant
+kufar.house_improvements | Удобства | composite
+kufar.house_rent_area | На территории | composite
+kufar.condition | Состояние | specific.kufar.condition
+kufar.house_rent_for_whom | Кому сдается | specific.kufar.house_rent_for_whom
+kufar.price | Цена за месяц | rental.monthly_price
+kufar.country_direction | Направление | Регион/направление и расстояние требуют подтверждённого адреса площадки; не подменять кодами геопровайдера.
+kufar.distance_ringway | Расстояние от МКАД, км | Регион/направление и расстояние требуют подтверждённого адреса площадки; не подменять кодами геопровайдера.
+kufar.negotiable_price | Договорная цена | specific.kufar.negotiable_price
+{"common_option_id":"rental.currency","platform_option_id":"kufar.currency","conversion":{"kind":"lookup","values":[{"from":"BYN","to":"BYR"},{"from":"USD","to":"USD"},{"from":"EUR","to":"EUR"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"rental.monthly_price","platform_option_id":"kufar.price","conversion":{"kind":"decimal","target":"number","requires":["kufar.currency"],"currency_field":"kufar.currency"}}
+{"common_option_id":"house.kind","platform_option_id":"kufar.house_type_for_rent","conversion":{"kind":"lookup","values":[{"from":"Дом","to":"1"},{"from":"Дача","to":"5"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.rooms","platform_option_id":"kufar.house_rent_rooms","conversion":{"kind":"lookup","values":[{"from":"1","to":"1"},{"from":"2","to":"2"},{"from":"3","to":"3"},{"from":"4","to":"4"},{"from":"5","to":"5"},{"from":"6","to":"6"},{"from":"7","to":"7"},{"from":"8","to":"8"},{"from":"9","to":"9"},{"from":"10 и более","to":"10"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.total_area","platform_option_id":"kufar.size","conversion":{"kind":"decimal","target":"number"}}
+{"common_option_id":"house.land_area","platform_option_id":"kufar.size_area","conversion":{"kind":"decimal","target":"number"}}
+{"common_option_id":"house.capacity","platform_option_id":"kufar.house_rent_couchettes","conversion":{"kind":"lookup","values":[{"from":"1","to":"1"},{"from":"2","to":"2"},{"from":"3","to":"3"},{"from":"4","to":"4"},{"from":"5","to":"5"},{"from":"6","to":"6"},{"from":"7","to":"7"},{"from":"8","to":"8"},{"from":"9","to":"9"},{"from":"10","to":"10"},{"from":"11","to":"11"},{"from":"12","to":"12"},{"from":"13","to":"13"},{"from":"14","to":"14"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.heating","platform_option_id":"kufar.re_heating","conversion":{"kind":"lookup","values":[{"from":"Газовое","to":"1"},{"from":"Центральное","to":"5"},{"from":"Электрическое","to":"10"},{"from":"Печное","to":"15"},{"from":"Твердотопливное","to":"17"},{"from":"Нет","to":"20"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.water","platform_option_id":"kufar.re_water","conversion":{"kind":"lookup","values":[{"from":"Сезонная","to":"1"},{"from":"Скважина","to":"5"},{"from":"Колодец","to":"10"},{"from":"Центральный водопровод","to":"15"},{"from":"Нет","to":"20"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.sewer","platform_option_id":"kufar.re_sewage","conversion":{"kind":"lookup","values":[{"from":"Центральная","to":"1"},{"from":"Выгребная яма","to":"5"},{"from":"Септик","to":"10"},{"from":"Биологическая очистка","to":"15"},{"from":"С/у на улице","to":"20"},{"from":"Нет","to":"25"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.gas","platform_option_id":"kufar.gaz","conversion":{"kind":"lookup","values":[{"from":"Есть","to":"1"},{"from":"Нет","to":"0"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"listing.description","platform_option_id":"kufar.body","conversion":{"kind":"identity"}}
+{"common_option_id":"listing.title","platform_option_id":"kufar.subject","conversion":{"kind":"identity"}}
+{"common_option_id":"media.images","platform_option_id":"kufar.images","conversion":{"kind":"files","preparation":{"operations":[]},"on_incompatible":"needs_review"}}
+{"common_option_id":"media.video_url","platform_option_id":"kufar.content_video","conversion":{"kind":"identity"}}
+{"common_option_id":"contact.name","platform_option_id":"kufar.name","conversion":{"kind":"identity"}}
+{"common_option_id":"contact.phone","platform_option_id":"kufar.phone","conversion":{"kind":"identity"}}
+{"common_option_id":"location.label","platform_option_id":"kufar.address","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.kufar.contact_person","platform_option_id":"kufar.contact_person","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.kufar.phone_hidden","platform_option_id":"kufar.phone_hidden","conversion":{"kind":"lookup","values":[{"from":"Звонки и сообщения","to":"0"},{"from":"Только сообщения","to":"1"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.kufar.re_contract","platform_option_id":"kufar.re_contract","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.kufar.house_rent_near_area","platform_option_id":"kufar.house_rent_near_area","conversion":{"kind":"list_lookup","values":[{"from":"Водоем, река, озеро","to":"1"},{"from":"Лес, пуща","to":"2"},{"from":"Горнолыжный центр","to":"3"},{"from":"Достопримечательности","to":"4"},{"from":"Живописное место","to":"5"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.kufar.re_hot_water","platform_option_id":"kufar.re_hot_water","conversion":{"kind":"lookup","values":[{"from":"Да","to":"1"},{"from":"-","to":"0"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.kufar.house_rent_services","platform_option_id":"kufar.house_rent_services","conversion":{"kind":"list_lookup","values":[{"from":"Бильярд, боулинг","to":"1"},{"from":"Велосипеды","to":"2"},{"from":"Десткая кровать/стульчик","to":"3"},{"from":"Кальян","to":"4"},{"from":"Караоке","to":"5"},{"from":"Квадроциклы","to":"6"},{"from":"Конные прогулки","to":"7"},{"from":"Конференц-зал","to":"8"},{"from":"Лыжи","to":"9"},{"from":"Оздоровление, лечение","to":"10"},{"from":"Организация питания","to":"11"},{"from":"Охота","to":"12"},{"from":"Пейнтбол, лазертаг","to":"13"},{"from":"Прокат лодки","to":"14"},{"from":"Рыбалка","to":"15"},{"from":"Теннис","to":"16"},{"from":"Тренажерный зал","to":"17"},{"from":"Экскурсии","to":"18"},{"from":"Яхта, катер","to":"19"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.kufar.condition","platform_option_id":"kufar.condition","conversion":{"kind":"lookup","values":[{"from":"Новое","to":"2"},{"from":"Вторичное","to":"1"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.kufar.house_rent_for_whom","platform_option_id":"kufar.house_rent_for_whom","conversion":{"kind":"list_lookup","values":[{"from":"Можно с питомцами","to":"1"},{"from":"Можно большой компанией","to":"3"},{"from":"Проведение мероприятий, банкета","to":"4"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.kufar.negotiable_price","platform_option_id":"kufar.negotiable_price","conversion":{"kind":"identity"}}
+{"common_option_ids":["amenity.furniture","amenity.internet","amenity.tv","amenity.washing_machine","amenity.air_conditioner","amenity.fireplace","amenity.garage","amenity.shower","amenity.jacuzzi","specific.kufar.house_improvements.810ef972","specific.kufar.house_improvements.084f0d30","specific.kufar.house_improvements.4c1a0c87","specific.kufar.house_improvements.307ab0c9","specific.kufar.house_improvements.441a9a5f","specific.kufar.house_improvements.f1de1de0"],"platform_option_id":"kufar.house_improvements","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.furniture","values":[{"from":true,"to":"7"},{"from":false,"to":null}]},{"common_option_id":"amenity.internet","values":[{"from":true,"to":"1"},{"from":false,"to":null}]},{"common_option_id":"amenity.tv","values":[{"from":true,"to":"2"},{"from":false,"to":null}]},{"common_option_id":"amenity.washing_machine","values":[{"from":true,"to":"10"},{"from":false,"to":null}]},{"common_option_id":"amenity.air_conditioner","values":[{"from":true,"to":"4"},{"from":false,"to":null}]},{"common_option_id":"amenity.fireplace","values":[{"from":true,"to":"8"},{"from":false,"to":null}]},{"common_option_id":"amenity.garage","values":[{"from":true,"to":"14"},{"from":false,"to":null}]},{"common_option_id":"amenity.shower","values":[{"from":true,"to":"12"},{"from":false,"to":null}]},{"common_option_id":"amenity.jacuzzi","values":[{"from":true,"to":"11"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_improvements.810ef972","values":[{"from":true,"to":"3"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_improvements.084f0d30","values":[{"from":true,"to":"5"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_improvements.4c1a0c87","values":[{"from":true,"to":"6"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_improvements.307ab0c9","values":[{"from":true,"to":"9"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_improvements.441a9a5f","values":[{"from":true,"to":"13"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_improvements.f1de1de0","values":[{"from":true,"to":"15"},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+{"common_option_ids":["amenity.sauna","amenity.pool","amenity.gazebo","specific.kufar.house_rent_area.0fb33a69","specific.kufar.house_rent_area.6d21e527","specific.kufar.house_rent_area.815f35ab","specific.kufar.house_rent_area.9c27fc56","specific.kufar.house_rent_area.dc777be2","specific.kufar.house_rent_area.cc78f3ce","specific.kufar.house_rent_area.7ddcfc5f","specific.kufar.house_rent_area.3ec30fdc"],"platform_option_id":"kufar.house_rent_area","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.sauna","values":[{"from":true,"to":"1"},{"from":false,"to":null}]},{"common_option_id":"amenity.pool","values":[{"from":true,"to":"2"},{"from":false,"to":null}]},{"common_option_id":"amenity.gazebo","values":[{"from":true,"to":"3"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.0fb33a69","values":[{"from":true,"to":"4"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.6d21e527","values":[{"from":true,"to":"5"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.815f35ab","values":[{"from":true,"to":"6"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.9c27fc56","values":[{"from":true,"to":"7"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.dc777be2","values":[{"from":true,"to":"8"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.cc78f3ce","values":[{"from":true,"to":"9"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.7ddcfc5f","values":[{"from":true,"to":"10"},{"from":false,"to":null}]},{"common_option_id":"specific.kufar.house_rent_area.3ec30fdc","values":[{"from":true,"to":"11"},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+
+domovita: source SHA-256 414c15ef7b53dc2a0b08d4c5fd2621df8239df360e25dabbecb692ba72a51416; binding SHA-256 f23c9d3666607e3452ca95ebc2d5ed4077004bb523859cbeefe4067760ecd94f
+domovita.action | Подать объявление о | route constant
+domovita.type | Тип недвижимости | route constant
+domovita.town_id | Населённый пункт | address
+domovita.street_name | Улица | address
+domovita.house_number | Дом | address
+domovita.contact_name | Как обращаться | contact.name
+domovita.phones.0.contact_phone | Телефон для связи | contact.phone
+domovita.email | Эл. почта | specific.domovita.email
+domovita.building_year | Год постройки | house.building_year
+domovita.area_ground | Участок (сотки) | house.land_area
+domovita.buiding_levels | Кол-во уровней | house.levels
+domovita.area_total | Площадь м² | house.total_area
+domovita.youtube_link | Ссылка на видео с YouTube | media.video_url
+domovita.price | Общая цена | rental.monthly_price
+domovita.rooms | Количество комнат | house.rooms
+domovita.phone | Телефон | house.landline
+domovita.heating | Отопление | house.heating
+domovita.gas | Газ | house.gas
+domovita.electro | Электричество | house.electricity
+domovita.price_currency_text | Валюта | rental.currency
+domovita.prepayment | Предоплата | specific.domovita.prepayment
+domovita.extra_info_comments | Дополнительные опции | composite
+domovita.images | Фотографии | media.images
+domovita.description | Описание | listing.description
+{"common_option_id":"rental.currency","platform_option_id":"domovita.price_currency_text","conversion":{"kind":"lookup","values":[{"from":"USD","to":"USD"},{"from":"EUR","to":"EUR"},{"from":"BYN","to":"BYN"},{"from":"RUB","to":"RUB"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"rental.monthly_price","platform_option_id":"domovita.price","conversion":{"kind":"identity","requires":["domovita.price_currency_text"]}}
+{"common_option_id":"house.rooms","platform_option_id":"domovita.rooms","conversion":{"kind":"lookup","values":[{"from":"1","to":1},{"from":"2","to":2},{"from":"3","to":3},{"from":"4","to":4},{"from":"5","to":5},{"from":"6","to":6},{"from":"7","to":7}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.total_area","platform_option_id":"domovita.area_total","conversion":{"kind":"identity"}}
+{"common_option_id":"house.land_area","platform_option_id":"domovita.area_ground","conversion":{"kind":"identity"}}
+{"common_option_id":"house.levels","platform_option_id":"domovita.buiding_levels","conversion":{"kind":"identity"}}
+{"common_option_id":"house.building_year","platform_option_id":"domovita.building_year","conversion":{"kind":"identity"}}
+{"common_option_id":"house.heating","platform_option_id":"domovita.heating","conversion":{"kind":"lookup","values":[{"from":"Газовое","to":"газовое"},{"from":"Центральное","to":"центральное"},{"from":"Электрическое","to":"электрическое"},{"from":"Печное","to":"печное"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.gas","platform_option_id":"domovita.gas","conversion":{"kind":"lookup","values":[{"from":"В посёлке","to":"В посёлке"},{"from":"В доме","to":"В доме"},{"from":"Нет","to":"Нет"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.electricity","platform_option_id":"domovita.electro","conversion":{"kind":"lookup","values":[{"from":"Есть","to":1},{"from":"Нет","to":0}],"on_unmapped":"needs_review"}}
+{"common_option_id":"house.landline","platform_option_id":"domovita.phone","conversion":{"kind":"lookup","values":[{"from":"Есть","to":"Есть"},{"from":"Нет","to":"Нет"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"listing.description","platform_option_id":"domovita.description","conversion":{"kind":"identity"}}
+{"common_option_id":"media.images","platform_option_id":"domovita.images","conversion":{"kind":"files","preparation":{"operations":[]},"on_incompatible":"needs_review"}}
+{"common_option_id":"media.video_url","platform_option_id":"domovita.youtube_link","conversion":{"kind":"identity"}}
+{"common_option_id":"contact.name","platform_option_id":"domovita.contact_name","conversion":{"kind":"identity"}}
+{"common_option_id":"contact.phone","platform_option_id":"domovita.phones.0.contact_phone","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.domovita.email","platform_option_id":"domovita.email","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.domovita.prepayment","platform_option_id":"domovita.prepayment","conversion":{"kind":"lookup","values":[{"from":"нет","to":"нет"},{"from":"месяц","to":"месяц"},{"from":"2 месяца","to":"2 месяца"},{"from":"3 месяца","to":"3 месяца"},{"from":"полгода","to":"полгода"}],"on_unmapped":"needs_review"}}
+{"common_option_ids":["amenity.air_conditioner"],"platform_option_id":"domovita.extra_info_comments","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.air_conditioner","values":[{"from":true,"to":"kondicioner"},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+
+onliner: source SHA-256 5493dff9999f31a94912967b245177ef852d120a93a0ded02415da9c35a75ab1; binding SHA-256 17847ee88f4132c4fbda1d467bb22f65161cccc8508b1de80ca4055f0d3f41b2
+onliner.images | Фотографии дома | media.images
+onliner.rent_type | Что сдаете в аренду? | route constant
+onliner.room_count | Количество комнат | house.rooms
+onliner.address_query | Город, улица, номер дома: поисковый ввод | location.label
+onliner.facilities | Какие удобства есть в доме? | composite
+onliner.description | Подробное описание | listing.description
+onliner.rent_rules | Условия аренды | specific.onliner.rent_rules
+onliner.price_amount | Стоимость аренды в месяц | rental.monthly_price
+onliner.price_currency | Валюта ввода стоимости | rental.currency
+onliner.contact_owner | Собственник / Агентство | specific.onliner.contact_owner
+onliner.agency_name | Юридическое наименование | specific.onliner.agency_name
+onliner.agency_unp | УНП | specific.onliner.agency_unp
+onliner.agency_contract_number | Номер договора | specific.onliner.agency_contract_number
+onliner.agency_contract_date | Дата заключения договора | specific.onliner.agency_contract_date
+onliner.agency_licence_number | Номер лицензии | specific.onliner.agency_licence_number
+onliner.agency_licence_date | Дата выдачи лицензии | specific.onliner.agency_licence_date
+onliner.contact_name | Ваше имя | contact.name
+onliner.contact_phone | Номер телефона в международном формате | contact.phone
+onliner.call_time_from | Звонить с | specific.onliner.call_time_from
+onliner.call_time_to | Звонить до | specific.onliner.call_time_to
+{"common_option_id":"rental.currency","platform_option_id":"onliner.price_currency","conversion":{"kind":"lookup","values":[{"from":"USD","to":"USD"},{"from":"BYN","to":"BYN"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"rental.monthly_price","platform_option_id":"onliner.price_amount","conversion":{"kind":"decimal","target":"number","requires":["onliner.price_currency"],"currency_field":"onliner.price_currency","integer_currencies":["USD"]}}
+{"common_option_id":"house.rooms","platform_option_id":"onliner.room_count","conversion":{"kind":"lookup","values":[{"from":"1","to":"1_room"},{"from":"2","to":"2_rooms"},{"from":"3","to":"3_rooms"},{"from":"4","to":"4_rooms"},{"from":"5","to":"5_rooms"},{"from":"6","to":"6_rooms"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"listing.description","platform_option_id":"onliner.description","conversion":{"kind":"identity"}}
+{"common_option_id":"media.images","platform_option_id":"onliner.images","conversion":{"kind":"files","preparation":{"operations":[]},"on_incompatible":"needs_review"}}
+{"common_option_id":"contact.name","platform_option_id":"onliner.contact_name","conversion":{"kind":"identity"}}
+{"common_option_id":"contact.phone","platform_option_id":"onliner.contact_phone","conversion":{"kind":"identity"}}
+{"common_option_id":"location.label","platform_option_id":"onliner.address_query","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.rent_rules","platform_option_id":"onliner.rent_rules","conversion":{"kind":"list_lookup","values":[{"from":"Не студентам","to":"not_student"},{"from":"Без детей","to":"without_children"},{"from":"Без животных","to":"without_animals"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.onliner.contact_owner","platform_option_id":"onliner.contact_owner","conversion":{"kind":"lookup","values":[{"from":"Собственник","to":true},{"from":"Агентство","to":false}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.onliner.agency_name","platform_option_id":"onliner.agency_name","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.agency_unp","platform_option_id":"onliner.agency_unp","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.agency_contract_number","platform_option_id":"onliner.agency_contract_number","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.agency_contract_date","platform_option_id":"onliner.agency_contract_date","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.agency_licence_number","platform_option_id":"onliner.agency_licence_number","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.agency_licence_date","platform_option_id":"onliner.agency_licence_date","conversion":{"kind":"identity"}}
+{"common_option_id":"specific.onliner.call_time_from","platform_option_id":"onliner.call_time_from","conversion":{"kind":"lookup","values":[{"from":"0:00","to":"0"},{"from":"1:00","to":"1"},{"from":"2:00","to":"2"},{"from":"3:00","to":"3"},{"from":"4:00","to":"4"},{"from":"5:00","to":"5"},{"from":"6:00","to":"6"},{"from":"7:00","to":"7"},{"from":"8:00","to":"8"},{"from":"9:00","to":"9"},{"from":"10:00","to":"10"},{"from":"11:00","to":"11"},{"from":"12:00","to":"12"},{"from":"13:00","to":"13"},{"from":"14:00","to":"14"},{"from":"15:00","to":"15"},{"from":"16:00","to":"16"},{"from":"17:00","to":"17"},{"from":"18:00","to":"18"},{"from":"19:00","to":"19"},{"from":"20:00","to":"20"},{"from":"21:00","to":"21"},{"from":"22:00","to":"22"},{"from":"23:00","to":"23"}],"on_unmapped":"needs_review"}}
+{"common_option_id":"specific.onliner.call_time_to","platform_option_id":"onliner.call_time_to","conversion":{"kind":"lookup","values":[{"from":"0:00","to":"0"},{"from":"1:00","to":"1"},{"from":"2:00","to":"2"},{"from":"3:00","to":"3"},{"from":"4:00","to":"4"},{"from":"5:00","to":"5"},{"from":"6:00","to":"6"},{"from":"7:00","to":"7"},{"from":"8:00","to":"8"},{"from":"9:00","to":"9"},{"from":"10:00","to":"10"},{"from":"11:00","to":"11"},{"from":"12:00","to":"12"},{"from":"13:00","to":"13"},{"from":"14:00","to":"14"},{"from":"15:00","to":"15"},{"from":"16:00","to":"16"},{"from":"17:00","to":"17"},{"from":"18:00","to":"18"},{"from":"19:00","to":"19"},{"from":"20:00","to":"20"},{"from":"21:00","to":"21"},{"from":"22:00","to":"22"},{"from":"23:00","to":"23"}],"on_unmapped":"needs_review"}}
+{"common_option_ids":["amenity.furniture","amenity.internet","amenity.tv","amenity.refrigerator","amenity.washing_machine","amenity.air_conditioner","specific.onliner.facilities.7edaaee6","specific.onliner.facilities.fd2abc32","specific.onliner.facilities.387e96be"],"platform_option_id":"onliner.facilities","conversion":{"kind":"multi_lookup","members":[{"common_option_id":"amenity.furniture","values":[{"from":true,"to":"furniture"},{"from":false,"to":null}]},{"common_option_id":"amenity.internet","values":[{"from":true,"to":"internet"},{"from":false,"to":null}]},{"common_option_id":"amenity.tv","values":[{"from":true,"to":"tv"},{"from":false,"to":null}]},{"common_option_id":"amenity.refrigerator","values":[{"from":true,"to":"refrigerator"},{"from":false,"to":null}]},{"common_option_id":"amenity.washing_machine","values":[{"from":true,"to":"washing_machine"},{"from":false,"to":null}]},{"common_option_id":"amenity.air_conditioner","values":[{"from":true,"to":"conditioner"},{"from":false,"to":null}]},{"common_option_id":"specific.onliner.facilities.7edaaee6","values":[{"from":true,"to":"kitchen_furniture"},{"from":false,"to":null}]},{"common_option_id":"specific.onliner.facilities.fd2abc32","values":[{"from":true,"to":"stove"},{"from":false,"to":null}]},{"common_option_id":"specific.onliner.facilities.387e96be","values":[{"from":true,"to":"balcony"},{"from":false,"to":null}]}],"on_unmapped":"needs_review"}}
+Основание rental.currency: realt / realt.termsOfDeal.currency / Цена
+Основание rental.currency: kufar / kufar.currency / Выбор валюты
+Основание rental.currency: domovita / domovita.price_currency_text / Валюта
+Основание rental.currency: onliner / onliner.price_currency / Валюта ввода стоимости
+Основание rental.monthly_price: realt / realt.termsOfDeal.price / За месяц
+Основание rental.monthly_price: kufar / kufar.price / Цена за месяц
+Основание rental.monthly_price: domovita / domovita.price / Общая цена
+Основание rental.monthly_price: onliner / onliner.price_amount / Стоимость аренды в месяц
+Основание house.kind: realt / realt.object_type / Вид недвижимости
+Основание house.kind: kufar / kufar.house_type_for_rent / Вид объекта
+Основание house.rooms: kufar / kufar.house_rent_rooms / Комнат
+Основание house.rooms: domovita / domovita.rooms / Количество комнат
+Основание house.rooms: onliner / onliner.room_count / Количество комнат
+Основание house.total_area: realt / realt.area.total / Площадь общая, м²
+Основание house.total_area: kufar / kufar.size / Общая площадь, м²
+Основание house.total_area: domovita / domovita.area_total / Площадь м²
+Основание house.land_area: realt / realt.area.ground / Площадь участка, соток
+Основание house.land_area: kufar / kufar.size_area / Площадь участка, соток
+Основание house.land_area: domovita / domovita.area_ground / Участок (сотки)
+Основание house.levels: realt / realt.apartment.buildingLevels / Уровней в доме
+Основание house.levels: domovita / domovita.buiding_levels / Кол-во уровней
+Основание house.building_year: realt / realt.apartment.buildingYear / Год постройки
+Основание house.building_year: domovita / domovita.building_year / Год постройки
+Основание house.capacity: realt / realt.apartment.capacity / Вместимость человек
+Основание house.capacity: kufar / kufar.house_rent_couchettes / Количество гостей
+Основание house.heating: realt / realt.apartment.heating / Отопление
+Основание house.heating: kufar / kufar.re_heating / Отопление
+Основание house.heating: domovita / domovita.heating / Отопление
+Основание house.water: realt / realt.plot.water / Водоснабжение
+Основание house.water: kufar / kufar.re_water / Вода
+Основание house.sewer: realt / realt.plot.sewer / Канализация
+Основание house.sewer: kufar / kufar.re_sewage / Канализация
+Основание house.gas: realt / realt.plot.gas / Газоснабжение
+Основание house.gas: kufar / kufar.gaz / Газ
+Основание house.gas: domovita / domovita.gas / Газ
+Основание house.electricity: realt / realt.apartment.electricity / Электричество
+Основание house.electricity: domovita / domovita.electro / Электричество
+Основание house.landline: realt / realt.additional.phone / Количество телефонов
+Основание house.landline: domovita / domovita.phone / Телефон
+Основание listing.description: realt / realt.description.description / Подробное описание
+Основание listing.description: kufar / kufar.body / Описание
+Основание listing.description: domovita / domovita.description / Описание
+Основание listing.description: onliner / onliner.description / Подробное описание
+Основание listing.title: realt / realt.description.title / Заголовок
+Основание listing.title: kufar / kufar.subject / Название товара/услуги
+Основание media.images: realt / realt.media.photos / Фото
+Основание media.images: kufar / kufar.images / Фотографии
+Основание media.images: domovita / domovita.images / Фотографии
+Основание media.images: onliner / onliner.images / Фотографии дома
+Основание media.video_url: realt / realt.media.youtube / Ссылка на видео YouTube
+Основание media.video_url: kufar / kufar.content_video / Видео на YouTube
+Основание media.video_url: domovita / domovita.youtube_link / Ссылка на видео с YouTube
+Основание contact.name: kufar / kufar.name / Имя
+Основание contact.name: domovita / domovita.contact_name / Как обращаться
+Основание contact.name: onliner / onliner.contact_name / Ваше имя
+Основание contact.phone: kufar / kufar.phone / Телефон
+Основание contact.phone: domovita / domovita.phones.0.contact_phone / Телефон для связи
+Основание contact.phone: onliner / onliner.contact_phone / Номер телефона в международном формате
+Основание amenity.furniture: realt / realt.additional.furniture / Мебель
+Основание amenity.furniture: kufar / kufar.house_improvements / Удобства
+Основание amenity.furniture: onliner / onliner.facilities / Какие удобства есть в доме?
+Основание amenity.internet: realt / realt.additional.appliance / Удобства
+Основание amenity.internet: kufar / kufar.house_improvements / Удобства
+Основание amenity.internet: onliner / onliner.facilities / Какие удобства есть в доме?
+Основание amenity.tv: realt / realt.additional.applianceRental / Бытовая техника
+Основание amenity.tv: kufar / kufar.house_improvements / Удобства
+Основание amenity.tv: onliner / onliner.facilities / Какие удобства есть в доме?
+Основание amenity.refrigerator: realt / realt.additional.applianceRental / Бытовая техника
+Основание amenity.refrigerator: onliner / onliner.facilities / Какие удобства есть в доме?
+Основание amenity.washing_machine: kufar / kufar.house_improvements / Удобства
+Основание amenity.washing_machine: onliner / onliner.facilities / Какие удобства есть в доме?
+Основание amenity.air_conditioner: kufar / kufar.house_improvements / Удобства
+Основание amenity.air_conditioner: domovita / domovita.extra_info_comments / Дополнительные опции
+Основание amenity.air_conditioner: onliner / onliner.facilities / Какие удобства есть в доме?
+Основание amenity.fireplace: realt / realt.additional.appliance / Удобства
+Основание amenity.fireplace: kufar / kufar.house_improvements / Удобства
+Основание amenity.sauna: realt / realt.additional.appliance / Удобства
+Основание amenity.sauna: kufar / kufar.house_rent_area / На территории
+Основание amenity.pool: realt / realt.additional.appliance / Удобства
+Основание amenity.pool: kufar / kufar.house_rent_area / На территории
+Основание amenity.gazebo: realt / realt.additional.appliance / Удобства
+Основание amenity.gazebo: kufar / kufar.house_rent_area / На территории
+Основание amenity.garage: realt / realt.additional.infrastructure / Инфраструктура
+Основание amenity.garage: kufar / kufar.house_improvements / Удобства
+Основание amenity.shower: realt / realt.additional.appliance / Удобства
+Основание amenity.shower: kufar / kufar.house_improvements / Удобства
+Основание amenity.jacuzzi: realt / realt.additional.appliance / Удобства
+Основание amenity.jacuzzi: kufar / kufar.house_improvements / Удобства
+Основание location.house: realt / realt.location.houseNumber / Дом
+Основание location.block: realt / realt.location.buildingNumber / Корпус
+Основание location.label: kufar / kufar.address / Адрес
+Основание location.label: onliner / onliner.address_query / Город, улица, номер дома: поисковый ввод
+Основание specific.realt.area.living: realt / realt.area.living / Площадь жилая, м²
+Основание specific.realt.area.kitchen: realt / realt.area.kitchen / Площадь кухни, м²
+Основание specific.realt.apartment.toilet: realt / realt.apartment.toilet / Санузел
+Основание specific.realt.house.wallsMaterial: realt / realt.house.wallsMaterial / Материал стен
+Основание specific.realt.additional.parking: realt / realt.additional.parking / Мест для парковки
+Основание specific.realt.termsOfDeal.rentPeriod: realt / realt.termsOfDeal.rentPeriod / Срок сдачи
+Основание specific.realt.termsOfDeal.bargain: realt / realt.termsOfDeal.bargain / Возможен торг
+Основание specific.realt.media.planning: realt / realt.media.planning / Фото планировки
+Основание specific.realt.media.tour3d: realt / realt.media.tour3d / 3D тур
+Основание specific.realt.description.shortDescription: realt / realt.description.shortDescription / Краткое описание
+Основание specific.kufar.contact_person: kufar / kufar.contact_person / Контактное лицо
+Основание specific.kufar.phone_hidden: kufar / kufar.phone_hidden / Способ связи
+Основание specific.kufar.re_contract: kufar / kufar.re_contract / Номер и дата договора
+Основание specific.kufar.house_rent_near_area: kufar / kufar.house_rent_near_area / Рядом с территорией
+Основание specific.kufar.re_hot_water: kufar / kufar.re_hot_water / Горячая вода
+Основание specific.kufar.house_rent_services: kufar / kufar.house_rent_services / Услуги и развлечения
+Основание specific.kufar.condition: kufar / kufar.condition / Состояние
+Основание specific.kufar.house_rent_for_whom: kufar / kufar.house_rent_for_whom / Кому сдается
+Основание specific.kufar.negotiable_price: kufar / kufar.negotiable_price / Договорная цена
+Основание specific.domovita.email: domovita / domovita.email / Эл. почта
+Основание specific.domovita.prepayment: domovita / domovita.prepayment / Предоплата
+Основание specific.onliner.rent_rules: onliner / onliner.rent_rules / Условия аренды
+Основание specific.onliner.contact_owner: onliner / onliner.contact_owner / Собственник / Агентство
+Основание specific.onliner.agency_name: onliner / onliner.agency_name / Юридическое наименование
+Основание specific.onliner.agency_unp: onliner / onliner.agency_unp / УНП
+Основание specific.onliner.agency_contract_number: onliner / onliner.agency_contract_number / Номер договора
+Основание specific.onliner.agency_contract_date: onliner / onliner.agency_contract_date / Дата заключения договора
+Основание specific.onliner.agency_licence_number: onliner / onliner.agency_licence_number / Номер лицензии
+Основание specific.onliner.agency_licence_date: onliner / onliner.agency_licence_date / Дата выдачи лицензии
+Основание specific.onliner.call_time_from: onliner / onliner.call_time_from / Звонить с
+Основание specific.onliner.call_time_to: onliner / onliner.call_time_to / Звонить до
+houses_long_term_rent_common.json | SHA-256 a190977e9ba70a29a02e7f41278e4d2bed1576819ca3c38b73353a01355afa15
+mapping_houses_long_term_rent_domovita.json | SHA-256 bcab06635c5cd8ad2cac0b9d73d7972c0480b48ed86f975ed51c388321c420e1
+mapping_houses_long_term_rent_kufar.json | SHA-256 b4437b1ad820a5d1d886c2a34ba27973260609b67e513eddf327c5d7de803421
+mapping_houses_long_term_rent_onliner.json | SHA-256 9731f5e19a576a610040b826622354e4ef1a136b6cdf214b1bb565d0851604f4
+mapping_houses_long_term_rent_realt.json | SHA-256 c4829b89089e2e48f94591f5b861650a7ba380f76d8db171f01441de811d3ad1
+Приёмка: ссылки и нативные lookup-коды проверены генератором и тестами backend; готовность browser binding не утверждается. Исходники этапа A не изменены.

@@ -1,0 +1,44 @@
+ONLINER — ШАБЛОН ДЛИТЕЛЬНОЙ АРЕНДЫ ДОМОВ
+Дата: 2026-11-08 (Europe/Minsk). Категория: houses_long_term_rent. Контракт: 2.1.
+
+Основание: прямое указание пользователя «для онлайнер используй то же что есть для квартиры, скопируй и переименуй». Оно заменяет прежнее решение оставить схему Onliner пустой. Это копирование шаблона, а не новое наблюдение площадки.
+Источник — уточнённый рабочий комплект аренды квартир, 20 полей; первоначальный частичный снимок с 16 полями не использован.
+Категория и её название переименованы. Подписи «Фотографии квартиры» и «Какие удобства есть в квартире?» адаптированы для дома. Все option_id, типы, варианты choice, нативные коды, ограничения, условия и известные селекторы сохранены.
+При переносе 1.2 → 2.1 факты из fill_rule подняты в Option, choice.fill_rule.value → choice.value, depends_on перенесён в binding. Корень binding приведён к {category_id, platform, fields}. Для перечислений добавлен options_complete=false: новая проверка полноты для домов не проводилась.
+Квартирный маршрут https://r.onliner.by/ak/apartments/create и коды flat/room сохранены как часть шаблона. Код house и другая точка подачи не выдуманы. Исходные описания исторических тестов снабжены пометкой об их квартирном происхождении.
+Наблюдение предыдущего исследования сохраняет силу: в доступной форме Onliner были варианты «Квартиру» и «Комнату». Копия по указанию пользователя не является независимым подтверждением поддержки домов и не должна считаться дополнительным источником доказательств при сравнении площадок.
+Скопированные действия, селекторы и verify оставлены для последующей адаптации. Все 20 binding-записей имеют needs_review; для полей без исходной привязки добавлена запись с причиной. Это не разрешение автоматически отправлять объявления. Runtime, публикация, common/mapping и другие площадки не изменялись.
+
+ВХОДЫ / SHA-256 по байтам:
+data/rental/apartments_long_term_rent/onliner/apartments_long_term_rent_onliner.json | c6ac0cd45b076ede2fef1953d0e0bdad73954276ccebdd21873453a6c0e71dbf
+data/rental/apartments_long_term_rent/onliner/bindings_apartments_long_term_rent_onliner.json | fde16a8da377d94c9a3f5445b59d9cec52fdf144c1b5c8f742e021bdeba18b3d
+
+ПОЛЯ / ПОКРЫТИЕ:
+onliner.images | Фотографии дома | files | needs_review | привязка скопирована
+onliner.rent_type | Что сдаете в аренду? | enum | needs_review | в исходнике привязки нет
+onliner.room_count | Количество комнат | enum | needs_review | в исходнике привязки нет
+onliner.address_query | Город, улица, номер дома: поисковый ввод | text | needs_review | в исходнике привязки нет
+onliner.facilities | Какие удобства есть в доме? | multi_enum | needs_review | в исходнике привязки нет
+onliner.description | Подробное описание | text | needs_review | привязка скопирована
+onliner.rent_rules | Условия аренды | multi_enum | needs_review | в исходнике привязки нет
+onliner.price_amount | Стоимость аренды в месяц | number | needs_review | привязка скопирована
+onliner.price_currency | Валюта ввода стоимости | enum | needs_review | привязка скопирована
+onliner.contact_owner | Собственник / Агентство | enum | needs_review | в исходнике привязки нет
+onliner.agency_name | Юридическое наименование | text | needs_review | привязка скопирована
+onliner.agency_unp | УНП | text | needs_review | привязка скопирована
+onliner.agency_contract_number | Номер договора | text | needs_review | привязка скопирована
+onliner.agency_contract_date | Дата заключения договора | date | needs_review | привязка скопирована
+onliner.agency_licence_number | Номер лицензии | text | needs_review | привязка скопирована
+onliner.agency_licence_date | Дата выдачи лицензии | date | needs_review | привязка скопирована
+onliner.contact_name | Ваше имя | text | needs_review | в исходнике привязки нет
+onliner.contact_phone | Номер телефона в международном формате | text | needs_review | в исходнике привязки нет
+onliner.call_time_from | Звонить с | enum | needs_review | привязка скопирована
+onliner.call_time_to | Звонить до | enum | needs_review | привязка скопирована
+
+ПРИЁМКА: 20 полей = 0 ready + 20 needs_review + 0 unsupported. Скопировано исходных привязок: 12.
+Пройдено: UTF-8 JSON; обязательные свойства; уникальность ID; полное покрытие полей binding; разрешение when/depends_on; отсутствие циклов; точное сохранение типов и значений choice, ограничений и исходных действий; исходные файлы квартир не изменены.
+Не выполнялось: новая проверка браузером, подтверждение собственной ветви домов и её финальная отправка.
+
+ВЫХОДЫ / SHA-256 по байтам:
+data/parsing/houses_long_term_rent/houses_long_term_rent_onliner.json | 5493dff9999f31a94912967b245177ef852d120a93a0ded02415da9c35a75ab1
+data/parsing/houses_long_term_rent/binding_houses_long_term_rent_onliner.json | 17847ee88f4132c4fbda1d467bb22f65161cccc8508b1de80ca4055f0d3f41b2

@@ -1,0 +1,971 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "houses_long_term_rent",
+  "platform": "kufar",
+  "fields": [
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "kufar.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "BYR"
+          },
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.monthly_price",
+      "platform_option_id": "kufar.price",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number",
+        "requires": [
+          "kufar.currency"
+        ],
+        "currency_field": "kufar.currency"
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "kufar.house_type_for_rent",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": "1"
+          },
+          {
+            "from": "Дача",
+            "to": "5"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.rooms",
+      "platform_option_id": "kufar.house_rent_rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10 и более",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.total_area",
+      "platform_option_id": "kufar.size",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.land_area",
+      "platform_option_id": "kufar.size_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.capacity",
+      "platform_option_id": "kufar.house_rent_couchettes",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10",
+            "to": "10"
+          },
+          {
+            "from": "11",
+            "to": "11"
+          },
+          {
+            "from": "12",
+            "to": "12"
+          },
+          {
+            "from": "13",
+            "to": "13"
+          },
+          {
+            "from": "14",
+            "to": "14"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "kufar.re_heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Газовое",
+            "to": "1"
+          },
+          {
+            "from": "Центральное",
+            "to": "5"
+          },
+          {
+            "from": "Электрическое",
+            "to": "10"
+          },
+          {
+            "from": "Печное",
+            "to": "15"
+          },
+          {
+            "from": "Твердотопливное",
+            "to": "17"
+          },
+          {
+            "from": "Нет",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.water",
+      "platform_option_id": "kufar.re_water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Сезонная",
+            "to": "1"
+          },
+          {
+            "from": "Скважина",
+            "to": "5"
+          },
+          {
+            "from": "Колодец",
+            "to": "10"
+          },
+          {
+            "from": "Центральный водопровод",
+            "to": "15"
+          },
+          {
+            "from": "Нет",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.sewer",
+      "platform_option_id": "kufar.re_sewage",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Центральная",
+            "to": "1"
+          },
+          {
+            "from": "Выгребная яма",
+            "to": "5"
+          },
+          {
+            "from": "Септик",
+            "to": "10"
+          },
+          {
+            "from": "Биологическая очистка",
+            "to": "15"
+          },
+          {
+            "from": "С/у на улице",
+            "to": "20"
+          },
+          {
+            "from": "Нет",
+            "to": "25"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "kufar.gaz",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": "1"
+          },
+          {
+            "from": "Нет",
+            "to": "0"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "kufar.body",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "kufar.subject",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "kufar.images",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "kufar.content_video",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "kufar.name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "kufar.phone",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "location.label",
+      "platform_option_id": "kufar.address",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.contact_person",
+      "platform_option_id": "kufar.contact_person",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.phone_hidden",
+      "platform_option_id": "kufar.phone_hidden",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Звонки и сообщения",
+            "to": "0"
+          },
+          {
+            "from": "Только сообщения",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_contract",
+      "platform_option_id": "kufar.re_contract",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.house_rent_near_area",
+      "platform_option_id": "kufar.house_rent_near_area",
+      "conversion": {
+        "kind": "list_lookup",
+        "values": [
+          {
+            "from": "Водоем, река, озеро",
+            "to": "1"
+          },
+          {
+            "from": "Лес, пуща",
+            "to": "2"
+          },
+          {
+            "from": "Горнолыжный центр",
+            "to": "3"
+          },
+          {
+            "from": "Достопримечательности",
+            "to": "4"
+          },
+          {
+            "from": "Живописное место",
+            "to": "5"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_hot_water",
+      "platform_option_id": "kufar.re_hot_water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "1"
+          },
+          {
+            "from": "-",
+            "to": "0"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.house_rent_services",
+      "platform_option_id": "kufar.house_rent_services",
+      "conversion": {
+        "kind": "list_lookup",
+        "values": [
+          {
+            "from": "Бильярд, боулинг",
+            "to": "1"
+          },
+          {
+            "from": "Велосипеды",
+            "to": "2"
+          },
+          {
+            "from": "Десткая кровать/стульчик",
+            "to": "3"
+          },
+          {
+            "from": "Кальян",
+            "to": "4"
+          },
+          {
+            "from": "Караоке",
+            "to": "5"
+          },
+          {
+            "from": "Квадроциклы",
+            "to": "6"
+          },
+          {
+            "from": "Конные прогулки",
+            "to": "7"
+          },
+          {
+            "from": "Конференц-зал",
+            "to": "8"
+          },
+          {
+            "from": "Лыжи",
+            "to": "9"
+          },
+          {
+            "from": "Оздоровление, лечение",
+            "to": "10"
+          },
+          {
+            "from": "Организация питания",
+            "to": "11"
+          },
+          {
+            "from": "Охота",
+            "to": "12"
+          },
+          {
+            "from": "Пейнтбол, лазертаг",
+            "to": "13"
+          },
+          {
+            "from": "Прокат лодки",
+            "to": "14"
+          },
+          {
+            "from": "Рыбалка",
+            "to": "15"
+          },
+          {
+            "from": "Теннис",
+            "to": "16"
+          },
+          {
+            "from": "Тренажерный зал",
+            "to": "17"
+          },
+          {
+            "from": "Экскурсии",
+            "to": "18"
+          },
+          {
+            "from": "Яхта, катер",
+            "to": "19"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.condition",
+      "platform_option_id": "kufar.condition",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Новое",
+            "to": "2"
+          },
+          {
+            "from": "Вторичное",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.house_rent_for_whom",
+      "platform_option_id": "kufar.house_rent_for_whom",
+      "conversion": {
+        "kind": "list_lookup",
+        "values": [
+          {
+            "from": "Можно с питомцами",
+            "to": "1"
+          },
+          {
+            "from": "Можно большой компанией",
+            "to": "3"
+          },
+          {
+            "from": "Проведение мероприятий, банкета",
+            "to": "4"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.negotiable_price",
+      "platform_option_id": "kufar.negotiable_price",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.furniture",
+        "amenity.internet",
+        "amenity.tv",
+        "amenity.washing_machine",
+        "amenity.air_conditioner",
+        "amenity.fireplace",
+        "amenity.garage",
+        "amenity.shower",
+        "amenity.jacuzzi",
+        "specific.kufar.house_improvements.810ef972",
+        "specific.kufar.house_improvements.084f0d30",
+        "specific.kufar.house_improvements.4c1a0c87",
+        "specific.kufar.house_improvements.307ab0c9",
+        "specific.kufar.house_improvements.441a9a5f",
+        "specific.kufar.house_improvements.f1de1de0"
+      ],
+      "platform_option_id": "kufar.house_improvements",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.furniture",
+            "values": [
+              {
+                "from": true,
+                "to": "7"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.internet",
+            "values": [
+              {
+                "from": true,
+                "to": "1"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.tv",
+            "values": [
+              {
+                "from": true,
+                "to": "2"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.washing_machine",
+            "values": [
+              {
+                "from": true,
+                "to": "10"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.air_conditioner",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.fireplace",
+            "values": [
+              {
+                "from": true,
+                "to": "8"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.garage",
+            "values": [
+              {
+                "from": true,
+                "to": "14"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.shower",
+            "values": [
+              {
+                "from": true,
+                "to": "12"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.jacuzzi",
+            "values": [
+              {
+                "from": true,
+                "to": "11"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.810ef972",
+            "values": [
+              {
+                "from": true,
+                "to": "3"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.084f0d30",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.4c1a0c87",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.307ab0c9",
+            "values": [
+              {
+                "from": true,
+                "to": "9"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.441a9a5f",
+            "values": [
+              {
+                "from": true,
+                "to": "13"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.f1de1de0",
+            "values": [
+              {
+                "from": true,
+                "to": "15"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.sauna",
+        "amenity.pool",
+        "amenity.gazebo",
+        "specific.kufar.house_rent_area.0fb33a69",
+        "specific.kufar.house_rent_area.6d21e527",
+        "specific.kufar.house_rent_area.815f35ab",
+        "specific.kufar.house_rent_area.9c27fc56",
+        "specific.kufar.house_rent_area.dc777be2",
+        "specific.kufar.house_rent_area.cc78f3ce",
+        "specific.kufar.house_rent_area.7ddcfc5f",
+        "specific.kufar.house_rent_area.3ec30fdc"
+      ],
+      "platform_option_id": "kufar.house_rent_area",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.sauna",
+            "values": [
+              {
+                "from": true,
+                "to": "1"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.pool",
+            "values": [
+              {
+                "from": true,
+                "to": "2"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.gazebo",
+            "values": [
+              {
+                "from": true,
+                "to": "3"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.0fb33a69",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.6d21e527",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.815f35ab",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.9c27fc56",
+            "values": [
+              {
+                "from": true,
+                "to": "7"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.dc777be2",
+            "values": [
+              {
+                "from": true,
+                "to": "8"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.cc78f3ce",
+            "values": [
+              {
+                "from": true,
+                "to": "9"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.7ddcfc5f",
+            "values": [
+              {
+                "from": true,
+                "to": "10"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_rent_area.3ec30fdc",
+            "values": [
+              {
+                "from": true,
+                "to": "11"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    }
+  ],
+  "constants": {
+    "kufar.category": "1020",
+    "kufar.type": "let",
+    "kufar.house_rent_period": "10"
+  },
+  "addresses": [],
+  "address_bound_fields": [
+    "kufar.address"
+  ],
+  "review": [],
+  "schema_hash": "b42db1940cb1833e8476cc79b2539d5a1c811516170d0c5ae3b7ae03bd3a3abb",
+  "common_hash": "dd3d3b71c4ebb989f273e499e33c723489d2c572e2b45ce4f2da6b32a774b70d"
+}

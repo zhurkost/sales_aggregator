@@ -1,0 +1,100 @@
+ИССЛЕДОВАНИЕ houses_long_term_rent / domovita
+Этап A; формат 2.1; отчёт 2026-11-08T18:23:12+00:00
+Ревизия проекта: master / 9da5d6fd401c398ab3014b4dd5e1b48ce654d466
+
+Границы: Беларусь; предложение длительной аренды жилого дома целиком. Включены коттедж/дача там, где они входят в доступную ветвь. Исключены посуточная аренда, комната/часть дома, «сниму», продажа.
+Источник задания: сообщение пользователя в чате и явное подтверждение «Да, длительная аренда дома целиком». Отдельного parsing_input.txt для домов нет; согласно правилам его не создавали и существующие входные задания не меняли.
+Этап A; контракт 2.1. Новая категория исследуется впервые. Реализация приложения и активный каталог категорий не изменены. Common/mapping не созданы: это отдельный этап B. Исходники квартир используются только как пример метода, не как доказательство полей домов.
+Собраны определения полей, а не объявление. Файлы не загружались; телефон/код подтверждения не отправлялись; кнопки окончательной подачи, сохранения, оплаты и пакеты продвижения не использовались. На Domovita «Далее» не нажимали.
+Наблюдение: обычный браузер Chromium, отдельный анонимный контекст, русский интерфейс; открывались только формы и необходимые справочные страницы. Дополнительно Onliner проверен в существующей авторизованной сессии Chrome. Доступные странице определения полей прочитаны из DOM/React props и ответа bootstrap, вызванного самой формой. Прямые запросы к GraphQL/sdapi и обход защиты не выполнялись.
+Ограничение инструмента: управление пользовательским Chrome было остановлено, поскольку инструмент не смог надёжно определить URL. Последующие действия через него не выполнялись; результат сохранён по имеющимся наблюдениям. Проверки установки и повторного запуска не завершены. Наличие source JSON не означает, что категория поддержана расширением.
+
+СТАТУС: PARTIAL — начальная форма cottages/rent подтверждена; телефонная/файловая ветвь закрыта.
+Маршрут: https://domovita.by/new/add → Сдаче длительно → Коттеджи/Дома → https://domovita.by/new/add/cottages/rent . action="rent", type="cottages". Отдельного выбора дачи в этой форме не увидели; её поддержка не утверждается. Соседние значения action/type не исследовались.
+В форме дома есть год постройки, участок в сотках, уровни, комнаты 1..7, общая площадь, стационарный телефон, отопление, газ, электричество, 11 дополнительных опций, фото, описание, YouTube, цена/валюта/предоплата и контакты. Жилая/кухонная площадь, материал стен и квартирные поля из эталона не добавлены: в исследованной форме их не увидели.
+Примеры: rooms 2 — число 2; electro «Нет» — число 0; phone «Нет» — строка «Нет»; price_currency_text — USD/EUR/BYN/RUB. Нативная опечатка buiding_levels сохранена. Для дополнительных опций видны все 11 подписей; код «Кондиционер» подтверждён как kondicioner, другие коды неизвестны (null), не взяты из схемы квартиры.
+Все радио/чиповые списки видимы без пагинации. Привязки требуют проверки, в том числе одиночности выбора: отдельные элементы в DOM имеют type=checkbox. Тип enum отражает назначение поля, но поведение компонента при втором выборе не проверено. Список валют взят из props, его UI-раскрытие не проверено; options_complete=false.
+«Необязательно» сохранено как required=false; отсутствие этой подписи само по себе не доказывает серверную обязательность, поэтому неизвестные required=null. Нативные числовые ограничения, дробная точность, длины и лимит редактора не выдуманы.
+Три адресных React Select в начальном состоянии не содержат вариантов; street/house отключены. Динамические ID react-select-N-input не объявлены готовыми селекторами. Скрытые position_x/position_y — производные координаты карты, а не самостоятельные вопросы пользователю; не включены в поля. Геокодирование и перемещение карты требуют доисследования.
+Фотографии доступны только после контактов и подтверждения телефона. exists(phone) не является достаточным условием, поэтому неверный when не добавлен. Показана сортировка перетаскиванием, фактическая загрузка не проверялась; количество/MIME/размеры/обложка/принятие неизвестны. «Добавить другой номер» видно, дополнительные телефонные слоты не раскрывались и не выдуманы.
+Пробелы: адреса, native-коды 10 допопций, проверка выбора всех enum, именование/пределы редактора, телефонное подтверждение, фото после подтверждения, дополнительные телефоны, авторизованная/агентская ветвь, переходы после «Далее». Последняя кнопка намеренно не нажималась согласно указанию пользователя.
+Официальные источники: https://domovita.by/robots.txt ; https://domovita.by/rules . В robots закрыты запросы с query, кроме разрешения *?page, и служебные пути; форма исследовалась по наблюдаемому пути без query. Правила площадки выделяют аренду коттеджей как отдельный вид размещения; тарифы и срок активности не превращены в поля объявления.
+
+ВХОДНЫЕ ДОКУМЕНТЫ / SHA-256 (байты файлов):
+docs/parsing/category-research-prompt.txt | f02743f098b6213eb2cc35f4e6a5957dc4702b7bca4e78cef8d70f66b3cbfb39
+parsing_rule.txt | 36594d541acf179485f35ae63141643938bc32062b245cf854b9969e7b58b115
+parsing_format_rule.txt | ae25db91788daff61922f08640c89fe0df5e01112d7770f1b844a69683757800
+
+СВЕРКА МЕТОДА С АРЕНДОЙ КВАРТИР:
+Первичный снимок 1.2: 27 конечных полей; рабочая ревизия: 34; строк исследовательского mapping: 7; строк preparation: 27. Common: 114 листьев; это не шаблон полей домов.
+data/parsing/apartments_long_term_rent/apartments_long_term_rent_domovita.json | SHA-256 ea4fe25d56bedb70f28f69ad4565d4ae5b8e00ce5751efa2012f2c32400b5e43
+data/rental/apartments_long_term_rent/domovita/apartments_long_term_rent_domovita.json | SHA-256 d5159485689e7e1800fcb9cf0eb92b3728a642afa563ff5c9b96bf4f35a88a48
+data/rental/apartments_long_term_rent/integration/mapping_apartments_long_term_rent_domovita.json | SHA-256 5d6ab6b7879e7f59a892c3df57643302a462ce2e041c218cabc3d937b9e15f0f
+data/rental/apartments_long_term_rent/runtime/preparation_domovita.json | SHA-256 636afbe0550962dcc05f5cdd9b735c53cdb507d4ad9f67c9800eb27a4eefd093
+data/rental/apartments_long_term_rent/runtime/browser_domovita.json | SHA-256 f55a8cd9febe9c6d412e7c786eb231e5bb5410ea29b2d0fc62808f50441be2f3
+data/rental/apartments_long_term_rent/integration/apartments_long_term_rent_common.json | SHA-256 ae58e7182a364a306b12f96f506a8b256d54680ddb389e1f01854e7c6b0d3be6
+Прослежены комнаты, валюта и фотографии от рабочего source через common/mapping до preparation/browser. Пример числовых/строковых кодов комнат: Realt 2, Kufar "2", Domovita 2, Onliner "2_rooms". В новом результате факты Option/choice.value записаны по 2.1; исторический fill_rule не перенесён. Поля квартиры не используются как доказательство дома.
+
+РЕЕСТР ПОЛЕЙ / ПРОИСХОЖДЕНИЕ / ПОКРЫТИЕ:
+domovita.action | Подать объявление о | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. | Целевая ветвь открыта через эти переключатели; стабильность CSS-привязки и повторная установка не проверены.
+  варианты=3; options_complete=true; неизвестные коды=0
+domovita.type | Тип недвижимости | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. | Целевая ветвь открыта через эти переключатели; стабильность CSS-привязки и повторная установка не проверены.
+  варианты=5; options_complete=true; неизвестные коды=0
+domovita.town_id | Населённый пункт | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. React Select name=town_id. | Динамические подсказки не запрашивались; варианты, выбор адреса и обновление карты не проверены.
+  варианты=0; options_complete=false; неизвестные коды=0
+domovita.street_name | Улица | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. React Select name=street_name. | Динамические подсказки не запрашивались; варианты, выбор адреса и обновление карты не проверены.
+  варианты=0; options_complete=false; неизвестные коды=0
+domovita.house_number | Дом | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. React Select name=house_number. | Динамические подсказки не запрашивались; варианты, выбор адреса и обновление карты не проверены.
+  варианты=0; options_complete=false; неизвестные коды=0
+domovita.contact_name | Как обращаться | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=contact_name. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"contact_name\"]"]}; action/verify не объявлены готовыми.
+domovita.phones.0.contact_phone | Телефон для связи | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=phones.0.contact_phone. | Телефон не вводили и код подтверждения не запрашивали; маска, формат сохранения и подтверждение не проверены.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"phones.0.contact_phone\"]"]}; action/verify не объявлены готовыми.
+domovita.email | Эл. почта | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=email. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"email\"]"]}; action/verify не объявлены готовыми.
+domovita.building_year | Год постройки | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=building_year. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"building_year\"]"]}; action/verify не объявлены готовыми.
+domovita.area_ground | Участок (сотки) | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=area_ground. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"area_ground\"]"]}; action/verify не объявлены готовыми.
+domovita.buiding_levels | Кол-во уровней | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=buiding_levels. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"buiding_levels\"]"]}; action/verify не объявлены готовыми.
+domovita.area_total | Площадь м² | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=area_total. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"area_total\"]"]}; action/verify не объявлены готовыми.
+domovita.youtube_link | Ссылка на видео с YouTube | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=youtube_link. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"youtube_link\"]"]}; action/verify не объявлены готовыми.
+domovita.price | Общая цена | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. input name=price. | Поле наблюдалось; установка значения и чтение результата после blur не проверены. До такой проверки не выполнять автоматически.
+  Наблюдаемый кандидат target: {"selectors": ["input[name=\"price\"]"]}; action/verify не объявлены готовыми.
+domovita.rooms | Количество комнат | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=rooms; props.options. | Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены.
+  варианты=7; options_complete=true; неизвестные коды=0
+domovita.phone | Телефон | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=phone; props.options. | Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены.
+  варианты=2; options_complete=true; неизвестные коды=0
+domovita.heating | Отопление | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=heating; props.options. | Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены.
+  варианты=4; options_complete=true; неизвестные коды=0
+domovita.gas | Газ | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=gas; props.options. | Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены.
+  варианты=3; options_complete=true; неизвестные коды=0
+domovita.electro | Электричество | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=electro; props.options. | Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены.
+  варианты=2; options_complete=true; неизвестные коды=0
+domovita.price_currency_text | Валюта | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=price_currency_text; props.options. | USD/EUR/BYN/RUB найдены в props. Выпадающий список и смена валюты вместе с ценой не проверены.
+  варианты=4; options_complete=false; неизвестные коды=0
+domovita.prepayment | Предоплата | enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=prepayment; props.options. | Нативные коды прочитаны из props. Реальный выбор/снятие, одиночность переключателя и результат после blur не проверены.
+  варианты=5; options_complete=true; неизвестные коды=0
+domovita.extra_info_comments | Дополнительные опции | multi_enum | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Видимые чипы; props.name=extra_info_comments. | Видны все 11 подписей. Код kondicioner наблюдён у Кондиционера, остальные 10 кодов неизвестны. Множественный выбор не проверен.
+  варианты=11; options_complete=true; неизвестные коды=10
+domovita.images | Фотографии | files | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Блок фотографий с условием подтверждения телефона. | Загрузчик закрыт до заполнения контактов и подтверждения телефона. Файлы не загружались; количество, MIME, размеры, обложка и серверное принятие неизвестны.
+domovita.description | Описание | text | needs_review | https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Видимый contenteditable-редактор под заголовком «Описание». | Редактор наблюдался, нативное имя сохраняемого поля и установка текста с подтверждением не проверены. description — исследовательский ID.
+
+ИТОГ ПРИЁМКИ:
+Конечных полей: 24 = ready 0 + needs_review 24 + unsupported 0. Enum/multi_enum: 13; неизвестных кодов choice: 10.
+[ПРОЙДЕНО] UTF-8/JSON; корни Category[] и binding; обязательные свойства; уникальные ID; choice.value с сохранением JSON-типа; enum completeness.
+[ПРОЙДЕНО] Ровно одна binding-запись на конечное поле; ссылки when/depends_on разрешаются; циклов depends_on нет; непроверенных ready нет.
+[ПРОЙДЕНО] Входные parsing_input.txt не менялись; новые fill_rule/common/mapping/runtime не создавались; объявления/токены/куки/бинарные данные в результат не записывались.
+[ЕСТЬ ПРОБЕЛ] Полнота живого исследования и готовность автоматического заполнения не приняты. Причины и конкретные ветви перечислены выше. Нулевой ready — не успешный тест заполнения.
+[НЕ ПРИМЕНИМО] End-to-end перенос из Автопоста, БД, backend/frontend, запуск расширения и публикация: не входят в этап A.
+[НЕ ПРИМЕНИМО] Приёмка common/mapping: нужен отдельный этап B по указанным версиям source; неполные поля не объявлять готовыми связями.
+
+ВЫХОДНЫЕ JSON / SHA-256:
+data/parsing/houses_long_term_rent/houses_long_term_rent_domovita.json | 414c15ef7b53dc2a0b08d4c5fd2621df8239df360e25dabbecb692ba72a51416
+data/parsing/houses_long_term_rent/binding_houses_long_term_rent_domovita.json | f23c9d3666607e3452ca95ebc2d5ed4077004bb523859cbeefe4067760ecd94f
+Отчёт: data/parsing/houses_long_term_rent/report_houses_long_term_rent_domovita.txt. Самохеш отчёта не включается. Файлы work/houses-research — локальные вспомогательные снимки, не API и не вход runtime.
+
+СЛЕДУЮЩИЙ ШАГ: доисследовать перечисленные пробелы и проверить binding; отдельно выдать B на конкретные source-файлы/хеши. Подключение категории в приложение — отдельная задача.

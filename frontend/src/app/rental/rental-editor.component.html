@@ -1,8 +1,8 @@
 <div [attr.inert]="panel ? '' : null">
   <header class="rental-heading">
-    <h1>{{ deal === 'sale' ? 'Продать квартиру' : 'Сдать квартиру' }}</h1>
+    <h1>{{ title }}</h1>
     <div class="header-actions">
-      <button type="button" class="quiet-button" [disabled]="store.busy">Мои квартиры</button>
+      <button type="button" class="quiet-button" [disabled]="store.busy">{{ objectKind === 'house' ? 'Мои дома' : 'Мои квартиры' }}</button>
       <button type="button" class="quiet-button" [disabled]="store.busy">＋ Новая</button>
     </div>
   </header>
@@ -17,8 +17,8 @@
     }
     <fieldset class="card" [disabled]="store.busy" [attr.aria-busy]="ai.busy">
       <section class="description-section">
-        <label for="rental-listing.description">Описание квартиры</label>
-        <textarea id="rental-listing.description" class="source-description" rows="4" maxlength="8000" [ngModel]="description" (ngModelChange)="setDescription($event)" [placeholder]="deal === 'sale' ? 'Например: продам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9. Цена 85 000 USD.' : 'Например: сдам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9, 1500 BYN в месяц. Есть балкон и стиральная машина, можно с детьми.'"></textarea>
+        <label for="rental-listing.description">{{ objectKind === 'house' ? 'Описание дома' : 'Описание квартиры' }}</label>
+        <textarea id="rental-listing.description" class="source-description" rows="4" maxlength="8000" [ngModel]="description" (ngModelChange)="setDescription($event)" [placeholder]="descriptionPlaceholder"></textarea>
         <div class="description-actions">
           <span class="ai-status" role="status">{{ ai.busy ? 'ИИ заполняет карточку…' : ai.message }}</span>
           <button type="button" class="ai-button" [disabled]="store.busy || description.trim().length < 10" (click)="ai.fillFromDescription()">✦ {{ ai.busy ? 'Заполняем…' : 'Заполнить с ИИ' }}</button>
@@ -78,7 +78,7 @@
 @if (panel && store.schema) {
   <div class="drawer-overlay" (click)="closePanel()">
     <section class="rental-drawer" role="dialog" aria-modal="true" aria-labelledby="rental-panel-title" (click)="$event.stopPropagation()" (keydown)="panelKeys($event)">
-      <header class="drawer-heading"><h2 id="rental-panel-title" tabindex="-1">{{ panel === 'parameters' ? 'Параметры квартиры' : 'Подготовленные данные' }}</h2><button type="button" class="icon-button" aria-label="Закрыть панель" (click)="closePanel()">×</button></header>
+      <header class="drawer-heading"><h2 id="rental-panel-title" tabindex="-1">{{ panel === 'parameters' ? (objectKind === 'house' ? 'Параметры дома' : 'Параметры квартиры') : 'Подготовленные данные' }}</h2><button type="button" class="icon-button" aria-label="Закрыть панель" (click)="closePanel()">×</button></header>
       @if (panel === 'parameters') {
         @if (store.applicability.error) { <p role="status">{{ store.applicability.error }} <button type="button" class="text-button" [disabled]="store.applicability.loading" (click)="store.applicability.refresh()">Повторить</button></p> }
         <div class="drawer-tools"><input aria-label="Найти параметр" type="search" placeholder="Найти параметр…" [ngModel]="view.parameterSearch" (ngModelChange)="view.parameterSearch = $event" /><label><input type="checkbox" [(ngModel)]="view.filledOnly" />Заполненные</label></div>

@@ -1,0 +1,323 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "houses_long_term_rent",
+  "platform": "domovita",
+  "fields": [
+    {
+      "common_option_id": "rental.currency",
+      "platform_option_id": "domovita.price_currency_text",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          },
+          {
+            "from": "BYN",
+            "to": "BYN"
+          },
+          {
+            "from": "RUB",
+            "to": "RUB"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "rental.monthly_price",
+      "platform_option_id": "domovita.price",
+      "conversion": {
+        "kind": "identity",
+        "requires": [
+          "domovita.price_currency_text"
+        ]
+      }
+    },
+    {
+      "common_option_id": "house.rooms",
+      "platform_option_id": "domovita.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5",
+            "to": 5
+          },
+          {
+            "from": "6",
+            "to": 6
+          },
+          {
+            "from": "7",
+            "to": 7
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.total_area",
+      "platform_option_id": "domovita.area_total",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.land_area",
+      "platform_option_id": "domovita.area_ground",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.levels",
+      "platform_option_id": "domovita.buiding_levels",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.building_year",
+      "platform_option_id": "domovita.building_year",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "domovita.heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Газовое",
+            "to": "газовое"
+          },
+          {
+            "from": "Центральное",
+            "to": "центральное"
+          },
+          {
+            "from": "Электрическое",
+            "to": "электрическое"
+          },
+          {
+            "from": "Печное",
+            "to": "печное"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "domovita.gas",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "В посёлке",
+            "to": "В посёлке"
+          },
+          {
+            "from": "В доме",
+            "to": "В доме"
+          },
+          {
+            "from": "Нет",
+            "to": "Нет"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.electricity",
+      "platform_option_id": "domovita.electro",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.landline",
+      "platform_option_id": "domovita.phone",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": "Есть"
+          },
+          {
+            "from": "Нет",
+            "to": "Нет"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "domovita.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "domovita.images",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "domovita.youtube_link",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "domovita.contact_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "domovita.phones.0.contact_phone",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.domovita.email",
+      "platform_option_id": "domovita.email",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.domovita.prepayment",
+      "platform_option_id": "domovita.prepayment",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "нет",
+            "to": "нет"
+          },
+          {
+            "from": "месяц",
+            "to": "месяц"
+          },
+          {
+            "from": "2 месяца",
+            "to": "2 месяца"
+          },
+          {
+            "from": "3 месяца",
+            "to": "3 месяца"
+          },
+          {
+            "from": "полгода",
+            "to": "полгода"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.air_conditioner"
+      ],
+      "platform_option_id": "domovita.extra_info_comments",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.air_conditioner",
+            "values": [
+              {
+                "from": true,
+                "to": "kondicioner"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    }
+  ],
+  "constants": {
+    "domovita.action": "rent",
+    "domovita.type": "cottages"
+  },
+  "addresses": [
+    {
+      "platform_option_id": "domovita.town_id",
+      "part": "settlement",
+      "scalar_verified": false
+    },
+    {
+      "platform_option_id": "domovita.street_name",
+      "part": "street",
+      "scalar_verified": false
+    },
+    {
+      "platform_option_id": "domovita.house_number",
+      "part": "house",
+      "scalar_verified": false
+    }
+  ],
+  "address_bound_fields": [
+    "domovita.town_id",
+    "domovita.street_name",
+    "domovita.house_number"
+  ],
+  "review": [],
+  "schema_hash": "088db868413116a17e70f1e4996313d0ad1f486c74f4befded4cf57ccd965fc1",
+  "common_hash": "dd3d3b71c4ebb989f273e499e33c723489d2c572e2b45ce4f2da6b32a774b70d"
+}

@@ -32,7 +32,10 @@ public final class BrowserRecipeValidator {
             && !recipe.path("ready").isEmpty()
             && recipe.path("ready").size() <= 10,
         "признаки категории browser");
-    for (var guard : recipe.path("ready")) selector(guard);
+    for (var guard : recipe.path("ready")) {
+      selector(guard);
+      valueText(guard, fields);
+    }
     Set<String> seen = new HashSet<>();
     check(recipe.path("controls").isArray() && recipe.path("controls").size() <= 150, "controls");
     for (var control : recipe.path("controls")) {
@@ -110,6 +113,7 @@ public final class BrowserRecipeValidator {
       check(recipe.path(phase).isArray() && recipe.path(phase).size() <= 10, "шаги browser");
       for (var step : recipe.path(phase)) {
         selector(step);
+        valueText(step, fields);
         check(
             text(step, "action").equals("click") && !text(step, "text").isBlank(),
             "переход browser");
@@ -126,6 +130,22 @@ public final class BrowserRecipeValidator {
                 && row.path("index").asInt() < 20,
         "index browser");
     check(!row.has("code") && !row.has("script") && !row.has("url"), "исполняемый код browser");
+  }
+
+  private void valueText(JsonNode row, Map<String, JsonNode> fields) {
+    if (!row.has("valueField") && !row.has("textByValue")) return;
+    String id = text(row, "valueField");
+    check(fields.containsKey(id), "поле выбора категории browser");
+    var texts = row.path("textByValue");
+    check(texts.isObject() && !texts.isEmpty() && texts.size() <= 20, "варианты выбора категории browser");
+    var codes = new HashSet<String>();
+    for (var choice : fields.get(id).path("options")) {
+      var value = choice.path("fill_rule").get("value");
+      if (value != null && !value.isNull()) codes.add(value.asText());
+    }
+    texts.fields().forEachRemaining(e -> check(codes.contains(e.getKey()) && e.getValue().isTextual()
+        && !e.getValue().asText().isBlank() && e.getValue().asText().length() <= 120,
+        "неизвестный вариант выбора категории browser"));
   }
 
   private void selectorValue(String value) {

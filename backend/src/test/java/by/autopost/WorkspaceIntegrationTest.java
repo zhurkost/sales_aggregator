@@ -70,6 +70,26 @@ class WorkspaceIntegrationTest {
   }
 
   @Test
+  void houseRoutesExposeOwnFieldsAndCompileFourPublicationJobs() throws Exception {
+    var cookie = register().cookie();
+    var path = "categories/houses_long_term_rent/";
+    var editor = getJson(path + "editor", cookie, 200);
+    assertEquals("houses_long_term_rent", text(editor, "categoryId"));
+    assertTrue(editor.path("publicationEnabled").asBoolean());
+    assertTrue(editor.path("category").toString().contains("house.land_area"));
+    var card = object("categoryId", "houses_long_term_rent", "modelVersion", 2,
+        "schemaVersion", text(editor, "version"), "platforms", List.of("realt", "kufar", "domovita", "onliner"),
+        "values", object("house.kind", "Дом", "house.land_area", "10"));
+    postJson(path + "prepare", cookie, card, 200);
+    postJson(path + "applicability", cookie, card, 200);
+    postJson(path + "normalize", cookie, card, 200);
+    postJson(path + "analyze", cookie, object("text", "М"), 400);
+    var launch = postJson(path + "extension-config", cookie, object("card", card, "id", "house-example", "revision", 1), 200);
+    assertEquals(4, parse(launch.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8)).path("jobs").size());
+    postJson("categories/apartments_long_term_rent/normalize", cookie, card, 409);
+  }
+
+  @Test
   void saleEditorPreparesTotalPriceForEachMarketplace() throws Exception {
     var cookie = register().cookie();
     var path = "categories/apartments_sale/";

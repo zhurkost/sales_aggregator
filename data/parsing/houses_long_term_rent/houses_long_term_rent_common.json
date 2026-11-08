@@ -1,0 +1,319 @@
+[
+  {
+    "id": "houses_long_term_rent",
+    "name": "Длительная аренда домов",
+    "description": "Этап B по зафиксированным source-файлам; Onliner — унаследованный квартирный шаблон по указанию пользователя.",
+    "categories": [],
+    "options": [
+      {
+        "id": "group.main",
+        "name": "Основные характеристики",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "rental.currency",
+            "name": "Валюта",
+            "description": "Валюта Допустимые общие значения: BYN, USD, EUR, RUB.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "rental.monthly_price",
+            "name": "Цена за месяц",
+            "description": "Сумма за один месяц в выбранной валюте. Не залог, не предоплата, не цена за сутки. Без пересчёта валют.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.kind",
+            "name": "Вид объекта",
+            "description": "Дом целиком, коттедж или дача для длительного проживания. Части дома и посуточное размещение исключены. Допустимые общие значения: Дом, Коттедж, Дача.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.rooms",
+            "name": "Количество комнат",
+            "description": "Количество комнат Допустимые общие значения: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 и более.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.total_area",
+            "name": "Общая площадь, м²",
+            "description": "Общая площадь, м²",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.land_area",
+            "name": "Площадь участка, соток",
+            "description": "Площадь земельного участка в сотках, не площадь дома. 1 гектар = 100 соток; 100 м² земли = 1 сотка.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.levels",
+            "name": "Уровней в доме",
+            "description": "Количество уровней/этажей всего дома. Не этаж квартиры.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.house",
+        "name": "Дом",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "house.building_year",
+            "name": "Год постройки",
+            "description": "Год постройки",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.capacity",
+            "name": "Вместимость, человек",
+            "description": "Количество проживающих или гостей, не число комнат.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.utilities",
+        "name": "Коммуникации",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "house.heating",
+            "name": "Отопление",
+            "description": "Отопление Допустимые общие значения: Нет, Центральное, Паровое, Паровое на газу, Печное, Электрическое, Газовое, Твердотопливное.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.water",
+            "name": "Водоснабжение",
+            "description": "Водоснабжение Допустимые общие значения: Нет, Горячая, Холодная, Колодец, Водопровод, Центральный водопровод, Скважина, Сезонная.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.sewer",
+            "name": "Канализация",
+            "description": "Канализация Допустимые общие значения: Есть, Нет, С/у на улице, Центральная, Местная, Выгребная яма, Септик, Биологическая очистка.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.gas",
+            "name": "Газоснабжение",
+            "description": "Газоснабжение Допустимые общие значения: Нет, Есть, Баллон, Магистральный, В посёлке, В доме.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.electricity",
+            "name": "Электричество",
+            "description": "Электричество Допустимые общие значения: Нет, Есть, Рядом.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.landline",
+            "name": "Стационарный телефон",
+            "description": "Стационарный телефон Допустимые общие значения: Нет, Есть, 2 телефона, 3 телефона.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.listing",
+        "name": "Объявление",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "listing.description",
+            "name": "Описание дома",
+            "description": "Исходный текст пользователя. Не генерировать и не заменять автоматически.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "listing.title",
+            "name": "Заголовок",
+            "description": "Заголовок до 100 символов, только подтверждённые текстом преимущества дома.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.media",
+        "name": "Фото и видео",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "media.images",
+            "name": "Фотографии",
+            "description": "Фотографии",
+            "type": "files",
+            "options": []
+          },
+          {
+            "id": "media.video_url",
+            "name": "Ссылка на YouTube",
+            "description": "Ссылка на YouTube",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.contacts",
+        "name": "Контакты",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "contact.name",
+            "name": "Контактное лицо",
+            "description": "Контактное лицо",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.phone",
+            "name": "Телефон для связи",
+            "description": "Телефон для связи",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.amenities",
+        "name": "Удобства",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "amenity.furniture",
+            "name": "Мебель",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.internet",
+            "name": "Интернет",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.tv",
+            "name": "Телевизор",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.refrigerator",
+            "name": "Холодильник",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.washing_machine",
+            "name": "Стиральная машина",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.air_conditioner",
+            "name": "Кондиционер",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.fireplace",
+            "name": "Камин",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.sauna",
+            "name": "Баня",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.pool",
+            "name": "Бассейн",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.gazebo",
+            "name": "Беседка",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.garage",
+            "name": "Гараж",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.shower",
+            "name": "Душевая кабина",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.jacuzzi",
+            "name": "Джакузи",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.address_projection",
+        "name": "Компоненты адреса",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "location.label",
+            "name": "label",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]
