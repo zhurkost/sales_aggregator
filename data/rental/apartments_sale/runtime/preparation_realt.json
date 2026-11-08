@@ -201,6 +201,14 @@
           {
             "from": "2 и более",
             "to": 2
+          },
+          {
+            "from": "Два",
+            "to": 2
+          },
+          {
+            "from": "Три",
+            "to": 2
           }
         ],
         "on_unmapped": "needs_review"

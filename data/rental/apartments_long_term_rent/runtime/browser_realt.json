@@ -231,6 +231,13 @@
       "selector": "#additional",
       "pickerId": "additional.appliance",
       "label": "Удобства"
+    },
+    {
+      "field": "realt.stove",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Плита",
+      "expandSection": "additional"
     }
   ],
   "next": [],

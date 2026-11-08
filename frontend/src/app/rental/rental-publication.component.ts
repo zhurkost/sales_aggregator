@@ -1,6 +1,5 @@
 import { APARTMENT_RENT } from "../listing-categories";
 import { Component, HostListener, Input, OnChanges, OnDestroy } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { EXTENSION_VERSION, type Photo } from "../../../../lib/workspace";
 import { RentalFormStore } from "./rental-form.store";
 import { RentalPublicationGateway } from "./rental-publication.gateway";
@@ -17,7 +16,6 @@ type Job = {
 @Component({
   selector: "app-rental-publication",
   standalone: true,
-  imports: [FormsModule],
   templateUrl: "./rental-publication.component.html",
   styleUrl: "./rental-publication.component.css",
 })
@@ -107,8 +105,12 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     }
   }
   async publish() {
-    if (!this.publicationEnabled || this.busy || this.store.busy || !this.store.card.platforms.length)
+    if (!this.publicationEnabled || this.busy || this.photosBusy || this.store.busy || !this.store.card.platforms.length)
       return;
+    if (this.pendingPhotoLinks().length) {
+      this.error = "Сначала нажмите «Загрузить фото по ссылкам» и проверьте появившиеся фотографии.";
+      return;
+    }
     this.busy = true;
     this.error = "";
     const generation = this.generation;
@@ -159,6 +161,33 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
   name(platform: string) {
     return this.store.schema?.platforms[platform]?.name || platform;
   }
+  pendingPhotoLinks(): string[] {
+    const links = this.store.card.values["media.images"];
+    if (!Array.isArray(links)) return [];
+    const imported = this.photos.map(photo => photo.sourceUrl);
+    return links.filter((link): link is string => {
+      if (typeof link !== "string" || !link.trim()) return false;
+      const index = imported.indexOf(link);
+      if (index < 0) return true;
+      imported.splice(index, 1);
+      return false;
+    });
+  }
+  async importLinks() {
+    if (this.photosBusy || this.busy) return;
+    this.photosBusy = true;
+    this.error = "";
+    const generation = this.generation;
+    try {
+      const photos = await this.gateway.importLinks(this.photos, this.pendingPhotoLinks());
+      if (generation === this.generation && !this.destroyed) {
+        this.photos = photos;
+        this.store.changed();
+      }
+    } catch (e) {
+      if (generation === this.generation) this.error = (e as Error).message;
+    } finally { this.photosBusy = false; }
+  }
   async add(files: File[]) {
     if (this.photosBusy) return;
     this.photosBusy = true;
@@ -196,6 +225,12 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
     try {
       if (generation === this.generation) {
         this.photos = photos;
+        if (photo.sourceUrl && Array.isArray(this.store.card.values["media.images"])) {
+          const links = [...this.store.card.values["media.images"]];
+          const index = links.indexOf(photo.sourceUrl);
+          if (index >= 0) links.splice(index, 1);
+          this.store.card.values["media.images"] = links;
+        }
         this.store.changed();
       }
     } catch (e) {

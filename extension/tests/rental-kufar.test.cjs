@@ -14,6 +14,44 @@ async function fixture(t, html, controls, photos = [], claim = async () => true)
   return {w, doc: w.document, form: new w.AutopostRentalForm.Form({controls}, photos, claim)};
 }
 
+test('Kufar opens a multiple-choice dropdown once and fills both window directions', async t => {
+  const c = {field:'kufar.flat_windows_side',action:'dropdown',selector:'#windows',
+    triggerSelector:'button',optionsSelector:'#popup label',value:['1','4'],
+    labels:{1:'Во двор',4:'На улицу'}};
+  const f = await fixture(t, '<div id="windows"><button>Выберите</button><div id="popup" hidden></div></div>', [c]);
+  let opens = 0;
+  const popup = f.doc.querySelector('#popup');
+  f.doc.querySelector('button').onclick = () => {
+    opens++;
+    queueMicrotask(() => {
+      popup.hidden = !popup.hidden;
+      if (!popup.children.length) popup.innerHTML = '<label><input type="checkbox" value="1">Во двор</label><label><input type="checkbox" value="4">На улицу</label>';
+    });
+  };
+  for (let i=0; i<10; i++) await f.form.tick();
+  assert.equal(opens, 1, 'opening for each value toggles the same popup closed');
+  assert.deepEqual([...popup.querySelectorAll('input')].filter(e=>e.checked).map(e=>e.value), ['1','4']);
+  assert.equal(f.form.done.has(c.field), true);
+});
+
+test('a menu that renders after several ticks is not toggled closed for the second requested value', async t => {
+  const c={field:'kufar.flat_windows_side',action:'dropdown',selector:'#windows',triggerSelector:'button',
+    value:['1','4'],labels:{1:'Во двор',4:'На улицу'}};
+  const f=await fixture(t,'<div id="windows"><button>Выберите</button><div id="popup" hidden></div></div>',[c]);
+  let opens=0, show;
+  const popup=f.doc.querySelector('#popup');
+  f.doc.querySelector('button').onclick=()=>{opens++;show=()=>{
+    popup.hidden=!popup.hidden;
+    popup.innerHTML='<label><input type="checkbox" value="1">Во двор</label><label><input type="checkbox" value="4">На улицу</label>';
+  };};
+  for(let i=0;i<3;i++)await f.form.tick();
+  assert.equal(opens,1);
+  show();
+  for(let i=0;i<8;i++)await f.form.tick();
+  assert.equal(f.form.done.has(c.field),true);
+  assert.deepEqual([...popup.querySelectorAll('input')].filter(e=>e.checked).map(e=>e.value),['1','4']);
+});
+
 test('Kufar selects all kitchen amenities across asynchronous renders without toggling earlier choices', async t => {
   const c = control('kitchen_amenities', {value:['1','2'], labels:{1:'Холодильник',2:'СВЧ-печь'}});
   const f = await fixture(t, '', [c]);

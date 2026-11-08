@@ -11,9 +11,43 @@ const extension = vi.fn(async () => ({
 const gateway = {
   request: extension,
   add: vi.fn(),
+  importLinks: vi.fn(),
 };
 afterEach(() => vi.clearAllMocks());
 describe("publication of incomplete rental cards", () => {
+  it("imports linked images once, then publishes files and removes matching links with a preview", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalFormStore(() => "owner");
+    c.workspaceId = "owner"; c.sessionId = c.store.id;
+    c.store.card.platforms = ["realt"];
+    const sourceUrl = "https://example.com/photo.jpg";
+    c.store.card.values["media.images"] = [sourceUrl];
+    const photo = {id:"linked-photo",name:"photo.jpg",type:"image/jpeg",dataUrl:"data:image/jpeg;base64,AAAA",sourceUrl};
+    gateway.importLinks.mockResolvedValueOnce([photo]);
+    await c.ngOnChanges();
+    await c.importLinks();
+    expect(c.pendingPhotoLinks()).toEqual([]);
+    expect(c.photos).toEqual([photo]);
+    await c.publish();
+    expect(extension).toHaveBeenCalledWith("RENTAL_RUN", expect.objectContaining({photos:[photo]}), 25000);
+    await c.remove(photo);
+    expect(c.photos).toEqual([]);
+    expect(c.store.card.values["media.images"]).toEqual([]);
+    c.ngOnDestroy(); c.store.destroy();
+  });
+  it("does not silently publish photo links without importing their files", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalFormStore(() => "owner");
+    c.workspaceId = "owner";
+    c.sessionId = c.store.id;
+    c.store.card.platforms = ["realt"];
+    c.store.card.values["media.images"] = ["https://example.com/photo.jpg"];
+    await c.ngOnChanges();
+    await c.publish();
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    expect(c.error).toMatch(/фото|ссыл/i);
+    c.ngOnDestroy(); c.store.destroy();
+  });
   it("asks to update older extensions without address suggestion support", async () => {
     const c = new RentalPublicationComponent(gateway);
     c.store = new RentalFormStore(() => "owner");
@@ -86,6 +120,7 @@ describe("publication of incomplete rental cards", () => {
     const button = fixture.nativeElement.querySelector(
       ".publish",
     ) as HTMLButtonElement;
+    expect(fixture.nativeElement.textContent).not.toContain("Автоматически пройти шаги формы");
     expect(button.disabled).toBe(false);
     await fixture.componentInstance.publish();
     expect(extension).toHaveBeenCalledWith(

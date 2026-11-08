@@ -19,8 +19,22 @@ import java.util.Set;
 public final class RuleExecutor {
   public static JsonNode lookup(JsonNode pairs, JsonNode input) {
     for (var p : pairs) if (equal(p.path("from"), input)) return p.path("to").deepCopy();
+    if (input.isTextual()) {
+      JsonNode match = null;
+      for (var p : pairs) {
+        if (!p.path("from").isTextual() || !choiceKey(p.path("from").asText()).equals(choiceKey(input.asText()))) continue;
+        if (match != null && !equal(match, p.path("to")))
+          throw new IllegalArgumentException("Несколько разных соответствий этому значению. Уточните его отдельно.");
+        match = p.path("to");
+      }
+      if (match != null) return match.deepCopy();
+    }
     throw new IllegalArgumentException(
         "У площадки нет точного соответствия этому значению. Уточните его отдельно.");
+  }
+
+  private static String choiceKey(String value) {
+    return value.toLowerCase(java.util.Locale.ROOT).replace('ё', 'е');
   }
 
   public void apply(
@@ -84,7 +98,16 @@ public final class RuleExecutor {
             if (!input.isArray())
               throw new IllegalArgumentException("Выберите варианты из списка.");
             ArrayNode mapped = array();
-            for (var item : input) mapped.add(lookup(cv.path("values"), item));
+            var unmapped = new java.util.ArrayList<String>();
+            for (var item : input) {
+              try {
+                var code = lookup(cv.path("values"), item);
+                if (list(mapped).stream().noneMatch(v -> equal(v, code))) mapped.add(code);
+              } catch (IllegalArgumentException e) {
+                unmapped.add("«" + item.asText() + "»");
+              }
+            }
+            if (!unmapped.isEmpty()) issue(issues, target, "list_value", text(field, "name") + ": нет соответствия для " + String.join(", ", unmapped) + ". Уточните их на площадке.");
             output = mapped;
           }
           case "lookup" -> output = lookup(cv.path("values"), input);

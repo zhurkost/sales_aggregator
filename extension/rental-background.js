@@ -138,6 +138,24 @@
         throw new Error(
           "У этой карточки уже есть задания. Остановите предыдущий запуск перед передачей новой версии.",
         );
+      // Retain recent stopped batches for an explicit retry, but do not let
+      // stopped/closed history permanently consume the active-card limit.
+      if (rows.length >= 20) {
+        for (const batch of [...rows]) {
+          if (rows.length < 20) break;
+          const inactive = await Promise.all(batch.jobs.map(async job => {
+            if (job.status === "stopped") return true;
+            if (!Number.isInteger(job.tabId)) return false;
+            try { await chrome.tabs.get(job.tabId); return false; }
+            catch { return true; }
+          }));
+          if (inactive.every(Boolean)) {
+            rows.splice(rows.indexOf(batch), 1);
+            await root.AutopostPhotos.remove([batch.photoKey]);
+          }
+        }
+        await save(rows);
+      }
       if (rows.length >= 20)
         throw new Error(
           "Слишком много активных карточек. Закройте завершённые задания.",

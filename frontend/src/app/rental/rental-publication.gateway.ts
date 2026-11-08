@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { extension, type Photo } from "../../../../lib/workspace";
-import { addRentalPhotos } from "./rental-photos";
+import { addRentalPhotos, importRentalPhotoLinks } from "./rental-photos";
 
 /** Boundary to the browser extension and image processing. */
 @Injectable({ providedIn: "root" })
@@ -10,5 +10,8 @@ export class RentalPublicationGateway {
   }
   add(current: Photo[], files: File[]) {
     return addRentalPhotos(current, files);
+  }
+  importLinks(current: Photo[], links: string[]) {
+    return importRentalPhotoLinks(current, links);
   }
 }

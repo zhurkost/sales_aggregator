@@ -1,0 +1,40 @@
+{
+  "id": "sale-byn-multiple",
+  "deal": "sale",
+  "city": "Минск",
+  "street": "Ольшевского",
+  "house": "10",
+  "photos": 3,
+  "description": "Тест продажи четырёхкомнатной квартиры. 110 м², жилая 70, кухня 14. Этаж 8 из 12. Дом 2015 года. 340000 BYN. Окна на две стороны, два санузла, лоджия.",
+  "fields": {
+    "sale.price": "340000",
+    "sale.currency": "BYN",
+    "apartment.rooms": "4",
+    "apartment.total_area": "110",
+    "apartment.living_area": "70",
+    "apartment.kitchen_area": "14",
+    "apartment.floor": "8",
+    "building.floors": "12",
+    "building.year": "2015",
+    "building.wall": "Монолитный",
+    "apartment.balcony": "Балкон и лоджия",
+    "apartment.repair": "Хороший",
+    "apartment.market": "Вторичка"
+  },
+  "extras": {
+    "apartment.bathroom": "Два",
+    "apartment.separate_rooms": "4",
+    "apartment.levels": "1",
+    "apartment.windows": [
+      "Во двор",
+      "На улицу"
+    ],
+    "building.amenities": [
+      "лифт",
+      "интернет",
+      "видеонаблюдение"
+    ],
+    "sale.terms": "Чистая продажа",
+    "listing.short_description": "Четыре комнаты, окна на две стороны, два санузла."
+  }
+}

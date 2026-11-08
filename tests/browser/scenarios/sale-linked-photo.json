@@ -1,0 +1,31 @@
+{
+  "id": "sale-linked-photo",
+  "deal": "sale",
+  "city": "Минск",
+  "street": "Независимости",
+  "house": "120",
+  "photos": 0,
+  "description": "Тест продажи: двухкомнатная квартира в Минске, проспект Независимости 120. Площадь 56 м², жилая 31 м², кухня 9 м². Этаж 5 из 9. Кирпичный дом 2008 года. Цена 94500 USD. Лоджия, раздельный санузел, чистая продажа.",
+  "fields": {
+    "sale.price": "94500",
+    "sale.currency": "USD",
+    "apartment.rooms": "2",
+    "apartment.total_area": "56",
+    "apartment.living_area": "31",
+    "apartment.kitchen_area": "9",
+    "apartment.floor": "5",
+    "building.floors": "9",
+    "building.year": "2008",
+    "building.wall": "Кирпичный",
+    "apartment.balcony": "Лоджия",
+    "apartment.repair": "Евро",
+    "apartment.market": "Вторичка",
+    "media.images": "https://example.com/qa-photo.png"
+  },
+  "extras": {
+    "listing.title": "Проверка фото по ссылке"
+  },
+  "platforms": [
+    "realt"
+  ]
+}

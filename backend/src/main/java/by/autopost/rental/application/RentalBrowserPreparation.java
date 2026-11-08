@@ -109,6 +109,19 @@ final class RentalBrowserPreparation {
                 if (!supported.contains(id) && !constants.has(id))
                   unsupported.add(fields.containsKey(id) ? text(fields.get(id), "name") : id);
               });
+      // Conversion can omit a supplied value entirely. Keep its explanation in
+      // the browser report instead of claiming that every value was transferred.
+      for (var issue : result.path("issues")) {
+        String code = text(issue, "code");
+        if (java.util.Set.of("required", "file_acceptance", "adapter_review").contains(code)) continue;
+        if (code.equals("condition")) {
+          String source = text(issue, "source");
+          if (!card.path("values").hasNonNull(source)) continue;
+        }
+        String message = text(issue, "message");
+        if (!message.isBlank() && list(unsupported).stream().noneMatch(v -> v.asText().equals(message)))
+          unsupported.add(message);
+      }
       recipe.set("controls", controls);
       recipe.set("unbound", unsupported);
       jobs.add(recipe);

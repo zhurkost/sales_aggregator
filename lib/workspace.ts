@@ -1,5 +1,5 @@
 import extensionManifest from "../extension/manifest.json" with { type: "json" };
-export type Photo = { id: string; name: string; type: string; dataUrl: string };
+export type Photo = { id: string; name: string; type: string; dataUrl: string; sourceUrl?: string };
 export type Profile = { id: string; accountId?:string; login: string; name: string };
 let workspaceContext='';
 export function setWorkspaceContext(id:string){workspaceContext=id;}

@@ -34,17 +34,15 @@
       </div>
     }
   </div>
+  @if (pendingPhotoLinks().length) {
+    <button type="button" [disabled]="photosBusy || busy" (click)="importLinks()">Загрузить фото по ссылкам</button>
+    <p class="hint">После загрузки проверьте фотографии перед отправкой на площадки.</p>
+  }
   @if (!publicationEnabled) {
     <p class="hint">Карточку можно заполнить сейчас. Публикация этой категории на площадках пока недоступна.</p>
   } @else {
   <div class="launch">
-    <label
-      ><input
-        type="checkbox"
-        [ngModel]="mode === 'automatic'"
-        (ngModelChange)="mode = $event ? 'automatic' : 'assist'"
-      />Автоматически пройти шаги формы</label
-    ><button
+    <button
       type="button"
       class="publish"
       [disabled]="
@@ -56,6 +54,7 @@
     </button>
   </div>
   <p class="hint">
+    Переходы между шагами и окончательную публикацию вы подтверждаете на площадке.
     Уточнения в проверке необязательны. Площадки могут запросить свои
     обязательные поля и подтверждения.
   </p>

@@ -1,0 +1,32 @@
+{
+  "id": "sale-rub",
+  "deal": "sale",
+  "city": "Могилев",
+  "street": "Пионерская",
+  "house": "12",
+  "photos": 0,
+  "description": "Тест продажи квартиры в Могилеве за 6900000 RUB. 75 м², 4 комнаты, этаж 3 из 5.",
+  "fields": {
+    "sale.price": "6900000",
+    "sale.currency": "RUB",
+    "apartment.rooms": "4",
+    "apartment.total_area": "75",
+    "apartment.living_area": "49",
+    "apartment.kitchen_area": "10",
+    "apartment.floor": "3",
+    "building.floors": "5",
+    "building.year": "1989",
+    "building.wall": "Кирпичный",
+    "apartment.balcony": "Балкон",
+    "apartment.repair": "Косметический",
+    "apartment.market": "Вторичка"
+  },
+  "extras": {
+    "building.amenities": [
+      "лифт"
+    ],
+    "apartment.separate_rooms": "3",
+    "sale.terms": "Любые",
+    "apartment.bathroom": "Совмещенный"
+  }
+}

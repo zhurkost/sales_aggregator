@@ -1,0 +1,40 @@
+{
+  "id": "rent-byn-family",
+  "deal": "rent",
+  "city": "Минск",
+  "street": "Брикета",
+  "house": "18",
+  "photos": 2,
+  "description": "Тест аренды: трёхкомнатная квартира Минск Брикета 18. Площадь 68 м², жилая 43, кухня 10. Этаж 7 из 9, 2009 год. 1700 BYN в месяц. Мебель, холодильник и стиральная машина, интернет. Можно с детьми, с животными нельзя. Залог за месяц.",
+  "fields": {
+    "rental.room_configuration": "3",
+    "rental.total_area": "68",
+    "rental.floor": "7",
+    "building.total_floors": "9",
+    "rental.monthly_price": "1700",
+    "rental.currency": "BYN",
+    "contact.landlord_role": "owner",
+    "amenity.furniture": "present",
+    "amenity.refrigerator": "yes",
+    "amenity.washing_machine": "yes",
+    "amenity.internet": "yes",
+    "contact.name": "Тестовый арендодатель"
+  },
+  "extras": {
+    "listing.title": "Три комнаты для семьи",
+    "rental.prepayment": "months_1",
+    "tenant.pets": "forbidden",
+    "tenant.children": "allowed",
+    "tenant.students": "forbidden",
+    "rental.living_area": "43",
+    "rental.kitchen_area": "10",
+    "rental.bathroom": "separate",
+    "rental.balcony": "loggia",
+    "rental.repair": "euro",
+    "building.year": "2009",
+    "building.wall_material": "panel",
+    "amenity.elevator": "yes",
+    "amenity.stove_type": "electric",
+    "amenity.tv": "no"
+  }
+}

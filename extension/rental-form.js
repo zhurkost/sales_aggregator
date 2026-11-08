@@ -411,7 +411,7 @@
           candidates.push(...options);
           if (
             !options.length &&
-            !this.tried.has(key + ":open") &&
+            !this.tried.has(c.field + ":open") &&
             elements.length === 1
           ) {
             const trigger =
@@ -428,8 +428,11 @@
                 bubbles: true, cancelable: true, button: 0,
               }));
             } else trigger.click();
-            this.tried.add(key + ":open");
+            this.tried.add(c.field + ":open");
             this.waiting = { field: c.field, tries: 0 };
+            // React renders the menu after this event. Opening it for the next
+            // selected value in the same tick would immediately close it again.
+            return;
           }
         }
         if (candidates.length !== 1) {
