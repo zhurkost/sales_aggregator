@@ -44,6 +44,7 @@ let browser;
 let completed = false;
 let testPhoto;
 const results = [];
+const requests = [];
 async function until(check, message, timeout = 20000) {
   const end = Date.now() + timeout;
   while (Date.now() < end) {
@@ -70,6 +71,19 @@ try {
     viewport: {width: 1400, height: 1100},
     args: ["--disable-extensions-except=" + extension, "--load-extension=" + extension],
   });
+  browser.on("request", request => {
+    const url = new URL(request.url());
+    if (request.method() === "POST" && /(^|\.)(realt|domovita|kufar|onliner)\.by$/.test(url.hostname))
+      requests.push({method:request.method(),url:url.origin+url.pathname,contentType:request.headers()["content-type"]});
+  });
+  let realtUploads = 0;
+  if (scenario?.failRealtUpload || scenario?.failRealtAfter)
+    await browser.route("https://realt.by/bff/api/files/upload/image", async route => {
+      const upload = ++realtUploads;
+      if (scenario.failRealtUpload || (scenario.failRealtAfter && upload > scenario.failRealtAfter))
+        return route.fulfill({status:503,contentType:"application/json",body:JSON.stringify({error:"QA simulated temporary upload failure"})});
+      return route.continue();
+    });
   await browser.route(origin + "/**", async route => {
     const url = new URL(route.request().url());
     if (url.pathname === "/__qa__/photo.png" && testPhoto)
@@ -189,16 +203,18 @@ try {
     await writeFile(path.join(output, "prepared.json"), JSON.stringify(await response.json(), null, 2));
     await writeFile(path.join(output, "source.json"), JSON.stringify(scenario, null, 2));
   }
+  const launchPagesBefore = new Set(browser.pages());
   await page.getByRole("button", {name:"Опубликовать", exact:true}).click();
+  const launchedPages = () => browser.pages().filter(p => !launchPagesBefore.has(p));
   if (live) {
     await until(async () => (await jobs()).length === (scenario?.platforms?.length || 4), "Selected marketplace jobs were not created");
     for (const job of await jobs()) {
       assert.equal(job.recipe.submit.length, 0, "Live checks must stop before publication");
       const host = new URL(job.recipe.startUrl).hostname;
-      await until(() => browser.pages().some(p => new URL(p.url()).hostname === host ||
+      await until(() => launchedPages().some(p => new URL(p.url()).hostname === host ||
         (host === "r.onliner.by" && new URL(p.url()).hostname === "profile.onliner.by")),
         "Marketplace navigation timed out: " + host, 30000);
-      const tab = browser.pages().find(p => new URL(p.url()).hostname === host ||
+      const tab = launchedPages().find(p => new URL(p.url()).hostname === host ||
         (host === "r.onliner.by" && new URL(p.url()).hostname === "profile.onliner.by"));
       if (!tab) throw new Error("Missing marketplace tab " + host);
       await tab.bringToFront();
@@ -223,16 +239,17 @@ try {
         return {field:c.field, action:c.action, expected:c.value,
           observed:elements.map(el => ({value:el.value,
             text:(el.tagName === "IFRAME" ? el.contentDocument?.body.innerText : el.innerText)?.slice(0,300),
-            checked:el.checked, visible:!!el.getClientRects().length,
+            checked:el.checked, label:el.closest('label')?.textContent.trim(), visible:!!el.getClientRects().length,
             selected:[...el.querySelectorAll('input:checked,[aria-checked="true"],[aria-selected="true"],[class*="chip__filled-green"],[class*="text-white"][class*="bg-basic"]')]
               .map(choice => ({value:choice.value, label:(choice.closest("label") || choice).textContent.trim()}))
-          })).slice(0,8)};
+          })).slice(0,50)};
       }), job.recipe.controls);
       const visibleText = await tab.locator("body").innerText();
       const photos = await tab.evaluate(controls => controls.filter(c => c.action === "files").map(c => ({
         field:c.field,
         counter:c.uploadedCountSelector ? [...document.querySelectorAll(c.uploadedCountSelector)].map(el => el.textContent) : [],
         previews:c.previewSelector ? document.querySelectorAll(c.previewSelector).length : null,
+        acceptedRealtPhotos:[...document.querySelectorAll('input[type="hidden"][name^="media.photos."][name$=".uuid"]')].filter(el => el.value).length,
         inputs:[...document.querySelectorAll(c.selector)].map(el => ({tag:el.tagName, files:el.files?.length})),
       })), job.recipe.controls);
       await writeFile(path.join(output, "live-" + job.recipe.platform + ".json"),
@@ -255,6 +272,12 @@ try {
         "; remaining=" + JSON.stringify(status?.remaining || []);
       results.push(message);
       console.log(message);
+      if (job.recipe.platform === 'realt' && (scenario?.failRealtUpload || scenario?.failRealtAfter)) {
+        const photoField = job.recipe.controls.find(c => c.action === 'files');
+        assert.ok(photos[0].acceptedRealtPhotos < photoCount, 'The test must reproduce an incomplete upload');
+        assert.ok(status.remaining.includes(photoField.name || photoField.field),
+          'Incomplete Realt uploads must remain visible as unfilled photos');
+      }
     }
   } else {
   await until(() => browser.pages().some(p => new URL(p.url()).hostname.endsWith("onliner.by")),
@@ -333,6 +356,7 @@ try {
   }
   throw error;
 } finally {
+  await writeFile(path.join(output, "network.json"), JSON.stringify(requests, null, 2));
   await writeFile(path.join(output, live ? "live-report.json" : "report.json"),
     JSON.stringify({mode:live ? "live-anonymous-observation" : "onliner-fixture", completed, results}, null, 2));
   await writeFile(path.join(scratch, "api.log"), apiLog);

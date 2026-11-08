@@ -14,6 +14,56 @@ async function fixture(html, controls) {
   return {window, document: window.document, form};
 }
 
+for (const category of ['apartments_long_term_rent','apartments_sale'])
+test(`Realt ${category} waits for accepted photo IDs instead of the file input alone`, async t => {
+  const r=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental',category,'runtime/browser_realt.json'),'utf8'));
+  const c=r.controls.find(c=>c.action==='files');
+  const {window:w,document:d}=await fixture('<input type="file"><div id="accepted"></div>',[]);
+  t.after(()=>w.close());
+  const form=new w.AutopostRentalForm.Form({controls:[c]},[{name:'one.jpg',dataUrl:'data:image/jpeg;base64,YQ=='}]);
+  await form.tick();
+  assert.equal(d.querySelector('input[type=file]').files.length,1);
+  assert.equal(form.done.has(c.field),false,'a selected file is not a successful upload');
+  for(let i=0;i<3;i++)await form.tick();
+  assert.equal(form.done.has(c.field),false);
+  d.querySelector('#accepted').innerHTML='<input type="hidden" name="media.photos.0.uuid" value="accepted-server-id">';
+  await form.tick();
+  assert.equal(form.done.has(c.field),true);
+});
+
+for (const category of ['apartments_long_term_rent','apartments_sale']) {
+  const r=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental',category,'runtime/browser_realt.json'),'utf8'));
+  const c=r.controls.find(c=>c.action==='files');
+  test(`Realt ${category} keeps partial and pending photo uploads incomplete`, async t => {
+    const {window:w,document:d}=await fixture('<input type="file"><input type="hidden" name="media.photos.0.uuid" value="">',[]);
+    t.after(()=>w.close());
+    let uploads=0;
+    d.querySelector('input[type=file]').onchange=()=>uploads++;
+    const form=new w.AutopostRentalForm.Form({controls:[c]},['one','two'].map(name=>({name:name+'.jpg',dataUrl:'data:image/jpeg;base64,YQ=='})));
+    await form.tick();
+    assert.equal(form.done.has(c.field),false);
+    assert.equal(form.awaitingPhotos(),true);
+    const first=d.querySelector('input[type=hidden]');
+    first.setAttribute('value','first-accepted-id');
+    await form.tick();
+    assert.equal(form.done.has(c.field),false,'one accepted photo is not the requested two');
+    d.body.insertAdjacentHTML('beforeend','<input type="hidden" name="media.photos.1.uuid" value="second-accepted-id">');
+    await form.tick();
+    assert.equal(form.done.has(c.field),true);
+    assert.equal(form.awaitingPhotos(),false);
+    assert.equal(uploads,1);
+  });
+  test(`Realt ${category} preserves photos already present in the marketplace form`, async t => {
+    const {window:w,document:d}=await fixture('<input type="file"><input type="hidden" name="media.photos.0.uuid" value="existing-id">',[]);
+    t.after(()=>w.close());
+    const form=new w.AutopostRentalForm.Form({controls:[c]},[{name:'new.jpg',dataUrl:'data:image/jpeg;base64,YQ=='}]);
+    await form.tick();
+    assert.equal(d.querySelector('input[type=file]').files.length,0);
+    assert.equal(form.protected.has(c.field),true);
+    assert.equal(form.done.has(c.field),false);
+  });
+}
+
 test('phone prefix is not mistaken for a manually entered number; formatted numbers are confirmed', async () => {
   for (const [html, value, expected] of [
     ['<input id="phone" value="+375">', '+375291234567', '+375291234567'],

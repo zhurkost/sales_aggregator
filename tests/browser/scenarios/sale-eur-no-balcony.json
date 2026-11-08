@@ -1,0 +1,35 @@
+{
+  "id": "sale-eur-no-balcony",
+  "deal": "sale",
+  "city": "Витебск",
+  "street": "Ленина",
+  "house": "12",
+  "photos": 1,
+  "description": "Продаётся однокомнатная квартира в Витебске, Ленина 12. 42 м², жилая 22, кухня 8. Первый этаж из пяти. Кирпичный дом 1987 года. Балкона нет, совмещённый санузел. Цена 61000 EUR. Чистая продажа.",
+  "fields": {
+    "sale.price": "61000",
+    "sale.currency": "EUR",
+    "apartment.rooms": "1",
+    "apartment.total_area": "42",
+    "apartment.living_area": "22",
+    "apartment.kitchen_area": "8",
+    "apartment.floor": "1",
+    "building.floors": "5",
+    "building.year": "1987",
+    "building.wall": "Кирпичный",
+    "apartment.balcony": "Нет",
+    "apartment.repair": "Косметический",
+    "apartment.market": "Вторичка"
+  },
+  "extras": {
+    "apartment.bathroom": "Совмещенный",
+    "apartment.separate_rooms": "1",
+    "sale.terms": "Чистая продажа",
+    "apartment.windows": [
+      "На улицу"
+    ],
+    "building.amenities": [
+      "лифт"
+    ]
+  }
+}

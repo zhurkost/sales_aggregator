@@ -1,0 +1,40 @@
+{
+  "id": "sale-usd-newbuild",
+  "deal": "sale",
+  "city": "Гродно",
+  "street": "Горького",
+  "house": "80",
+  "photos": 1,
+  "description": "Продам пятикомнатную квартиру в Гродно, Горького 80. Новостройка без отделки. Общая площадь 148, жилая 92, кухня 18. Этаж 16 из 16, дом 2025 года. Терраса, три санузла, цена 155000 USD. Возможен обмен.",
+  "fields": {
+    "sale.price": "155000",
+    "sale.currency": "USD",
+    "apartment.rooms": "5",
+    "apartment.total_area": "148",
+    "apartment.living_area": "92",
+    "apartment.kitchen_area": "18",
+    "apartment.floor": "16",
+    "building.floors": "16",
+    "building.year": "2025",
+    "building.wall": "Монолитный",
+    "apartment.balcony": "Терраса",
+    "apartment.repair": "Без отделки",
+    "apartment.market": "Новостройка"
+  },
+  "extras": {
+    "apartment.bathroom": "Три",
+    "apartment.separate_rooms": "5",
+    "apartment.levels": "1",
+    "apartment.windows": [
+      "Во двор",
+      "На улицу"
+    ],
+    "building.amenities": [
+      "лифт",
+      "интернет",
+      "видеонаблюдение"
+    ],
+    "sale.terms": "Обмен",
+    "listing.short_description": "Пять комнат, терраса, три санузла."
+  }
+}

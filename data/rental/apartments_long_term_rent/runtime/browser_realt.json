@@ -180,6 +180,7 @@
       "field": "realt.photos",
       "action": "files",
       "selector": "input[type=\"file\"]",
+      "previewSelector": "input[type=\"hidden\"][name^=\"media.photos.\"][name$=\".uuid\"][value]:not([value=\"\"])",
       "index": 0
     },
     {
