@@ -15,7 +15,26 @@ const profile = {id:"owner",name:"Owner",login:"owner"};
 const response = (body: unknown) => new Response(JSON.stringify(body),{status:200});
 describe("Real estate workspace",()=>{
   let app: AppComponent;
-  afterEach(()=>{app?.ngOnDestroy();vi.unstubAllGlobals();vi.restoreAllMocks();});
+  afterEach(()=>{app?.ngOnDestroy();vi.unstubAllGlobals();vi.restoreAllMocks();sessionStorage.clear();});
+  it("restores the selected category after reload for the same profile", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: unknown) =>
+      response(url === "/api/workspace/session" ? {profile, profiles:[profile]} : {settings:{}})));
+    app = new AppComponent();
+    vi.spyOn(app, "checkExtension").mockResolvedValue();
+    await app.session();
+    app.selectDeal("sale");
+    app.ngOnDestroy();
+    app = new AppComponent();
+    vi.spyOn(app, "checkExtension").mockResolvedValue();
+    await app.session();
+    expect(app.deal).toBe("sale");
+    app.selectDeal("rent");
+    await app.session();
+    expect(app.deal).toBe("rent");
+    sessionStorage.setItem("autopost.active-deal.owner", "unrecognized");
+    await app.session();
+    expect(app.deal).toBe("rent");
+  });
   it("opens rental directly and never requests removed workspace APIs",async()=>{
     const fetcher=vi.fn(async(url:unknown)=>{
       if(url==="/api/workspace/session")return response({profile,profiles:[profile]});

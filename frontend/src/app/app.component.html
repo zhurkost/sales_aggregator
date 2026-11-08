@@ -125,7 +125,7 @@
           @for (tab of deals; track tab.id; let i = $index) {
             <button type="button" role="tab" [id]="'tab-' + tab.id" [attr.aria-controls]="'panel-' + tab.id"
               [attr.aria-selected]="deal === tab.id" [tabIndex]="deal === tab.id ? 0 : -1"
-              (click)="deal = tab.id" (keydown)="tabKey($event, i)">{{ tab.label }}</button>
+              (click)="selectDeal(tab.id)" (keydown)="tabKey($event, i)">{{ tab.label }}</button>
           }
         </div>
         @for (tab of deals; track tab.id) {

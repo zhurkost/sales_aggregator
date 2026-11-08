@@ -19,11 +19,13 @@
     "build:frontend": "node scripts/prepare-angular.mjs && npm --prefix frontend run build",
     "build:backend": "node scripts/maven.mjs -B clean package",
     "test:frontend": "npm --prefix frontend test",
-    "test:backend": "node scripts/maven.mjs -B test"
+    "test:backend": "node scripts/maven.mjs -B test",
+    "test:browser": "node scripts/test-browser.mjs"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.6",
-    "happy-dom": "^21.0.4"
+    "happy-dom": "^21.0.4",
+    "playwright": "1.62.1"
   },
   "type": "module"
 }

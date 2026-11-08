@@ -165,10 +165,21 @@
       };
       if (c.action === "files" && c.previewSelector && this.oldPreviews && this.photoExpected) {
         const current = query(c.previewSelector);
-        const fresh = current.filter(photo => !this.oldPreviews.has(photo.querySelector("img").src));
-        if (fresh.length !== this.photoExpected) return;
-        const old = current.find(photo => this.oldPreviews.has(photo.querySelector("img").src));
-        if (old) {
+        if (!this.replacementReady) {
+          const remainingOld = new Map(this.oldPreviews);
+          let added = 0;
+          for (const photo of current) {
+            const src = photo.querySelector("img").src;
+            const count = remainingOld.get(src) || 0;
+            if (count) remainingOld.set(src, count - 1);
+            else added++;
+          }
+          if (added !== this.photoExpected) return;
+          this.replacementReady = true;
+        }
+        if (current.length > this.photoExpected) {
+          const old = current.find(photo => this.oldPreviews.has(photo.querySelector("img").src));
+          if (!old) return;
           const remove = old.querySelector(".new-photos__thumbnail-remove");
           if (remove && !this.removedPreviews.has(old)) {
             this.removedPreviews.add(old);
@@ -201,13 +212,17 @@
         // Existing uploads belong to the user; do not append duplicates or claim success.
         if (["onliner.images", "onliner.file"].includes(c.field) && c.previewSelector) {
           // Replace restored thumbnails only once all the incoming uploads appeared.
-          this.oldPreviews = new Set(query(c.previewSelector).map(photo => photo.querySelector("img").src));
+          this.oldPreviews = new Map();
+          for (const photo of query(c.previewSelector)) {
+            const src = photo.querySelector("img").src;
+            this.oldPreviews.set(src, (this.oldPreviews.get(src) || 0) + 1);
+          }
           this.removedPreviews = new Set();
         } else if (hasCounter && uploadedCount() > 0) {
           this.protected.add(c.field);
           return;
         }
-        if (elements.length !== 1 || elements[0].files?.length) return;
+        if (elements.length !== 1 || (!this.oldPreviews && elements[0].files?.length)) return;
         const transfer = new DataTransfer();
         for (const p of this.photos) {
           const [header, data] = p.dataUrl.split(",");

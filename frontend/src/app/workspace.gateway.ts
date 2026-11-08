@@ -21,4 +21,14 @@ export class WorkspaceGateway {
   }
   clearContext() { setWorkspaceContext(""); }
   pingExtension() { return extension("PING"); }
+  activeDeal(profileId: string): "rent" | "sale" {
+    try {
+      return sessionStorage.getItem("autopost.active-deal." + profileId) === "sale" ? "sale" : "rent";
+    } catch { return "rent"; }
+  }
+  rememberDeal(profileId: string, deal: "rent" | "sale") {
+    try {
+      sessionStorage.setItem("autopost.active-deal." + profileId, deal);
+    } catch { /* Browser storage may be disabled; selection still works in memory. */ }
+  }
 }

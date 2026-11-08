@@ -200,3 +200,39 @@ test('Kufar can deselect a default paid package without clicking a paid offer or
   const clicks=[];d.addEventListener('click',e=>clicks.push(e.target.dataset.cy));
   await form.tick();await form.tick();assert.deepEqual(clicks,['vas-no_vas']);
 });
+
+test('Onliner uploads again from a restored file input and accepts repeated photo URLs', async t => {
+  const c = recipe('onliner').controls.find(c => c.action === 'files');
+  const {window:w, document:d} = await fixture('<input class="new-photos__input-file" type="file" name="file">', []);
+  t.after(() => w.close());
+  const input = d.querySelector('input');
+  const oldFiles = new w.DataTransfer();
+  oldFiles.items.add(new w.File(['old'], 'old.png', {type:'image/png'}));
+  input.files = oldFiles.files;
+  function preview() {
+    const item = d.createElement('div');
+    item.className = 'new-photos__thumbnail-figure';
+    item.innerHTML = '<img src="https://content.onliner.by/apartments_photo/same.jpg"><a class="new-photos__thumbnail-remove">Удалить</a>';
+    item.querySelector('a').onclick = () => item.remove();
+    d.body.append(item);
+    return item;
+  }
+  const old = preview();
+  let uploads = 0;
+  input.addEventListener('change', () => uploads++);
+  const form = new w.AutopostRentalForm.Form({controls:[c]},
+    [{name:'new.png', dataUrl:'data:image/png;base64,YQ=='}]);
+  await form.tick();
+  assert.equal(uploads, 1);
+  assert.equal(input.files[0].name, 'new.png');
+  await form.tick();
+  assert.equal(old.isConnected, true);
+  assert.equal(form.done.has(c.field), false);
+  const incoming = preview();
+  await form.tick();
+  await form.tick();
+  assert.equal(old.isConnected, false);
+  assert.equal(incoming.isConnected, true);
+  assert.equal(form.done.has(c.field), true);
+  assert.equal(uploads, 1);
+});

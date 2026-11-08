@@ -19,12 +19,16 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
   readonly deals = [{ id: "rent", category: APARTMENT_RENT, label: "Аренда квартир" }, { id: "sale", category: APARTMENT_SALE, label: "Продажа квартир" }] as const;
   deal: "rent" | "sale" = "rent";
+  selectDeal(deal: "rent" | "sale") {
+    this.deal = deal;
+    if (this.profile) this.workspace.rememberDeal(this.profile.id, deal);
+  }
   tabKey(event: KeyboardEvent, index: number) {
     const next = event.key === "Home" ? 0 : event.key === "End" ? 1 :
       ["ArrowLeft", "ArrowRight"].includes(event.key) ? 1 - index : -1;
     if (next < 0) return;
     event.preventDefault();
-    this.deal = this.deals[next].id;
+    this.selectDeal(this.deals[next].id);
     (event.currentTarget as HTMLElement).parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus();
   }
   ready = false;
@@ -95,7 +99,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const settings = await this.workspace.settings(profile);
     if (!this.alive) return;
     this.settings = settings;
-    this.deal = "rent";
+    this.deal = this.workspace.activeDeal(profile.id);
     this.profile = profile;
     void this.checkExtension();
   }

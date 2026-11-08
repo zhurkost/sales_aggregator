@@ -1,0 +1,85 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Onliner sale regression fixture</title>
+<style>body { font: 16px sans-serif; max-width: 900px; margin: 30px auto; } input,select,textarea { display: block; margin: 10px; } label { display: inline-block; } .new-photos__thumbnail-figure img { width: 100px; }</style>
+<div class="new-progress">Продажа квартиры — тестовая форма</div>
+<input class="new-photos__input-file" name="file" type="file" multiple>
+<div id="photos"></div>
+<a href="#progress">Продолжить</a>
+<section id="details" hidden>
+  <div class="new-sub__location">
+    <input aria-label="Адрес" data-bind="value: $root.data.location.user_address" value="Минск">
+    <div id="suggestions"></div>
+  </div>
+  <textarea placeholder="Подробное описание">Предыдущее объявление</textarea>
+  <input id="price-input" placeholder="0,00" value="92 000,00">
+  <select data-bind="value: $root.data.price.currency"><option value="USD">Доллары США</option><option value="BYN">Белорусские рубли</option></select>
+  <input name="floor" aria-label="Этаж" value="4">
+  <input name="floors" aria-label="Этажей в доме" value="9">
+  <input name="area.total" aria-label="Общая" value="56">
+  <input name="area.living" aria-label="Жилая" value="34">
+  <input name="area.kitchen" aria-label="Кухня" value="9">
+  <input name="buildingYear" aria-label="Год постройки" value="2008">
+  <input placeholder="Ваше имя">
+  <div id="choices"></div>
+</section>
+<button id="publish">Опубликовать объявление на площадке</button>
+<output id="submitted">0</output>
+<script>
+  window.uploads = 0;
+  const photoUrl = 'https://content.onliner.by/apartments_photo/test-same.png';
+  function preview() {
+    const figure = document.createElement('div');
+    figure.className = 'new-photos__thumbnail-figure';
+    const img = document.createElement('img');
+    img.src = photoUrl;
+    const remove = document.createElement('a');
+    remove.className = 'new-photos__thumbnail-remove';
+    remove.textContent = 'Удалить';
+    remove.onclick = () => figure.remove();
+    figure.append(img, remove);
+    document.querySelector('#photos').append(figure);
+  }
+  preview();
+  const restored = new DataTransfer();
+  restored.items.add(new File(['old'], 'restored.jpg', {type:'image/jpeg'}));
+  document.querySelector('[type=file]').files = restored.files;
+  document.querySelector('[type=file]').onchange = event => {
+    window.uploads++;
+    for (const file of event.target.files) preview();
+  };
+  document.querySelector('a[href="#progress"]').onclick = () => {
+    document.querySelector('#details').hidden = false;
+  };
+  const address = document.querySelector('.new-sub__location input');
+  address.onkeyup = () => {
+    const option = document.createElement('div');
+    option.className = 'new-sub__map-menu-item';
+    option.textContent = address.value;
+    option.onmousedown = () => {
+      address.value = option.textContent;
+      document.querySelector('#suggestions').replaceChildren();
+    };
+    document.querySelector('#suggestions').replaceChildren(option);
+  };
+  for (const [name, choices] of Object.entries({
+    resale: {true:'Вторичка', false:'Новостройка'},
+    walling: {panel:'Панель', brick:'Кирпич', monolith:'Монолит', block:'Блок'},
+    rooms: {1:'1', 2:'2', 3:'3', 4:'4', 5:'5', 6:'6+'},
+    balcony: {true:'Есть', false:'Нет'},
+    'seller.type': {owner:'Собственник', agent:'Агентство', builder:'Застройщик'}
+  })) {
+    for (const [value, text] of Object.entries(choices)) {
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = name;
+      input.value = value;
+      const label = document.createElement('label');
+      label.append(input, text);
+      document.querySelector('#choices').append(label);
+    }
+  }
+  document.querySelector('#publish').onclick = () => {
+    document.querySelector('#submitted').value = String(Number(document.querySelector('#submitted').value) + 1);
+  };
+</script>
