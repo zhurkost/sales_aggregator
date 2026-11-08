@@ -671,6 +671,41 @@
             "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. props.name=prepayment; props.options.",
             "type": "enum",
             "options": []
+          },
+          {
+            "id": "specific.domovita.extra_info_comments.554bf8f2",
+            "name": "Сигнализация",
+            "description": "Дополнительная опция Domovita. Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.domovita.extra_info_comments.fe744909",
+            "name": "Видеонаблюдение",
+            "description": "Дополнительная опция Domovita. Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.domovita.extra_info_comments.b1f4d2dd",
+            "name": "Лес",
+            "description": "Дополнительная опция Domovita. Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.domovita.extra_info_comments.6c91a54a",
+            "name": "Водоем",
+            "description": "Дополнительная опция Domovita. Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
+            "type": "boolean",
+            "options": []
+          },
+          {
+            "id": "specific.domovita.extra_info_comments.06b247b2",
+            "name": "Магазин",
+            "description": "Дополнительная опция Domovita. Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
+            "type": "boolean",
+            "options": []
           }
         ]
       },

@@ -752,13 +752,13 @@
       {
         "id": "domovita.extra_info_comments",
         "name": "Дополнительные опции",
-        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Видимые чипы; props.name=extra_info_comments.",
+        "description": "https://domovita.by/new/add/cottages/rent | 2026-11-08T18:09:40.510Z | Сдаче длительно → Коттеджи/Дома. DOM и props компонента. Видимые чипы; props.name=extra_info_comments. Повторная проверка 2026-11-08T19:55:30.349Z: все 11 кодов прочитаны из конфигурации формы; все 11 checkbox выбраны и прочитаны обратно из DOM. Неизвестных кодов нет.",
         "type": "multi_enum",
         "options": [
           {
             "id": "domovita.extra_info_comments.v_f1c12e659aa7",
             "name": "Кондиционер",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
             "value": "kondicioner",
             "options": []
@@ -766,81 +766,81 @@
           {
             "id": "domovita.extra_info_comments.v_2a27b9c84852",
             "name": "Сигнализация",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "signalizacia",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_7e9b0b202a1d",
             "name": "Видеонаблюдение",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "videonabl",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_ff052eb3069d",
             "name": "Интернет",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "internet",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_2ecd1d498e1b",
             "name": "Баня",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "banay",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_069901f7abb4",
             "name": "Лес",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "les",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_c9457a9bb434",
             "name": "Водоем",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "vodoem",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_0d3ab89199bf",
             "name": "Магазин",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "magazin",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_919606c08d1b",
             "name": "Гараж",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "garage",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_9ee03439c5f8",
             "name": "Камин",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "fireplace",
             "options": []
           },
           {
             "id": "domovita.extra_info_comments.v_f459548e0521",
             "name": "Басcейн",
-            "description": "",
+            "description": "Код подтверждён в fields[].inputs[].input_options живой формы 2026-11-08T19:55:30.349Z.",
             "type": "choice",
-            "value": null,
+            "value": "pool",
             "options": []
           }
         ],

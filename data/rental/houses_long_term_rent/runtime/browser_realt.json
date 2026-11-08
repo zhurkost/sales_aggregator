@@ -143,9 +143,9 @@
     },
     {
       "field": "realt.additional.furniture",
-      "action": "choices",
-      "selector": "#additional",
-      "label": "Мебель"
+      "action": "check",
+      "selector": "#additional button[role=\"switch\"]",
+      "controlText": "Мебель"
     },
     {
       "field": "realt.additional.applianceRental",

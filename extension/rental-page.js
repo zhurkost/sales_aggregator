@@ -101,9 +101,14 @@
       if (departed || document.hidden) return;
       if (!form.ready()) {
         idle = cycles = 0;
+        const loginRequired = task.recipe.platform === "kufar"
+          && [...document.querySelectorAll('button')].some(e => api.visible(e)
+            && e.textContent.replace(/\s+/g, " ").trim() === "Войти или зарегистрироваться");
         const wrongDeal = task.categoryId !== "apartments_sale" && task.recipe.platform === "kufar"
           && [...document.querySelectorAll('[data-name="re_auction_sale"]')].some(api.visible);
-        await report(wrongDeal ? "needs_action" : "running", wrongDeal
+        await report(loginRequired || wrongDeal ? "needs_action" : "running", loginRequired
+          ? "Войдите в аккаунт Kufar в открытой вкладке. После входа заполнение продолжится."
+          : wrongDeal
           ? "Открыта продажа. Выберите долгосрочную аренду на Kufar; заполнение продолжится автоматически."
           : "Ожидаем открытия формы площадки.");
         return;

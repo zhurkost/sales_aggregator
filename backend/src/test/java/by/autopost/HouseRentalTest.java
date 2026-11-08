@@ -103,4 +103,16 @@ class HouseRentalTest {
     return list(result.path("platforms")).stream().filter(p -> text(p, "platform").equals(id))
         .findFirst().orElseThrow().path("values");
   }
+
+  @Test
+  void domovitaTransfersEverySharedHouseAmenityWithObservedNativeCodes() {
+    var values = object("house.kind", "Дом", "amenity.air_conditioner", true,
+        "amenity.internet", true, "amenity.sauna", true, "amenity.garage", true,
+        "amenity.fireplace", true, "amenity.pool", true);
+    var prepared = catalog.prepare(object("modelVersion", 2, "schemaVersion", catalog.version(),
+        "values", values, "platforms", List.of("domovita")));
+    var actual = new java.util.HashSet<String>();
+    platform(prepared, "domovita").path("domovita.extra_info_comments").forEach(v -> actual.add(v.asText()));
+    assertEquals(java.util.Set.of("kondicioner", "internet", "banay", "garage", "fireplace", "pool"), actual);
+  }
 }

@@ -47,3 +47,39 @@ test('all house adapters leave next steps and final submission to the user', () 
     assert.deepEqual(recipe(p).submit, []);
   }
 });
+
+test('Realt house furniture uses its switch and leaves other switches untouched', async t => {
+  const w = await windowFor(t, '<section id="additional"><button role="switch" aria-checked="false">Мебель</button><button role="switch" aria-checked="false">Другое</button></section>');
+  const switches = [...w.document.querySelectorAll('[role="switch"]')];
+  for (const button of switches) button.onclick = () => button.setAttribute('aria-checked', String(button.getAttribute('aria-checked') !== 'true'));
+  const c = recipe('realt').controls.find(c => c.field === 'realt.additional.furniture');
+  for (const value of [true, false]) {
+    const form = new w.AutopostRentalForm.Form({controls:[{...c,value}]});
+    for (let i=0;i<5;i++) await form.tick();
+    assert.equal(form.done.has(c.field), true);
+    assert.equal(switches[0].getAttribute('aria-checked'), String(value));
+    assert.equal(switches[1].getAttribute('aria-checked'), 'false');
+  }
+});
+
+test('Kufar reports a visible login requirement and resumes when the form becomes available', async t => {
+  const w = await windowFor(t, '<button><span>Войти или зарегистрироваться</span></button>');
+  let tick;
+  const reports=[];
+  w.setInterval=fn=>{tick=fn;return 1;};w.clearInterval=()=>{};
+  w.AutopostCore={fillNavigation:()=>({type:'navigate'})};
+  const task={jobId:'house-login',categoryId:'houses_long_term_rent',photos:[],recipe:{platform:'kufar',ready:[{selector:'#ready'}],controls:[{field:'price',action:'text',selector:'#price',value:'1900'}]}};
+  w.chrome={runtime:{id:'test',onMessage:{addListener(){}},async sendMessage(m){
+    if(m.type==='GET')return {task};
+    if(m.type==='REPORT')reports.push(m.payload);
+    return {ok:true};
+  }}};
+  const flush=()=>new Promise(resolve=>setImmediate(resolve));
+  await w.eval(fs.readFileSync(path.join(__dirname,'../rental-page.js'),'utf8'));
+  await flush();
+  assert.equal(reports.at(-1).status,'needs_action');
+  assert.match(reports.at(-1).message,/Войдите.*Kufar/);
+  w.document.body.innerHTML='<div id="ready"><input id="price"></div>';
+  for(let i=0;i<3;i++){tick();await flush();}
+  assert.equal(w.document.querySelector('#price').value,'1900');
+});
