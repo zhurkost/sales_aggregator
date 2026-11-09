@@ -162,3 +162,48 @@ test("manual edits during autocomplete are preserved", async (t) => {
   assert.equal(f.city.value, "Брест");
   assert.equal(f.form.done.size, 0);
 });
+
+test("slow address suggestions retain focus until a later response arrives", async (t) => {
+  const f = await setup("");
+  t.after(() => f.window.happyDOM.abort());
+  const price = f.document.createElement("input");
+  price.id = "price";
+  f.document.body.append(price);
+  f.form.recipe.controls.push({field: "price", action: "text", selector: "#price", value: "900"});
+  // React Select clears its unfinished query on blur, as observed on Domovita.
+  f.city.addEventListener("blur", () => { if (!f.form.done.has("realt.settlement")) f.city.value = ""; });
+  for (let i = 0; i < 10; i++) await f.form.tick();
+  assert.equal(f.city.value, "минск");
+  assert.equal(f.document.activeElement, f.city);
+  assert.equal(price.value, "");
+  f.document.querySelector("#city-wrap ul").innerHTML = cityRows;
+  f.document.querySelector('#city-wrap [role="button"]').onclick = () => {
+    f.city.value = "г. Минск";
+    f.document.querySelector("#city-wrap ul").remove();
+  };
+  for (let i = 0; i < 5; i++) await f.form.tick();
+  assert.equal(f.form.done.has("realt.settlement"), true);
+  assert.equal(price.value, "900");
+});
+
+test("address waiting is bounded and a manual edit releases the remaining fields", async (t) => {
+  for (const manual of [false, true]) {
+    const f = await setup("");
+    t.after(() => f.window.happyDOM.abort());
+    let now = 1000;
+    f.window.Date.now = () => now;
+    const price = f.document.createElement("input");
+    price.id = "price";
+    f.document.body.append(price);
+    f.form.recipe.controls.push({field: "price", action: "text", selector: "#price", value: "900"});
+    await f.form.tick();
+    if (manual) {
+      f.city.value = "Брест";
+      f.form.protect(f.city);
+    } else now += 31000;
+    await f.form.tick();
+    assert.equal(price.value, "900");
+    if (manual) assert.equal(f.city.value, "Брест");
+    assert.equal(f.form.done.has("realt.settlement"), false);
+  }
+});

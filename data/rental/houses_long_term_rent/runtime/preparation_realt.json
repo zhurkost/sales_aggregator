@@ -490,7 +490,7 @@
       }
     },
     {
-      "common_option_id": "specific.realt.description.shortDescription",
+      "common_option_id": "listing.short_description",
       "platform_option_id": "realt.description.shortDescription",
       "conversion": {
         "kind": "identity"
@@ -817,5 +817,5 @@
   ],
   "review": [],
   "schema_hash": "3688cbe88eadda668c53abd93c1c6ff24567c4fb88ac1030a208684e398035e1",
-  "common_hash": "641868fa6effed78f4e812298c3e27a798a0c5d4cf6b3d1824c109df3119f2c5"
+  "common_hash": "624b622f6a4bcc9043ec7f1d5ab664690f5ac2c7e1eff49f096312c4579f8c88"
 }

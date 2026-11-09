@@ -72,6 +72,8 @@ public final class RentalAiPolicy {
 house.kind — явно указанный вид объекта: Дом, Коттедж или Дача. Не заменяй коттедж домом.
 rental.monthly_price — месячная арендная плата; rental.currency — её валюта. Не смешивай цену с залогом, коммунальными платежами или предоплатой. Не пересчитывай валюты.
 house.rooms — количество комнат, house.capacity — количество проживающих, house.levels — число уровней дома. Эти величины независимы. Не добавляй поля этажа квартиры.
+Явные числа словами переводи в цифры: «два уровня», «двухэтажный дом», «двухуровневый коттедж» → house.levels="2"; «одноэтажный дом» → "1"; «восемь человек» → house.capacity="8". «Пять жильцов» → "5", «двенадцать гостей» → "12". Цитата остаётся дословной. Не задавай уточнение для однозначного числа этажей или уровней.
+specific.domovita.prepayment — только явно названная предоплата или аванс. «Залог за один месяц» не заполняет предоплату. «Без залога» не означает «без предоплаты». «Без предоплаты» → "нет", «предоплата за два месяца» → "2 месяца".
 house.total_area — площадь дома в м², house.land_area — площадь участка в сотках. Не смешивай их. Если участок указан в м² или гектарах, не подставляй число как сотки: пропусти поле и задай вопрос о площади в сотках.
 Числа — обычная десятичная строка без единиц. Отопление, газ, вода, канализация, электричество и удобства — только из явно указанных сведений и допустимых choices. Не выводи их из слов «все коммуникации».
 """ : sale ? """
@@ -122,6 +124,7 @@ rental.room_configuration — ВСЕ комнаты, rental.separate_rooms — �
 «Рубли», «рублей», «руб.» без указания страны означают BYN. Российские рубли и RUB — RUB.
 Boolean — только true/false, не строки. Не упомянутый факт отсутствует, а не false.
 Enum — только точный код из choices; multi_enum — массив этих кодов.
+Список полей, choices и подписи кодов — справочник допустимых вариантов, а не уже заполненные данные объявления. Не считай вариант из справочника фактом или противоречием. Например, «Можно с детьми» не противоречит наличию варианта «Без детей»: не выбирай этот вариант и не задавай вопрос, если подходящего положительного варианта нет.
 Для неоднозначных/противоречивых сведений не заполняй поле, добавь короткий вопрос
 (до 3 вопросов только про неоднозначности, не перечисляй все незаполненные поля).
 Не создавай поля вне списка. Не заполняй за пользователя описание или ссылки на фото.
@@ -242,6 +245,8 @@ Enum — только точный код из choices; multi_enum — масс�
         var corrected = TextNode.valueOf(payment);
         return list(choices).contains(corrected) ? corrected : null;
       }
+      if (text(field, "id").equals("specific.domovita.prepayment")
+          && !RentalAiFacts.houseAdvanceGrounded(value.asText(), quote)) return null;
       if (Set.of("rental.currency", "sale.currency").contains(text(field, "id")) && !currencyGrounded(value.asText(), quote))
         return null;
       return value.deepCopy();
@@ -268,6 +273,8 @@ Enum — только точный код из choices; multi_enum — масс�
             && RentalAiFacts.spelledFloor(quote, number.stripTrailingZeros().toPlainString())) found = true;
         if (Set.of("building.total_floors", "building.floors").contains(text(field, "id"))
             && RentalAiFacts.spelledHeight(quote, number.stripTrailingZeros().toPlainString())) found = true;
+        if (HouseCountEvidence.supports(text(field, "id"), number.stripTrailingZeros().toPlainString(), quote))
+          found = true;
         return found && number.signum() >= 0
             ? TextNode.valueOf(number.stripTrailingZeros().toPlainString())
             : null;

@@ -38,6 +38,19 @@ final class RentalAiFacts {
     return value;
   }
 
+  static boolean houseAdvanceGrounded(String value, String quote) {
+    String code = switch (value) {
+      case "нет" -> "none";
+      case "месяц" -> "months_1";
+      case "2 месяца" -> "months_2";
+      case "3 месяца" -> "months_3";
+      case "полгода" -> "months_6";
+      default -> "";
+    };
+    // Domovita has no deposit-only option. Never turn a deposit into an advance.
+    return !code.isEmpty() && code.equals(paymentValue(code, quote));
+  }
+
   private static final Map<String, String> ROOM_PREFIXES = Map.of("1", "одно", "2", "двух|дву",
       "3", "трех|трёх", "4", "четырех|четырёх", "5", "пяти", "6", "шести", "7", "семи");
 

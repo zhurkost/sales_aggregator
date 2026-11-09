@@ -155,7 +155,7 @@
       if (config.queryEvent === "keyup")
         input.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true }));
       form.pending.set(control.field, { phase: "query", search, retries: retry ? (pending.retries || 0) + 1 : 0 });
-      form.waiting = { field: control.field, tries: 0 };
+      form.waiting = { field: control.field, tries: 0, until: Date.now() + 30000 };
       return;
     }
     if (pending.phase === "confirm") {
@@ -212,7 +212,7 @@
       }
       pending.phase = "confirm";
       pending.label = config.confirm === "display-and-closed" ? rawLabel(option) : label(option);
-      form.waiting = { field: control.field, tries: 0 };
+      form.waiting = { field: control.field, tries: 0, until: Date.now() + 30000 };
     }
     if (config.optionEvent === "mousedown")
       option.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, button: 0 }));

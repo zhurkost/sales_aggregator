@@ -567,7 +567,11 @@
           (c) => c.field === this.waiting.field,
         );
         if (c) await this.fill(c);
-        if (this.done.has(this.waiting.field) || ++this.waiting.tries >= 6)
+        // Address lookups are asynchronous. Filling a sibling too early can blur
+        // React Select and erase our query. Manual edits release the queue at once.
+        const expired = this.waiting.until !== undefined
+          ? Date.now() >= this.waiting.until : ++this.waiting.tries >= 6;
+        if (this.done.has(this.waiting.field) || this.protected.has(this.waiting.field) || expired)
           this.waiting = null;
         else return true;
       }
