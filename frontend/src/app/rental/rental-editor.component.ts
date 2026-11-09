@@ -33,9 +33,9 @@ export class RentalEditorComponent implements OnInit, OnDestroy {
   @Input() category = APARTMENT_RENT;
   @Input() deal: "rent" | "sale" = "rent";
   @Input() objectKind: "apartment" | "house" = "apartment";
-  get title() { return this.objectKind === "house" ? "Сдать дом" : this.deal === "sale" ? "Продать квартиру" : "Сдать квартиру"; }
+  get title() { return this.objectKind === "house" ? (this.deal === "sale" ? "Продать дом" : "Сдать дом") : this.deal === "sale" ? "Продать квартиру" : "Сдать квартиру"; }
   get descriptionPlaceholder() {
-    if (this.objectKind === "house") return "Например: сдам дом в Колодищах, 120 м², участок 10 соток, 2 уровня, 4 комнаты. 2500 BYN в месяц. Газовое отопление, скважина, гараж.";
+    if (this.objectKind === "house") return this.deal === "sale" ? "Например: продам дом в Колодищах, 120 м², участок 10 соток, 2 уровня, 4 комнаты. Цена 150 000 USD. Газовое отопление, скважина, гараж." : "Например: сдам дом в Колодищах, 120 м², участок 10 соток, 2 уровня, 4 комнаты. 2500 BYN в месяц. Газовое отопление, скважина, гараж.";
     return this.deal === "sale" ? "Например: продам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9. Цена 85 000 USD." : "Например: сдам двухкомнатную квартиру в Минске, 54 м², 3 этаж из 9, 1500 BYN в месяц. Есть балкон и стиральная машина, можно с детьми.";
   }
   @Input() profileDefaults: RentalProfile = {};

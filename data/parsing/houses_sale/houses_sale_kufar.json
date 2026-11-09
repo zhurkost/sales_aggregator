@@ -1,0 +1,2831 @@
+[
+  {
+    "id": "houses_sale",
+    "name": "Продажа домов",
+    "description": "Беларусь. Продажа дома целиком, коттеджа или дачи. Не аренда, не участок без дома и не часть дома.",
+    "categories": [],
+    "options": [
+      {
+        "id": "kufar.category",
+        "name": "Подкатегория",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1591], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.category.v_020bbc579698",
+            "name": "Новостройки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1120"
+          },
+          {
+            "id": "kufar.category.v_2bdfaea2f1f6",
+            "name": "Квартиры",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1010"
+          },
+          {
+            "id": "kufar.category.v_7fb6b48ca442",
+            "name": "Комнаты",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1040"
+          },
+          {
+            "id": "kufar.category.v_7dc5cb4210d9",
+            "name": "Дома, агроусадьбы, коттеджи",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1020"
+          },
+          {
+            "id": "kufar.category.v_762c57e268dd",
+            "name": "Гаражи и стоянки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1030"
+          },
+          {
+            "id": "kufar.category.v_0712bb2efcc1",
+            "name": "Участки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1080"
+          },
+          {
+            "id": "kufar.category.v_0a3c7c96049b",
+            "name": "Коммерческая",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1050"
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "validation": {}
+      },
+      {
+        "id": "kufar.type",
+        "name": "Тип сделки",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1442], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.type.v_567a9094dfb1",
+            "name": "Продажа",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "sell"
+          },
+          {
+            "id": "kufar.type.v_295d793b6e7f",
+            "name": "Долгосрочная аренда",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "let"
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "validation": {}
+      },
+      {
+        "id": "kufar.subject",
+        "name": "Название товара/услуги",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1512], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 2,
+          "max_length": 100
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.address",
+        "name": "Адрес",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1595], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.body",
+        "name": "Описание",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[10911], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 20,
+          "max_length": 5000
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.images",
+        "name": "Фотографии",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1774], category=1020, type=sell.",
+        "type": "files",
+        "options": [],
+        "required": false,
+        "file_role": "product_image",
+        "validation": {
+          "extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+          ],
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ],
+          "max_file_size_bytes": 10485760,
+          "min_file_size_bytes": 10241
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.currency",
+        "name": "Выбор валюты",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1775], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.currency.v_38f03536b60e",
+            "name": "р.",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "BYR"
+          },
+          {
+            "id": "kufar.currency.v_85a98ea3a58a",
+            "name": "$",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "USD"
+          },
+          {
+            "id": "kufar.currency.v_7984dc1a1030",
+            "name": "€",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "EUR"
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.contact_person",
+        "name": "Контактное лицо",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1519], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.phone",
+        "name": "Телефон",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1515], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {},
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.phone_hidden",
+        "name": "Способ связи",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[9247], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.phone_hidden.v_46be85bd2007",
+            "name": "Звонки и сообщения",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "0"
+          },
+          {
+            "id": "kufar.phone_hidden.v_85d246994258",
+            "name": "Только сообщения",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.name",
+        "name": "Имя",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[2116], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min_length": 2,
+          "max_length": 100
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.content_video",
+        "name": "Видео на YouTube",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[6007], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min_length": 2,
+          "max_length": 150
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.re_contract",
+        "name": "Номер и дата договора",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[7287], category=1020, type=sell.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min_length": 2,
+          "max_length": 150
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        }
+      },
+      {
+        "id": "kufar.region",
+        "name": "Регион",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[9121], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.region.v_fb555e8cdd0f",
+            "name": "Минск",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "kufar.region.v_45ebd3d47719",
+            "name": "Брестская область",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.region.v_f2c436d2aee9",
+            "name": "Гомельская область",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.region.v_bebd7ae1e7f6",
+            "name": "Гродненская область",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.region.v_7a47f6d37df7",
+            "name": "Могилевская область",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "kufar.region.v_9dc8277b0310",
+            "name": "Минская область",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.region.v_ddaddc886dac",
+            "name": "Витебская область",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.area",
+        "name": "Город / Район",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[9122], category=1020, type=sell.",
+        "type": "enum",
+        "options": [],
+        "required": false,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.price",
+        "name": "Цена",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1592], category=1020, type=sell.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_readiness",
+        "name": "Готовность",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5005], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_readiness.v_e054c29df475",
+            "name": "100 %",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_readiness.v_6b3ac53c6c63",
+            "name": "90 %",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.house_readiness.v_9acec468f0f4",
+            "name": "75 %",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_readiness.v_cd1c7ca2eeb5",
+            "name": "50 %",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_readiness.v_a296b70058f4",
+            "name": "30 %",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.house_readiness.v_2be62c5dccb0",
+            "name": "10 %",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_roof_material",
+        "name": "Материал крыши",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5009], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_roof_material.v_d34009a91aa4",
+            "name": "Шифер",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_roof_material.v_6698d5f61479",
+            "name": "Еврошифер",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.house_roof_material.v_36912a56db76",
+            "name": "Металлочерепица",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_roof_material.v_583f2fd1fbae",
+            "name": "Мягкая кровля",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_roof_material.v_65f77843cf21",
+            "name": "Прочее",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_gaz",
+        "name": "Газ",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5028], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_gaz.v_93e580f5de54",
+            "name": "В доме",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_gaz.v_451492561ba0",
+            "name": "Подведён к дому",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_gaz.v_04ce4f19d479",
+            "name": "Идет по улице",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_gaz.v_7e50f36d5e9d",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.size_living_space",
+        "name": "Жилая площадь, м²",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1449], category=1020, type=sell.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.wall_material",
+        "name": "Материал стен",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1503], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.wall_material.v_ca1b06524a15",
+            "name": "Кирпичный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.wall_material.v_5138c90a6dba",
+            "name": "Деревянный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.wall_material.v_eccef3922981",
+            "name": "Дерево, обложено кирпичом",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.wall_material.v_db5628f19717",
+            "name": "Сборно-щитовой",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "kufar.wall_material.v_8c938b0b9b1a",
+            "name": "Блочный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.wall_material.v_db2e3a2ed33d",
+            "name": "Керамзитбетон",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          },
+          {
+            "id": "kufar.wall_material.v_a52f125353bd",
+            "name": "Шлакобетон",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "kufar.wall_material.v_beaed84d346e",
+            "name": "Панельный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "8"
+          },
+          {
+            "id": "kufar.wall_material.v_2750afc5dc94",
+            "name": "Монолитный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.wall_material.v_dff1fc1e343f",
+            "name": "Каркасный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "11"
+          },
+          {
+            "id": "kufar.wall_material.v_ff3a281c2b23",
+            "name": "Другой",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "9"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.flat_ceiling_height",
+        "name": "Высота потолков",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5003], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.flat_ceiling_height.v_2ed83ede1a3d",
+            "name": "от 2.5 м",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_ebb4ca1f9845",
+            "name": "от 2.7 м",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_09b18e7f37d2",
+            "name": "от 3 м",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_83f65bc133de",
+            "name": "от 3.5 м",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.flat_ceiling_height.v_065e5ff75b4f",
+            "name": "от 4 м",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_auction_sale",
+        "name": "Продажа через аукцион/конкурс",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5051], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_auction_sale.v_3c719045ad21",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.re_auction_sale.v_68b20c6f84a4",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "0"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_garden_community",
+        "name": "Участок расположен в садовом товариществе",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[4996], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_garden_community.v_d5ddc7953343",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.re_garden_community.v_79fc39f4d69e",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_number_floors",
+        "name": "Количество этажей",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5000], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_number_floors.v_ad386b7e13d2",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_number_floors.v_1a653d6d311b",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.house_number_floors.v_ecae4a3b48bc",
+            "name": "3+",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_water",
+        "name": "Вода",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5022], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_water.v_d67c9e83651d",
+            "name": "Сезонная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.re_water.v_316e120a7afe",
+            "name": "Скважина",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.re_water.v_96d8056796a4",
+            "name": "Колодец",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.re_water.v_d51606085402",
+            "name": "Центральная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.re_water.v_9744e4a2593f",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_improvements",
+        "name": "Удобства",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5042], category=1020, type=sell.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_improvements.v_48ed2c26a52b",
+            "name": "Интернет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_improvements.v_5cde0db614d8",
+            "name": "Телевизор",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.house_improvements.v_666f1c23ca00",
+            "name": "Телефон",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.house_improvements.v_77e5f0aa6ed7",
+            "name": "Кондиционер",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "kufar.house_improvements.v_25c0cae42152",
+            "name": "Обустроенная кухня",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_improvements.v_cf62739000c7",
+            "name": "Обустроенный туалет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          },
+          {
+            "id": "kufar.house_improvements.v_e875cb92d22f",
+            "name": "Мебель",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "kufar.house_improvements.v_bd19705788f5",
+            "name": "Камин",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "8"
+          },
+          {
+            "id": "kufar.house_improvements.v_7cc79db78ac9",
+            "name": "Ванная комната",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "9"
+          },
+          {
+            "id": "kufar.house_improvements.v_08f2d3446dc2",
+            "name": "Стиральная машина",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_improvements.v_1b6282e4a543",
+            "name": "Джакузи",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "11"
+          },
+          {
+            "id": "kufar.house_improvements.v_e97a04e770b3",
+            "name": "Душевая кабина",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "12"
+          },
+          {
+            "id": "kufar.house_improvements.v_e6b5de38bfe5",
+            "name": "Парковка",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "13"
+          },
+          {
+            "id": "kufar.house_improvements.v_b9b3e3a1f704",
+            "name": "Гараж",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "14"
+          },
+          {
+            "id": "kufar.house_improvements.v_5a2d9626056a",
+            "name": "Сигнализация",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.rooms",
+        "name": "Количество комнат",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1463], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.rooms.v_ad386b7e13d2",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.rooms.v_1a653d6d311b",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.rooms.v_96cab390c779",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.rooms.v_0b7438591fc0",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "kufar.rooms.v_567bc95c929f",
+            "name": "5 и более",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.size_area",
+        "name": "Площадь участка, соток",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1460], category=1020, type=sell.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_property_rights",
+        "name": "Право собственности",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[7334], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_property_rights.v_ff6c956ea43c",
+            "name": "Частная собственность",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.re_property_rights.v_1be88a4fab0e",
+            "name": "Пожизненное наследование",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.re_property_rights.v_6aacdb8ffba8",
+            "name": "Аренда",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_sewage",
+        "name": "Канализация",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5034], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_sewage.v_bae8217c9f8e",
+            "name": "Центральная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.re_sewage.v_8cdc052d5d9f",
+            "name": "Выгребная яма",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.re_sewage.v_51bce3f3c6ef",
+            "name": "Септик",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.re_sewage.v_507d35b1e495",
+            "name": "Биологическая очистка",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.re_sewage.v_4a5f0ed576c5",
+            "name": "С/у на улице",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          },
+          {
+            "id": "kufar.re_sewage.v_ef6d8d9ac0cc",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "25"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.size_snb",
+        "name": "Площадь по СНБ, м²",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[10349], category=1020, type=sell.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.size_kitchen",
+        "name": "Площадь кухни, м²",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1453], category=1020, type=sell.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_type_for_sell",
+        "name": "Вид объекта",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[4992], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_type_for_sell.v_33e2cab45e36",
+            "name": "Дом",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_type_for_sell.v_374e3382f22c",
+            "name": "Коттедж",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_type_for_sell.v_f7e6df039e32",
+            "name": "Дача",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_type_for_sell.v_0f846baddd05",
+            "name": "Таунхаус",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "25"
+          },
+          {
+            "id": "kufar.house_type_for_sell.v_539e1e47b349",
+            "name": "Часть дома",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.house_type_for_sell.v_7d29d0a3ad28",
+            "name": "Прочее",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.year_built",
+        "name": "Год постройки",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1470], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.year_built.v_16ad61efca34",
+            "name": "2029",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2029"
+          },
+          {
+            "id": "kufar.year_built.v_6101316c2c03",
+            "name": "2028",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2028"
+          },
+          {
+            "id": "kufar.year_built.v_337b52a28841",
+            "name": "2027",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2027"
+          },
+          {
+            "id": "kufar.year_built.v_261776de7ae8",
+            "name": "2026",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2026"
+          },
+          {
+            "id": "kufar.year_built.v_07a10249b95f",
+            "name": "2025",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2025"
+          },
+          {
+            "id": "kufar.year_built.v_a6a38d447b53",
+            "name": "2024",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2024"
+          },
+          {
+            "id": "kufar.year_built.v_a662c1de21d7",
+            "name": "2023",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2023"
+          },
+          {
+            "id": "kufar.year_built.v_f5d2c4428ae1",
+            "name": "2022",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2022"
+          },
+          {
+            "id": "kufar.year_built.v_2a47df139a0a",
+            "name": "2021",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2021"
+          },
+          {
+            "id": "kufar.year_built.v_829d93643c48",
+            "name": "2020",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2020"
+          },
+          {
+            "id": "kufar.year_built.v_4b42faa0e899",
+            "name": "2019",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2019"
+          },
+          {
+            "id": "kufar.year_built.v_3274a39e435c",
+            "name": "2018",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2018"
+          },
+          {
+            "id": "kufar.year_built.v_a4a2ddcbe100",
+            "name": "2017",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2017"
+          },
+          {
+            "id": "kufar.year_built.v_8deff747a04b",
+            "name": "2016",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2016"
+          },
+          {
+            "id": "kufar.year_built.v_f09391d2e97e",
+            "name": "2015",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2015"
+          },
+          {
+            "id": "kufar.year_built.v_8b6496db98c8",
+            "name": "2014",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2014"
+          },
+          {
+            "id": "kufar.year_built.v_0b01e4d3e90d",
+            "name": "2013",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2013"
+          },
+          {
+            "id": "kufar.year_built.v_1dc62c159969",
+            "name": "2012",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2012"
+          },
+          {
+            "id": "kufar.year_built.v_5ef39eec658a",
+            "name": "2011",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2011"
+          },
+          {
+            "id": "kufar.year_built.v_cc68fc71c0ef",
+            "name": "2010",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2010"
+          },
+          {
+            "id": "kufar.year_built.v_115acfa5998f",
+            "name": "2009",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2009"
+          },
+          {
+            "id": "kufar.year_built.v_d910f74c8828",
+            "name": "2008",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2008"
+          },
+          {
+            "id": "kufar.year_built.v_4a05f84ff95c",
+            "name": "2007",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2007"
+          },
+          {
+            "id": "kufar.year_built.v_c414f8496b2c",
+            "name": "2006",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2006"
+          },
+          {
+            "id": "kufar.year_built.v_c340786b3d34",
+            "name": "2005",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2005"
+          },
+          {
+            "id": "kufar.year_built.v_f8a61a835868",
+            "name": "2004",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2004"
+          },
+          {
+            "id": "kufar.year_built.v_7d6135729d63",
+            "name": "2003",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2003"
+          },
+          {
+            "id": "kufar.year_built.v_89003421dd36",
+            "name": "2002",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2002"
+          },
+          {
+            "id": "kufar.year_built.v_caf063dabac2",
+            "name": "2001",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2001"
+          },
+          {
+            "id": "kufar.year_built.v_abf39473af6c",
+            "name": "2000",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2000"
+          },
+          {
+            "id": "kufar.year_built.v_c5b87ce11531",
+            "name": "1999",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1999"
+          },
+          {
+            "id": "kufar.year_built.v_8ca485814a64",
+            "name": "1998",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1998"
+          },
+          {
+            "id": "kufar.year_built.v_474832525bb9",
+            "name": "1997",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1997"
+          },
+          {
+            "id": "kufar.year_built.v_4582ad6abd5c",
+            "name": "1996",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1996"
+          },
+          {
+            "id": "kufar.year_built.v_8239288585f3",
+            "name": "1995",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1995"
+          },
+          {
+            "id": "kufar.year_built.v_f51fff95b873",
+            "name": "1994",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1994"
+          },
+          {
+            "id": "kufar.year_built.v_7ec084f5d38e",
+            "name": "1993",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1993"
+          },
+          {
+            "id": "kufar.year_built.v_396889042919",
+            "name": "1992",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1992"
+          },
+          {
+            "id": "kufar.year_built.v_eb7a130e016b",
+            "name": "1991",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1991"
+          },
+          {
+            "id": "kufar.year_built.v_d8eb67ac5cd9",
+            "name": "1990",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1990"
+          },
+          {
+            "id": "kufar.year_built.v_d6c154f8ef6b",
+            "name": "1989",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1989"
+          },
+          {
+            "id": "kufar.year_built.v_a9630331a520",
+            "name": "1988",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1988"
+          },
+          {
+            "id": "kufar.year_built.v_dd5d14a3d611",
+            "name": "1987",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1987"
+          },
+          {
+            "id": "kufar.year_built.v_f8ecd44a8948",
+            "name": "1986",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1986"
+          },
+          {
+            "id": "kufar.year_built.v_719c07d14703",
+            "name": "1985",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1985"
+          },
+          {
+            "id": "kufar.year_built.v_174799831d1c",
+            "name": "1984",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1984"
+          },
+          {
+            "id": "kufar.year_built.v_fd8173d0365a",
+            "name": "1983",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1983"
+          },
+          {
+            "id": "kufar.year_built.v_85a42fe5872e",
+            "name": "1982",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1982"
+          },
+          {
+            "id": "kufar.year_built.v_304bae4dd9b8",
+            "name": "1981",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1981"
+          },
+          {
+            "id": "kufar.year_built.v_db913eb01b20",
+            "name": "1980",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1980"
+          },
+          {
+            "id": "kufar.year_built.v_47d13fe4de30",
+            "name": "1979",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1979"
+          },
+          {
+            "id": "kufar.year_built.v_6db5d6de07ba",
+            "name": "1978",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1978"
+          },
+          {
+            "id": "kufar.year_built.v_9cb204ada7e1",
+            "name": "1977",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1977"
+          },
+          {
+            "id": "kufar.year_built.v_9673472c13c5",
+            "name": "1976",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1976"
+          },
+          {
+            "id": "kufar.year_built.v_c14c16ba0580",
+            "name": "1975",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1975"
+          },
+          {
+            "id": "kufar.year_built.v_8f9123669b07",
+            "name": "1974",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1974"
+          },
+          {
+            "id": "kufar.year_built.v_35512d82381f",
+            "name": "1973",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1973"
+          },
+          {
+            "id": "kufar.year_built.v_1b8ada658d19",
+            "name": "1972",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1972"
+          },
+          {
+            "id": "kufar.year_built.v_adb98cb4ac0f",
+            "name": "1971",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1971"
+          },
+          {
+            "id": "kufar.year_built.v_f03668d5ca79",
+            "name": "1970",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1970"
+          },
+          {
+            "id": "kufar.year_built.v_00a061f5a6a2",
+            "name": "1969",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1969"
+          },
+          {
+            "id": "kufar.year_built.v_fac6f041f35f",
+            "name": "1968",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1968"
+          },
+          {
+            "id": "kufar.year_built.v_292284e8140e",
+            "name": "1967",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1967"
+          },
+          {
+            "id": "kufar.year_built.v_4df01481f3c5",
+            "name": "1966",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1966"
+          },
+          {
+            "id": "kufar.year_built.v_afb0b85cb067",
+            "name": "1965",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1965"
+          },
+          {
+            "id": "kufar.year_built.v_b75080574f12",
+            "name": "1964",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1964"
+          },
+          {
+            "id": "kufar.year_built.v_9aae35548566",
+            "name": "1963",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1963"
+          },
+          {
+            "id": "kufar.year_built.v_8d3f40e268d0",
+            "name": "1962",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1962"
+          },
+          {
+            "id": "kufar.year_built.v_3b832274fea4",
+            "name": "1961",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1961"
+          },
+          {
+            "id": "kufar.year_built.v_e772f2d4b2d3",
+            "name": "1960",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1960"
+          },
+          {
+            "id": "kufar.year_built.v_8cf6250f07de",
+            "name": "1959",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1959"
+          },
+          {
+            "id": "kufar.year_built.v_0f2ff4e00b37",
+            "name": "1958",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1958"
+          },
+          {
+            "id": "kufar.year_built.v_a11af27b8ca7",
+            "name": "1957",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1957"
+          },
+          {
+            "id": "kufar.year_built.v_94f6dc9958d6",
+            "name": "1956",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1956"
+          },
+          {
+            "id": "kufar.year_built.v_6cf02e94f9d2",
+            "name": "1955",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1955"
+          },
+          {
+            "id": "kufar.year_built.v_355cf74ac8b4",
+            "name": "1954",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1954"
+          },
+          {
+            "id": "kufar.year_built.v_38532f4866b2",
+            "name": "1953",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1953"
+          },
+          {
+            "id": "kufar.year_built.v_2c3068d4ad3e",
+            "name": "1952",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1952"
+          },
+          {
+            "id": "kufar.year_built.v_56ec871daf0c",
+            "name": "1951",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1951"
+          },
+          {
+            "id": "kufar.year_built.v_f9d1db77b6ef",
+            "name": "1950 или ранее",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1950"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_heating",
+        "name": "Отопление",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5015], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_heating.v_d467d62ca1c2",
+            "name": "Газовое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.re_heating.v_6edc86dd9010",
+            "name": "Центральное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.re_heating.v_6db16399f510",
+            "name": "Электрическое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.re_heating.v_477811dac281",
+            "name": "Печное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.re_heating.v_cef3f7bfd875",
+            "name": "Твердотопливное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "17"
+          },
+          {
+            "id": "kufar.re_heating.v_9744e4a2593f",
+            "name": "Отсутствует",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.re_hot_water",
+        "name": "Горячая вода",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5401], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.re_hot_water.v_3c719045ad21",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.re_hot_water.v_68b20c6f84a4",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "0"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_sell_area",
+        "name": "На территории",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5046], category=1020, type=sell.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "kufar.house_sell_area.v_70716e941e2d",
+            "name": "Рядом водоем / река",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_sell_area.v_d1200cc2153c",
+            "name": "Рядом лес",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.house_sell_area.v_bddeeaba5a92",
+            "name": "Баня",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.house_sell_area.v_767703d109d2",
+            "name": "Беседка",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "kufar.house_sell_area.v_47e98e4a6dc4",
+            "name": "Мангал",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_sell_area.v_784cbbd8b620",
+            "name": "Бассейн",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          },
+          {
+            "id": "kufar.house_sell_area.v_037227035e20",
+            "name": "Ландшафтный дизайн",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "kufar.house_sell_area.v_99aed3dc94c7",
+            "name": "Хоз. постройки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "8"
+          },
+          {
+            "id": "kufar.house_sell_area.v_602058ae0559",
+            "name": "Сад, огород",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "9"
+          },
+          {
+            "id": "kufar.house_sell_area.v_5292db1969e2",
+            "name": "Рядом достопримечательности",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_sell_area.v_0807d2fe4bc8",
+            "name": "Живописное место",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "11"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.house_roof_material_type",
+        "name": "Крыша (тип)",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[10053], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.house_roof_material_type.v_77d35db26858",
+            "name": "Плоская",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.house_roof_material_type.v_0bea74b34982",
+            "name": "Односкатная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.house_roof_material_type.v_7a36e2c32fe2",
+            "name": "Двухскатная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "10"
+          },
+          {
+            "id": "kufar.house_roof_material_type.v_870006ad2fc4",
+            "name": "Многоскатная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "15"
+          },
+          {
+            "id": "kufar.house_roof_material_type.v_bf55641c60d0",
+            "name": "Вальмовая",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "20"
+          },
+          {
+            "id": "kufar.house_roof_material_type.v_16eb39f66c85",
+            "name": "Шатровая",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "25"
+          },
+          {
+            "id": "kufar.house_roof_material_type.v_3f0fff2070f6",
+            "name": "Другая",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "30"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.condition",
+        "name": "Состояние",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1508], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.condition.v_7791798665ff",
+            "name": "Новое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.condition.v_d82a8d43e950",
+            "name": "Вторичное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          }
+        ],
+        "required": true,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.size",
+        "name": "Общая площадь, м²",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1454], category=1020, type=sell.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.possible_exchange",
+        "name": "Возможен обмен",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1441], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.possible_exchange.v_3c719045ad21",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.possible_exchange.v_68b20c6f84a4",
+            "name": "-",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "0"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.country_direction",
+        "name": "Направление",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1495], category=1020, type=sell.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "kufar.country_direction.v_ae6378ca53b7",
+            "name": "Брестское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "1"
+          },
+          {
+            "id": "kufar.country_direction.v_2a6019140c59",
+            "name": "Логойское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "2"
+          },
+          {
+            "id": "kufar.country_direction.v_a6f3227ea1d3",
+            "name": "Могилевское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "3"
+          },
+          {
+            "id": "kufar.country_direction.v_65f4a711d829",
+            "name": "Молодечненское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "4"
+          },
+          {
+            "id": "kufar.country_direction.v_76845e7a869d",
+            "name": "Московское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "5"
+          },
+          {
+            "id": "kufar.country_direction.v_e9e382872830",
+            "name": "Мядельское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "6"
+          },
+          {
+            "id": "kufar.country_direction.v_d5b0fcedab8b",
+            "name": "Пуховичское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "7"
+          },
+          {
+            "id": "kufar.country_direction.v_7f12f86fa86e",
+            "name": "Раковское",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "8"
+          },
+          {
+            "id": "kufar.country_direction.v_0fb66c651737",
+            "name": "Слуцкое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "9"
+          }
+        ],
+        "required": false,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            },
+            {
+              "option_id": "kufar.region",
+              "operator": "equals",
+              "value": "5"
+            }
+          ]
+        },
+        "validation": {}
+      },
+      {
+        "id": "kufar.distance_ringway",
+        "name": "Расстояние от МКАД, км",
+        "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1501], category=1020, type=sell.",
+        "type": "integer",
+        "options": [],
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "kufar.category",
+              "operator": "equals",
+              "value": "1020"
+            },
+            {
+              "option_id": "kufar.type",
+              "operator": "equals",
+              "value": "sell"
+            },
+            {
+              "option_id": "kufar.region",
+              "operator": "equals",
+              "value": "5"
+            }
+          ]
+        },
+        "validation": {}
+      }
+    ]
+  }
+]

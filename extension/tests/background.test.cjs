@@ -83,6 +83,19 @@ function rentalPayload(photos = []) {
     jobs:[{...JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/apartments_long_term_rent/runtime/browser_realt.json'),'utf8')),controls:[]}]};
 }
 
+test('house sale launches sale routes and rejects confusing them with house rent', async () => {
+  const worker=createWorker();
+  const jobs=['kufar','onliner','realt','domovita'].map(p=>JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/rental/houses_sale/runtime/browser_'+p+'.json'),'utf8')));
+  const payload={...rentalPayload(),categoryId:'houses_sale',jobs};
+  const run=await worker.request({kind:'RENTAL_REQUEST',type:'RENTAL_RUN',payload,userGesture:true});
+  assert.equal(run.error,undefined);assert.equal(run.jobs.length,4);
+  assert.equal(worker.created[1].url,'https://r.onliner.by/pk/apartments/create');
+  assert.equal(worker.created[3].url,'https://domovita.by/new/add/cottages/sale');
+  assert.ok((await worker.request({kind:'APP_REQUEST',type:'PING'})).capabilities.includes('house-sale-publishing'));
+  assert.ok((await worker.request({kind:'RENTAL_REQUEST',type:'RENTAL_RUN',payload:{...payload,categoryId:'houses_long_term_rent'},userGesture:true})).error);
+  for(const job of jobs){assert.deepEqual(job.next,[]);assert.deepEqual(job.submit,[]);}
+});
+
 test('house launch opens all four sites with the separate Domovita route', async () => {
   const worker = createWorker();
   const jobs = ['kufar', 'onliner', 'realt', 'domovita'].map(site =>

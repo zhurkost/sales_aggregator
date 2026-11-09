@@ -1,0 +1,415 @@
+{
+  "category_id": "houses_sale",
+  "platform": "domovita",
+  "fields": [
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "domovita.youtube_link",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "domovita.contact_name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "domovita.phones.0.contact_phone",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "domovita.price_currency_text",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          },
+          {
+            "from": "BYN",
+            "to": "BYN"
+          },
+          {
+            "from": "RUB",
+            "to": "RUB"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.price",
+      "platform_option_id": "domovita.price",
+      "conversion": {
+        "kind": "identity",
+        "requires": [
+          "domovita.price_currency_text"
+        ]
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "domovita.type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": "cottages"
+          },
+          {
+            "from": "Коттедж",
+            "to": "cottages"
+          },
+          {
+            "from": "Дача",
+            "to": "dacha"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "domovita.object_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": 3
+          },
+          {
+            "from": "Коттедж",
+            "to": 3
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.total_area",
+      "platform_option_id": "domovita.area_total",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.living_area",
+      "platform_option_id": "domovita.area_living",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.kitchen_area",
+      "platform_option_id": "domovita.area_kitchen",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.land_area",
+      "platform_option_id": "domovita.area_ground",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.levels",
+      "platform_option_id": "domovita.buiding_levels",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.building_year",
+      "platform_option_id": "domovita.building_year",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "house.rooms",
+      "platform_option_id": "domovita.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "6"
+          },
+          {
+            "from": "7",
+            "to": "7"
+          },
+          {
+            "from": "8",
+            "to": "8"
+          },
+          {
+            "from": "9",
+            "to": "9"
+          },
+          {
+            "from": "10",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "domovita.heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Газовое",
+            "to": "газовое"
+          },
+          {
+            "from": "Центральное",
+            "to": "центральное"
+          },
+          {
+            "from": "Электрическое",
+            "to": "электрическое"
+          },
+          {
+            "from": "Печное",
+            "to": "печное"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.water",
+      "platform_option_id": "domovita.water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Центральный водопровод",
+            "to": "c"
+          },
+          {
+            "from": "Скважина",
+            "to": "b"
+          },
+          {
+            "from": "Колодец",
+            "to": "w"
+          },
+          {
+            "from": "Сезонное",
+            "to": "s"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.sewer",
+      "platform_option_id": "domovita.sewer",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": "Есть"
+          },
+          {
+            "from": "Нет",
+            "to": "Нет"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "domovita.gas",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "В посёлке",
+            "to": "В посёлке"
+          },
+          {
+            "from": "В доме",
+            "to": "В доме"
+          },
+          {
+            "from": "Нет",
+            "to": "Нет"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.electricity",
+      "platform_option_id": "domovita.electro",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.walls",
+      "platform_option_id": "domovita.walls_material",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Кирпич",
+            "to": "кирпич"
+          },
+          {
+            "from": "Дерево",
+            "to": "дерево"
+          },
+          {
+            "from": "Сборно-щитовой",
+            "to": "щитовые"
+          },
+          {
+            "from": "Блок",
+            "to": "блоки"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.roof",
+      "platform_option_id": "domovita.roof_material",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Шифер",
+            "to": "Шифер"
+          },
+          {
+            "from": "Металлочерепица",
+            "to": "Металлочерепица"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.terms",
+      "platform_option_id": "domovita.terms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Любые",
+            "to": "Любые"
+          },
+          {
+            "from": "Чистая продажа",
+            "to": "Чистая продажа"
+          },
+          {
+            "from": "Обмен",
+            "to": "Обмен"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.readiness",
+      "platform_option_id": "domovita.building_percent",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "10",
+            "to": 10
+          },
+          {
+            "from": "20",
+            "to": 20
+          },
+          {
+            "from": "50",
+            "to": 50
+          },
+          {
+            "from": "100",
+            "to": 100
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "domovita.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "domovita.images",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    }
+  ]
+}

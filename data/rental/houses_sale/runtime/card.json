@@ -1,0 +1,402 @@
+{
+  "version": 2,
+  "platforms": {
+    "realt": {
+      "name": "Realt"
+    },
+    "kufar": {
+      "name": "Kufar"
+    },
+    "domovita": {
+      "name": "Domovita"
+    },
+    "onliner": {
+      "name": "Onliner"
+    }
+  },
+  "canonicalValues": {
+    "sale.currency": [
+      "BYN",
+      "USD",
+      "EUR",
+      "RUB"
+    ],
+    "sale.price": [],
+    "house.kind": [
+      "Дом",
+      "Коттедж",
+      "Дача"
+    ],
+    "house.total_area": [],
+    "house.land_area": [],
+    "house.levels": [],
+    "house.building_year": [],
+    "house.heating": [
+      "Паровое",
+      "Газовое",
+      "Печное",
+      "Электрическое",
+      "Центральное",
+      "Нет",
+      "Твердотопливное"
+    ],
+    "house.water": [
+      "Горячая",
+      "Холодная",
+      "Колодец",
+      "Водопровод",
+      "Центральный водопровод",
+      "Скважина",
+      "Нет",
+      "Сезонная",
+      "Сезонное"
+    ],
+    "house.sewer": [
+      "Есть",
+      "Центральная",
+      "Местная",
+      "С/у на улице",
+      "Нет",
+      "Выгребная яма",
+      "Септик",
+      "Биологическая очистка"
+    ],
+    "house.gas": [
+      "Есть",
+      "Нет",
+      "Баллон",
+      "Магистральный",
+      "В доме",
+      "Подведён к дому",
+      "Идет по улице",
+      "В посёлке"
+    ],
+    "house.electricity": [
+      "Есть",
+      "Нет",
+      "Рядом"
+    ],
+    "listing.description": [],
+    "listing.title": [],
+    "media.images": [],
+    "media.video_url": [],
+    "amenity.furniture": [],
+    "location.house": [],
+    "location.block": [],
+    "specific.realt.termsOfDeal.bargain": [],
+    "specific.realt.media.planning": [],
+    "specific.realt.media.tour3d": [],
+    "listing.short_description": [],
+    "amenity.internet": [],
+    "amenity.fireplace": [],
+    "amenity.sauna": [],
+    "amenity.pool": [],
+    "amenity.gazebo": [],
+    "amenity.garage": [],
+    "specific.realt.additional.infrastructure.dd13cd83": [],
+    "specific.realt.additional.infrastructure.f9d2cef1": [],
+    "specific.realt.additional.infrastructure.853f64a3": [],
+    "contact.name": [],
+    "contact.phone": [],
+    "location.label": [],
+    "specific.kufar.contact_person": [],
+    "specific.kufar.phone_hidden": [
+      "Звонки и сообщения",
+      "Только сообщения"
+    ],
+    "specific.kufar.re_contract": [],
+    "specific.kufar.re_hot_water": [
+      "Да",
+      "-"
+    ],
+    "specific.kufar.condition": [
+      "Новое",
+      "Вторичное"
+    ],
+    "amenity.tv": [],
+    "amenity.washing_machine": [],
+    "amenity.air_conditioner": [],
+    "amenity.shower": [],
+    "amenity.jacuzzi": [],
+    "specific.kufar.house_improvements.810ef972": [],
+    "specific.kufar.house_improvements.084f0d30": [],
+    "specific.kufar.house_improvements.4c1a0c87": [],
+    "specific.kufar.house_improvements.307ab0c9": [],
+    "specific.kufar.house_improvements.441a9a5f": [],
+    "specific.kufar.house_improvements.f1de1de0": [],
+    "house.landline": [
+      "Нет",
+      "Есть",
+      "2 телефона",
+      "3 телефона"
+    ],
+    "specific.domovita.email": [],
+    "specific.domovita.extra_info_comments.554bf8f2": [],
+    "specific.domovita.extra_info_comments.fe744909": [],
+    "specific.domovita.extra_info_comments.b1f4d2dd": [],
+    "specific.domovita.extra_info_comments.6c91a54a": [],
+    "specific.domovita.extra_info_comments.06b247b2": [],
+    "house.rooms": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5+",
+      "5",
+      "6+"
+    ],
+    "specific.onliner.balcony": [],
+    "specific.onliner.repaired": [],
+    "specific.onliner.resale": [],
+    "house.living_area": [],
+    "house.kitchen_area": [],
+    "specific.onliner.floor": [],
+    "contact.additional_phone_1": [],
+    "contact.additional_phone_2": [],
+    "specific.onliner.parking": [
+      "Нет",
+      "На улице",
+      "В гараже"
+    ],
+    "specific.onliner.combinedKitchen": [
+      "Да",
+      "Нет"
+    ],
+    "specific.onliner.wallHeight": [],
+    "specific.onliner.seller.type": [
+      "Собственник",
+      "Агентство",
+      "Застройщик"
+    ],
+    "specific.onliner.seller.name": [],
+    "specific.onliner.seller.legalInfo.unp": [],
+    "specific.onliner.seller.legalInfo.contract.number": [],
+    "specific.onliner.seller.legalInfo.contract.date": [],
+    "specific.onliner.seller.legalInfo.licence.number": [],
+    "specific.onliner.seller.legalInfo.licence.date": [],
+    "specific.onliner.call_from": [
+      "0:00",
+      "1:00",
+      "2:00",
+      "3:00",
+      "4:00",
+      "5:00",
+      "6:00",
+      "7:00",
+      "8:00",
+      "9:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00"
+    ],
+    "specific.onliner.call_to": [
+      "0:00",
+      "1:00",
+      "2:00",
+      "3:00",
+      "4:00",
+      "5:00",
+      "6:00",
+      "7:00",
+      "8:00",
+      "9:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+      "14:00",
+      "15:00",
+      "16:00",
+      "17:00",
+      "18:00",
+      "19:00",
+      "20:00",
+      "21:00",
+      "22:00",
+      "23:00"
+    ],
+    "house.bedrooms": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5+"
+    ],
+    "house.walls": [
+      "Кирпич",
+      "Панель",
+      "Блок-комнаты",
+      "Бревенчатый",
+      "Монолитно-каркасный",
+      "Силикатные блоки",
+      "Дерево",
+      "Дерево, обложено кирпичом",
+      "Сборно-щитовой",
+      "Блок",
+      "Керамзитбетон",
+      "Шлакобетон",
+      "Монолит",
+      "Каркасный",
+      "Другой"
+    ],
+    "house.roof": [
+      "Жесть",
+      "Рубероид",
+      "Доски",
+      "Черепица",
+      "Шифер",
+      "Ондулин",
+      "Металл",
+      "Гидроизоляция",
+      "Природные материалы",
+      "Еврошифер",
+      "Металлочерепица",
+      "Мягкая кровля",
+      "Прочее"
+    ],
+    "sale.terms": [
+      "Чистая продажа",
+      "Обмен",
+      "Обмен - разъезд",
+      "Обмен - съезд",
+      "Подбираются варианты",
+      "Съезд",
+      "Любые"
+    ],
+    "house.readiness": [
+      "100",
+      "90",
+      "80",
+      "70",
+      "50",
+      "30",
+      "75",
+      "10",
+      "20"
+    ],
+    "specific.realt.additional.appliance.f57b8252": [],
+    "specific.realt.additional.infrastructure.07e46896": [],
+    "specific.realt.additional.infrastructure.0c658eb5": [],
+    "specific.realt.additional.infrastructure.ccbcd0d6": [],
+    "specific.realt.additional.infrastructure.a7f0b84d": [],
+    "specific.realt.additional.infrastructure.6165d33e": [],
+    "specific.realt.location.cadastral": [],
+    "specific.realt.house.newBuilding": [],
+    "specific.realt.additional.buildingState": [
+      "Элитный коттедж",
+      "Евроотделка",
+      "Отделка деревом",
+      "Не достроен"
+    ],
+    "specific.realt.termsOfDeal.privatization": [
+      "Частная собственность",
+      "Пользование",
+      "Аренда",
+      "Пожизненно наследуемое владение",
+      "Другое"
+    ],
+    "specific.realt.termsOfDeal.termsExtra": [],
+    "specific.kufar.flat_ceiling_height": [
+      "от 2.5 м",
+      "от 2.7 м",
+      "от 3 м",
+      "от 3.5 м",
+      "от 4 м"
+    ],
+    "specific.kufar.re_auction_sale": [
+      "Да",
+      "-"
+    ],
+    "specific.kufar.re_garden_community": [
+      "Да",
+      "Нет"
+    ],
+    "specific.kufar.re_property_rights": [
+      "Частная собственность",
+      "Пожизненное наследование",
+      "Аренда"
+    ],
+    "specific.kufar.house_sell_area": [
+      "Рядом водоем / река",
+      "Рядом лес",
+      "Баня",
+      "Беседка",
+      "Мангал",
+      "Бассейн",
+      "Ландшафтный дизайн",
+      "Хоз. постройки",
+      "Сад, огород",
+      "Рядом достопримечательности",
+      "Живописное место"
+    ],
+    "specific.kufar.house_roof_material_type": [
+      "Плоская",
+      "Односкатная",
+      "Двухскатная",
+      "Многоскатная",
+      "Вальмовая",
+      "Шатровая",
+      "Другая"
+    ],
+    "specific.kufar.possible_exchange": [
+      "Да",
+      "-"
+    ],
+    "specific.domovita.repair_state": [
+      "С отделкой",
+      "Без отделки",
+      "Хороший",
+      "Косметический",
+      "Евро",
+      "Дизайнерский"
+    ],
+    "specific.domovita.price_haggle": [
+      "Торг",
+      "Без торга"
+    ]
+  },
+  "valueLabels": {},
+  "mainFields": [
+    "house.kind",
+    "sale.price",
+    "sale.currency",
+    "house.rooms",
+    "house.total_area",
+    "house.living_area",
+    "house.kitchen_area",
+    "house.land_area",
+    "house.levels",
+    "house.building_year",
+    "media.images",
+    "house.walls"
+  ],
+  "profileDefaults": [
+    {
+      "setting": "phone",
+      "field": "contact.phone"
+    },
+    {
+      "setting": "contactPerson",
+      "field": "contact.name"
+    }
+  ],
+  "addressProjection": {
+    "location.settlement": "settlement",
+    "location.street": "street",
+    "location.house": "house",
+    "location.block": "block",
+    "location.label": "label"
+  },
+  "addressDependentFacts": []
+}

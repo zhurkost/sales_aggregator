@@ -1,0 +1,311 @@
+{
+  "startUrl": "https://realt.by/podat-obyavlenie/",
+  "setup": [
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Продать"
+    },
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Жилая"
+    },
+    {
+      "action": "click",
+      "selector": "button,[role=\"button\"],label",
+      "text": "Дом",
+      "valueField": "realt.object_type",
+      "textByValue": {
+        "House": "Дом",
+        "Cottage": "Коттедж",
+        "Dacha": "Дача"
+      }
+    }
+  ],
+  "controls": [
+    {
+      "field": "realt.location.settlement",
+      "action": "autocomplete",
+      "selector": "[id=\"location.settlement\"]",
+      "addressPart": "settlement",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "settlement",
+        "scopeSelector": "div.relative:has(> div > input[id=\"location.settlement\"])",
+        "optionSelector": "ul > li > [role=\"button\"]",
+        "busySelector": "svg.animate-spin",
+        "confirm": "value-and-closed",
+        "labelSelector": "p:first-child",
+        "contextSelector": "p:not(:first-child)",
+        "contextParts": [
+          "region",
+          "district"
+        ]
+      }
+    },
+    {
+      "field": "realt.location.street",
+      "action": "autocomplete",
+      "selector": "[id=\"location.street\"]",
+      "addressPart": "street",
+      "after": "realt.location.settlement",
+      "autocomplete": {
+        "selection": "type-then-first",
+        "kind": "street",
+        "scopeSelector": "div.relative:has(> div > input[id=\"location.street\"])",
+        "optionSelector": "ul > li > [role=\"button\"]",
+        "busySelector": "svg.animate-spin",
+        "confirm": "value-and-closed"
+      }
+    },
+    {
+      "field": "realt.location.houseNumber",
+      "action": "text",
+      "selector": "[id=\"location.houseNumber\"]",
+      "addressPart": "house",
+      "after": "realt.location.settlement"
+    },
+    {
+      "field": "realt.location.buildingNumber",
+      "action": "text",
+      "selector": "[id=\"location.buildingNumber\"]",
+      "after": "realt.location.settlement",
+      "addressPart": "block"
+    },
+    {
+      "field": "realt.area.total",
+      "action": "text",
+      "selector": "[id=\"area.total\"]"
+    },
+    {
+      "field": "realt.area.living",
+      "action": "text",
+      "selector": "[id=\"area.living\"]"
+    },
+    {
+      "field": "realt.termsOfDeal.price",
+      "action": "text",
+      "selector": "[id=\"termsOfDeal.price\"]",
+      "after": "realt.termsOfDeal.currency"
+    },
+    {
+      "field": "realt.description.shortDescription",
+      "action": "text",
+      "selector": "[id=\"description.shortDescription\"]"
+    },
+    {
+      "field": "realt.termsOfDeal.bargain",
+      "action": "check",
+      "selector": "[id=\"termsOfDeal.bargain\"]"
+    },
+    {
+      "field": "realt.termsOfDeal.currency",
+      "action": "choices",
+      "selector": "[id=\"termsOfDeal\"]",
+      "label": "Цена"
+    },
+    {
+      "field": "realt.media.photos",
+      "action": "files",
+      "selector": "input[type=\"file\"]",
+      "previewSelector": "input[type=\"hidden\"][name^=\"media.photos.\"][name$=\".uuid\"][value]:not([value=\"\"])",
+      "index": 0
+    },
+    {
+      "field": "realt.description.title",
+      "action": "text",
+      "selector": "[id=\"description.title\"]"
+    },
+    {
+      "field": "realt.description.description",
+      "action": "richtext",
+      "selector": "iframe[id=\"description.description_ifr\"]"
+    },
+    {
+      "field": "realt.area.kitchen",
+      "action": "text",
+      "selector": "[id=\"area.kitchen\"]",
+      "expandSection": "area"
+    },
+    {
+      "field": "realt.additional.furniture",
+      "action": "check",
+      "selector": "#additional button[role=\"switch\"]",
+      "controlText": "Мебель"
+    },
+    {
+      "field": "realt.additional.appliance",
+      "action": "choices",
+      "selector": "#additional",
+      "pickerId": "additional.appliance",
+      "label": "Удобства"
+    },
+    {
+      "field": "realt.apartment.buildingYear",
+      "action": "text",
+      "selector": "[id=\"apartment.buildingYear\"]",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.buildingLevels",
+      "action": "text",
+      "selector": "[id=\"apartment.buildingLevels\"]",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.area.ground",
+      "action": "text",
+      "selector": "[id=\"area.ground\"]",
+      "expandSection": "area"
+    },
+    {
+      "field": "realt.plot.sewer",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Канализация",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.plot.water",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Водоснабжение",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.plot.gas",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Газоснабжение",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.electricity",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Электричество",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.apartment.heating",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Отопление",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.house.wallsMaterial",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Материал стен",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.additional.infrastructure",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Инфраструктура",
+      "expandSection": "additional"
+    },
+    {
+      "field": "realt.media.youtube",
+      "action": "text",
+      "selector": "[id=\"media.youtube\"]",
+      "expandSection": "media"
+    },
+    {
+      "field": "realt.media.tour3d",
+      "action": "text",
+      "selector": "[id=\"media.tour3d\"]",
+      "expandSection": "media"
+    },
+    {
+      "field": "realt.location.cadastral",
+      "action": "text",
+      "selector": "[id=\"location.cadastral\"]",
+      "expandSection": "location"
+    },
+    {
+      "field": "realt.apartment.rooms",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Количество спален",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.house.newBuilding",
+      "action": "check",
+      "selector": "[role=\"switch\"]",
+      "label": "Новостройка"
+    },
+    {
+      "field": "realt.house.roofMaterial",
+      "action": "choices",
+      "selector": "#apartment",
+      "label": "Материал крыши",
+      "expandSection": "apartment"
+    },
+    {
+      "field": "realt.additional.buildingState",
+      "action": "choices",
+      "selector": "#additional",
+      "label": "Ремонт",
+      "expandSection": "additional"
+    },
+    {
+      "field": "realt.aboutBuilding.percentage",
+      "action": "choices",
+      "selector": "#aboutBuilding",
+      "label": "% готовности дома",
+      "expandSection": "aboutBuilding"
+    },
+    {
+      "field": "realt.termsOfDeal.privatization",
+      "action": "choices",
+      "selector": "#termsOfDeal",
+      "label": "Статус земли",
+      "expandSection": "termsOfDeal"
+    },
+    {
+      "field": "realt.termsOfDeal.termsOfDeal",
+      "action": "choices",
+      "selector": "#termsOfDeal",
+      "label": "Условия сделки",
+      "expandSection": "termsOfDeal"
+    },
+    {
+      "field": "realt.termsOfDeal.termsExtra",
+      "action": "check",
+      "selector": "[role=\"switch\"]",
+      "label": "Конкурс / Аукцион"
+    },
+    {
+      "field": "realt.media.planning",
+      "action": "text",
+      "selector": "[id=\"media.planning\"]",
+      "expandSection": "media"
+    }
+  ],
+  "next": [],
+  "submit": [],
+  "format": 1,
+  "platform": "realt",
+  "observedAt": "2026-11-09",
+  "note": "Продажа дома целиком. Финальная отправка, переход Далее и продвижение только вручную.",
+  "ready": [
+    {
+      "selector": "#apartment"
+    },
+    {
+      "selector": "p",
+      "valueField": "realt.object_type",
+      "textByValue": {
+        "House": "Продажа дома",
+        "Cottage": "Продажа коттеджа",
+        "Dacha": "Продажа дачи"
+      },
+      "text": "Продажа дома"
+    }
+  ]
+}

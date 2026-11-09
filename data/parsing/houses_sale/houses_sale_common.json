@@ -1,0 +1,243 @@
+[
+  {
+    "id": "houses_sale",
+    "name": "Продажа домов",
+    "description": "Беларусь. Продажа дома целиком, коттеджа или дачи. Не аренда, не участок без дома и не часть дома.",
+    "categories": [],
+    "options": [
+      {
+        "id": "group.details",
+        "name": "Характеристики дома",
+        "description": "",
+        "type": "group",
+        "options": [
+          {
+            "id": "sale.currency",
+            "name": "Валюта полной цены",
+            "description": "Код валюты BYN, USD, EUR или RUB по поддержке площадки Общие значения: BYN, USD, EUR, RUB",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "sale.price",
+            "name": "Цена продажи",
+            "description": "Полная стоимость дома, не аренда, аванс или цена за м². Без пересчёта валют.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.kind",
+            "name": "Вид объекта",
+            "description": "Дом целиком, коттедж или дача для длительного проживания. Части дома и посуточное размещение исключены. Общие значения: Дом, Коттедж, Дача",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.total_area",
+            "name": "Общая площадь, м²",
+            "description": "Общая площадь, м²",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.land_area",
+            "name": "Площадь участка, соток",
+            "description": "Площадь участка в сотках; не площадь дома.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.levels",
+            "name": "Уровней в доме",
+            "description": "Число этажей всего дома, не этаж квартиры.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.building_year",
+            "name": "Год постройки",
+            "description": "Год постройки",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.heating",
+            "name": "Отопление",
+            "description": "Отопление Общие значения: Паровое, Газовое, Печное, Электрическое, Центральное, Нет, Твердотопливное",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.water",
+            "name": "Водоснабжение",
+            "description": "Водоснабжение Общие значения: Горячая, Холодная, Колодец, Водопровод, Центральный водопровод, Скважина, Нет, Сезонная, Сезонное",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.sewer",
+            "name": "Канализация",
+            "description": "Канализация Общие значения: Есть, Центральная, Местная, С/у на улице, Нет, Выгребная яма, Септик, Биологическая очистка",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.gas",
+            "name": "Газоснабжение",
+            "description": "Газоснабжение Общие значения: Есть, Нет, Баллон, Магистральный, В доме, Подведён к дому, Идет по улице, В посёлке",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.electricity",
+            "name": "Электричество",
+            "description": "Электричество Общие значения: Есть, Нет, Рядом",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "listing.description",
+            "name": "Описание дома",
+            "description": "Исходное описание пользователя, не заменять автоматически.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "listing.title",
+            "name": "Заголовок",
+            "description": "Свободный текст",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "media.images",
+            "name": "Фотографии",
+            "description": "Фотографии",
+            "type": "files",
+            "options": [],
+            "file_role": "product_image"
+          },
+          {
+            "id": "media.video_url",
+            "name": "Ссылка на YouTube",
+            "description": "Ссылка на YouTube",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.furniture",
+            "name": "Мебель",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.internet",
+            "name": "Интернет",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.fireplace",
+            "name": "Камин",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.sauna",
+            "name": "Баня",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.pool",
+            "name": "Бассейн",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.garage",
+            "name": "Гараж",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.name",
+            "name": "Имя контактного лица",
+            "description": "Свободный текст",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "contact.phone",
+            "name": "Телефон для связи",
+            "description": "Международный номер с кодом страны; учесть маску ввода",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "amenity.air_conditioner",
+            "name": "Кондиционер",
+            "description": "Наличие: true/false. Если не упомянуто, оставить незаполненным.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.rooms",
+            "name": "Количество комнат",
+            "description": "Количество комнат Общие значения: 1, 2, 3, 4, 5+, 5, 6+",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.living_area",
+            "name": "Жилая площадь, м²",
+            "description": "Жилая площадь, м²",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.kitchen_area",
+            "name": "Площадь кухни, м²",
+            "description": "Площадь кухни, м²",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.walls",
+            "name": "Материал стен",
+            "description": "Материал стен Общие значения: Кирпич, Панель, Блок-комнаты, Бревенчатый, Монолитно-каркасный, Силикатные блоки, Дерево, Дерево, обложено кирпичом, Сборно-щитовой, Блок, Керамзитбетон, Шлакобетон, Монолит, Каркасный, Другой",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.roof",
+            "name": "Материал крыши",
+            "description": "Материал крыши Общие значения: Жесть, Рубероид, Доски, Черепица, Шифер, Ондулин, Металл, Гидроизоляция, Природные материалы, Еврошифер, Металлочерепица, Мягкая кровля, Прочее",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "sale.terms",
+            "name": "Условия сделки",
+            "description": "Условия сделки Общие значения: Чистая продажа, Обмен, Обмен - разъезд, Обмен - съезд, Подбираются варианты, Съезд, Любые",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "house.readiness",
+            "name": "Готовность дома, %",
+            "description": "Готовность дома, % Общие значения: 100, 90, 80, 70, 50, 30, 75, 10, 20",
+            "type": "text",
+            "options": []
+          }
+        ]
+      }
+    ]
+  }
+]

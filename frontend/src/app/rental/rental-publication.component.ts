@@ -1,4 +1,4 @@
-import { APARTMENT_RENT } from "../listing-categories";
+import { APARTMENT_RENT, HOUSE_SALE } from "../listing-categories";
 import { Component, HostListener, Input, OnChanges, OnDestroy } from "@angular/core";
 import { EXTENSION_VERSION, type Photo } from "../../../../lib/workspace";
 import { RentalFormStore } from "./rental-form.store";
@@ -68,7 +68,8 @@ export class RentalPublicationComponent implements OnChanges, OnDestroy {
         ping["capabilities"].includes("rental-address-type-then-first") &&
         ping["capabilities"].includes("rental-onliner-city-menu") &&
         ping["capabilities"].includes("rental-localized-price") &&
-        (this.store.category() === APARTMENT_RENT || (ping["capabilities"].includes("listing-category-path") && ping["capabilities"].includes("sale-scoped-controls")));
+        (this.store.category() === APARTMENT_RENT || (ping["capabilities"].includes("listing-category-path") && ping["capabilities"].includes("sale-scoped-controls"))) &&
+        (this.store.category() !== HOUSE_SALE || ping["capabilities"].includes("house-sale-publishing"));
       this.connectionMessage = this.ready ? "" :
         `Подключённый помощник ${ping["version"] || ""} не поддерживает заполнение этой категории. Загрузите расширение ${this.extensionVersion} и перезагрузите его в Chrome.`;
       if (this.ready && this.timer === undefined) {

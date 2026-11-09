@@ -1,0 +1,918 @@
+[
+  {
+    "id": "houses_sale",
+    "name": "Продажа квартир",
+    "description": "Беларусь. Предложение продать квартиру целиком. Ветки покупки, аренды, комнаты и доли исключены.",
+    "categories": [],
+    "options": [
+      {
+        "id": "onliner.file",
+        "name": "Фотографии",
+        "description": "/pk/apartments/create → name=file; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "files",
+        "options": [],
+        "required": true,
+        "file_role": "product_image"
+      },
+      {
+        "id": "onliner.location.user_address",
+        "name": "Город, улица, номер дома",
+        "description": "/pk/apartments/create → location.user_address; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "onliner.resale",
+        "name": "Какую квартиру продаете?",
+        "description": "/pk/apartments/create → name=resale; код из Knockout checkedValue.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.resale.v_8a84abcfa577",
+            "name": "Вторичка",
+            "description": "",
+            "type": "choice",
+            "value": true,
+            "options": []
+          },
+          {
+            "id": "onliner.resale.v_95e186dd7a87",
+            "name": "Новостройка",
+            "description": "",
+            "type": "choice",
+            "value": false,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.walling",
+        "name": "Материал стен",
+        "description": "/pk/apartments/create → name=walling; код из HTML value.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.walling.v_3cb4ddc22010",
+            "name": "Панель",
+            "description": "",
+            "type": "choice",
+            "value": "panel",
+            "options": []
+          },
+          {
+            "id": "onliner.walling.v_9722f2f3e30f",
+            "name": "Кирпич",
+            "description": "",
+            "type": "choice",
+            "value": "brick",
+            "options": []
+          },
+          {
+            "id": "onliner.walling.v_6d9fee2a8dbc",
+            "name": "Монолит",
+            "description": "",
+            "type": "choice",
+            "value": "monolith",
+            "options": []
+          },
+          {
+            "id": "onliner.walling.v_630256c9e24f",
+            "name": "Блок",
+            "description": "",
+            "type": "choice",
+            "value": "block",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.repaired",
+        "name": "Отделка",
+        "description": "/pk/apartments/create → name=repaired; код из Knockout checkedValue.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.repaired.v_8a84abcfa577",
+            "name": "С ремонтом",
+            "description": "",
+            "type": "choice",
+            "value": true,
+            "options": []
+          },
+          {
+            "id": "onliner.repaired.v_95e186dd7a87",
+            "name": "Без отделки",
+            "description": "",
+            "type": "choice",
+            "value": false,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.rooms",
+        "name": "Количество комнат",
+        "description": "/pk/apartments/create → name=rooms; код из Knockout checkedValue.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.rooms.v_5d61994ce558",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "onliner.rooms.v_ea9753513186",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "onliner.rooms.v_fc9d7eb4104a",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "onliner.rooms.v_1c68ca07f2d7",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "onliner.rooms.v_353d3af5fc87",
+            "name": "5",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "onliner.rooms.v_5daa0980abe1",
+            "name": "6+",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.balcony",
+        "name": "Балкон (лоджия)",
+        "description": "/pk/apartments/create → name=balcony; код из Knockout checkedValue.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.balcony.v_8a84abcfa577",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "value": true,
+            "options": []
+          },
+          {
+            "id": "onliner.balcony.v_95e186dd7a87",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": false,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.parking",
+        "name": "Выделенное парковочное место",
+        "description": "/pk/apartments/create → name=parking; код из HTML value.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.parking.v_439083f38956",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": "",
+            "options": []
+          },
+          {
+            "id": "onliner.parking.v_58c453a8123c",
+            "name": "На улице",
+            "description": "",
+            "type": "choice",
+            "value": "street",
+            "options": []
+          },
+          {
+            "id": "onliner.parking.v_d96e1ba01c1a",
+            "name": "В гараже",
+            "description": "",
+            "type": "choice",
+            "value": "garage",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.floor",
+        "name": "Этаж",
+        "description": "/pk/apartments/create → floor; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "integer",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.floors",
+        "name": "Этажей в доме",
+        "description": "/pk/apartments/create → floors; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "integer",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.combinedKitchen",
+        "name": "Кухня совмещена с жилой",
+        "description": "/pk/apartments/create → name=combinedKitchen; код из Knockout checkedValue.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.combinedKitchen.v_8a84abcfa577",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "value": true,
+            "options": []
+          },
+          {
+            "id": "onliner.combinedKitchen.v_95e186dd7a87",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "value": false,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.area.total",
+        "name": "Общая площадь",
+        "description": "/pk/apartments/create → area.total; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "number",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.area.living",
+        "name": "Жилая площадь",
+        "description": "/pk/apartments/create → area.living; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "number",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.area.kitchen",
+        "name": "Площадь кухни",
+        "description": "/pk/apartments/create → area.kitchen; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "number",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.wallHeight",
+        "name": "Высота потолков",
+        "description": "/pk/apartments/create → wallHeight; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "number",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.buildingYear",
+        "name": "Год постройки",
+        "description": "/pk/apartments/create → buildingYear; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "integer",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.description",
+        "name": "Описание",
+        "description": "/pk/apartments/create → description; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.price.amount",
+        "name": "Цена продажи",
+        "description": "/pk/apartments/create → price.amount; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "number",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.price.currency",
+        "name": "Валюта",
+        "description": "/pk/apartments/create → price.currency; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.price.currency.v_7b2792c0dde8",
+            "name": "Доллары США",
+            "description": "",
+            "type": "choice",
+            "value": "USD",
+            "options": []
+          },
+          {
+            "id": "onliner.price.currency.v_652c0946998e",
+            "name": "Белорусские рубли",
+            "description": "",
+            "type": "choice",
+            "value": "BYN",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.seller.type",
+        "name": "Кто продаёт",
+        "description": "/pk/apartments/create → name=seller.type; код из HTML value.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.seller.type.v_bc03fb2d9ca7",
+            "name": "Собственник",
+            "description": "",
+            "type": "choice",
+            "value": "owner",
+            "options": []
+          },
+          {
+            "id": "onliner.seller.type.v_b1322c20c8a9",
+            "name": "Агентство",
+            "description": "",
+            "type": "choice",
+            "value": "agent",
+            "options": []
+          },
+          {
+            "id": "onliner.seller.type.v_87486dd98355",
+            "name": "Застройщик",
+            "description": "",
+            "type": "choice",
+            "value": "builder",
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.seller.name",
+        "name": "Юридическое наименование",
+        "description": "/pk/apartments/create → seller.name; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.seller.type",
+          "operator": "not_equals",
+          "value": "owner"
+        }
+      },
+      {
+        "id": "onliner.seller.legalInfo.unp",
+        "name": "УНП",
+        "description": "/pk/apartments/create → seller.legalInfo.unp; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.seller.type",
+          "operator": "not_equals",
+          "value": "owner"
+        }
+      },
+      {
+        "id": "onliner.seller.legalInfo.contract.number",
+        "name": "Номер договора",
+        "description": "/pk/apartments/create → seller.legalInfo.contract.number; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.seller.type",
+          "operator": "not_equals",
+          "value": "owner"
+        },
+        "validation": {
+          "max_length": 100
+        }
+      },
+      {
+        "id": "onliner.seller.legalInfo.contract.date",
+        "name": "Дата заключения договора",
+        "description": "/pk/apartments/create → seller.legalInfo.contract.date; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "date",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.seller.type",
+          "operator": "not_equals",
+          "value": "owner"
+        }
+      },
+      {
+        "id": "onliner.seller.legalInfo.licence.number",
+        "name": "Номер лицензии",
+        "description": "/pk/apartments/create → seller.legalInfo.licence.number; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.seller.type",
+          "operator": "not_equals",
+          "value": "owner"
+        },
+        "validation": {
+          "max_length": 100
+        }
+      },
+      {
+        "id": "onliner.seller.legalInfo.licence.date",
+        "name": "Дата выдачи лицензии",
+        "description": "/pk/apartments/create → seller.legalInfo.licence.date; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "date",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.seller.type",
+          "operator": "not_equals",
+          "value": "owner"
+        }
+      },
+      {
+        "id": "onliner.contact.name",
+        "name": "Ваше имя",
+        "description": "/pk/apartments/create → contact.name; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.phone",
+        "name": "Контактный телефон",
+        "description": "/pk/apartments/create → phone; разметка формы; последующие шаги зависят от фотографий.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "onliner.call_from",
+        "name": "Звонить с",
+        "description": "/pk/apartments/create → call_from; числовые options 0…23 в data-bind.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.call_from.v_6db638fe4d2f",
+            "name": "0:00",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_5d61994ce558",
+            "name": "1:00",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_ea9753513186",
+            "name": "2:00",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_fc9d7eb4104a",
+            "name": "3:00",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_1c68ca07f2d7",
+            "name": "4:00",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_353d3af5fc87",
+            "name": "5:00",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_5daa0980abe1",
+            "name": "6:00",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_f81db69cc8df",
+            "name": "7:00",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_aca4f4a652c9",
+            "name": "8:00",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_728b81fd8bd2",
+            "name": "9:00",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_3e64baebd6b2",
+            "name": "10:00",
+            "description": "",
+            "type": "choice",
+            "value": 10,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_0f2b09bf336d",
+            "name": "11:00",
+            "description": "",
+            "type": "choice",
+            "value": 11,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_ab9f3039ca32",
+            "name": "12:00",
+            "description": "",
+            "type": "choice",
+            "value": 12,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_588e898a5cb9",
+            "name": "13:00",
+            "description": "",
+            "type": "choice",
+            "value": 13,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_66b309ea6fb3",
+            "name": "14:00",
+            "description": "",
+            "type": "choice",
+            "value": 14,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_5fa8e0b2cc0a",
+            "name": "15:00",
+            "description": "",
+            "type": "choice",
+            "value": 15,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_913c6bd3527b",
+            "name": "16:00",
+            "description": "",
+            "type": "choice",
+            "value": 16,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_89e8d3a813fc",
+            "name": "17:00",
+            "description": "",
+            "type": "choice",
+            "value": 17,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_f3754197ced5",
+            "name": "18:00",
+            "description": "",
+            "type": "choice",
+            "value": 18,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_a48f515d8d2a",
+            "name": "19:00",
+            "description": "",
+            "type": "choice",
+            "value": 19,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_521ad1127796",
+            "name": "20:00",
+            "description": "",
+            "type": "choice",
+            "value": 20,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_4a9b3ce4eac9",
+            "name": "21:00",
+            "description": "",
+            "type": "choice",
+            "value": 21,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_2c0011786248",
+            "name": "22:00",
+            "description": "",
+            "type": "choice",
+            "value": 22,
+            "options": []
+          },
+          {
+            "id": "onliner.call_from.v_5b9bca7aed26",
+            "name": "23:00",
+            "description": "",
+            "type": "choice",
+            "value": 23,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.call_to",
+        "name": "Звонить до",
+        "description": "/pk/apartments/create → call_to; числовые options 0…23 в data-bind.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "onliner.call_to.v_6db638fe4d2f",
+            "name": "0:00",
+            "description": "",
+            "type": "choice",
+            "value": 0,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_5d61994ce558",
+            "name": "1:00",
+            "description": "",
+            "type": "choice",
+            "value": 1,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_ea9753513186",
+            "name": "2:00",
+            "description": "",
+            "type": "choice",
+            "value": 2,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_fc9d7eb4104a",
+            "name": "3:00",
+            "description": "",
+            "type": "choice",
+            "value": 3,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_1c68ca07f2d7",
+            "name": "4:00",
+            "description": "",
+            "type": "choice",
+            "value": 4,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_353d3af5fc87",
+            "name": "5:00",
+            "description": "",
+            "type": "choice",
+            "value": 5,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_5daa0980abe1",
+            "name": "6:00",
+            "description": "",
+            "type": "choice",
+            "value": 6,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_f81db69cc8df",
+            "name": "7:00",
+            "description": "",
+            "type": "choice",
+            "value": 7,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_aca4f4a652c9",
+            "name": "8:00",
+            "description": "",
+            "type": "choice",
+            "value": 8,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_728b81fd8bd2",
+            "name": "9:00",
+            "description": "",
+            "type": "choice",
+            "value": 9,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_3e64baebd6b2",
+            "name": "10:00",
+            "description": "",
+            "type": "choice",
+            "value": 10,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_0f2b09bf336d",
+            "name": "11:00",
+            "description": "",
+            "type": "choice",
+            "value": 11,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_ab9f3039ca32",
+            "name": "12:00",
+            "description": "",
+            "type": "choice",
+            "value": 12,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_588e898a5cb9",
+            "name": "13:00",
+            "description": "",
+            "type": "choice",
+            "value": 13,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_66b309ea6fb3",
+            "name": "14:00",
+            "description": "",
+            "type": "choice",
+            "value": 14,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_5fa8e0b2cc0a",
+            "name": "15:00",
+            "description": "",
+            "type": "choice",
+            "value": 15,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_913c6bd3527b",
+            "name": "16:00",
+            "description": "",
+            "type": "choice",
+            "value": 16,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_89e8d3a813fc",
+            "name": "17:00",
+            "description": "",
+            "type": "choice",
+            "value": 17,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_f3754197ced5",
+            "name": "18:00",
+            "description": "",
+            "type": "choice",
+            "value": 18,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_a48f515d8d2a",
+            "name": "19:00",
+            "description": "",
+            "type": "choice",
+            "value": 19,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_521ad1127796",
+            "name": "20:00",
+            "description": "",
+            "type": "choice",
+            "value": 20,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_4a9b3ce4eac9",
+            "name": "21:00",
+            "description": "",
+            "type": "choice",
+            "value": 21,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_2c0011786248",
+            "name": "22:00",
+            "description": "",
+            "type": "choice",
+            "value": 22,
+            "options": []
+          },
+          {
+            "id": "onliner.call_to.v_5b9bca7aed26",
+            "name": "23:00",
+            "description": "",
+            "type": "choice",
+            "value": 23,
+            "options": []
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "onliner.additional_phone_1",
+        "name": "Дополнительный телефон 1",
+        "description": "Контакты: повторитель contact.phones, в HTML условие length < 3 для действия «Еще один номер».",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "onliner.additional_phone_2",
+        "name": "Дополнительный телефон 2",
+        "description": "Контакты: повторитель contact.phones, в HTML условие length < 3 для действия «Еще один номер».",
+        "type": "text",
+        "options": [],
+        "required": false
+      }
+    ]
+  }
+]

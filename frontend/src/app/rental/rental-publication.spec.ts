@@ -1,4 +1,5 @@
 import { EXTENSION_VERSION } from "../../../../lib/workspace";
+import { HOUSE_SALE } from "../listing-categories";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { RentalPublicationComponent } from "./rental-publication.component";
@@ -15,6 +16,25 @@ const gateway = {
 };
 afterEach(() => vi.clearAllMocks());
 describe("publication of incomplete rental cards", () => {
+  it("requires house sale support, then launches with the house sale category", async () => {
+    const c = new RentalPublicationComponent(gateway);
+    c.store = new RentalFormStore(() => "owner", () => ({}), () => HOUSE_SALE);
+    c.workspaceId = "owner"; c.sessionId = c.store.id;
+    c.store.card.platforms = ["realt"];
+    const capabilities = ["rental-publishing", "rental-address-suggestions", "rental-form-session", "rental-field-transfer-v2", "rental-address-type-then-first", "rental-onliner-city-menu", "rental-localized-price", "listing-category-path", "sale-scoped-controls"];
+    extension.mockResolvedValueOnce({capabilities, jobs:[]});
+    await c.ngOnChanges();
+    expect(c.ready).toBe(false);
+    extension.mockResolvedValueOnce({capabilities, jobs:[]});
+    await c.publish();
+    expect(extension).not.toHaveBeenCalledWith("RENTAL_RUN", expect.anything(), expect.anything());
+    extension.mockResolvedValueOnce({capabilities:[...capabilities, "house-sale-publishing"], jobs:[]});
+    await c.checkConnection();
+    expect(c.ready).toBe(true);
+    await c.publish();
+    expect(extension).toHaveBeenCalledWith("RENTAL_RUN", expect.objectContaining({categoryId:HOUSE_SALE}), 25000);
+    c.ngOnDestroy(); c.store.destroy();
+  });
   it("counts local files without duplicating imported URLs or sending image bytes to preparation", async () => {
     const store = new RentalFormStore(() => "owner");
     const url = "https://example.com/one.jpg";

@@ -1,0 +1,1383 @@
+[
+  {
+    "id": "houses_sale",
+    "name": "Продажа домов",
+    "description": "Беларусь. Продажа дома целиком, коттеджа или дачи. Не аренда, не участок без дома и не часть дома.",
+    "categories": [],
+    "options": [
+      {
+        "id": "domovita.action",
+        "name": "Подать объявление о",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=action.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.action.v_76c0e5009641",
+            "name": "Продаже",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "sale"
+          },
+          {
+            "id": "domovita.action.v_f4c63b80e9be",
+            "name": "Сдаче длительно",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "rent"
+          },
+          {
+            "id": "domovita.action.v_026e6259c272",
+            "name": "Сдаче посуточно",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "daily"
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.type",
+        "name": "Тип недвижимости",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=type.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.type.v_d76e39251537",
+            "name": "Квартиры",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "flats"
+          },
+          {
+            "id": "domovita.type.v_75a58d79d924",
+            "name": "Комнаты",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "room"
+          },
+          {
+            "id": "domovita.type.v_f42d0ad87465",
+            "name": "Коттеджи/Дома",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "cottages"
+          },
+          {
+            "id": "domovita.type.v_53a045e643e5",
+            "name": "Дачи",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "dacha"
+          },
+          {
+            "id": "domovita.type.v_7498bbb1976c",
+            "name": "Участки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "area"
+          },
+          {
+            "id": "domovita.type.v_c0408c14a75b",
+            "name": "Гаражи",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "garage"
+          },
+          {
+            "id": "domovita.type.v_ba9d5536fd36",
+            "name": "Коммерческая",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "commercial"
+          }
+        ],
+        "required": null,
+        "options_complete": true
+      },
+      {
+        "id": "domovita.town_id",
+        "name": "Населённый пункт",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=town_id.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.contact_name",
+        "name": "Как обращаться",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=contact_name.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.phones.0.contact_phone",
+        "name": "Телефон для связи",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=phones.0.contact_phone.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "format": "phone"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.email",
+        "name": "Эл. почта",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=email.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "format": "email"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.object_type",
+        "name": "Вид объекта",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=object_type.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.object_type.v_e07334779379",
+            "name": "Дом",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "domovita.object_type.v_1aa2f3a9b9a6",
+            "name": "Дуплекс",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "domovita.object_type.v_a7c985404127",
+            "name": "Таунхаус",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          }
+        ],
+        "options_complete": true,
+        "required": false,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.is_half_house",
+        "name": "Полдома",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=is_half_house.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.is_half_house.v_debe7067ba07",
+            "name": "Да",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "domovita.is_half_house.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.building_year",
+        "name": "Год постройки",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=building_year.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_ground",
+        "name": "Участок (сотки)",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=area_ground.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.buiding_levels",
+        "name": "Кол-во уровней",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=buiding_levels.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_total",
+        "name": "Площадь м²",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=area_total.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_kitchen",
+        "name": "Площадь кухни, м²",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=area_kitchen.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.area_living",
+        "name": "Жилая площадь, м²",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=area_living.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.building_percent",
+        "name": "Готовность в %",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=building_percent.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.building_percent.v_a634b64d1642",
+            "name": "10",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 10
+          },
+          {
+            "id": "domovita.building_percent.v_73e964aecade",
+            "name": "20",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 20
+          },
+          {
+            "id": "domovita.building_percent.v_9731d24fa32c",
+            "name": "50",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 50
+          },
+          {
+            "id": "domovita.building_percent.v_e7749765b629",
+            "name": "100",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 100
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.walls_material",
+        "name": "Материал стен",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=walls_material.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.walls_material.v_a6e0bcf4dc97",
+            "name": "Кирпич",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "кирпич"
+          },
+          {
+            "id": "domovita.walls_material.v_871369185dd0",
+            "name": "Дерево",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "дерево"
+          },
+          {
+            "id": "domovita.walls_material.v_58e010bfbb6d",
+            "name": "Щитовые",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "щитовые"
+          },
+          {
+            "id": "domovita.walls_material.v_25300024176a",
+            "name": "Блоки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "блоки"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.roof_material",
+        "name": "Материал крыши",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=roof_material.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.roof_material.v_1e05dfdb93c3",
+            "name": "Шифер",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Шифер"
+          },
+          {
+            "id": "domovita.roof_material.v_04624788ffdf",
+            "name": "Металлочерепица",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Металлочерепица"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.phone",
+        "name": "Телефон",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=phone.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.phone.v_d0123c3baf5f",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Есть"
+          },
+          {
+            "id": "domovita.phone.v_d3a4503e248b",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Нет"
+          }
+        ],
+        "required": null,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.heating",
+        "name": "Отопление",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=heating.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.heating.v_6ee1faa5522e",
+            "name": "газовое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "газовое"
+          },
+          {
+            "id": "domovita.heating.v_6afb11ac6c2e",
+            "name": "центральное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "центральное"
+          },
+          {
+            "id": "domovita.heating.v_9557b2652e6b",
+            "name": "электрическое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "электрическое"
+          },
+          {
+            "id": "domovita.heating.v_6090e8959429",
+            "name": "печное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "печное"
+          }
+        ],
+        "required": null,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.water",
+        "name": "Водоснабжение",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=water.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.water.v_a18e73d3e966",
+            "name": "Центральное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "c"
+          },
+          {
+            "id": "domovita.water.v_7393384f0af8",
+            "name": "Скважина",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "b"
+          },
+          {
+            "id": "domovita.water.v_62f05436d03b",
+            "name": "Колодец",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "w"
+          },
+          {
+            "id": "domovita.water.v_a9c020a1ecd5",
+            "name": "Сезонное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "s"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.gas",
+        "name": "Газ",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=gas.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.gas.v_0da9f8680dbf",
+            "name": "В посёлке",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "В посёлке"
+          },
+          {
+            "id": "domovita.gas.v_6d5e8b4aaaab",
+            "name": "В доме",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "В доме"
+          },
+          {
+            "id": "domovita.gas.v_d3a4503e248b",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Нет"
+          }
+        ],
+        "required": null,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.sewer",
+        "name": "Канализация",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=sewer.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.sewer.v_d0123c3baf5f",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Есть"
+          },
+          {
+            "id": "domovita.sewer.v_d3a4503e248b",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Нет"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.electro",
+        "name": "Электричество",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=electro.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.electro.v_b8285b187452",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "domovita.electro.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          }
+        ],
+        "required": null,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.rooms",
+        "name": "Количество комнат",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=rooms.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.repair_state",
+        "name": "Ремонт",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=repair_state.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.repair_state.v_05c3bf78867d",
+            "name": "С отделкой",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "С отделкой"
+          },
+          {
+            "id": "domovita.repair_state.v_3a7b8b9407a2",
+            "name": "Без отделки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Без отделки"
+          },
+          {
+            "id": "domovita.repair_state.v_2784a85cbe39",
+            "name": "Хороший",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Хороший"
+          },
+          {
+            "id": "domovita.repair_state.v_9105f2a952e3",
+            "name": "Косметический",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Косметический"
+          },
+          {
+            "id": "domovita.repair_state.v_bab89d6a6b8f",
+            "name": "Евро",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Евро"
+          },
+          {
+            "id": "domovita.repair_state.v_c110753883a3",
+            "name": "Дизайнерский",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Дизайнерский"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.description",
+        "name": "Описание",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=description.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.youtube_link",
+        "name": "Ссылка на видео с YouTube",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=youtube_link.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "format": "uri"
+        },
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.price",
+        "name": "Общая цена",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=price.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.price_currency_text",
+        "name": "Валюта",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=price_currency_text.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.price_currency_text.v_3daa41f7382e",
+            "name": "USD",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "USD"
+          },
+          {
+            "id": "domovita.price_currency_text.v_3110c1ee6fbf",
+            "name": "EUR",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "EUR"
+          },
+          {
+            "id": "domovita.price_currency_text.v_ccda7111034c",
+            "name": "BYN",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "BYN"
+          },
+          {
+            "id": "domovita.price_currency_text.v_253a2209f127",
+            "name": "RUB",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "RUB"
+          }
+        ],
+        "required": null,
+        "options_complete": true,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.terms",
+        "name": "Условия сделки",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=terms.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.terms.v_d199ac9ce347",
+            "name": "Любые",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Любые"
+          },
+          {
+            "id": "domovita.terms.v_1173351afe31",
+            "name": "Чистая продажа",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Чистая продажа"
+          },
+          {
+            "id": "domovita.terms.v_30f6d3eb9dbc",
+            "name": "Обмен",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Обмен"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.price_haggle",
+        "name": "Торг",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. name=price_haggle.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "domovita.price_haggle.v_90914a94dc51",
+            "name": "Торг",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Торг"
+          },
+          {
+            "id": "domovita.price_haggle.v_b72c194e4526",
+            "name": "Без торга",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "Без торга"
+          }
+        ],
+        "options_complete": true,
+        "required": null,
+        "when": {
+          "all": [
+            {
+              "option_id": "domovita.action",
+              "operator": "equals",
+              "value": "sale"
+            },
+            {
+              "option_id": "domovita.type",
+              "operator": "in",
+              "value": [
+                "cottages",
+                "dacha"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "domovita.street_name",
+        "name": "Улица",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.house_number",
+        "name": "Дом",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "domovita.images",
+        "name": "Фотографии",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image"
+      },
+      {
+        "id": "domovita.extra_info_comments",
+        "name": "Дополнительные опции",
+        "description": "2026-11-09. Domovita: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Коды всех чипов прочитаны из input.value.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "domovita.extra_info_comments.kondicioner",
+            "name": "Кондиционер",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "kondicioner"
+          },
+          {
+            "id": "domovita.extra_info_comments.signalizacia",
+            "name": "Сигнализация",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "signalizacia"
+          },
+          {
+            "id": "domovita.extra_info_comments.videonabl",
+            "name": "Видеонаблюдение",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "videonabl"
+          },
+          {
+            "id": "domovita.extra_info_comments.internet",
+            "name": "Интернет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "internet"
+          },
+          {
+            "id": "domovita.extra_info_comments.banay",
+            "name": "Баня",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "banay"
+          },
+          {
+            "id": "domovita.extra_info_comments.les",
+            "name": "Лес",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "les"
+          },
+          {
+            "id": "domovita.extra_info_comments.vodoem",
+            "name": "Водоем",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "vodoem"
+          },
+          {
+            "id": "domovita.extra_info_comments.magazin",
+            "name": "Магазин",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "magazin"
+          },
+          {
+            "id": "domovita.extra_info_comments.garage",
+            "name": "Гараж",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "garage",
+            "when": {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          },
+          {
+            "id": "domovita.extra_info_comments.fireplace",
+            "name": "Камин",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "fireplace",
+            "when": {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          },
+          {
+            "id": "domovita.extra_info_comments.pool",
+            "name": "Бассейн",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "pool",
+            "when": {
+              "option_id": "domovita.type",
+              "operator": "equals",
+              "value": "cottages"
+            }
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      }
+    ]
+  }
+]

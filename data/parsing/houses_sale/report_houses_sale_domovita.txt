@@ -1,0 +1,40 @@
+Продажа домов / domovita / 2026-11-09. Задание: пользователь попросил сделать аналогично аренде домов.
+Источники: официальная форма подачи; DOM/props и публичный справочник insertion. Подтверждение, платные опции и публикация не выполнялись.
+source SHA-256 (compact JSON): e8d6714501c22505e94e739e2030284ba8fd61ce8a85780828216c372b928797
+Листьев: 35. Поле → способ покрытия:
+domovita.action | Подать объявление о | константа
+domovita.type | Тип недвижимости | house.kind
+domovita.town_id | Населённый пункт | адрес
+domovita.contact_name | Как обращаться | contact.name
+domovita.phones.0.contact_phone | Телефон для связи | contact.phone
+domovita.email | Эл. почта | specific.domovita.email
+domovita.object_type | Вид объекта | house.kind
+domovita.is_half_house | Полдома | константа
+domovita.building_year | Год постройки | house.building_year
+domovita.area_ground | Участок (сотки) | house.land_area
+domovita.buiding_levels | Кол-во уровней | house.levels
+domovita.area_total | Площадь м² | house.total_area
+domovita.area_kitchen | Площадь кухни, м² | house.kitchen_area
+domovita.area_living | Жилая площадь, м² | house.living_area
+domovita.building_percent | Готовность в % | house.readiness
+domovita.walls_material | Материал стен | house.walls
+domovita.roof_material | Материал крыши | house.roof
+domovita.phone | Телефон | house.landline
+domovita.heating | Отопление | house.heating
+domovita.water | Водоснабжение | house.water
+domovita.gas | Газ | house.gas
+domovita.sewer | Канализация | house.sewer
+domovita.electro | Электричество | house.electricity
+domovita.rooms | Количество комнат | house.rooms
+domovita.repair_state | Ремонт | specific.domovita.repair_state
+domovita.description | Описание | listing.description
+domovita.youtube_link | Ссылка на видео с YouTube | media.video_url
+domovita.price | Общая цена | sale.price
+domovita.price_currency_text | Валюта | sale.currency
+domovita.terms | Условия сделки | sale.terms
+domovita.price_haggle | Торг | specific.domovita.price_haggle
+domovita.street_name | Улица | адрес
+domovita.house_number | Дом | адрес
+domovita.images | Фотографии | media.images
+domovita.extra_info_comments | Дополнительные опции | композит
+Bindings новых полей не объявляются ready без проверки полного переноса. Runtime использует существующие адаптеры; новые селекторы требуют проверки под аккаунтом. Для Realt коттедж/дача используют общий шаблон дома; отдельные ветви пока не проверены. Для Domovita проверены обе ветви cottages/sale и dacha/sale. Для Kufar все значения из refs ветви sell; UI без авторизации не отрисовал дополнительные параметры, поэтому полнота их DOM не подтверждена.

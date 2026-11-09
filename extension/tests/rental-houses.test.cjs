@@ -12,6 +12,25 @@ async function windowFor(t, html) {
   return w;
 }
 
+test('Domovita house sale waits for the selected category using its sibling label', async t => {
+  const r = JSON.parse(fs.readFileSync(path.join(__dirname,
+    '../../data/rental/houses_sale/runtime/browser_domovita.json'), 'utf8'));
+  const w = await windowFor(t, '<input id="sale" name="action" type="radio" value="sale" checked><label for="sale">Продаже</label><input id="house" name="type" type="radio" value="cottages"><label for="house">Коттеджи/Дома</label><input id="dacha" name="type" type="radio" value="dacha" checked><label for="dacha">Дачи</label><input name="area_total">');
+  r.setup = [];
+  r.controls = [{...r.controls.find(c => c.field === 'domovita.area_total'),value:'160'}];
+  const form = new w.AutopostRentalForm.Form(r);
+  await form.tick();
+  assert.equal(form.ready(), false);
+  assert.equal(w.document.querySelector('[name="area_total"]').value, '');
+  w.document.querySelector('#house').checked = true;
+  await form.tick();
+  assert.equal(form.ready(), true);
+  assert.equal(w.document.querySelector('[name="area_total"]').value, '160');
+  w.document.querySelector('#dacha').checked = true;
+  r.ready[1].text = 'Дачи';
+  assert.equal(new w.AutopostRentalForm.Form(r).ready(), true);
+});
+
 test('house choices on Domovita are scoped by heading even when inputs have no name or value', async t => {
   const rows = [{id:'rooms',heading:'Количество комнат',labels:['3','4'],value:4,wanted:'4'},
     {id:'gas',heading:'Газ',labels:['В доме','Нет'],value:0,wanted:'Нет'},

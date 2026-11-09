@@ -1,0 +1,1298 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "houses_sale",
+  "platform": "kufar",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "kufar.subject",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "kufar.content_video",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "kufar.name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "kufar.phone",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "location.label",
+      "platform_option_id": "kufar.address",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.contact_person",
+      "platform_option_id": "kufar.contact_person",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.phone_hidden",
+      "platform_option_id": "kufar.phone_hidden",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Звонки и сообщения",
+            "to": "0"
+          },
+          {
+            "from": "Только сообщения",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_contract",
+      "platform_option_id": "kufar.re_contract",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_hot_water",
+      "platform_option_id": "kufar.re_hot_water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "1"
+          },
+          {
+            "from": "-",
+            "to": "0"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.condition",
+      "platform_option_id": "kufar.condition",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Новое",
+            "to": "2"
+          },
+          {
+            "from": "Вторичное",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_ids": [
+        "amenity.furniture",
+        "amenity.internet",
+        "amenity.tv",
+        "amenity.washing_machine",
+        "amenity.air_conditioner",
+        "amenity.fireplace",
+        "amenity.garage",
+        "amenity.shower",
+        "amenity.jacuzzi",
+        "specific.kufar.house_improvements.810ef972",
+        "specific.kufar.house_improvements.084f0d30",
+        "specific.kufar.house_improvements.4c1a0c87",
+        "specific.kufar.house_improvements.307ab0c9",
+        "specific.kufar.house_improvements.441a9a5f",
+        "specific.kufar.house_improvements.f1de1de0"
+      ],
+      "platform_option_id": "kufar.house_improvements",
+      "conversion": {
+        "kind": "multi_lookup",
+        "members": [
+          {
+            "common_option_id": "amenity.furniture",
+            "values": [
+              {
+                "from": true,
+                "to": "7"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.internet",
+            "values": [
+              {
+                "from": true,
+                "to": "1"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.tv",
+            "values": [
+              {
+                "from": true,
+                "to": "2"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.washing_machine",
+            "values": [
+              {
+                "from": true,
+                "to": "10"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.air_conditioner",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.fireplace",
+            "values": [
+              {
+                "from": true,
+                "to": "8"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.garage",
+            "values": [
+              {
+                "from": true,
+                "to": "14"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.shower",
+            "values": [
+              {
+                "from": true,
+                "to": "12"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "amenity.jacuzzi",
+            "values": [
+              {
+                "from": true,
+                "to": "11"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.810ef972",
+            "values": [
+              {
+                "from": true,
+                "to": "3"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.084f0d30",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.4c1a0c87",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.307ab0c9",
+            "values": [
+              {
+                "from": true,
+                "to": "9"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.441a9a5f",
+            "values": [
+              {
+                "from": true,
+                "to": "13"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          },
+          {
+            "common_option_id": "specific.kufar.house_improvements.f1de1de0",
+            "values": [
+              {
+                "from": true,
+                "to": "15"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "kufar.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "BYR"
+          },
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "EUR",
+            "to": "EUR"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.price",
+      "platform_option_id": "kufar.price",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number",
+        "requires": [
+          "kufar.currency"
+        ],
+        "currency_field": "kufar.currency"
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "kufar.house_type_for_sell",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": "1"
+          },
+          {
+            "from": "Коттедж",
+            "to": "5"
+          },
+          {
+            "from": "Дача",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.total_area",
+      "platform_option_id": "kufar.size",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.living_area",
+      "platform_option_id": "kufar.size_living_space",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.kitchen_area",
+      "platform_option_id": "kufar.size_kitchen",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.land_area",
+      "platform_option_id": "kufar.size_area",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.levels",
+      "platform_option_id": "kufar.house_number_floors",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "3"
+          },
+          {
+            "from": "5",
+            "to": "3"
+          },
+          {
+            "from": "6",
+            "to": "3"
+          },
+          {
+            "from": "7",
+            "to": "3"
+          },
+          {
+            "from": "8",
+            "to": "3"
+          },
+          {
+            "from": "9",
+            "to": "3"
+          },
+          {
+            "from": "10",
+            "to": "3"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.building_year",
+      "platform_option_id": "kufar.year_built",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "2029",
+            "to": "2029"
+          },
+          {
+            "from": "2028",
+            "to": "2028"
+          },
+          {
+            "from": "2027",
+            "to": "2027"
+          },
+          {
+            "from": "2026",
+            "to": "2026"
+          },
+          {
+            "from": "2025",
+            "to": "2025"
+          },
+          {
+            "from": "2024",
+            "to": "2024"
+          },
+          {
+            "from": "2023",
+            "to": "2023"
+          },
+          {
+            "from": "2022",
+            "to": "2022"
+          },
+          {
+            "from": "2021",
+            "to": "2021"
+          },
+          {
+            "from": "2020",
+            "to": "2020"
+          },
+          {
+            "from": "2019",
+            "to": "2019"
+          },
+          {
+            "from": "2018",
+            "to": "2018"
+          },
+          {
+            "from": "2017",
+            "to": "2017"
+          },
+          {
+            "from": "2016",
+            "to": "2016"
+          },
+          {
+            "from": "2015",
+            "to": "2015"
+          },
+          {
+            "from": "2014",
+            "to": "2014"
+          },
+          {
+            "from": "2013",
+            "to": "2013"
+          },
+          {
+            "from": "2012",
+            "to": "2012"
+          },
+          {
+            "from": "2011",
+            "to": "2011"
+          },
+          {
+            "from": "2010",
+            "to": "2010"
+          },
+          {
+            "from": "2009",
+            "to": "2009"
+          },
+          {
+            "from": "2008",
+            "to": "2008"
+          },
+          {
+            "from": "2007",
+            "to": "2007"
+          },
+          {
+            "from": "2006",
+            "to": "2006"
+          },
+          {
+            "from": "2005",
+            "to": "2005"
+          },
+          {
+            "from": "2004",
+            "to": "2004"
+          },
+          {
+            "from": "2003",
+            "to": "2003"
+          },
+          {
+            "from": "2002",
+            "to": "2002"
+          },
+          {
+            "from": "2001",
+            "to": "2001"
+          },
+          {
+            "from": "2000",
+            "to": "2000"
+          },
+          {
+            "from": "1999",
+            "to": "1999"
+          },
+          {
+            "from": "1998",
+            "to": "1998"
+          },
+          {
+            "from": "1997",
+            "to": "1997"
+          },
+          {
+            "from": "1996",
+            "to": "1996"
+          },
+          {
+            "from": "1995",
+            "to": "1995"
+          },
+          {
+            "from": "1994",
+            "to": "1994"
+          },
+          {
+            "from": "1993",
+            "to": "1993"
+          },
+          {
+            "from": "1992",
+            "to": "1992"
+          },
+          {
+            "from": "1991",
+            "to": "1991"
+          },
+          {
+            "from": "1990",
+            "to": "1990"
+          },
+          {
+            "from": "1989",
+            "to": "1989"
+          },
+          {
+            "from": "1988",
+            "to": "1988"
+          },
+          {
+            "from": "1987",
+            "to": "1987"
+          },
+          {
+            "from": "1986",
+            "to": "1986"
+          },
+          {
+            "from": "1985",
+            "to": "1985"
+          },
+          {
+            "from": "1984",
+            "to": "1984"
+          },
+          {
+            "from": "1983",
+            "to": "1983"
+          },
+          {
+            "from": "1982",
+            "to": "1982"
+          },
+          {
+            "from": "1981",
+            "to": "1981"
+          },
+          {
+            "from": "1980",
+            "to": "1980"
+          },
+          {
+            "from": "1979",
+            "to": "1979"
+          },
+          {
+            "from": "1978",
+            "to": "1978"
+          },
+          {
+            "from": "1977",
+            "to": "1977"
+          },
+          {
+            "from": "1976",
+            "to": "1976"
+          },
+          {
+            "from": "1975",
+            "to": "1975"
+          },
+          {
+            "from": "1974",
+            "to": "1974"
+          },
+          {
+            "from": "1973",
+            "to": "1973"
+          },
+          {
+            "from": "1972",
+            "to": "1972"
+          },
+          {
+            "from": "1971",
+            "to": "1971"
+          },
+          {
+            "from": "1970",
+            "to": "1970"
+          },
+          {
+            "from": "1969",
+            "to": "1969"
+          },
+          {
+            "from": "1968",
+            "to": "1968"
+          },
+          {
+            "from": "1967",
+            "to": "1967"
+          },
+          {
+            "from": "1966",
+            "to": "1966"
+          },
+          {
+            "from": "1965",
+            "to": "1965"
+          },
+          {
+            "from": "1964",
+            "to": "1964"
+          },
+          {
+            "from": "1963",
+            "to": "1963"
+          },
+          {
+            "from": "1962",
+            "to": "1962"
+          },
+          {
+            "from": "1961",
+            "to": "1961"
+          },
+          {
+            "from": "1960",
+            "to": "1960"
+          },
+          {
+            "from": "1959",
+            "to": "1959"
+          },
+          {
+            "from": "1958",
+            "to": "1958"
+          },
+          {
+            "from": "1957",
+            "to": "1957"
+          },
+          {
+            "from": "1956",
+            "to": "1956"
+          },
+          {
+            "from": "1955",
+            "to": "1955"
+          },
+          {
+            "from": "1954",
+            "to": "1954"
+          },
+          {
+            "from": "1953",
+            "to": "1953"
+          },
+          {
+            "from": "1952",
+            "to": "1952"
+          },
+          {
+            "from": "1951",
+            "to": "1951"
+          },
+          {
+            "from": "1950 или ранее",
+            "to": "1950"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.rooms",
+      "platform_option_id": "kufar.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": "1"
+          },
+          {
+            "from": "2",
+            "to": "2"
+          },
+          {
+            "from": "3",
+            "to": "3"
+          },
+          {
+            "from": "4",
+            "to": "4"
+          },
+          {
+            "from": "5+",
+            "to": "5"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "kufar.re_heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Газовое",
+            "to": "1"
+          },
+          {
+            "from": "Центральное",
+            "to": "5"
+          },
+          {
+            "from": "Электрическое",
+            "to": "10"
+          },
+          {
+            "from": "Печное",
+            "to": "15"
+          },
+          {
+            "from": "Твердотопливное",
+            "to": "17"
+          },
+          {
+            "from": "Нет",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.water",
+      "platform_option_id": "kufar.re_water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Сезонная",
+            "to": "1"
+          },
+          {
+            "from": "Скважина",
+            "to": "5"
+          },
+          {
+            "from": "Колодец",
+            "to": "10"
+          },
+          {
+            "from": "Центральный водопровод",
+            "to": "15"
+          },
+          {
+            "from": "Нет",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.sewer",
+      "platform_option_id": "kufar.re_sewage",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Центральная",
+            "to": "1"
+          },
+          {
+            "from": "Выгребная яма",
+            "to": "5"
+          },
+          {
+            "from": "Септик",
+            "to": "10"
+          },
+          {
+            "from": "Биологическая очистка",
+            "to": "15"
+          },
+          {
+            "from": "С/у на улице",
+            "to": "20"
+          },
+          {
+            "from": "Нет",
+            "to": "25"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "kufar.house_gaz",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "В доме",
+            "to": "1"
+          },
+          {
+            "from": "Подведён к дому",
+            "to": "5"
+          },
+          {
+            "from": "Идет по улице",
+            "to": "10"
+          },
+          {
+            "from": "Нет",
+            "to": "15"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.walls",
+      "platform_option_id": "kufar.wall_material",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Кирпич",
+            "to": "1"
+          },
+          {
+            "from": "Дерево",
+            "to": "2"
+          },
+          {
+            "from": "Дерево, обложено кирпичом",
+            "to": "3"
+          },
+          {
+            "from": "Сборно-щитовой",
+            "to": "4"
+          },
+          {
+            "from": "Блок",
+            "to": "5"
+          },
+          {
+            "from": "Керамзитбетон",
+            "to": "6"
+          },
+          {
+            "from": "Шлакобетон",
+            "to": "7"
+          },
+          {
+            "from": "Панель",
+            "to": "8"
+          },
+          {
+            "from": "Монолит",
+            "to": "10"
+          },
+          {
+            "from": "Каркасный",
+            "to": "11"
+          },
+          {
+            "from": "Другой",
+            "to": "9"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.roof",
+      "platform_option_id": "kufar.house_roof_material",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Шифер",
+            "to": "1"
+          },
+          {
+            "from": "Еврошифер",
+            "to": "2"
+          },
+          {
+            "from": "Металлочерепица",
+            "to": "5"
+          },
+          {
+            "from": "Мягкая кровля",
+            "to": "10"
+          },
+          {
+            "from": "Прочее",
+            "to": "15"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.readiness",
+      "platform_option_id": "kufar.house_readiness",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "100",
+            "to": "1"
+          },
+          {
+            "from": "90",
+            "to": "3"
+          },
+          {
+            "from": "75",
+            "to": "5"
+          },
+          {
+            "from": "50",
+            "to": "10"
+          },
+          {
+            "from": "30",
+            "to": "15"
+          },
+          {
+            "from": "10",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "kufar.body",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "kufar.images",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.flat_ceiling_height",
+      "platform_option_id": "kufar.flat_ceiling_height",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "от 2.5 м",
+            "to": "1"
+          },
+          {
+            "from": "от 2.7 м",
+            "to": "5"
+          },
+          {
+            "from": "от 3 м",
+            "to": "10"
+          },
+          {
+            "from": "от 3.5 м",
+            "to": "15"
+          },
+          {
+            "from": "от 4 м",
+            "to": "20"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_auction_sale",
+      "platform_option_id": "kufar.re_auction_sale",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "1"
+          },
+          {
+            "from": "-",
+            "to": "0"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_garden_community",
+      "platform_option_id": "kufar.re_garden_community",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "2"
+          },
+          {
+            "from": "Нет",
+            "to": "1"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.re_property_rights",
+      "platform_option_id": "kufar.re_property_rights",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Частная собственность",
+            "to": "1"
+          },
+          {
+            "from": "Пожизненное наследование",
+            "to": "5"
+          },
+          {
+            "from": "Аренда",
+            "to": "10"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.house_sell_area",
+      "platform_option_id": "kufar.house_sell_area",
+      "conversion": {
+        "kind": "list_lookup",
+        "values": [
+          {
+            "from": "Рядом водоем / река",
+            "to": "1"
+          },
+          {
+            "from": "Рядом лес",
+            "to": "2"
+          },
+          {
+            "from": "Баня",
+            "to": "3"
+          },
+          {
+            "from": "Беседка",
+            "to": "4"
+          },
+          {
+            "from": "Мангал",
+            "to": "5"
+          },
+          {
+            "from": "Бассейн",
+            "to": "6"
+          },
+          {
+            "from": "Ландшафтный дизайн",
+            "to": "7"
+          },
+          {
+            "from": "Хоз. постройки",
+            "to": "8"
+          },
+          {
+            "from": "Сад, огород",
+            "to": "9"
+          },
+          {
+            "from": "Рядом достопримечательности",
+            "to": "10"
+          },
+          {
+            "from": "Живописное место",
+            "to": "11"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.house_roof_material_type",
+      "platform_option_id": "kufar.house_roof_material_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Плоская",
+            "to": "1"
+          },
+          {
+            "from": "Односкатная",
+            "to": "5"
+          },
+          {
+            "from": "Двухскатная",
+            "to": "10"
+          },
+          {
+            "from": "Многоскатная",
+            "to": "15"
+          },
+          {
+            "from": "Вальмовая",
+            "to": "20"
+          },
+          {
+            "from": "Шатровая",
+            "to": "25"
+          },
+          {
+            "from": "Другая",
+            "to": "30"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.kufar.possible_exchange",
+      "platform_option_id": "kufar.possible_exchange",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": "1"
+          },
+          {
+            "from": "-",
+            "to": "0"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    }
+  ],
+  "constants": {
+    "kufar.category": "1020",
+    "kufar.type": "sell"
+  },
+  "addresses": [],
+  "address_bound_fields": [
+    "kufar.address"
+  ],
+  "review": [],
+  "schema_hash": "49260b12b6bb46ec8188f926a1e80a52ba1986392f213cb7b52836074704239b",
+  "common_hash": "bfb3e9b8860583603fda9da6e133f564036ca148b84abc2551a0263fe255cee0"
+}

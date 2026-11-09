@@ -1,0 +1,380 @@
+{
+  "category_id": "houses_sale",
+  "platform": "realt",
+  "fields": [
+    {
+      "common_option_id": "listing.title",
+      "platform_option_id": "realt.description.title",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.video_url",
+      "platform_option_id": "realt.media.youtube",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "realt.termsOfDeal.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "BYN",
+            "to": "933"
+          },
+          {
+            "from": "USD",
+            "to": "840"
+          },
+          {
+            "from": "EUR",
+            "to": "978"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.kind",
+      "platform_option_id": "realt.object_type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Дом",
+            "to": "House"
+          },
+          {
+            "from": "Коттедж",
+            "to": "Cottage"
+          },
+          {
+            "from": "Дача",
+            "to": "Dacha"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.heating",
+      "platform_option_id": "realt.apartment.heating",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Паровое",
+            "to": 8
+          },
+          {
+            "from": "Газовое",
+            "to": 3
+          },
+          {
+            "from": "Печное",
+            "to": 9
+          },
+          {
+            "from": "Электрическое",
+            "to": 4
+          },
+          {
+            "from": "Центральное",
+            "to": 10
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.water",
+      "platform_option_id": "realt.plot.water",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Горячая",
+            "to": 2
+          },
+          {
+            "from": "Холодная",
+            "to": 3
+          },
+          {
+            "from": "Колодец",
+            "to": 7
+          },
+          {
+            "from": "Водопровод",
+            "to": 11
+          },
+          {
+            "from": "Центральный водопровод",
+            "to": 9
+          },
+          {
+            "from": "Скважина",
+            "to": 8
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.sewer",
+      "platform_option_id": "realt.plot.sewer",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Центральная",
+            "to": 2
+          },
+          {
+            "from": "Местная",
+            "to": 3
+          },
+          {
+            "from": "С/у на улице",
+            "to": 4
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.gas",
+      "platform_option_id": "realt.plot.gas",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Баллон",
+            "to": 3
+          },
+          {
+            "from": "Магистральный",
+            "to": 4
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.electricity",
+      "platform_option_id": "realt.apartment.electricity",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": 1
+          },
+          {
+            "from": "Нет",
+            "to": 0
+          },
+          {
+            "from": "Рядом",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.walls",
+      "platform_option_id": "realt.house.wallsMaterial",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Кирпич",
+            "to": 1
+          },
+          {
+            "from": "Панель",
+            "to": 17
+          },
+          {
+            "from": "Блок-комнаты",
+            "to": 22
+          },
+          {
+            "from": "Бревенчатый",
+            "to": 21
+          },
+          {
+            "from": "Монолитно-каркасный",
+            "to": 20
+          },
+          {
+            "from": "Силикатные блоки",
+            "to": 23
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.roof",
+      "platform_option_id": "realt.house.roofMaterial",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Жесть",
+            "to": 11
+          },
+          {
+            "from": "Рубероид",
+            "to": 9
+          },
+          {
+            "from": "Доски",
+            "to": 8
+          },
+          {
+            "from": "Черепица",
+            "to": 12
+          },
+          {
+            "from": "Шифер",
+            "to": 10
+          },
+          {
+            "from": "Ондулин",
+            "to": 13
+          },
+          {
+            "from": "Металл",
+            "to": 4
+          },
+          {
+            "from": "Гидроизоляция",
+            "to": 3
+          },
+          {
+            "from": "Природные материалы",
+            "to": 2
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.terms",
+      "platform_option_id": "realt.termsOfDeal.termsOfDeal",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Чистая продажа",
+            "to": 1
+          },
+          {
+            "from": "Обмен",
+            "to": 2
+          },
+          {
+            "from": "Обмен - разъезд",
+            "to": 3
+          },
+          {
+            "from": "Обмен - съезд",
+            "to": 4
+          },
+          {
+            "from": "Подбираются варианты",
+            "to": 5
+          },
+          {
+            "from": "Съезд",
+            "to": 7
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.readiness",
+      "platform_option_id": "realt.aboutBuilding.percentage",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "100",
+            "to": 100
+          },
+          {
+            "from": "90",
+            "to": 90
+          },
+          {
+            "from": "80",
+            "to": 80
+          },
+          {
+            "from": "70",
+            "to": 70
+          },
+          {
+            "from": "50",
+            "to": 50
+          },
+          {
+            "from": "30",
+            "to": 30
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "realt.description.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "realt.media.photos",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    }
+  ]
+}

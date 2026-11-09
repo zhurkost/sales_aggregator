@@ -1,0 +1,196 @@
+{
+  "startUrl": "https://r.onliner.by/pk/apartments/create",
+  "setup": [],
+  "controls": [
+    {
+      "field": "onliner.file",
+      "action": "files",
+      "selector": "input.new-photos__input-file[name=\"file\"]",
+      "previewSelector": ".new-photos__thumbnail-figure:has(img[src^=\"https://content.onliner.by/apartments_photo/\"]):has(.new-photos__thumbnail-remove)"
+    },
+    {
+      "field": "onliner.location.user_address",
+      "action": "autocomplete",
+      "selector": "input[data-bind*=\"value: $root.data.location.user_address\"]",
+      "addressPart": "settlement",
+      "autocomplete": {
+        "kind": "address",
+        "scopeSelector": ".new-sub__location",
+        "optionSelector": ".new-sub__map-menu-item",
+        "busySelector": ".new-sub__location-input_processing",
+        "replaceInitialValue": true,
+        "optionEvent": "mousedown",
+        "selection": "single-or-exact",
+        "confirm": "value-and-closed",
+        "queryEvent": "keyup",
+        "labelFormat": "settlement-with-admin-prefix",
+        "resetSameQuery": true
+      }
+    },
+    {
+      "field": "onliner.description",
+      "action": "text",
+      "selector": "textarea[placeholder=\"Подробное описание\"]"
+    },
+    {
+      "field": "onliner.price.amount",
+      "action": "text",
+      "selector": "#price-input",
+      "after": "onliner.price.currency"
+    },
+    {
+      "field": "onliner.price.currency",
+      "action": "select",
+      "selector": "select[data-bind=\"value: $root.data.price.currency\"]"
+    },
+    {
+      "field": "onliner.contact.name",
+      "action": "text",
+      "selector": "input[placeholder=\"Ваше имя\"]"
+    },
+    {
+      "field": "onliner.phone",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер телефона в международном формате\"]",
+      "index": 0
+    },
+    {
+      "field": "onliner.call_from",
+      "action": "select",
+      "selector": "select[data-bind*=\"value: $root.data.contact.callTime[0]\"]"
+    },
+    {
+      "field": "onliner.call_to",
+      "action": "select",
+      "selector": "select[data-bind*=\"value: $root.data.contact.callTime[1]\"]"
+    },
+    {
+      "field": "onliner.seller.name",
+      "action": "text",
+      "selector": "input[placeholder=\"Юридическое наименование\"]"
+    },
+    {
+      "field": "onliner.seller.legalInfo.unp",
+      "action": "text",
+      "selector": "input[placeholder=\"УНП\"]"
+    },
+    {
+      "field": "onliner.seller.legalInfo.contract.number",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер договора\"]"
+    },
+    {
+      "field": "onliner.seller.legalInfo.contract.date",
+      "action": "text",
+      "selector": "input[placeholder=\"Дата заключения договора\"]"
+    },
+    {
+      "field": "onliner.seller.legalInfo.licence.number",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер лицензии\"]"
+    },
+    {
+      "field": "onliner.seller.legalInfo.licence.date",
+      "action": "text",
+      "selector": "input[placeholder=\"Дата выдачи лицензии\"]"
+    },
+    {
+      "field": "onliner.resale",
+      "action": "choices",
+      "selector": "input[name=\"resale\"]"
+    },
+    {
+      "field": "onliner.walling",
+      "action": "choices",
+      "selector": "input[name=\"walling\"]"
+    },
+    {
+      "field": "onliner.repaired",
+      "action": "choices",
+      "selector": "input[name=\"repaired\"]"
+    },
+    {
+      "field": "onliner.rooms",
+      "action": "choices",
+      "selector": "input[name=\"rooms\"]"
+    },
+    {
+      "field": "onliner.balcony",
+      "action": "choices",
+      "selector": "input[name=\"balcony\"]"
+    },
+    {
+      "field": "onliner.parking",
+      "action": "choices",
+      "selector": "input[name=\"parking\"]"
+    },
+    {
+      "field": "onliner.combinedKitchen",
+      "action": "choices",
+      "selector": "input[name=\"combinedKitchen\"]"
+    },
+    {
+      "field": "onliner.seller.type",
+      "action": "choices",
+      "selector": "input[name=\"seller.type\"]"
+    },
+    {
+      "field": "onliner.floor",
+      "action": "text",
+      "selector": "input[name=\"floor\"],input[data-bind*=\"value: $root.data.floor,\"],input[data-bind$=\"value: $root.data.floor\"]"
+    },
+    {
+      "field": "onliner.floors",
+      "action": "text",
+      "selector": "input[name=\"floors\"],input[data-bind*=\"value: $root.data.floors,\"],input[data-bind$=\"value: $root.data.floors\"]"
+    },
+    {
+      "field": "onliner.area.total",
+      "action": "text",
+      "selector": "input[name=\"area.total\"],input[data-bind*=\"value: $root.data.area.total,\"],input[data-bind$=\"value: $root.data.area.total\"]"
+    },
+    {
+      "field": "onliner.area.living",
+      "action": "text",
+      "selector": "input[name=\"area.living\"],input[data-bind*=\"value: $root.data.area.living,\"],input[data-bind$=\"value: $root.data.area.living\"]"
+    },
+    {
+      "field": "onliner.area.kitchen",
+      "action": "text",
+      "selector": "input[name=\"area.kitchen\"],input[data-bind*=\"value: $root.data.area.kitchen,\"],input[data-bind$=\"value: $root.data.area.kitchen\"]"
+    },
+    {
+      "field": "onliner.wallHeight",
+      "action": "text",
+      "selector": "input[name=\"wallHeight\"],input[data-bind*=\"value: $root.data.wallHeight,\"],input[data-bind$=\"value: $root.data.wallHeight\"]"
+    },
+    {
+      "field": "onliner.buildingYear",
+      "action": "text",
+      "selector": "input[name=\"buildingYear\"],input[data-bind*=\"value: $root.data.buildingYear,\"],input[data-bind$=\"value: $root.data.buildingYear\"]"
+    },
+    {
+      "field": "onliner.additional_phone_1",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер телефона в международном формате\"]",
+      "index": 1
+    },
+    {
+      "field": "onliner.additional_phone_2",
+      "action": "text",
+      "selector": "input[placeholder=\"Номер телефона в международном формате\"]",
+      "index": 2
+    }
+  ],
+  "next": [],
+  "submit": [],
+  "format": 1,
+  "platform": "onliner",
+  "observedAt": "2026-11-06",
+  "ready": [
+    {
+      "selector": ".new-progress"
+    }
+  ],
+  "formPath": "/pk/apartments/create"
+}

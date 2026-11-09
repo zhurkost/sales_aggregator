@@ -1,0 +1,617 @@
+{
+  "runtime_version": "1.0",
+  "category_id": "houses_sale",
+  "platform": "onliner",
+  "schema_hash": "b16db15c77962a0120f53d7abb15a204264daa41038d81b71fc89c49d32b5577",
+  "common_hash": "bfb3e9b8860583603fda9da6e133f564036ca148b84abc2551a0263fe255cee0",
+  "fields": [
+    {
+      "common_option_id": "specific.onliner.balcony",
+      "platform_option_id": "onliner.balcony",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Есть",
+            "to": true
+          },
+          {
+            "from": "Нет",
+            "to": false
+          },
+          {
+            "from": "Балкон",
+            "to": true
+          },
+          {
+            "from": "Лоджия",
+            "to": true
+          },
+          {
+            "from": "Балкон и лоджия",
+            "to": true
+          },
+          {
+            "from": "Два",
+            "to": true
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.repaired",
+      "platform_option_id": "onliner.repaired",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "С ремонтом",
+            "to": true
+          },
+          {
+            "from": "Без отделки",
+            "to": false
+          },
+          {
+            "from": "Евро",
+            "to": true
+          },
+          {
+            "from": "Дизайнерский",
+            "to": true
+          },
+          {
+            "from": "Косметический",
+            "to": true
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.resale",
+      "platform_option_id": "onliner.resale",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Вторичка",
+            "to": true
+          },
+          {
+            "from": "Новостройка",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "contact.name",
+      "platform_option_id": "onliner.contact.name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.floor",
+      "platform_option_id": "onliner.floor",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "contact.additional_phone_1",
+      "platform_option_id": "onliner.additional_phone_1",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "common_option_id": "contact.additional_phone_2",
+      "platform_option_id": "onliner.additional_phone_2",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "common_option_id": "contact.phone",
+      "platform_option_id": "onliner.phone",
+      "conversion": {
+        "kind": "phone",
+        "format": "E164"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.parking",
+      "platform_option_id": "onliner.parking",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Нет",
+            "to": ""
+          },
+          {
+            "from": "На улице",
+            "to": "street"
+          },
+          {
+            "from": "В гараже",
+            "to": "garage"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.combinedKitchen",
+      "platform_option_id": "onliner.combinedKitchen",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Да",
+            "to": true
+          },
+          {
+            "from": "Нет",
+            "to": false
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.wallHeight",
+      "platform_option_id": "onliner.wallHeight",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.type",
+      "platform_option_id": "onliner.seller.type",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Собственник",
+            "to": "owner"
+          },
+          {
+            "from": "Агентство",
+            "to": "agent"
+          },
+          {
+            "from": "Застройщик",
+            "to": "builder"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.name",
+      "platform_option_id": "onliner.seller.name",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.legalInfo.unp",
+      "platform_option_id": "onliner.seller.legalInfo.unp",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.legalInfo.contract.number",
+      "platform_option_id": "onliner.seller.legalInfo.contract.number",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.legalInfo.contract.date",
+      "platform_option_id": "onliner.seller.legalInfo.contract.date",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.legalInfo.licence.number",
+      "platform_option_id": "onliner.seller.legalInfo.licence.number",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.seller.legalInfo.licence.date",
+      "platform_option_id": "onliner.seller.legalInfo.licence.date",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.call_from",
+      "platform_option_id": "onliner.call_from",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "0:00",
+            "to": 0
+          },
+          {
+            "from": "1:00",
+            "to": 1
+          },
+          {
+            "from": "2:00",
+            "to": 2
+          },
+          {
+            "from": "3:00",
+            "to": 3
+          },
+          {
+            "from": "4:00",
+            "to": 4
+          },
+          {
+            "from": "5:00",
+            "to": 5
+          },
+          {
+            "from": "6:00",
+            "to": 6
+          },
+          {
+            "from": "7:00",
+            "to": 7
+          },
+          {
+            "from": "8:00",
+            "to": 8
+          },
+          {
+            "from": "9:00",
+            "to": 9
+          },
+          {
+            "from": "10:00",
+            "to": 10
+          },
+          {
+            "from": "11:00",
+            "to": 11
+          },
+          {
+            "from": "12:00",
+            "to": 12
+          },
+          {
+            "from": "13:00",
+            "to": 13
+          },
+          {
+            "from": "14:00",
+            "to": 14
+          },
+          {
+            "from": "15:00",
+            "to": 15
+          },
+          {
+            "from": "16:00",
+            "to": 16
+          },
+          {
+            "from": "17:00",
+            "to": 17
+          },
+          {
+            "from": "18:00",
+            "to": 18
+          },
+          {
+            "from": "19:00",
+            "to": 19
+          },
+          {
+            "from": "20:00",
+            "to": 20
+          },
+          {
+            "from": "21:00",
+            "to": 21
+          },
+          {
+            "from": "22:00",
+            "to": 22
+          },
+          {
+            "from": "23:00",
+            "to": 23
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "specific.onliner.call_to",
+      "platform_option_id": "onliner.call_to",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "0:00",
+            "to": 0
+          },
+          {
+            "from": "1:00",
+            "to": 1
+          },
+          {
+            "from": "2:00",
+            "to": 2
+          },
+          {
+            "from": "3:00",
+            "to": 3
+          },
+          {
+            "from": "4:00",
+            "to": 4
+          },
+          {
+            "from": "5:00",
+            "to": 5
+          },
+          {
+            "from": "6:00",
+            "to": 6
+          },
+          {
+            "from": "7:00",
+            "to": 7
+          },
+          {
+            "from": "8:00",
+            "to": 8
+          },
+          {
+            "from": "9:00",
+            "to": 9
+          },
+          {
+            "from": "10:00",
+            "to": 10
+          },
+          {
+            "from": "11:00",
+            "to": 11
+          },
+          {
+            "from": "12:00",
+            "to": 12
+          },
+          {
+            "from": "13:00",
+            "to": 13
+          },
+          {
+            "from": "14:00",
+            "to": 14
+          },
+          {
+            "from": "15:00",
+            "to": 15
+          },
+          {
+            "from": "16:00",
+            "to": 16
+          },
+          {
+            "from": "17:00",
+            "to": 17
+          },
+          {
+            "from": "18:00",
+            "to": 18
+          },
+          {
+            "from": "19:00",
+            "to": 19
+          },
+          {
+            "from": "20:00",
+            "to": 20
+          },
+          {
+            "from": "21:00",
+            "to": 21
+          },
+          {
+            "from": "22:00",
+            "to": 22
+          },
+          {
+            "from": "23:00",
+            "to": 23
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.currency",
+      "platform_option_id": "onliner.price.currency",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "USD",
+            "to": "USD"
+          },
+          {
+            "from": "BYN",
+            "to": "BYN"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "sale.price",
+      "platform_option_id": "onliner.price.amount",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number",
+        "requires": [
+          "onliner.price.currency"
+        ],
+        "currency_field": "onliner.price.currency",
+        "integer_currencies": [
+          "USD"
+        ]
+      }
+    },
+    {
+      "common_option_id": "house.total_area",
+      "platform_option_id": "onliner.area.total",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.living_area",
+      "platform_option_id": "onliner.area.living",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.kitchen_area",
+      "platform_option_id": "onliner.area.kitchen",
+      "conversion": {
+        "kind": "decimal",
+        "target": "number"
+      }
+    },
+    {
+      "common_option_id": "house.levels",
+      "platform_option_id": "onliner.floors",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "house.building_year",
+      "platform_option_id": "onliner.buildingYear",
+      "conversion": {
+        "kind": "decimal",
+        "target": "integer"
+      }
+    },
+    {
+      "common_option_id": "house.rooms",
+      "platform_option_id": "onliner.rooms",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "1",
+            "to": 1
+          },
+          {
+            "from": "2",
+            "to": 2
+          },
+          {
+            "from": "3",
+            "to": 3
+          },
+          {
+            "from": "4",
+            "to": 4
+          },
+          {
+            "from": "5",
+            "to": 5
+          },
+          {
+            "from": "6+",
+            "to": 6
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "house.walls",
+      "platform_option_id": "onliner.walling",
+      "conversion": {
+        "kind": "lookup",
+        "values": [
+          {
+            "from": "Панель",
+            "to": "panel"
+          },
+          {
+            "from": "Кирпич",
+            "to": "brick"
+          },
+          {
+            "from": "Монолит",
+            "to": "monolith"
+          },
+          {
+            "from": "Блок",
+            "to": "block"
+          }
+        ],
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "listing.description",
+      "platform_option_id": "onliner.description",
+      "conversion": {
+        "kind": "identity"
+      }
+    },
+    {
+      "common_option_id": "media.images",
+      "platform_option_id": "onliner.file",
+      "conversion": {
+        "kind": "files",
+        "preparation": {
+          "operations": []
+        },
+        "on_incompatible": "needs_review"
+      }
+    }
+  ],
+  "constants": {},
+  "addresses": [
+    {
+      "platform_option_id": "onliner.location.user_address",
+      "part": "label",
+      "scalar_verified": false
+    }
+  ],
+  "address_bound_fields": [
+    "onliner.location.user_address"
+  ],
+  "review": []
+}

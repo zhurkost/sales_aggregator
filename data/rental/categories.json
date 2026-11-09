@@ -9,6 +9,11 @@
     "analysis": "house_rental",
     "publication": true
   },
+  "houses_sale": {
+    "reference": "houses_sale",
+    "analysis": "house_sale",
+    "publication": true
+  },
   "apartments_sale": {
     "reference": "apartments_sale",
     "analysis": "apartment_sale",

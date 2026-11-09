@@ -1,0 +1,37 @@
+Продажа домов / onliner / 2026-11-09. Задание: пользователь попросил сделать аналогично аренде домов.
+По прямому указанию пользователя скопирована схема продажи квартир и её binding без изменения полей/кодов. Это не независимое наблюдение формы домов.
+source SHA-256 (compact JSON): b16db15c77962a0120f53d7abb15a204264daa41038d81b71fc89c49d32b5577
+Листьев: 32. Поле → способ покрытия:
+onliner.file | Фотографии | media.images
+onliner.location.user_address | Город, улица, номер дома | адрес
+onliner.resale | Какую квартиру продаете? | specific.onliner.resale
+onliner.walling | Материал стен | house.walls
+onliner.repaired | Отделка | specific.onliner.repaired
+onliner.rooms | Количество комнат | house.rooms
+onliner.balcony | Балкон (лоджия) | specific.onliner.balcony
+onliner.parking | Выделенное парковочное место | specific.onliner.parking
+onliner.floor | Этаж | specific.onliner.floor
+onliner.floors | Этажей в доме | house.levels
+onliner.combinedKitchen | Кухня совмещена с жилой | specific.onliner.combinedKitchen
+onliner.area.total | Общая площадь | house.total_area
+onliner.area.living | Жилая площадь | house.living_area
+onliner.area.kitchen | Площадь кухни | house.kitchen_area
+onliner.wallHeight | Высота потолков | specific.onliner.wallHeight
+onliner.buildingYear | Год постройки | house.building_year
+onliner.description | Описание | listing.description
+onliner.price.amount | Цена продажи | sale.price
+onliner.price.currency | Валюта | sale.currency
+onliner.seller.type | Кто продаёт | specific.onliner.seller.type
+onliner.seller.name | Юридическое наименование | specific.onliner.seller.name
+onliner.seller.legalInfo.unp | УНП | specific.onliner.seller.legalInfo.unp
+onliner.seller.legalInfo.contract.number | Номер договора | specific.onliner.seller.legalInfo.contract.number
+onliner.seller.legalInfo.contract.date | Дата заключения договора | specific.onliner.seller.legalInfo.contract.date
+onliner.seller.legalInfo.licence.number | Номер лицензии | specific.onliner.seller.legalInfo.licence.number
+onliner.seller.legalInfo.licence.date | Дата выдачи лицензии | specific.onliner.seller.legalInfo.licence.date
+onliner.contact.name | Ваше имя | contact.name
+onliner.phone | Контактный телефон | contact.phone
+onliner.call_from | Звонить с | specific.onliner.call_from
+onliner.call_to | Звонить до | specific.onliner.call_to
+onliner.additional_phone_1 | Дополнительный телефон 1 | contact.additional_phone_1
+onliner.additional_phone_2 | Дополнительный телефон 2 | contact.additional_phone_2
+Bindings новых полей не объявляются ready без проверки полного переноса. Runtime использует существующие адаптеры; новые селекторы требуют проверки под аккаунтом. Для Realt коттедж/дача используют общий шаблон дома; отдельные ветви пока не проверены. Для Domovita проверены обе ветви cottages/sale и dacha/sale. Для Kufar все значения из refs ветви sell; UI без авторизации не отрисовал дополнительные параметры, поэтому полнота их DOM не подтверждена.

@@ -1,0 +1,1176 @@
+[
+  {
+    "id": "houses_sale",
+    "name": "Продажа домов",
+    "description": "Беларусь. Продажа дома целиком, коттеджа или дачи. Не аренда, не участок без дома и не часть дома.",
+    "categories": [],
+    "options": [
+      {
+        "id": "realt.object_type",
+        "name": "Вид недвижимости",
+        "description": "Маршруты Дом / Коттедж / Дача; коды сохранены из существующей схемы домов. Продажа наблюдалась через Дом.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.object_type.v_ef7f65883788",
+            "name": "Дом",
+            "description": "Входит в задание.",
+            "type": "choice",
+            "value": "House",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_4f6eb6a5b3df",
+            "name": "Коттедж",
+            "description": "Входит в задание.",
+            "type": "choice",
+            "value": "Cottage",
+            "options": []
+          },
+          {
+            "id": "realt.object_type.v_7fbcfa89d5ed",
+            "name": "Дача",
+            "description": "Входит в задание.",
+            "type": "choice",
+            "value": "Dacha",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.location.settlement",
+        "name": "Адрес — населённый пункт",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле location.settlement.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.location.settlement.v_ef6d41bfbc5e",
+            "name": "г. Минск",
+            "description": "",
+            "type": "choice",
+            "value": "4cb07174-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_901ae6aa31b3",
+            "name": "г. Брест",
+            "description": "",
+            "type": "choice",
+            "value": "4c8f8db2-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_00610eaf8baf",
+            "name": "г. Витебск",
+            "description": "",
+            "type": "choice",
+            "value": "4c9236d8-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_76b65894fc1f",
+            "name": "г. Гомель",
+            "description": "",
+            "type": "choice",
+            "value": "4c95d414-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_286ea2eaa787",
+            "name": "г. Гродно",
+            "description": "",
+            "type": "choice",
+            "value": "4c97eac6-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          },
+          {
+            "id": "realt.location.settlement.v_4a944b240658",
+            "name": "г. Могилев",
+            "description": "",
+            "type": "choice",
+            "value": "4cb0e950-7b00-11eb-8943-0cc47adabd66",
+            "options": []
+          }
+        ],
+        "required": true,
+        "options_complete": false
+      },
+      {
+        "id": "realt.location.street",
+        "name": "Улица",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле location.street.",
+        "type": "enum",
+        "options": [],
+        "required": null,
+        "options_complete": false
+      },
+      {
+        "id": "realt.location.houseNumber",
+        "name": "Дом",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле location.houseNumber.",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "validation": {
+          "max_length": 255
+        }
+      },
+      {
+        "id": "realt.location.buildingNumber",
+        "name": "Корпус",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле location.buildingNumber.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "realt.location.cadastral",
+        "name": "Кадастровый номер",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле location.cadastral.",
+        "type": "text",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "realt.apartment.rooms",
+        "name": "Количество спален",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле apartment.rooms.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.rooms.v_e9e543288f53",
+            "name": "1",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.apartment.rooms.v_39e4deae5868",
+            "name": "2",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          },
+          {
+            "id": "realt.apartment.rooms.v_c5600a5ca56f",
+            "name": "3",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.apartment.rooms.v_ab43bdcf5249",
+            "name": "4",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          },
+          {
+            "id": "realt.apartment.rooms.v_eadef6b8a1e4",
+            "name": "5+",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 5
+          }
+        ],
+        "options_complete": true,
+        "required": true
+      },
+      {
+        "id": "realt.apartment.buildingYear",
+        "name": "Год постройки",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле apartment.buildingYear.",
+        "type": "integer",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1700,
+          "max": 2100
+        }
+      },
+      {
+        "id": "realt.house.newBuilding",
+        "name": "Новостройка",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле house.newBuilding.",
+        "type": "boolean",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "realt.apartment.buildingLevels",
+        "name": "Уровней в доме",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле apartment.buildingLevels.",
+        "type": "integer",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      {
+        "id": "realt.plot.sewer",
+        "name": "Канализация",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле plot.sewer.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.plot.sewer.v_b8285b187452",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.plot.sewer.v_f238f07bf626",
+            "name": "Центральная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          },
+          {
+            "id": "realt.plot.sewer.v_4e216fecf149",
+            "name": "Местная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.plot.sewer.v_0db2636d6fbd",
+            "name": "С/у на улице",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          },
+          {
+            "id": "realt.plot.sewer.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.plot.water",
+        "name": "Водоснабжение",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле plot.water.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.plot.water.v_37a2a6abee8d",
+            "name": "Горячая",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          },
+          {
+            "id": "realt.plot.water.v_052c72d0310f",
+            "name": "Холодная",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.plot.water.v_e4bcf204a9e9",
+            "name": "Колодец",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 7
+          },
+          {
+            "id": "realt.plot.water.v_e3643c584ffb",
+            "name": "Водопровод",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 11
+          },
+          {
+            "id": "realt.plot.water.v_d3db309bf59f",
+            "name": "Центральный водопровод",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 9
+          },
+          {
+            "id": "realt.plot.water.v_849d6863f6a6",
+            "name": "Скважина",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 8
+          },
+          {
+            "id": "realt.plot.water.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.plot.gas",
+        "name": "Газоснабжение",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле plot.gas.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.plot.gas.v_b8285b187452",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.plot.gas.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          },
+          {
+            "id": "realt.plot.gas.v_a4ca0184eba6",
+            "name": "Баллон",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.plot.gas.v_9e342378f7c5",
+            "name": "Магистральный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.electricity",
+        "name": "Электричество",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле apartment.electricity.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.electricity.v_b8285b187452",
+            "name": "Есть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.apartment.electricity.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          },
+          {
+            "id": "realt.apartment.electricity.v_30f1d6fd579b",
+            "name": "Рядом",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.apartment.heating",
+        "name": "Отопление",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле apartment.heating.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.apartment.heating.v_dfb4d2916247",
+            "name": "Паровое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 8
+          },
+          {
+            "id": "realt.apartment.heating.v_66d2e9308e66",
+            "name": "На газу",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.apartment.heating.v_7eba0c7a814a",
+            "name": "Печное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 9
+          },
+          {
+            "id": "realt.apartment.heating.v_fff174ac8e3f",
+            "name": "Электрическое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          },
+          {
+            "id": "realt.apartment.heating.v_22e72fac0ce2",
+            "name": "Центральное",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 10
+          },
+          {
+            "id": "realt.apartment.heating.v_c151daba55d2",
+            "name": "Нет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 0
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.house.wallsMaterial",
+        "name": "Материал стен",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле house.wallsMaterial.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.house.wallsMaterial.v_92e216eb446a",
+            "name": "Кирпичный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_3d97fa6e33c4",
+            "name": "Панельный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 17
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_26152b5bcaf1",
+            "name": "Блок-комнаты",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 22
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_cd69af651926",
+            "name": "Бревенчатый",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 21
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_cc5ceecf8f21",
+            "name": "Монолитно-каркасный",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 20
+          },
+          {
+            "id": "realt.house.wallsMaterial.v_06960cd8a30f",
+            "name": "Силикатные блоки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 23
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.house.roofMaterial",
+        "name": "Материал крыши",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле house.roofMaterial.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.house.roofMaterial.v_7f19c8b44ea3",
+            "name": "Жесть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 11
+          },
+          {
+            "id": "realt.house.roofMaterial.v_817ae93b58c4",
+            "name": "Рубероид",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 9
+          },
+          {
+            "id": "realt.house.roofMaterial.v_0e7e4b66cc1b",
+            "name": "Доски",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 8
+          },
+          {
+            "id": "realt.house.roofMaterial.v_562f2a71139f",
+            "name": "Черепица",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 12
+          },
+          {
+            "id": "realt.house.roofMaterial.v_7dc2a7c12c9b",
+            "name": "Шифер",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 10
+          },
+          {
+            "id": "realt.house.roofMaterial.v_1feb54ff48fb",
+            "name": "Ондулин",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 13
+          },
+          {
+            "id": "realt.house.roofMaterial.v_701be6b47e48",
+            "name": "Металл",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          },
+          {
+            "id": "realt.house.roofMaterial.v_3a35024bc442",
+            "name": "Гидроизоляция",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.house.roofMaterial.v_55c7b15d62a5",
+            "name": "Природные материалы",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          }
+        ],
+        "options_complete": true,
+        "required": null
+      },
+      {
+        "id": "realt.area.total",
+        "name": "Площадь общая, м²",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле area.total.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        }
+      },
+      {
+        "id": "realt.area.living",
+        "name": "Площадь жилая, м²",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле area.living.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        }
+      },
+      {
+        "id": "realt.area.ground",
+        "name": "Площадь участка, соток",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле area.ground.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        }
+      },
+      {
+        "id": "realt.area.kitchen",
+        "name": "Площадь кухни, м²",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле area.kitchen.",
+        "type": "number",
+        "options": [],
+        "required": false,
+        "validation": {
+          "min": 1,
+          "max": 9999,
+          "multiple_of": 0.001
+        }
+      },
+      {
+        "id": "realt.additional.appliance",
+        "name": "Удобства",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле additional.appliance.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.appliance.v_def0d96ca172",
+            "name": "Камин",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 603
+          },
+          {
+            "id": "realt.additional.appliance.v_d3497c277962",
+            "name": "Телефонная сеть",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 606
+          },
+          {
+            "id": "realt.additional.appliance.v_9ab786be93e7",
+            "name": "Интернет",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 607
+          },
+          {
+            "id": "realt.additional.appliance.v_4a63019111f5",
+            "name": "Баня",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 612
+          },
+          {
+            "id": "realt.additional.appliance.v_f923fc299538",
+            "name": "Бассейн",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 613
+          },
+          {
+            "id": "realt.additional.appliance.v_35c5bf01ebd2",
+            "name": "Беседка",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 615
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.additional.infrastructure",
+        "name": "Инфраструктура",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле additional.infrastructure.",
+        "type": "multi_enum",
+        "options": [
+          {
+            "id": "realt.additional.infrastructure.v_d6678c3fab42",
+            "name": "Ландшафтный дизайн",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 719
+          },
+          {
+            "id": "realt.additional.infrastructure.v_9f5330b9c931",
+            "name": "Водоем",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 724
+          },
+          {
+            "id": "realt.additional.infrastructure.v_47496b14a975",
+            "name": "Рядом лес",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 722
+          },
+          {
+            "id": "realt.additional.infrastructure.v_f2fe61dad408",
+            "name": "Пруд на участке",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 723
+          },
+          {
+            "id": "realt.additional.infrastructure.v_065464e06c16",
+            "name": "Сад",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 748
+          },
+          {
+            "id": "realt.additional.infrastructure.v_d4ad9f0732a1",
+            "name": "Хозпостройки",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 742
+          },
+          {
+            "id": "realt.additional.infrastructure.v_d3ad15928c62",
+            "name": "Строительные материалы",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 756
+          },
+          {
+            "id": "realt.additional.infrastructure.v_ed8b58bee7b2",
+            "name": "Теплица",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 749
+          },
+          {
+            "id": "realt.additional.infrastructure.v_bbe35f080bac",
+            "name": "Гараж",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 744
+          }
+        ],
+        "required": false,
+        "options_complete": true
+      },
+      {
+        "id": "realt.additional.buildingState",
+        "name": "Ремонт",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле additional.buildingState.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.additional.buildingState.v_8440cf345a82",
+            "name": "Элитный коттедж",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 202
+          },
+          {
+            "id": "realt.additional.buildingState.v_361efac54240",
+            "name": "Евроотделка",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 203
+          },
+          {
+            "id": "realt.additional.buildingState.v_0a02323ebe3a",
+            "name": "Отделка деревом",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 204
+          },
+          {
+            "id": "realt.additional.buildingState.v_8674155c1286",
+            "name": "Не достроен",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 206
+          }
+        ],
+        "options_complete": true,
+        "required": null
+      },
+      {
+        "id": "realt.additional.furniture",
+        "name": "Мебель",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле additional.furniture.",
+        "type": "boolean",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "realt.aboutBuilding.percentage",
+        "name": "% готовности дома",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле aboutBuilding.percentage.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.aboutBuilding.percentage.v_44b50899eaba",
+            "name": "100%",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 100
+          },
+          {
+            "id": "realt.aboutBuilding.percentage.v_26622fd8683a",
+            "name": "90%",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 90
+          },
+          {
+            "id": "realt.aboutBuilding.percentage.v_92ca2ce8d4a1",
+            "name": "80%",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 80
+          },
+          {
+            "id": "realt.aboutBuilding.percentage.v_199c933460d6",
+            "name": "70%",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 70
+          },
+          {
+            "id": "realt.aboutBuilding.percentage.v_19897522c6f6",
+            "name": "50%",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 50
+          },
+          {
+            "id": "realt.aboutBuilding.percentage.v_99e41b39326b",
+            "name": "30%",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 30
+          }
+        ],
+        "options_complete": true,
+        "required": null
+      },
+      {
+        "id": "realt.termsOfDeal.currency",
+        "name": "Цена",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле termsOfDeal.currency.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.currency.v_bd32e45c86d6",
+            "name": "BYN",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "933"
+          },
+          {
+            "id": "realt.termsOfDeal.currency.v_c3fa2abf477c",
+            "name": "USD",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "840"
+          },
+          {
+            "id": "realt.termsOfDeal.currency.v_513f9aec46f7",
+            "name": "EUR",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": "978"
+          }
+        ],
+        "required": true,
+        "options_complete": true
+      },
+      {
+        "id": "realt.termsOfDeal.price",
+        "name": "Цена продажи",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле termsOfDeal.price.",
+        "type": "number",
+        "options": [],
+        "required": true,
+        "validation": {
+          "min": 1,
+          "max": 999999999
+        }
+      },
+      {
+        "id": "realt.termsOfDeal.bargain",
+        "name": "Возможен торг",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле termsOfDeal.bargain.",
+        "type": "boolean",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "realt.termsOfDeal.privatization",
+        "name": "Статус земли",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле termsOfDeal.privatization.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.privatization.v_508377901a79",
+            "name": "Частная собственность",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.termsOfDeal.privatization.v_95d2734adb56",
+            "name": "Пользование",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          },
+          {
+            "id": "realt.termsOfDeal.privatization.v_a23d4f0b252a",
+            "name": "Аренда",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.termsOfDeal.privatization.v_f97f12b9ec4b",
+            "name": "Пожизненно наследуемое владение",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          },
+          {
+            "id": "realt.termsOfDeal.privatization.v_5f7cc003f5fd",
+            "name": "Другое",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 5
+          }
+        ],
+        "options_complete": true,
+        "required": true
+      },
+      {
+        "id": "realt.termsOfDeal.termsOfDeal",
+        "name": "Условия сделки",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле termsOfDeal.termsOfDeal.",
+        "type": "enum",
+        "options": [
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_df90e1980224",
+            "name": "Чистая продажа",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 1
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_11456461f367",
+            "name": "Обмен",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 2
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_6a053d2d717b",
+            "name": "Обмен - разъезд",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 3
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_72b1f57b8713",
+            "name": "Обмен - съезд",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 4
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_9cb745a7d2c1",
+            "name": "Подбираются варианты",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 5
+          },
+          {
+            "id": "realt.termsOfDeal.termsOfDeal.v_c0d51608a0e1",
+            "name": "Съезд",
+            "description": "",
+            "type": "choice",
+            "options": [],
+            "value": 7
+          }
+        ],
+        "options_complete": true,
+        "required": true
+      },
+      {
+        "id": "realt.termsOfDeal.termsExtra",
+        "name": "Конкурс / Аукцион",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле termsOfDeal.termsExtra.",
+        "type": "boolean",
+        "options": [],
+        "required": null
+      },
+      {
+        "id": "realt.media.photos",
+        "name": "Фото",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле media.photos.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "validation": {
+          "max_items": 20,
+          "extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+          ],
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ],
+          "max_file_size_bytes": null
+        }
+      },
+      {
+        "id": "realt.media.planning",
+        "name": "Фото планировки",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле media.planning.",
+        "type": "files",
+        "options": [],
+        "required": null,
+        "file_role": "product_image",
+        "validation": {
+          "max_items": 1,
+          "extensions": [
+            ".jpg",
+            ".jpeg",
+            ".png"
+          ],
+          "mime_types": [
+            "image/jpeg",
+            "image/png"
+          ],
+          "max_file_size_bytes": null
+        }
+      },
+      {
+        "id": "realt.media.youtube",
+        "name": "Ссылка на видео YouTube",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле media.youtube.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "format": "uri"
+        }
+      },
+      {
+        "id": "realt.media.tour3d",
+        "name": "3D тур",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле media.tour3d.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "format": "uri"
+        }
+      },
+      {
+        "id": "realt.description.title",
+        "name": "Заголовок",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле description.title.",
+        "type": "text",
+        "options": [],
+        "required": false
+      },
+      {
+        "id": "realt.description.shortDescription",
+        "name": "Краткое описание",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле description.shortDescription.",
+        "type": "text",
+        "options": [],
+        "required": true,
+        "validation": {
+          "max_length": 500
+        }
+      },
+      {
+        "id": "realt.description.description",
+        "name": "Подробное описание",
+        "description": "2026-11-09. Realt: наблюдаемая форма продажи дома; DOM и справочник компонента. Не означает завершённую публикацию. Поле description.description.",
+        "type": "text",
+        "options": [],
+        "required": false,
+        "validation": {
+          "max_length": 5000
+        }
+      }
+    ]
+  }
+]
