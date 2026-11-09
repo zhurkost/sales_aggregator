@@ -820,6 +820,14 @@
           {
             "from": "5+",
             "to": "5"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6+",
+            "to": "5"
           }
         ],
         "on_unmapped": "needs_review"
@@ -884,6 +892,10 @@
           {
             "from": "Нет",
             "to": "20"
+          },
+          {
+            "from": "Сезонное",
+            "to": "1"
           }
         ],
         "on_unmapped": "needs_review"
@@ -1174,54 +1186,165 @@
       }
     },
     {
-      "common_option_id": "specific.kufar.house_sell_area",
+      "common_option_ids": [
+        "specific.kufar.house_sell_area.391552c0",
+        "specific.kufar.house_sell_area.cc11310c",
+        "amenity.sauna",
+        "amenity.gazebo",
+        "specific.kufar.house_sell_area.d10a4bc9",
+        "amenity.pool",
+        "specific.kufar.house_sell_area.266aa588",
+        "specific.kufar.house_sell_area.ade1a1c2",
+        "specific.kufar.house_sell_area.986b79d4",
+        "specific.kufar.house_sell_area.53654959",
+        "specific.kufar.house_sell_area.f326bd84"
+      ],
       "platform_option_id": "kufar.house_sell_area",
       "conversion": {
-        "kind": "list_lookup",
-        "values": [
+        "kind": "multi_lookup",
+        "members": [
           {
-            "from": "Рядом водоем / река",
-            "to": "1"
+            "common_option_id": "specific.kufar.house_sell_area.391552c0",
+            "values": [
+              {
+                "from": true,
+                "to": "1"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Рядом лес",
-            "to": "2"
+            "common_option_id": "specific.kufar.house_sell_area.cc11310c",
+            "values": [
+              {
+                "from": true,
+                "to": "2"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Баня",
-            "to": "3"
+            "common_option_id": "amenity.sauna",
+            "values": [
+              {
+                "from": true,
+                "to": "3"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Беседка",
-            "to": "4"
+            "common_option_id": "amenity.gazebo",
+            "values": [
+              {
+                "from": true,
+                "to": "4"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Мангал",
-            "to": "5"
+            "common_option_id": "specific.kufar.house_sell_area.d10a4bc9",
+            "values": [
+              {
+                "from": true,
+                "to": "5"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Бассейн",
-            "to": "6"
+            "common_option_id": "amenity.pool",
+            "values": [
+              {
+                "from": true,
+                "to": "6"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Ландшафтный дизайн",
-            "to": "7"
+            "common_option_id": "specific.kufar.house_sell_area.266aa588",
+            "values": [
+              {
+                "from": true,
+                "to": "7"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Хоз. постройки",
-            "to": "8"
+            "common_option_id": "specific.kufar.house_sell_area.ade1a1c2",
+            "values": [
+              {
+                "from": true,
+                "to": "8"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Сад, огород",
-            "to": "9"
+            "common_option_id": "specific.kufar.house_sell_area.986b79d4",
+            "values": [
+              {
+                "from": true,
+                "to": "9"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Рядом достопримечательности",
-            "to": "10"
+            "common_option_id": "specific.kufar.house_sell_area.53654959",
+            "values": [
+              {
+                "from": true,
+                "to": "10"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           },
           {
-            "from": "Живописное место",
-            "to": "11"
+            "common_option_id": "specific.kufar.house_sell_area.f326bd84",
+            "values": [
+              {
+                "from": true,
+                "to": "11"
+              },
+              {
+                "from": false,
+                "to": null
+              }
+            ]
           }
         ],
         "on_unmapped": "needs_review"
@@ -1294,5 +1417,5 @@
   ],
   "review": [],
   "schema_hash": "49260b12b6bb46ec8188f926a1e80a52ba1986392f213cb7b52836074704239b",
-  "common_hash": "bfb3e9b8860583603fda9da6e133f564036ca148b84abc2551a0263fe255cee0"
+  "common_hash": "709db9b09b35265ed26434ca2f7da69236658bd98d41f8273f20f4e024c1ce6c"
 }

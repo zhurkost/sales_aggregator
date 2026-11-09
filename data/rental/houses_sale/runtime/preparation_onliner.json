@@ -3,7 +3,7 @@
   "category_id": "houses_sale",
   "platform": "onliner",
   "schema_hash": "b16db15c77962a0120f53d7abb15a204264daa41038d81b71fc89c49d32b5577",
-  "common_hash": "bfb3e9b8860583603fda9da6e133f564036ca148b84abc2551a0263fe255cee0",
+  "common_hash": "709db9b09b35265ed26434ca2f7da69236658bd98d41f8273f20f4e024c1ce6c",
   "fields": [
     {
       "common_option_id": "specific.onliner.balcony",

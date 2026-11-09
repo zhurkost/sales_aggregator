@@ -238,6 +238,10 @@
           {
             "from": "Сезонное",
             "to": "s"
+          },
+          {
+            "from": "Сезонная",
+            "to": "s"
           }
         ],
         "on_unmapped": "needs_review"

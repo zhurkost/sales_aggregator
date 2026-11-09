@@ -86,4 +86,59 @@ class HouseSaleTest {
     assertEquals(MAPPER.readTree(Files.readString(Path.of("../data/rental/apartments_sale/runtime/browser_onliner.json"))),
         MAPPER.readTree(Files.readString(Path.of("../data/rental/houses_sale/runtime/browser_onliner.json"))));
   }
+
+  @Test void fiveAndSixPlusRoomsUseKufarsFiveOrMoreBucket() {
+    for (var rooms : List.of("5", "5+", "6+")) {
+      var result = catalog.prepare(card(object("house.kind", "Дом", "house.rooms", rooms)));
+      assertEquals("5", text(values(result, "kufar"), "kufar.rooms"));
+      // An open interval must not be silently converted into an exact room count.
+      if (rooms.equals("5+")) assertFalse(values(result, "domovita").has("domovita.rooms"));
+    }
+  }
+
+  @Test void seasonalWaterAliasesUseTheSameNativeValues() {
+    for (var water : List.of("Сезонная", "Сезонное")) {
+      var result = catalog.prepare(card(object("house.kind", "Дом", "house.water", water)));
+      assertEquals("1", text(values(result, "kufar"), "kufar.re_water"));
+      assertEquals("s", text(values(result, "domovita"), "domovita.water"));
+    }
+  }
+
+  @Test void sharedAndSpecificTerritoryAmenitiesUseSaleCodesWithoutInventingUncheckedAmenities() {
+    var territory = list(catalog.plan("kufar").path("fields")).stream()
+        .filter(f -> text(f, "platform_option_id").equals("kufar.house_sell_area")).findFirst().orElseThrow();
+    var forest = list(territory.path("conversion").path("members")).stream()
+        .filter(m -> text(m.path("values").get(0), "to").equals("2")).findFirst().orElseThrow();
+    var result = catalog.prepare(card(object("house.kind", "Коттедж", "amenity.sauna", true,
+        "amenity.pool", false, "amenity.gazebo", true, text(forest, "common_option_id"), true)));
+    assertEquals(List.of("2", "3", "4"), list(values(result, "kufar").path("kufar.house_sell_area"))
+        .stream().map(JsonNode::asText).sorted().toList());
+    var empty = catalog.prepare(card(object("house.kind", "Дом")));
+    assertFalse(values(empty, "kufar").has("kufar.house_sell_area"));
+  }
+
+  @Test void onlinerChoiceListsAreAvailableToBothEditorAndAiAndCanBeMapped() {
+    var editor = catalog.editor().path("canonicalValues");
+    var ai = catalog.analysisSchema().path("canonicalValues");
+    for (var id : List.of("balcony", "repaired", "resale")) {
+      String key = "specific.onliner." + id;
+      assertFalse(editor.path(key).isEmpty(), key);
+      assertEquals(editor.path(key), ai.path(key));
+      for (var choice : editor.path(key)) {
+        var result = catalog.prepare(card(object("house.kind", "Дом", key, choice.asText())));
+        assertTrue(values(result, "onliner").has("onliner." + id), choice.asText());
+      }
+    }
+  }
+
+  @Test void floorPlanIsReportedForManualUploadWithoutBeingTreatedAsPropertyPhotoOrText() {
+    var result = catalog.browser(card(object("house.kind", "Дом", "specific.realt.media.planning",
+        List.of("https://example.com/plan.jpg"))));
+    var job = list(result.path("jobs")).stream().filter(j -> text(j, "platform").equals("realt"))
+        .findFirst().orElseThrow();
+    assertTrue(job.path("unbound").toString().contains("Фото планировки"), job.toString());
+    assertFalse(list(job.path("controls")).stream().anyMatch(c -> text(c, "field").equals("realt.media.planning")));
+    assertTrue(list(job.path("controls")).stream().anyMatch(c ->
+        text(c, "field").equals("realt.media.photos") && text(c, "action").equals("files")));
+  }
 }

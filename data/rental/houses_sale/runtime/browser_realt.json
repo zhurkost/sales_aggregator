@@ -236,8 +236,9 @@
     {
       "field": "realt.house.newBuilding",
       "action": "check",
-      "selector": "[role=\"switch\"]",
-      "label": "Новостройка"
+      "selector": "#apartment button[role=\"switch\"]",
+      "controlText": "Новостройка",
+      "expandSection": "apartment"
     },
     {
       "field": "realt.house.roofMaterial",
@@ -277,14 +278,9 @@
     {
       "field": "realt.termsOfDeal.termsExtra",
       "action": "check",
-      "selector": "[role=\"switch\"]",
-      "label": "Конкурс / Аукцион"
-    },
-    {
-      "field": "realt.media.planning",
-      "action": "text",
-      "selector": "[id=\"media.planning\"]",
-      "expandSection": "media"
+      "selector": "#termsOfDeal button[role=\"switch\"]",
+      "controlText": "Конкурс / Аукцион",
+      "expandSection": "termsOfDeal"
     }
   ],
   "next": [],

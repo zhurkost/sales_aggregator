@@ -28,7 +28,7 @@
           {
             "id": "house.kind",
             "name": "Вид объекта",
-            "description": "Дом целиком, коттедж или дача для длительного проживания. Части дома и посуточное размещение исключены.",
+            "description": "Дом целиком, коттедж или дача для продажи. Не часть дома и не участок без дома.",
             "type": "enum",
             "options": []
           },
@@ -346,7 +346,7 @@
             "id": "specific.realt.media.planning",
             "name": "Фото планировки",
             "type": "files",
-            "description": "Фото планировки (Realt).",
+            "description": "Фото планировки (Realt). Загрузите план вручную на Realt: это отдельный файл, не фотография объекта.",
             "options": [],
             "file_role": "floor_plan"
           },
@@ -570,13 +570,6 @@
             "options": []
           },
           {
-            "id": "specific.kufar.house_sell_area",
-            "name": "На территории",
-            "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[5046], category=1020, type=sell.",
-            "type": "multi_enum",
-            "options": []
-          },
-          {
             "id": "specific.kufar.house_roof_material_type",
             "name": "Крыша (тип)",
             "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[10053], category=1020, type=sell.",
@@ -588,6 +581,62 @@
             "name": "Возможен обмен",
             "description": "2026-11-09 https://www.kufar.by/ain/create; bootstrap ad_metadata.parameters.refs[1441], category=1020, type=sell.",
             "type": "enum",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.391552c0",
+            "name": "Рядом водоем / река",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.cc11310c",
+            "name": "Рядом лес",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.d10a4bc9",
+            "name": "Мангал",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.266aa588",
+            "name": "Ландшафтный дизайн",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.ade1a1c2",
+            "name": "Хоз. постройки",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.986b79d4",
+            "name": "Сад, огород",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.53654959",
+            "name": "Рядом достопримечательности",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
+            "options": []
+          },
+          {
+            "id": "specific.kufar.house_sell_area.f326bd84",
+            "name": "Живописное место",
+            "type": "boolean",
+            "description": "Удобство участка (Kufar).",
             "options": []
           }
         ]

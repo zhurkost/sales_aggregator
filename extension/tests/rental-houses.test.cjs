@@ -4,6 +4,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const recipe = p => JSON.parse(fs.readFileSync(path.join(__dirname,
   '../../data/rental/houses_long_term_rent/runtime/browser_' + p + '.json'), 'utf8'));
+const saleRecipe = p => JSON.parse(fs.readFileSync(path.join(__dirname,
+  '../../data/rental/houses_sale/runtime/browser_' + p + '.json'), 'utf8'));
 async function windowFor(t, html) {
   const {Window} = await import('happy-dom');
   const w = new Window(); t.after(() => w.close()); w.document.body.innerHTML = html;
@@ -11,6 +13,38 @@ async function windowFor(t, html) {
     w.eval(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'));
   return w;
 }
+
+test('Kufar house sale fills when sale is implicit, but waits on rental and category dialogs', async t => {
+  const w = await windowFor(t, '<div data-testid="name_selected_category">Дома, дачи, коттеджи</div><div data-name="house_type_for_sell">Дом Коттедж Дача</div><input name="price">');
+  const r = saleRecipe('kufar'); r.setup = [];
+  r.controls = [{...r.controls.find(c => c.field === 'kufar.price'), value:'145000'}];
+  const form = new w.AutopostRentalForm.Form(r);
+  form.done.add('kufar.currency');
+  await form.tick();
+  assert.equal(form.ready(), true);
+  assert.equal(w.document.querySelector('input').value, '145000');
+  w.document.querySelector('[data-name]').dataset.name='house_type_for_rent';
+  assert.equal(form.ready(), false);
+  w.document.querySelector('[data-name]').dataset.name='house_type_for_sell';
+  const dialog=w.document.createElement('div'); dialog.dataset.testid='kufar-chose-category-popup';
+  w.document.body.append(dialog);
+  assert.equal(form.ready(), false);
+  dialog.remove();
+  w.document.querySelector('[data-testid]').textContent='Квартиры';
+  assert.equal(form.ready(), false);
+});
+
+test('Realt house sale switches select new building and auction independently of furniture', async t => {
+  const w = await windowFor(t, '<section id="apartment"><button role="switch" aria-checked="false">Новостройка<div>Дома не старше 5 лет</div></button></section><section id="additional"><button role="switch" aria-checked="false">Мебель</button></section><section id="termsOfDeal"><button role="switch" aria-checked="false">Конкурс / Аукцион</button></section>');
+  for (const button of w.document.querySelectorAll('[role=switch]')) button.onclick=()=>button.setAttribute('aria-checked',String(button.getAttribute('aria-checked')!=='true'));
+  const controls=saleRecipe('realt').controls.filter(c=>['realt.house.newBuilding','realt.termsOfDeal.termsExtra'].includes(c.field));
+  for (const value of [true,false]) {
+    const form=new w.AutopostRentalForm.Form({controls:controls.map(c=>({...c,value}))});
+    for(let i=0;i<4;i++)await form.tick();
+    assert.equal(form.done.size,2);
+    assert.deepEqual([...w.document.querySelectorAll('[role=switch]')].map(e=>e.getAttribute('aria-checked')),[String(value),'false',String(value)]);
+  }
+});
 
 test('Domovita house sale waits for the selected category using its sibling label', async t => {
   const r = JSON.parse(fs.readFileSync(path.join(__dirname,

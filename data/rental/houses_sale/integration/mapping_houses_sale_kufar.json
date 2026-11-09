@@ -479,6 +479,14 @@
           {
             "from": "5+",
             "to": "5"
+          },
+          {
+            "from": "5",
+            "to": "5"
+          },
+          {
+            "from": "6+",
+            "to": "5"
           }
         ],
         "on_unmapped": "needs_review"
@@ -543,6 +551,10 @@
           {
             "from": "Нет",
             "to": "20"
+          },
+          {
+            "from": "Сезонное",
+            "to": "1"
           }
         ],
         "on_unmapped": "needs_review"

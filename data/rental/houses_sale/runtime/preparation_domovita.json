@@ -429,6 +429,10 @@
           {
             "from": "Сезонное",
             "to": "s"
+          },
+          {
+            "from": "Сезонная",
+            "to": "s"
           }
         ],
         "on_unmapped": "needs_review"
@@ -683,5 +687,5 @@
   ],
   "review": [],
   "schema_hash": "e8d6714501c22505e94e739e2030284ba8fd61ce8a85780828216c372b928797",
-  "common_hash": "bfb3e9b8860583603fda9da6e133f564036ca148b84abc2551a0263fe255cee0"
+  "common_hash": "709db9b09b35265ed26434ca2f7da69236658bd98d41f8273f20f4e024c1ce6c"
 }

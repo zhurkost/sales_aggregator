@@ -39,7 +39,7 @@ kufar.house_type_for_sell | Вид объекта | house.kind
 kufar.year_built | Год постройки | house.building_year
 kufar.re_heating | Отопление | house.heating
 kufar.re_hot_water | Горячая вода | specific.kufar.re_hot_water
-kufar.house_sell_area | На территории | specific.kufar.house_sell_area
+kufar.house_sell_area | На территории | композит: amenity.sauna/pool/gazebo и отдельные удобства Kufar
 kufar.house_roof_material_type | Крыша (тип) | specific.kufar.house_roof_material_type
 kufar.condition | Состояние | specific.kufar.condition
 kufar.size | Общая площадь, м² | house.total_area
@@ -47,3 +47,5 @@ kufar.possible_exchange | Возможен обмен | specific.kufar.possible_
 kufar.country_direction | Направление | needs_review: геоданные либо невидимый контрол
 kufar.distance_ringway | Расстояние от МКАД, км | needs_review: геоданные либо невидимый контрол
 Bindings новых полей не объявляются ready без проверки полного переноса. Runtime использует существующие адаптеры; новые селекторы требуют проверки под аккаунтом. Для Realt коттедж/дача используют общий шаблон дома; отдельные ветви пока не проверены. Для Domovita проверены обе ветви cottages/sale и dacha/sale. Для Kufar все значения из refs ветви sell; UI без авторизации не отрисовал дополнительные параметры, поэтому полнота их DOM не подтверждена.
+
+Обновление 2026-11-09: дополнительные поля получены в живой форме после ввода адреса; результаты и границы проверки см. qa_houses_sale_20min_2026-11-09.txt.

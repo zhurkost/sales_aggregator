@@ -48,8 +48,7 @@
       "Центральный водопровод",
       "Скважина",
       "Нет",
-      "Сезонная",
-      "Сезонное"
+      "Сезонная"
     ],
     "house.sewer": [
       "Есть",
@@ -145,9 +144,25 @@
       "5",
       "6+"
     ],
-    "specific.onliner.balcony": [],
-    "specific.onliner.repaired": [],
-    "specific.onliner.resale": [],
+    "specific.onliner.balcony": [
+      "Есть",
+      "Нет",
+      "Балкон",
+      "Лоджия",
+      "Балкон и лоджия",
+      "Два"
+    ],
+    "specific.onliner.repaired": [
+      "С ремонтом",
+      "Без отделки",
+      "Евро",
+      "Дизайнерский",
+      "Косметический"
+    ],
+    "specific.onliner.resale": [
+      "Вторичка",
+      "Новостройка"
+    ],
     "house.living_area": [],
     "house.kitchen_area": [],
     "specific.onliner.floor": [],
@@ -327,19 +342,6 @@
       "Пожизненное наследование",
       "Аренда"
     ],
-    "specific.kufar.house_sell_area": [
-      "Рядом водоем / река",
-      "Рядом лес",
-      "Баня",
-      "Беседка",
-      "Мангал",
-      "Бассейн",
-      "Ландшафтный дизайн",
-      "Хоз. постройки",
-      "Сад, огород",
-      "Рядом достопримечательности",
-      "Живописное место"
-    ],
     "specific.kufar.house_roof_material_type": [
       "Плоская",
       "Односкатная",
@@ -364,7 +366,15 @@
     "specific.domovita.price_haggle": [
       "Торг",
       "Без торга"
-    ]
+    ],
+    "specific.kufar.house_sell_area.391552c0": [],
+    "specific.kufar.house_sell_area.cc11310c": [],
+    "specific.kufar.house_sell_area.d10a4bc9": [],
+    "specific.kufar.house_sell_area.266aa588": [],
+    "specific.kufar.house_sell_area.ade1a1c2": [],
+    "specific.kufar.house_sell_area.986b79d4": [],
+    "specific.kufar.house_sell_area.53654959": [],
+    "specific.kufar.house_sell_area.f326bd84": []
   },
   "valueLabels": {},
   "mainFields": [
