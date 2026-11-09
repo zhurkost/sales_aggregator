@@ -127,6 +127,10 @@ final class RentalBrowserPreparation {
       for (var issue : result.path("issues")) {
         String code = text(issue, "code");
         if (java.util.Set.of("required", "file_acceptance", "adapter_review").contains(code)) continue;
+        // Address selection is confirmed by the live control; a static preparation
+        // advisory must not remain after that control successfully completes.
+        if (text(issue, "source").equals("address") && list(controls).stream().anyMatch(c ->
+            c.has("addressPart") && text(c, "field").equals(text(issue, "field")))) continue;
         if (code.equals("condition")) {
           String source = text(issue, "source");
           if (!card.path("values").hasNonNull(source)) continue;

@@ -78,6 +78,7 @@
     {
       "field": "kufar.images",
       "action": "files",
+      "minFileSizeBytes": 10241,
       "selector": "#imageLoaderDropzone",
       "uploadedCountSelector": "[data-name=\"images\"] [class*=\"_counter\"]"
     },

@@ -16,6 +16,19 @@ class HouseRentalTest {
   private final RentalCatalog catalog = new RentalCatalog(registry.require("houses_long_term_rent").references());
 
   @Test
+  void browserAddressControlsOwnTheirLiveCompletionStatus() {
+    var card = object("categoryId", "houses_long_term_rent", "modelVersion", 2,
+        "schemaVersion", catalog.version(), "values", object("house.kind", "Дом"),
+        "address", object("provider", "manual", "countryIso", "BY", "confirmed", false,
+            "label", "Гродно Садовая 15", "settlement", "Гродно", "street", "Садовая", "house", "15"),
+        "platforms", List.of("realt", "domovita"));
+    for (var job : catalog.browser(card).path("jobs")) {
+      assertTrue(list(job.path("controls")).stream().anyMatch(c -> c.has("addressPart")));
+      assertFalse(job.path("unbound").toString().contains("сопоставление со справочником"), job.toString());
+    }
+  }
+
+  @Test
   void houseSchemaAndPublicationAreScopedToHouseCategory() {
     var editor = catalog.editor();
     assertEquals("houses_long_term_rent", text(editor.path("category"), "id"));

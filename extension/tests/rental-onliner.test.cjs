@@ -79,6 +79,14 @@ test('Onliner matches the settlement after an administrative prefix, not the rai
   assert.equal(f.form.done.has(f.c.field), true);
 });
 
+test('Onliner prefers the literal city when a village with a council prefix has the same name', async t => {
+  const f = await fixture(t, ['Рованичский сельский Совет, Гродно', 'Гродно',
+    'Гродно, Красноармейская улица'], 'Гродно');
+  for (let i=0;i<6;i++) await f.form.tick();
+  assert.deepEqual(f.clicks, ['Гродно']);
+  assert.equal(f.form.done.has(f.c.field), true);
+});
+
 test('Onliner retriggers a restored identical Knockout query and a query lost on tab switch', async t => {
   const f = await fixture(t, [], 'Колодищи');
   f.input.onkeyup = null;

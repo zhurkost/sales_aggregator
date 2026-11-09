@@ -199,8 +199,10 @@
     const available = options();
     // Full label equality ignores case and whitespace, but not punctuation or ё/е.
     const exactName = (v) => String(v ?? "").trim().replace(/\s+/g, " ").toLocaleLowerCase("ru");
+    // Prefer the literal city over a namesake with an administrative prefix.
+    const literal = available.filter(e => exactName(rawLabel(e)) === exactName(control.value));
     const candidates = config.selection === "single-or-exact"
-      ? available.length === 1 ? available : available.filter(e => exactName(label(e)) === exactName(control.value))
+      ? available.length === 1 ? available : literal.length ? literal : available.filter(e => exactName(label(e)) === exactName(control.value))
       : config.selection === "type-then-first"
         ? [preferredOption(available, label, control, config.kind)].filter(Boolean)
         : available.filter((e) => {

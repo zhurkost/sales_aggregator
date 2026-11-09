@@ -179,7 +179,7 @@
       {
         "id": "kufar.images",
         "name": "Фотографии",
-        "description": "https://www.kufar.by/ain/create | 2026-11-08T18:10:30.295Z | Недвижимость → Дома, дачи, коттеджи (в форме: Дома, агроусадьбы, коттеджи). Ответ bootstrap → ad_metadata.parameters. refs[1774]. source type=string; multi=false; validators=v_photo_count. UI: JPEG/JPG/PNG до 10 МБ; точные байты/число файлов неизвестны. required=false в metadata, официальные правила требуют реальное фото объекта; противоречие отражено в отчёте.",
+        "description": "https://www.kufar.by/ain/create | 2026-11-09 | Недвижимость → Дома, агроусадьбы, коттеджи. bootstrap ad_metadata.parameters refs[1774], validators=v_photo_count. Живая форма: 50 фото. Клиентский валидатор в chunks/1q-ey-4ydog5d.js отклоняет size<=10240 и size>10485760 байт; для файлов <=102400 байт дополнительно проверяет обе стороны >=200 px. Проверено: JPEG 6049 байт не принят, 138530 байт того же разрешения 640×480 принят. MIME JPEG/PNG. required=false в metadata; официальные правила требуют реальное фото объекта.",
         "type": "files",
         "options": [],
         "required": false,
@@ -194,7 +194,8 @@
             "image/jpeg",
             "image/png"
           ],
-          "max_file_size_bytes": null
+          "max_file_size_bytes": 10485760,
+          "min_file_size_bytes": 10241
         },
         "when": {
           "all": [

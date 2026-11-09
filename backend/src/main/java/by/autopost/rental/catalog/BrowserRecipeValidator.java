@@ -54,6 +54,10 @@ public final class BrowserRecipeValidator {
               .contains(text(control, "action")),
           "действие browser");
       selector(control);
+      if (control.has("minFileSizeBytes"))
+        check(text(control, "action").equals("files") && control.path("minFileSizeBytes").isIntegralNumber()
+            && control.path("minFileSizeBytes").asLong() > 0 && control.path("minFileSizeBytes").asLong() <= 20971520,
+            "минимальный размер файла browser");
       if (control.has("uploadedCountSelector")) {
         check(text(control, "action").equals("files"), "счётчик фотографий");
         selectorValue(text(control, "uploadedCountSelector"));

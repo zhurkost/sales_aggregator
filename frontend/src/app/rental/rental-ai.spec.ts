@@ -20,6 +20,25 @@ function setup(data:RentalAiResult=result) {
 }
 afterEach(()=>{vi.unstubAllGlobals();vi.useRealTimers();});
 describe("compact rental editor with AI",()=>{
+  it("applies AI facts when only local photos change during the request",async()=>{
+    const {c}=setup();let done!:(r:Response)=>void;
+    vi.stubGlobal("fetch",vi.fn(()=>new Promise<Response>(r=>done=r)));
+    const pending=c.ai.fillFromDescription();await vi.waitFor(()=>expect(done).toBeDefined());
+    c.store.setLocalFiles("media.images",[{}]);
+    done(response(result));await pending;
+    expect(c.store.card.values.price).toBe("1500");
+    expect(c.store.localFileCounts()).toEqual({"media.images":1});
+    expect(c.ai.message).toContain("Заполнено");c.ngOnDestroy();
+  });
+  it("explains discarded AI results and preserves manual edits made during recognition",async()=>{
+    const {c}=setup();let done!:(r:Response)=>void;
+    vi.stubGlobal("fetch",vi.fn(()=>new Promise<Response>(r=>done=r)));
+    const pending=c.ai.fillFromDescription();await vi.waitFor(()=>expect(done).toBeDefined());
+    c.store.card.values.price="1900";c.store.changed();
+    done(response(result));await pending;
+    expect(c.store.card.values.price).toBe("1900");expect(c.store.card.values.washing).toBeUndefined();
+    expect(c.ai.message).toContain("Карточка изменена");c.ngOnDestroy();
+  });
   it("traps reverse Tab from the dialog title without hijacking Tab inside a field group",()=>{
     const panel=document.createElement("section");panel.className="rental-drawer";
     panel.innerHTML='<h2 tabindex="-1">Title</h2><button>Close</button><div tabindex="-1"><input /></div><button>Done</button>';

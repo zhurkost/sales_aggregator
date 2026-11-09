@@ -12,6 +12,7 @@ export class RentalFormStore {
   card: RentalCard = {schemaVersion:"",values:{},extras:{},platforms:[],address:null};
   id: string = crypto.randomUUID();
   editVersion = 0;
+  contentVersion = 0;
   error = "";
   busy = false;
   destroyed = false;
@@ -28,7 +29,7 @@ export class RentalFormStore {
   /** File bytes stay in the browser. Preparation only needs their presence/count. */
   setLocalFiles(field: string, files: {sourceUrl?: string}[]) {
     this.localFiles[field] = files.map(file => file.sourceUrl);
-    this.changed();
+    this.changed(false);
   }
   localFileCounts(): Record<string, number> {
     const counts: Record<string, number> = {};
@@ -59,8 +60,9 @@ export class RentalFormStore {
       this.applicability.schedule();
     } catch (e) { this.error = (e as Error).message; }
   }
-  changed() {
+  changed(contentChanged = true) {
     this.editVersion++;
+    if (contentChanged) this.contentVersion++;
     this.check.invalidate();
     this.applicability.schedule();
     clearTimeout(this.timer);

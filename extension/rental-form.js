@@ -122,6 +122,7 @@
       this.protected = new Set();
       this.progress = 0;
       this.photoSent = false;
+      this.fileErrors = new Map();
       this.stepClicks = new Set();
       this.waiting = null;
     }
@@ -252,6 +253,11 @@
         for (const p of this.photos) {
           const [header, data] = p.dataUrl.split(",");
           const bytes = Uint8Array.from(atob(data), (x) => x.charCodeAt(0));
+          if (c.minFileSizeBytes && bytes.length < c.minFileSizeBytes) {
+            this.fileErrors.set(c.field, `${p.name}: файл меньше минимального размера площадки (${c.minFileSizeBytes} байт). Выберите другое фото в Автопосте и запустите заполнение заново.`);
+            this.protected.add(c.field);
+            return;
+          }
           transfer.items.add(
             new File([bytes], p.name, { type: header.slice(5).split(";")[0] }),
           );
@@ -619,7 +625,7 @@
             !this.done.has(c.field) &&
             (c.action !== "files" || this.photos.length || c.value?.length),
         )
-        .map((c) => c.name || c.field)
+        .map((c) => (c.name || c.field) + (this.fileErrors.has(c.field) ? ": " + this.fileErrors.get(c.field) : ""))
         .concat(this.recipe.unbound || []);
     }
     blockedReason() {

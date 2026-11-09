@@ -22,6 +22,14 @@ class HouseRentalAiEvidenceTest {
   }
 
   @Test
+  void aRoleIsNotAContactName() {
+    for (String role : List.of("Собственник", "Хозяйка", "Агент", "Риэлтор", "Собственник дома"))
+      assertTrue(suggestion("contact.name", role, role).isEmpty(), role);
+    assertEquals(1, suggestion("contact.name", "Илья", "Собственник Илья").size());
+    assertEquals(1, suggestion("specific.onliner.contact_owner", "Собственник", "Собственник").size());
+  }
+
+  @Test
   void keepsExplicitHouseLevelsWrittenAsWords() {
     for (String quote : List.of("два уровня", "двухэтажный дом", "двухуровневый коттедж")) {
       var result = suggestion("house.levels", "2", quote);

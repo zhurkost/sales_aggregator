@@ -103,6 +103,19 @@ test('Kufar does not duplicate existing photos or mark a failed upload as comple
   }
 });
 
+test('file limits reject a too-small batch before claiming photos and explain the actual file', async t => {
+  for (const size of [10240, 10241]) {
+    let claims=0;
+    const c={...control('photos'),minFileSizeBytes:10241,name:'Фотографии'};
+    const photo={name:'small.jpg',dataUrl:'data:image/jpeg;base64,'+Buffer.alloc(size).toString('base64')};
+    const f=await fixture(t,'<div data-name="images"><span class="x_counter">Загружено 0 из 50</span><input id="imageLoaderDropzone" type="file"></div>',[c],[photo],async()=>{claims++;return true;});
+    for(let i=0;i<3;i++)await f.form.tick();
+    assert.equal(claims,size<10241?0:1);
+    assert.equal(f.form.remaining().join(' ').includes('small.jpg'),size<10241);
+    assert.equal(f.form.done.has(c.field),false);
+  }
+});
+
 test('Kufar enters title case query and selects the matching street type from a manually typed full address', async t => {
   const c=control('address_text',{value:'Минск Брикета 18', matchValue:'г. Минск, ул. Брикета, д. 18'});
   const f=await fixture(t, '<input id="geocoder"><div id="options"></div>', [c]);

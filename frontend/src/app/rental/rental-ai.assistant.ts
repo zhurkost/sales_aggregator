@@ -18,10 +18,14 @@ export class RentalAiAssistant {
     if (this.store.busy || this.description().trim().length < 10 || !this.store.schema) return;
     this.store.busy = true; this.busy = true; this.store.error = ""; this.message = "";
     this.conflicts = []; this.address = null; this.addressFacts = []; this.questions = [];
-    const id = this.store.id, version = this.store.editVersion, schemaVersion = this.store.schema.version;
+    const id = this.store.id, version = this.store.contentVersion, schemaVersion = this.store.schema.version;
     try {
       const result = await rentalApi<RentalAiResult>(this.workspaceId(), this.store.category(), "analyze", {text:this.description(), schemaVersion});
-      if (this.store.destroyed || this.store.id !== id || this.store.editVersion !== version || this.store.schema?.version !== result.schemaVersion) return;
+      if (this.store.destroyed || this.store.id !== id || this.store.schema?.version !== result.schemaVersion) return;
+      if (this.store.contentVersion !== version) {
+        this.message = "Карточка изменена во время распознавания. Нажмите «Заполнить с ИИ» ещё раз.";
+        return;
+      }
       let count = 0;
       let appliedAddress = false;
       const current = this.store.card.address;
