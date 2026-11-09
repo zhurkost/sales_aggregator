@@ -132,20 +132,6 @@
             "options": []
           },
           {
-            "id": "location.house",
-            "name": "Номер дома",
-            "description": "Строка с буквой или дробью, если применимо",
-            "type": "text",
-            "options": []
-          },
-          {
-            "id": "location.block",
-            "name": "block",
-            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
-            "type": "text",
-            "options": []
-          },
-          {
             "id": "listing.short_description",
             "name": "Краткое описание",
             "type": "text",
@@ -205,13 +191,6 @@
             "id": "contact.phone",
             "name": "Телефон для связи",
             "description": "Международный номер с кодом страны; учесть маску ввода",
-            "type": "text",
-            "options": []
-          },
-          {
-            "id": "location.label",
-            "name": "label",
-            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
             "type": "text",
             "options": []
           },
@@ -821,6 +800,35 @@
             "name": "Звонить до",
             "type": "enum",
             "description": "Звонить до (Onliner).",
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "group.address_projection",
+        "name": "Проекция единого адреса",
+        "description": "Технические поля заполняются из card.address, не редактируются и не распознаются отдельно.",
+        "type": "group",
+        "options": [
+          {
+            "id": "location.house",
+            "name": "Номер дома",
+            "description": "Строка с буквой или дробью, если применимо",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.block",
+            "name": "block",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
+            "options": []
+          },
+          {
+            "id": "location.label",
+            "name": "label",
+            "description": "Компонент выбранного адреса; не самостоятельный ввод.",
+            "type": "text",
             "options": []
           }
         ]

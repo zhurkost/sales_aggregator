@@ -79,6 +79,31 @@ class HouseSaleTest {
     assertEquals(3,result.path("suggestions").size());
     assertEquals(1,result.path("ignored").asInt());
   }
+
+  @Test void addressProjectionNeverBecomesASecondEditorOrAiInput() {
+    for (String category : List.of("houses_sale", "houses_long_term_rent", "apartments_sale", "apartments_long_term_rent")) {
+      var categoryCatalog = new RentalCatalog(registry.require(category).references());
+      for (var schema : List.of(categoryCatalog.editor(), categoryCatalog.analysisSchema())) {
+        var fields = list(schema.path("category").path("options")).stream()
+            .flatMap(group -> list(group.path("options")).stream()).map(field -> text(field, "id")).toList();
+        for (var projected : categoryCatalog.editor().path("card").path("addressProjectionFields"))
+          assertFalse(fields.contains(projected.asText()), category + ": " + projected.asText());
+        assertTrue(fields.contains("listing.description"));
+      }
+    }
+    var input = (com.fasterxml.jackson.databind.node.ObjectNode) card(object("house.kind", "Дом"));
+    input.set("address", object("provider", "manual", "settlement", "Гродно", "street", "Садовая", "house", "15", "block", "2", "label", "Гродно Садовая 15 2"));
+    var prepared = catalog.prepare(input);
+    assertEquals("15", text(values(prepared, "realt"), "realt.location.houseNumber"));
+    assertEquals("2", text(values(prepared, "realt"), "realt.location.buildingNumber"));
+  }
+
+  @Test void unobservedKufarExchangeIsReportedForManualReview() {
+    var job = list(catalog.browser(card(object("house.kind", "Дом", "specific.kufar.possible_exchange", "Да"))).path("jobs"))
+        .stream().filter(j -> text(j, "platform").equals("kufar")).findFirst().orElseThrow();
+    assertTrue(list(job.path("controls")).stream().noneMatch(c -> text(c, "field").equals("kufar.possible_exchange")));
+    assertTrue(job.path("unbound").toString().contains("Возможен обмен"));
+  }
   @Test void onlinerSourceFieldsAndBrowserRecipeAreExactCopies() throws Exception {
     var sale=MAPPER.readTree(Files.readString(Path.of("../data/rental/apartments_sale/onliner/apartments_sale_onliner.json")));
     var house=MAPPER.readTree(Files.readString(Path.of("../data/rental/houses_sale/onliner/houses_sale_onliner.json")));

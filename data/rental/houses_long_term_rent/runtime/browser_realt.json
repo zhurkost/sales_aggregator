@@ -41,7 +41,19 @@
         "contextParts": [
           "region",
           "district"
-        ]
+        ],
+        "sheet": {
+          "triggerSelector": "#location [role=\"button\"].border",
+          "triggerIndex": 0,
+          "emptyLabel": "Населенный пункт, район, область",
+          "scopeSelector": "div.fixed.bottom-0:has(input[name=\"search\"])",
+          "headingSelector": "p.text-headline",
+          "heading": "Адрес",
+          "inputSelector": "input[name=\"search\"]",
+          "selectedMarker": ":scope > svg",
+          "applySelector": "button",
+          "applyText": "Применить"
+        }
       }
     },
     {
@@ -56,7 +68,19 @@
         "scopeSelector": "div.relative:has(> div > input[id=\"location.street\"])",
         "optionSelector": "ul > li > [role=\"button\"]",
         "busySelector": "svg.animate-spin",
-        "confirm": "value-and-closed"
+        "confirm": "value-and-closed",
+        "sheet": {
+          "triggerSelector": "#location [role=\"button\"].border",
+          "triggerIndex": 1,
+          "emptyLabel": "Улица",
+          "scopeSelector": "div.fixed.bottom-0:has(input[name=\"search\"])",
+          "headingSelector": "p.text-headline",
+          "heading": "Улица",
+          "inputSelector": "input[name=\"search\"]",
+          "selectedMarker": ":scope > svg",
+          "applySelector": "button",
+          "applyText": "Применить"
+        }
       }
     },
     {

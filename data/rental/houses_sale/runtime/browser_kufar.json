@@ -86,7 +86,7 @@
       "field": "kufar.currency",
       "action": "dropdown",
       "selector": "[data-name=\"price\"] [data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-name=\"price\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-name=\"price\"] [data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:not(:has([data-testid=\"popup-title\"])) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]",
       "uiLabels": {
         "BYR": "руб.",
@@ -175,7 +175,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"wall_material\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"wall_material.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {
@@ -224,7 +224,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"year_built\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"year_built.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {
@@ -236,12 +236,6 @@
       "field": "kufar.house_roof_material_type",
       "action": "choices",
       "selector": "[data-name=\"house_roof_material_type\"]"
-    },
-    {
-      "field": "kufar.possible_exchange",
-      "action": "check",
-      "selector": "[data-name=\"possible_exchange\"] input[type=\"checkbox\"]",
-      "checkedValue": "1"
     }
   ],
   "next": [],

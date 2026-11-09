@@ -238,5 +238,60 @@
     else option.click();
     if (!config.confirm) form.done.add(control.field);
   }
-  root.AutopostRentalAutocomplete = { fill, addressName };
+  // Responsive address pickers stage a choice in a sheet. Apply only our own
+  // selected suggestion, then confirm the value on the original form trigger.
+  function fillSheet(form, control, dom) {
+    const config = control.autocomplete, sheet = config.sheet;
+    const {query, visible, enabled} = dom;
+    if (!control.value) return;
+    const trigger = query(sheet.triggerSelector).filter(visible)[sheet.triggerIndex || 0];
+    if (!trigger || !enabled(trigger)) return;
+    const scopes = query(sheet.scopeSelector).filter(visible);
+    const scope = scopes.find(e => query(sheet.headingSelector, e).some(h => norm(h.textContent) === norm(sheet.heading)));
+    let pending = form.pending.get(control.field);
+    if (!scope) {
+      if (pending?.sheetApplied) {
+        if (norm(trigger.textContent) === norm(pending.label)) form.done.add(control.field);
+        return;
+      }
+      if (scopes.length || pending?.phase === "sheet-opening") return;
+      if (pending) { form.protected.add(control.field); return; }
+      const current = norm(trigger.textContent);
+      if (current !== norm(sheet.emptyLabel)) {
+        if (matches(current, control.matchValue || control.value, config.kind, control.streetType, true))
+          form.done.add(control.field);
+        else form.protected.add(control.field);
+        return;
+      }
+      form.pending.set(control.field, {phase:"sheet-opening"});
+      form.waiting = {field:control.field, tries:0, until:Date.now() + 30000};
+      form.clickControl(trigger);
+      form.progress++;
+      return;
+    }
+    const input = query(sheet.inputSelector, scope).find(e => visible(e) && enabled(e));
+    if (!input) return;
+    if (pending?.phase === "sheet-opening") {
+      form.pending.delete(control.field);
+      pending = undefined;
+    }
+    if (pending?.phase === "confirm") {
+      if (pending.sheetApplied) return;
+      const selected = query(config.optionSelector, scope).find(e => {
+        const label = config.labelSelector ? query(config.labelSelector, e)[0]?.textContent : e.textContent;
+        return norm(label) === norm(pending.label) && query(sheet.selectedMarker, e).length;
+      });
+      const apply = query(sheet.applySelector, scope).filter(e => visible(e) && enabled(e) && norm(e.textContent) === norm(sheet.applyText));
+      if (selected && apply.length === 1) {
+        pending.sheetApplied = true;
+        form.clickControl(apply[0]);
+        form.progress++;
+      }
+      return;
+    }
+    // Do not take over a sheet opened independently by the user.
+    if (!pending && form.waiting?.field !== control.field) return;
+    fill(form, {...control, autocomplete:{...config, scopeSelector:sheet.scopeSelector}}, input, dom);
+  }
+  root.AutopostRentalAutocomplete = { fill, fillSheet, addressName };
 })(globalThis);

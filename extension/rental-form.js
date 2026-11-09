@@ -230,6 +230,8 @@
       }
       if (c.pickerId) return this.fillRealtPicker(c);
       const elements = targets(c);
+      if (!elements.length && c.action === "autocomplete" && c.autocomplete?.sheet)
+        return root.AutopostRentalAutocomplete.fillSheet(this, c, {query, visible, enabled});
       if (!elements.length) return;
       const value = c.value,
         values = Array.isArray(value) ? value : [value];
