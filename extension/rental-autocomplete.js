@@ -61,8 +61,17 @@
     if (clicked.length < 3 || selected.length < clicked.length) return false;
     const street = addressName(clicked[0], "street");
     const shown = addressName(selected[0], "street");
-    return !!street.type && street.type === shown.type && street.name === shown.name
-      && clicked.slice(1).every((part, i) => !!part && part === selected[i + 1]);
+    if (!street.type || street.type !== shown.type || street.name !== shown.name ||
+        !clicked[1] || clicked[1] !== selected[1]) return false;
+    // Kufar can insert the rural council between the settlement and district.
+    // Verify all selected suggestion components in order, allowing added context.
+    let cursor = 2;
+    return clicked.slice(2).every(part => {
+      const index = part ? selected.indexOf(part, cursor) : -1;
+      if (index < 0) return false;
+      cursor = index + 1;
+      return true;
+    });
   }
 
   function preferredOption(options, label, control, kind) {
@@ -112,6 +121,9 @@
         ? query(config.labelSelector, e)[0]?.textContent || ""
         : e.textContent;
     const parts = (text) => {
+      if (config.labelFormat === "settlement-with-admin-prefix") {
+        return {label: String(text).replace(/^[^,]+(?:сельский\s+совет|сельсовет|с\/с),\s*/iu, ""), context: []};
+      }
       if (config.labelFormat === "settlement-region-district") {
         const match = String(text).trim().match(/^(.+?)\s+(\S+\s+область)(?:\s+(.+?\s+район))?$/iu);
         if (match) return { label: match[1], context: match.slice(2).filter(Boolean) };
@@ -121,7 +133,7 @@
     const label = (e) => parts(rawLabel(e)).label;
     const display = () => query(config.selectedValueSelector, scope)[0]?.textContent || "";
     let pending = form.pending.get(control.field);
-    const retry = config.retryClearedQuery && pending?.phase === "query" && !input.value && !display() && (pending.retries || 0) < 2;
+    const retry = pending?.restart || (config.retryClearedQuery && pending?.phase === "query" && !input.value && !display() && (pending.retries || 0) < 2);
     if (!pending || retry) {
       if (config.selectedValueSelector && display()) {
         // Preserve a selection made before the helper started.
@@ -146,6 +158,11 @@
       }
       // Autocomplete must stay focused: blur closes the list on several sites.
       input.focus();
+      // Knockout does not search again when a restored query equals its observable.
+      if (config.resetSameQuery && input.value === search) {
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(input, "");
+        input.dispatchEvent(new Event("input", {bubbles: true}));
+      }
       Object.getOwnPropertyDescriptor(
         HTMLInputElement.prototype,
         "value",
@@ -211,7 +228,7 @@
         return;
       }
       pending.phase = "confirm";
-      pending.label = config.confirm === "display-and-closed" ? rawLabel(option) : label(option);
+      pending.label = rawLabel(option);
       form.waiting = { field: control.field, tries: 0, until: Date.now() + 30000 };
     }
     if (config.optionEvent === "mousedown")

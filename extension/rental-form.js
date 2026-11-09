@@ -152,6 +152,14 @@
         )
           this.protected.add(c.field);
     }
+    resumeQueries() {
+      for (const c of this.recipe.controls) {
+        const pending = this.pending.get(c.field);
+        if (pending?.phase !== "query" || !c.autocomplete?.resetSameQuery || this.protected.has(c.field)) continue;
+        const input = targets(c)[0];
+        if (input && norm(input.value) === norm(pending.search)) pending.restart = true;
+      }
+    }
     async fill(c) {
       if (this.done.has(c.field) || this.protected.has(c.field)) return;
       if (c.after && !this.done.has(c.after)) return;
@@ -165,6 +173,23 @@
       };
       if (c.action === "files" && c.previewSelector && this.oldPreviews && this.photoExpected) {
         const current = query(c.previewSelector);
+        if (this.onlinerPhotos) {
+          const accepted = root.AutopostOnlinerPhotos.accepted(this.onlinerPhotos, this.photos.length);
+          if (!accepted) return;
+          this.photoExpected = accepted.length;
+          const keep = new Set(accepted);
+          const obsolete = current.find(photo => !keep.delete(photo.querySelector("img").src));
+          if (obsolete) {
+            if (!this.removedPreviews.has(obsolete)) {
+              this.removedPreviews.add(obsolete);
+              this.clickControl(obsolete.querySelector(".new-photos__thumbnail-remove"));
+              this.progress++;
+            }
+            return;
+          }
+          if (!keep.size && current.length === accepted.length) this.done.add(c.field);
+          return;
+        }
         if (!this.replacementReady) {
           const remainingOld = new Map(this.oldPreviews);
           let added = 0;
@@ -235,6 +260,7 @@
           this.photoSent = true;
           return;
         }
+        if (this.oldPreviews) this.onlinerPhotos = root.AutopostOnlinerPhotos?.start();
         elements[0].files = transfer.files;
         this.photoSent = true;
         this.photoExpected = this.photos.length;

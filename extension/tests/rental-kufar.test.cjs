@@ -188,6 +188,20 @@ test('Kufar confirms the chosen suggestion after reformatting without accepting 
   }
 });
 
+test('Kufar accepts added rural council context but rejects a different settlement or house', async t => {
+  for(const [house,town,ok] of [['12','Колодищи',true],['13','Колодищи',false],['12','Другой',false]]) {
+    const c=control('address_text',{value:'Колодищи Садовая 12',streetType:'ул'});
+    const f=await fixture(t,'<input id="geocoder"><div id="rows"></div>',[c]);
+    await f.form.tick();
+    const row=f.doc.createElement('div');row.dataset.name='autocomplete-option-0';
+    row.textContent='Садовая улица, 12, агрогородок Колодищи, Минский район';
+    f.doc.querySelector('#rows').append(row);
+    row.onclick=()=>{f.doc.querySelector('input').value=`Садовая ул, ${house}, агрогородок ${town}, Колодищанский сельсовет, Минский район, Минская область`;row.remove();};
+    for(let i=0;i<5;i++)await f.form.tick();
+    assert.equal(f.form.done.has(c.field),ok);
+  }
+});
+
 for (const [code,labels,expected] of [
   ['пр',['Минск, ул. Мира, 18','Минск, Мира пр-т, 18','Минск, пр. Мира, 18'],1],
   ['пр',['Минск, пр-д Мира, 18','Минск, пр-кт Мира, 18'],0],

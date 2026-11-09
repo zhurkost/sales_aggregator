@@ -15,7 +15,8 @@
     {
       "action": "click",
       "selector": "[data-testid=\"sub-category-1020\"]",
-      "text": "Дома, агроусадьбы, коттеджи"
+      "text": "Дома, дачи, коттеджи",
+      "matchText": false
     },
     {
       "action": "click",
@@ -65,7 +66,8 @@
         "scopeSelector": "body",
         "optionSelector": "[data-name^=\"autocomplete-option-\"]",
         "confirm": "value-and-closed",
-        "selection": "type-then-first"
+        "selection": "type-then-first",
+        "resetSameQuery": true
       }
     },
     {
@@ -131,7 +133,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"house_rent_near_area\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-name=\"house_rent_near_area\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-name=\"house_rent_near_area\"] [data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"house_rent_near_area.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {
@@ -145,7 +147,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"house_type_for_rent\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-name=\"house_type_for_rent\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-name=\"house_type_for_rent\"] [data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"house_type_for_rent.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {
@@ -153,7 +155,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"house_rent_rooms\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-name=\"house_rent_rooms\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-name=\"house_rent_rooms\"] [data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"house_rent_rooms.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {
@@ -161,7 +163,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"house_rent_couchettes\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-name=\"house_rent_couchettes\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-name=\"house_rent_couchettes\"] [data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"house_rent_couchettes.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {
@@ -175,7 +177,7 @@
       "action": "dropdown",
       "selector": "[data-name=\"house_rent_services\"]",
       "triggerSelector": "[data-testid=\"base-dropdown-ui\"]",
-      "optionsSelector": "[data-name=\"house_rent_services\"] [data-testid=\"dropdown-popup-ui\"] > div",
+      "optionsSelector": "[data-name=\"house_rent_services\"] [data-testid=\"dropdown-popup-ui\"] > div, [data-testid=\"modal-container\"]:has([data-name=\"house_rent_services.hint\"]) [data-testid=\"popup-body\"] > div",
       "displaySelector": "[class*=\"_value\"]"
     },
     {

@@ -154,6 +154,7 @@
     idle = 0;
     cycles = 0;
     form.tried.clear();
+    form.resumeQueries();
     void tick();
   };
   stop.onclick = () => {
@@ -166,6 +167,7 @@
     if (departed) return;
     idle = cycles = 0;
     if (document.hidden) return;
+    form.resumeQueries();
     if (resumeWhenVisible) {
       paused = false;
       resumeWhenVisible = false;

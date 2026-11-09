@@ -22,7 +22,9 @@
         "optionEvent": "mousedown",
         "selection": "single-or-exact",
         "confirm": "value-and-closed",
-        "queryEvent": "keyup"
+        "queryEvent": "keyup",
+        "labelFormat": "settlement-with-admin-prefix",
+        "resetSameQuery": true
       }
     },
     {

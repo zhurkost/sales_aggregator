@@ -70,3 +70,32 @@ test('Onliner preserves an address edited manually after query started',async t=
   for(let i=0;i<5;i++)await f.form.tick();
   assert.equal(f.input.value,'Брест');assert.deepEqual(f.clicks,[]);
 });
+
+test('Onliner matches the settlement after an administrative prefix, not the railway street result', async t => {
+  const f = await fixture(t, ['Колодищанский сельский Совет, Колодищи, Путейская улица',
+    'Колодищанский сельский Совет, Колодищи'], 'Колодищи');
+  for (let i=0;i<6;i++) await f.form.tick();
+  assert.deepEqual(f.clicks, ['Колодищанский сельский Совет, Колодищи']);
+  assert.equal(f.form.done.has(f.c.field), true);
+});
+
+test('Onliner retriggers a restored identical Knockout query and a query lost on tab switch', async t => {
+  const f = await fixture(t, [], 'Колодищи');
+  f.input.onkeyup = null;
+  let observable = 'Колодищи', searches = 0;
+  f.input.value = observable;
+  f.input.oninput = () => {
+    if (observable !== f.input.value) {
+      observable = f.input.value;
+      if (observable) { searches++; f.render(['Колодищи']); }
+    }
+  };
+  await f.form.tick();
+  assert.equal(searches, 1);
+  f.render([]); // Onliner clears suggestions when the tab loses focus.
+  f.form.resumeQueries();
+  for (let i=0;i<6;i++) await f.form.tick();
+  assert.equal(searches, 2);
+  assert.deepEqual(f.clicks, ['Колодищи']);
+  assert.equal(f.form.done.has(f.c.field), true);
+});

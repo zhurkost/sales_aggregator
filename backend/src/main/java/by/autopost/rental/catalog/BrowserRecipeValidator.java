@@ -80,8 +80,13 @@ public final class BrowserRecipeValidator {
         if (text(config, "confirm").equals("display-and-closed"))
           selectorValue(text(config, "selectedValueSelector"));
         if (config.has("labelFormat"))
-          check(text(config, "kind").equals("settlement") &&
-              text(config, "labelFormat").equals("settlement-region-district"), "формат autocomplete");
+          check((text(config, "kind").equals("settlement") &&
+              text(config, "labelFormat").equals("settlement-region-district")) ||
+              (text(config, "kind").equals("address") &&
+                  text(config, "labelFormat").equals("settlement-with-admin-prefix")), "формат autocomplete");
+        if (config.has("resetSameQuery"))
+          check(config.path("resetSameQuery").isBoolean(),
+              "повторный поиск autocomplete");
         for (String key : List.of("scopeSelector", "optionSelector"))
           selectorValue(text(config, key));
         for (String key : List.of("labelSelector", "busySelector", "contextSelector"))

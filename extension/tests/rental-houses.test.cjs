@@ -48,6 +48,37 @@ test('all house adapters leave next steps and final submission to the user', () 
   }
 });
 
+test('Kufar house setup uses category 1020 despite changes to its display name', async t => {
+  for (const title of ['Дома, дачи, коттеджи', 'Дома, агроусадьбы, коттеджи']) {
+    const w = await windowFor(t, `<ul><li data-testid="sub-category-1020">${title}</li><li data-testid="sub-category-1010">Квартиры</li></ul>`);
+    const clicks = [];
+    w.document.addEventListener('click', e => clicks.push(e.target.dataset.testid));
+    await new w.AutopostRentalForm.Form(recipe('kufar')).tick();
+    assert.deepEqual(clicks, ['sub-category-1020']);
+  }
+});
+
+test('Kufar house dropdowns select only their own modal when several dialogs are mounted', async t => {
+  const w = await windowFor(t, ['house_rent_rooms','house_rent_couchettes'].map(name =>
+    `<div data-name="${name}"><div data-testid="base-dropdown-ui"><span class="x_value">Выберите</span></div></div>
+     <div data-testid="modal-container"><div data-testid="popup-title"><div data-name="${name}.hint"></div></div><div data-testid="popup-body"><div>5</div><div>8</div></div></div>`).join(''));
+  const clicks=[];
+  for (const modal of w.document.querySelectorAll('[data-testid="modal-container"]')) {
+    const name=modal.querySelector('[data-name]').dataset.name.replace('.hint','');
+    for(const option of modal.querySelectorAll('[data-testid="popup-body"] > div')) option.onclick=()=>{
+      clicks.push(name+':'+option.textContent);
+      w.document.querySelector(`[data-name="${name}"] .x_value`).textContent=option.textContent;
+      modal.remove();
+    };
+  }
+  const controls=['house_rent_rooms','house_rent_couchettes'].map((name,i)=>({
+    ...recipe('kufar').controls.find(c=>c.field==='kufar.'+name),value:i?8:5}));
+  const form=new w.AutopostRentalForm.Form({controls,oneChangePerTick:true});
+  for(let i=0;i<6;i++) await form.tick();
+  assert.deepEqual(clicks,['house_rent_rooms:5','house_rent_couchettes:8']);
+  assert.equal(form.done.size,2);
+});
+
 test('Realt house furniture uses its switch and leaves other switches untouched', async t => {
   const w = await windowFor(t, '<section id="additional"><button role="switch" aria-checked="false">Мебель</button><button role="switch" aria-checked="false">Другое</button></section>');
   const switches = [...w.document.querySelectorAll('[role="switch"]')];

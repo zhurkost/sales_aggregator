@@ -1,6 +1,6 @@
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import path from 'node:path';
-const files=['manifest.json','core.js','photo-store.js','bridge.js','background.js','rental-core.js','rental-background.js','rental-autocomplete.js','rental-form.js','rental-page.js','README.md'];
+const files=['manifest.json','core.js','photo-store.js','bridge.js','background.js','rental-core.js','rental-background.js','rental-autocomplete.js','onliner-photo-state.js','rental-onliner-photos.js','rental-form.js','rental-page.js','README.md'];
 const table=Array.from({length:256},(_,n)=>{let c=n;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0;});
 const crc32=b=>{let crc=0xffffffff;for(const byte of b)crc=table[(crc^byte)&255]^(crc>>>8);return (crc^0xffffffff)>>>0;};
 const records=[],directory=[];let offset=0;
