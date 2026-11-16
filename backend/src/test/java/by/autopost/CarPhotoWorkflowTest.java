@@ -45,11 +45,16 @@ class CarPhotoWorkflowTest {
     var result=new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",images));
     assertEquals(2,calls[0]);assertEquals(2,result.path("recognitionPasses").asInt());assertEquals(8,result.path("collage").path("photoCount").asInt());assertEquals(2,result.path("observations").size());assertEquals("Продаётся BMW с кожаным салоном.",text(result,"text"));
   }
-  @Test void invalidDetailPlansNeverSendAnotherRequest()throws Exception{
+  @Test void invalidSelectionGetsOnlyOneRepairAttemptAndNeverSendsAllOriginals()throws Exception{
     var photos=array(List.of(image(Color.RED),image(Color.BLUE)));
-    for(JsonNode plan:List.of(object(),object("single",List.of(0),"groups",array()),object("single",List.of(3),"groups",array()),object("single",List.of(1.5),"groups",array()),object("single",List.of(1,1),"groups",array()),object("single",List.of(1),"groups",List.of(List.of(1,2))),object("single",array(),"groups",List.of(List.of(1))))){
-      int[] calls={0};AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){calls[0]++;return object("text","Черновик","detailRequests",plan);}};
-      assertThrows(ApiException.class,()->new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos)));assertEquals(1,calls[0]);
+    for(JsonNode plan:List.of(object(),object("single",List.of(0),"groups",array()),object("single",List.of(3),"groups",array()),object("single",List.of(1.5),"groups",array()),object("single",array(),"groups",List.of(List.of(1))))){
+      int[] calls={0};List<String> overview=new ArrayList<>();
+      AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){
+        calls[0]++;assertEquals(1,a.size());
+        if(calls[0]==1){overview.addAll(a);return object("text","Черновик","detailRequests",plan);}
+        assertEquals(2,calls[0]);assertEquals(overview,a);return (ObjectNode)plan;
+      }};
+      assertThrows(ApiException.class,()->new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos)));assertEquals(2,calls[0]);
     }
   }
   @Test void invalidSeventhPhotoIsNotSilentlyIgnored()throws Exception{
@@ -57,13 +62,31 @@ class CarPhotoWorkflowTest {
     AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){throw new AssertionError("All photos must be validated first");}};
     assertThrows(ApiException.class,()->new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos)));
   }
-  @Test void missingMandatoryWholeFrameCannotReturnAnOverviewAsFinal()throws Exception{
-    var photos=array(List.of(image(Color.RED),image(Color.BLUE)));
-    for(JsonNode groups:List.of(array(),array(List.of(List.of(1,2))))){
-      int[] calls={0};AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){calls[0]++;return object("text","Уверенное предварительное описание","detailRequests",object("single",array(),"groups",groups));}};
-      assertThrows(ApiException.class,()->new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos)));
-      assertEquals(1,calls[0],"Reject an incomplete plan without silently bypassing generation verification or retrying AI");
-    }
+  @Test void repairedSelectionSendsGenerationAndOdometerTogetherWithoutOtherOriginals()throws Exception{
+    var photos=array(List.of(image(Color.RED),image(Color.BLUE),image(Color.GREEN),image(Color.YELLOW)));
+    int[] calls={0};List<String> overview=new ArrayList<>();
+    AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){
+      calls[0]++;
+      if(calls[0]==1){overview.addAll(a);return object("text","Черновик","detailRequests",object("single",array(),"groups",array()));}
+      if(calls[0]==2){assertEquals(overview,a);return object("single",List.of(2,4),"groups",array());}
+      assertEquals(3,calls[0]);assertEquals(2,a.size());
+      var manifest=parse(s).path("attachments");assertEquals(array(List.of(2)),manifest.get(0).path("photos"));assertEquals(array(List.of(4)),manifest.get(1).path("photos"));
+      return object("text","Продаётся Kia Rio.","generationHint","IV Рестайлинг","observations",List.of("Фото 4: одометр 60000 км"));
+    }};
+    var result=new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos));
+    assertEquals(3,calls[0]);assertEquals(3,result.path("recognitionPasses").asInt());assertEquals(2,result.path("detailImages").size());
+    assertEquals("IV Рестайлинг",text(result,"generationHint"));assertEquals("Фото 4: одометр 60000 км",result.path("observations").get(0).asText());
+  }
+  @Test void duplicateStringAndOutOfRangeNumbersAreNormalizedWithoutExtraAiCall()throws Exception{
+    var photos=array(Collections.nCopies(5,image(Color.RED)));int[] calls={0};
+    AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){
+      if(++calls[0]==1)return object("text","Черновик","detailRequests",object("single",List.of("2",2,0,99,1.5),"groups",List.of(List.of(2,3,3),List.of(4,5))));
+      assertEquals(2,calls[0]);assertEquals(3,a.size());var manifest=parse(s).path("attachments");
+      assertEquals(array(List.of(2)),manifest.get(0).path("photos"));assertEquals(array(List.of(3)),manifest.get(1).path("photos"));assertEquals("single",text(manifest.get(1),"kind"));assertEquals(array(List.of(4,5)),manifest.get(2).path("photos"));
+      return object("text","Продаётся автомобиль.");
+    }};
+    var result=new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos));
+    assertEquals(2,calls[0]);assertEquals(2,result.path("recognitionPasses").asInt());assertFalse(result.path("warnings").isEmpty());
   }
   @Test void moreThanTwelvePhotosAreAllIncludedAndSingleFrameKeepsItsAspect()throws Exception{
     var composer=new JpegCarPhotoComposer();var result=composer.compose(array(Collections.nCopies(20,image(Color.RED))));
