@@ -18,20 +18,22 @@ export async function auditCabinet({page,browser,origin,until,output,picture}){
   await page.unroute(photoUrl);
  });
  await check('Two rapid clicks cause one request; controls stay locked until completion',async()=>{
+  await page.route(textUrl,r=>r.fulfill({json:{values:{},evidence:{},candidates:{},candidateEvidence:{},warnings:[]}}));
   let release,started=0;const gate=new Promise(r=>release=r);
   await page.route(photoUrl,async r=>{started++;await gate;await r.fulfill({json:{text:'Продаётся белый седан. Коробка передач по фото не определяется.',candidates:{},candidateEvidence:{},warnings:[],collage:{photoCount:6,bytes:1000,width:1536,height:1024}}});});
   const button=car.getByRole('button',{name:'Распознать с ИИ',exact:true});await button.click();await until(()=>Promise.resolve(started===1),'First AI request');
   assert(await button.isDisabled());assert(await car.getByRole('button',{name:'Заполнить с ИИ',exact:true}).isDisabled());assert(await recognized.isDisabled());assert(await source.isDisabled());assert(await car.getByRole('button',{name:'Удалить фото'}).first().isDisabled());
   await button.evaluate(el=>el.click());assert.equal(started,1);release();await until(()=>button.isEnabled(),'Recognition completed');await page.unroute(photoUrl);
   assert.equal(await car.getByRole('alert').count(),0);
+  await page.unroute(textUrl);
  });
  await check('Removing a photo preserves manually edited recognition text',async()=>{
   await recognized.fill('Продаётся BMW 7 серии. Текст исправлен вручную.');await car.getByRole('button',{name:'Удалить фото'}).last().click();
   assert.equal(await car.locator('.photos img').count(),6);assert.equal(await recognized.inputValue(),'Продаётся BMW 7 серии. Текст исправлен вручную.');
  });
- await check('Photo count limit rejects extra photos without dropping the six existing ones',async()=>{
+ await check('Adding photos beyond twelve preserves all existing and new photos',async()=>{
   await car.locator('input[type=file]').setInputFiles(Array.from({length:7},(_,i)=>({name:'overflow-'+i+'.png',mimeType:'image/png',buffer:picture})));
-  await car.getByRole('alert').waitFor();assert.equal(await car.locator('.photos img').count(),6);assert((await car.getByRole('alert').innerText()).includes('12'));
+  await until(()=>car.locator('.photos img').count().then(n=>n===13),'All thirteen photos loaded');assert.equal(await car.getByRole('alert').count(),0);
  });
  await check('A failed options request can recover without leaving a stale error',async()=>{
   const url=origin+'/api/workspace/categories/cars_used_sale/options**';
@@ -77,7 +79,7 @@ export async function auditCabinet({page,browser,origin,until,output,picture}){
   }
   for(const label of labels){await page.getByRole('tab',{name:label,exact:true}).click();assert((await page.getByRole('tabpanel',{name:label,exact:true}).locator('textarea.source-description').inputValue()).includes(label));}
   await page.getByRole('tab',{name:'Продажа домов',exact:true}).press('Home');assert.equal(await page.getByRole('tab',{name:'Аренда квартир',exact:true}).getAttribute('aria-selected'),'true');
-  await page.getByRole('button',{name:'Автомобили',exact:true}).click();assert.equal(await car.getByLabel('Цена',{exact:true}).inputValue(),beforePrice);assert.equal(await car.locator('.photos img').count(),6);
+  await page.getByRole('button',{name:'Автомобили',exact:true}).click();assert.equal(await car.getByLabel('Цена',{exact:true}).inputValue(),beforePrice);assert.equal(await car.locator('.photos img').count(),13);
  });
  await check('Narrow viewport keeps recognition controls and fields within the screen',async()=>{
   await page.setViewportSize({width:390,height:844});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));assert(await car.getByRole('button',{name:'Распознать с ИИ',exact:true}).isVisible());

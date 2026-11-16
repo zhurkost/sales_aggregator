@@ -7,6 +7,7 @@ import path from 'node:path';
 import {chromium} from 'playwright';
 import {auditCabinet} from './test-cabinet-audit.mjs';
 import {verifyCarAiChain} from './test-car-ai-chain-browser.mjs';
+import {verifyCarExtras} from './test-car-extras-browser.mjs';
 const root=path.resolve(import.meta.dirname,'..'),origin='http://localhost:5173';
 const output=path.join(root,'work/cars-browser-tests');await mkdir(output,{recursive:true});const scratch=await mkdtemp(path.join(output,'run-'));
 const socket=createServer().listen(0,'127.0.0.1');await once(socket,'listening');const port=socket.address().port;await new Promise(r=>socket.close(r));
@@ -59,13 +60,14 @@ try{
  await page.screenshot({path:path.join(output,'cars-desktop.png'),fullPage:true});await page.setViewportSize({width:390,height:844});assert(await page.getByRole('button',{name:'Опубликовать',exact:true}).isVisible());assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(output,'cars-mobile.png'),fullPage:true});await page.setViewportSize({width:1400,height:1000});
  const chooserReady=page.waitForEvent('filechooser');await page.getByRole('button',{name:'＋ Фото',exact:true}).click();const chooser=await chooserReady;assert(chooser.isMultiple());await chooser.setFiles([]);results.push('Real-estate style photo button opens multi-file chooser');
  // Only the external AI answers are fixtures; the editor, upload conversion and options API are real.
+ results.push(await verifyCarExtras({page,origin}));
  let photoCalls=0,textCalls=0;
  const carData=JSON.parse(await readFile(path.join(root,'data/automotive/cars_used_sale/runtime.json'),'utf8'));
  const transmissions=Object.values(carData.nodes).filter(n=>n.field==='car.transmission').slice(0,2);
  const recognized='Продаётся Kia Rio в кузове седан, белого цвета. Коробка передач по фото не определяется.';
  const candidates={'car.transmission':transmissions.map(n=>n.id)},candidateEvidence={'car.transmission':'По фото возможны несколько коробок.'};
  await page.route(origin+'/api/workspace/categories/cars_used_sale/recognize-photos',async route=>{
-  photoCalls++;const body=route.request().postDataJSON();assert.equal(body.images.length,6);assert(body.images.every(p=>p.startsWith('data:image/jpeg;base64,')));
+  photoCalls++;const body=route.request().postDataJSON();assert.equal(body.images.length,7);assert(body.images.every(p=>p.startsWith('data:image/jpeg;base64,')));
   await route.fulfill({json:{text:recognized,candidates,candidateEvidence,warnings:[],collage:{photoCount:6,bytes:12000,width:1536,height:1024}}});
  });
  await page.route(origin+'/api/workspace/categories/cars_used_sale/analyze',async route=>{
@@ -90,7 +92,7 @@ try{
  await page.getByRole('button',{name:'Все варианты',exact:true}).click();await page.getByRole('combobox',{name:'Коробка передач',exact:true}).click();
  await until(()=>page.getByRole('listbox',{name:'Коробка передач',exact:true}).getByRole('option').count().then(n=>n>3),'All transmissions restored');
  await page.getByLabel('Распознано ИИ',{exact:true}).click();assert.equal(photoCalls,1);assert.equal(textCalls,1);
- results.push('Seven photos → first six sent once; separate editable AI text; automatic combined text call; candidate filtering, reset and manual value preservation');
+ results.push('All seven photos sent once; separate editable AI text; automatic combined text call; candidate filtering, reset and manual value preservation');
  if(process.argv.includes('--audit'))results.push(...await auditCabinet({page,browser,origin,until,output,picture}));
  const aiCaseFile=process.argv.find(a=>a.startsWith('--ai-chain='))?.slice('--ai-chain='.length);
  if(aiCaseFile)results.push(...await verifyCarAiChain({page,origin,until,output,runtime:carData,caseFile:aiCaseFile,photoDirectory:process.argv.find(a=>a.startsWith('--photo-directory='))?.slice('--photo-directory='.length)}));

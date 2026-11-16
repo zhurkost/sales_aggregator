@@ -91,7 +91,13 @@ export class CarEditorComponent implements OnInit,OnDestroy {
   const last=result.path.at(-1);for(const child of this.schema!.fields.filter(f=>f.parent_option_id===last?.field))await this.loadOptions(child);
  }
  togglePlatform(id:string,checked:boolean){this.card.platforms=checked?[...new Set([...this.card.platforms,id])]:this.card.platforms.filter(p=>p!==id);this.change();}
- extra(f:CarField,value:unknown){(this.card.extras[f.platform!]??={})[f.id]=this.inputValue(f,value);this.change();}
+ extra(f:CarField,value:unknown){
+  const fields=this.card.extras[f.platform!]??={};
+  const normalized=f.type==='multi_enum'&&Array.isArray(value)?value.filter(v=>v!==''):this.inputValue(f,value);
+  if(normalized==null||normalized===''||Array.isArray(normalized)&&!normalized.length)delete fields[f.id];
+  else fields[f.id]=normalized;
+  this.change();
+ }
  private readonly emptySelection:string[]=[];
  extraValue(f:CarField):any{return this.card.extras[f.platform!]?.[f.id]??(f.type==='multi_enum'?this.emptySelection:'');}
  extraFields(platform:string){return this.schema?.extras.filter(f=>f.platform===platform&&f.type!=='files')||[];}

@@ -26,6 +26,11 @@ class CarCatalogTest {
       assertEquals("choose",state.path("binding").path("action").asText());assertFalse(state.path("binding").path("suggestions").path("selector").asText().isBlank());
     }
   }
+  @Test void editorDoesNotOfferOverridesForAutomaticConditionOrMileageUnits(){
+    var ids=list(catalog.editor().path("extras")).stream().map(f->text(f,"id")).toList();
+    for(String fixed:List.of("kufar.condition","onliner.state","onliner.odometerUnit","av.mileage_unit"))assertFalse(ids.contains(fixed));
+    assertTrue(ids.contains("onliner.powerUnit"));assertTrue(ids.contains("onliner.parktronic"));
+  }
   @Test void generationsRequireMappingsOnEveryPlatformAndHiddenIdsCannotBeSelected(){
     for(JsonNode n:DATA.path("nodes"))if(text(n,"field").equals("car.generation")){
       boolean complete=list(DATA.path("platforms")).stream().allMatch(p->DATA.path("mappings").path(text(p,"id")).path("nodes").has(text(n,"id")));

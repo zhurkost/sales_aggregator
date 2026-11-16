@@ -13,7 +13,13 @@ public class CarCatalogService {
   private final CarReference reference;
   public CarCatalogService(CarReference reference){this.reference=reference;}
   public JsonNode data(){return reference.data();}
-  public ObjectNode editor(){ArrayNode fields=data().path("fields").deepCopy();for(JsonNode f:fields)if(text(f,"id").equals("car.year"))((ObjectNode)f).put("control","select");return object("categoryId","cars_used_sale","fields",fields,"extras",data().path("extras"),"platforms",data().path("platforms"));}
+  public ObjectNode editor(){
+    ArrayNode fields=data().path("fields").deepCopy();for(JsonNode f:fields)if(text(f,"id").equals("car.year"))((ObjectNode)f).put("control","select");
+    // Category condition and common mileage units are assigned by preparation, not editable site overrides.
+    Set<String> automatic=Set.of("kufar.condition","onliner.state","onliner.odometerUnit","av.mileage_unit");
+    ArrayNode extras=array();for(JsonNode f:list(data().path("extras")))if(!automatic.contains(text(f,"id")))extras.add(f);
+    return object("categoryId","cars_used_sale","fields",fields,"extras",extras,"platforms",data().path("platforms"));
+  }
   public JsonNode node(String id){return data().path("nodes").path(data().path("identityAliases").path(id).asText(id));}
   /** Only generations with an approved native counterpart on every platform are offered. */
   public boolean selectable(JsonNode node){
