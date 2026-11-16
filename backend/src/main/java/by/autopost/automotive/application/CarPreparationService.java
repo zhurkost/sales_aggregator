@@ -66,6 +66,7 @@ public class CarPreparationService {
       });
       // Explicit scope and units, never inferred from a photograph.
       if(p.equals("kufar"))target.set("kufar.condition",object("value","1","name","С пробегом"));
+      if(p.equals("onliner"))target.set("onliner.state",object("value","owned","name","с пробегом"));
       if(p.equals("kufar")&&values.has("car.price"))target.set("kufar.price_mode",object("value","common","name","Цена"));
       if(p.equals("onliner")&&values.has("car.region"))target.set("onliner.country",object("value",mapping.path("context").get("value"),"name","Беларусь"));
       if(values.has("car.phone")){

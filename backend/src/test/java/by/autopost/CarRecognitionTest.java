@@ -78,7 +78,7 @@ class CarRecognitionTest {
       assertThrows(ApiException.class,()->service.recognize("test",object("images",images)));
   }
 
-  @Test void photoRecognitionUsesOneImageOneCallAndOnlyValidatedCompactCandidates()throws Exception{
+  @Test void photoRecognitionRequiresWholeFrameEvenForOneImageAndValidatesCompactCandidates()throws Exception{
     int[] calls={0};
     AiGateway ai=new AiGateway(){
       public String model(){return "test";}
@@ -86,11 +86,11 @@ class CarRecognitionTest {
       public ObjectNode serverJson(String i,String p,String s,List<String> images){
         calls[0]++;assertEquals(1,images.size());assertTrue(images.get(0).startsWith("data:image/jpeg;base64,"));assertFalse(p.contains("car.option."));assertFalse(p.contains("parentId"));
         JsonNode fields=parse(p.substring(p.lastIndexOf("справочника: ")+13));
-        return object("text","Продаётся Kia Rio в кузове седан. Коробка передач по фото не определяется.","candidates",object("car.transmission",List.of(code(fields,"car.transmission",0),code(fields,"car.transmission",1)),"car.engine",List.of(code(fields,"car.engine",0),"invented")),"candidateEvidence",object("car.transmission","У модели несколько вариантов","car.engine","Варианты двигателя"),"detailRequests",object("single",array(),"groups",array()));
+        return object("text","Продаётся Kia Rio в кузове седан. Коробка передач по фото не определяется.","candidates",object("car.transmission",List.of(code(fields,"car.transmission",0),code(fields,"car.transmission",1)),"car.engine",List.of(code(fields,"car.engine",0),"invented")),"candidateEvidence",object("car.transmission","У модели несколько вариантов","car.engine","Варианты двигателя"),"detailRequests",object("single",List.of(1),"groups",array()));
       }
     };
     var result=new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",List.of(photo(Color.RED))));
-    assertEquals(1,calls[0]);assertEquals(2,result.path("candidates").path("car.transmission").size());
+    assertEquals(2,calls[0]);assertEquals(2,result.path("recognitionPasses").asInt());assertEquals(2,result.path("candidates").path("car.transmission").size());
     assertFalse(result.path("candidates").has("car.engine"));assertFalse(result.path("warnings").isEmpty());
     assertEquals("Продаётся Kia Rio в кузове седан. Коробка передач по фото не определяется.",text(result,"text"));assertFalse(result.has("values"));
   }

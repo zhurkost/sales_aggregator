@@ -74,15 +74,16 @@ public class CarPhotoRecognitionService {
       Например: {single:[3],groups:[[1,5],[2,4]]}. Номера относятся к исходному обзорному коллажу.
       Каждый номер можно запросить только один раз; группа содержит минимум два разных снимка.
       Запрашивай только полезные уточнения из присланных фото; не проси отсутствующих снимков.
-      Если поколение или рестайлинг нельзя различить на коллаже, но в наборе есть подходящий ракурс,
-      запроси через detailRequests.single один наиболее информативный снимок целиком:
+      Обязательно запроси через detailRequests.single наиболее информативный снимок целиком
+      для проверки поколения и рестайлинга, даже если первоначальное определение уверенное:
       переднюю или заднюю часть, фары, решётку, салон либо заводскую маркировку.
       Выбирай кадр с признаками, различающими конкретные рассматриваемые поколения.
-      Не запрашивай фото только ради повторения уже уверенного определения; если нужного ракурса нет,
-      не выдумывай его номер. В observations укажи, какие признаки нужно уточнить на выбранном фото.
+      Поставь этот снимок первым в single. Если подходящего ракурса нет, выбери наиболее полезный
+      из имеющихся и укажи недостаток признаков в warnings; не выдумывай отсутствующие снимки.
+      Даже при единственном исходном фото запроси его отдельно: коллаж не заменяет целый кадр.
+      В observations укажи номер кадра и признаки поколения/рестайлинга для проверки.
       Если этот кадр уже запрошен для пробега, используй его же без повторного номера в плане.
-      Если кадров с приборной панелью/одометром нет и другие уточнения не нужны,
-      верни {single:[],groups:[]} и окончательный результат сразу.
+      На первом этапе single не может быть пустым. Окончательный результат формируется только на втором этапе.
       """+options;
     ObjectNode overview=ai.serverJson(identity,overviewPrompt,"На коллаже все "+collage.photoCount()+" фото. Порядок слева направо, сверху вниз; пустые ячейки не являются фотографиями.",List.of(collage.dataUrl()));
     var requests=detailRequests(overview.path("detailRequests"),images.size());
@@ -100,6 +101,7 @@ public class CarPhotoRecognitionService {
         Объедини всю подтверждённую информацию обоих этапов, исправь ошибочные догадки.
         На отдельном кадре для уточнения поколения проверь различающие признаки и уточни поколение
         и рестайлинг в generationHint. В text указывай их только при однозначном определении.
+        Первое вложение single — обязательный кадр для проверки поколения и рестайлинга.
         Сохрани наблюдения с обзорного коллажа, не опровергнутые деталями; не теряй информацию о других кадрах.
         attachments сопоставляет каждое вложение с исходными номерами фото. single — целый исходный кадр;
         group — коллаж, где локальные номера 1..K соответствуют порядку исходных номеров в photos.
@@ -118,7 +120,7 @@ public class CarPhotoRecognitionService {
   }
   private ArrayNode observations(JsonNode reply){ArrayNode result=array();for(JsonNode item:list(reply.path("observations"))){if(result.size()==40)break;if(item.isTextual())result.add(clean(item,1000));}return result;}
   private ArrayNode detailRequests(JsonNode plan,int count){
-    if(!plan.isObject()||!plan.path("single").isArray()||!plan.path("groups").isArray())throw invalidPlan();
+    if(!plan.isObject()||!plan.path("single").isArray()||plan.path("single").isEmpty()||!plan.path("groups").isArray())throw invalidPlan();
     ArrayNode result=array();Set<Integer> used=new HashSet<>();
     for(JsonNode index:plan.path("single")){checkIndex(index,count,used);result.add(object("kind","single","photos",array(List.of(index))));}
     for(JsonNode group:plan.path("groups")){

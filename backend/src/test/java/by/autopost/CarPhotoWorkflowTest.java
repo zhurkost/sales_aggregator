@@ -57,6 +57,14 @@ class CarPhotoWorkflowTest {
     AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){throw new AssertionError("All photos must be validated first");}};
     assertThrows(ApiException.class,()->new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos)));
   }
+  @Test void missingMandatoryWholeFrameCannotReturnAnOverviewAsFinal()throws Exception{
+    var photos=array(List.of(image(Color.RED),image(Color.BLUE)));
+    for(JsonNode groups:List.of(array(),array(List.of(List.of(1,2))))){
+      int[] calls={0};AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){calls[0]++;return object("text","Уверенное предварительное описание","detailRequests",object("single",array(),"groups",groups));}};
+      assertThrows(ApiException.class,()->new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",photos)));
+      assertEquals(1,calls[0],"Reject an incomplete plan without silently bypassing generation verification or retrying AI");
+    }
+  }
   @Test void moreThanTwelvePhotosAreAllIncludedAndSingleFrameKeepsItsAspect()throws Exception{
     var composer=new JpegCarPhotoComposer();var result=composer.compose(array(Collections.nCopies(20,image(Color.RED))));
     assertEquals(20,result.photoCount());assertEquals(2048,result.width());assertEquals(2560,result.height());assertTrue(result.byteSize()<512_000);

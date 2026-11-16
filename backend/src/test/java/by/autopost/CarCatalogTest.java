@@ -17,6 +17,15 @@ class CarCatalogTest {
   final CarCatalogService catalog=new CarCatalogService(()->DATA);
   final CarPreparationService service=new CarPreparationService(catalog);
   String option(String field,String parent,String name){return list(catalog.options(field,parent,name,0).path("items")).stream().filter(o->text(o,"name").equalsIgnoreCase(name)).findFirst().orElseThrow().path("id").asText();}
+  @Test void onlinerUsedCarStateIsAlwaysIncludedRegardlessOfOptionalExtras(){
+    for(JsonNode extras:List.of(object(),object("onliner",object("onliner.state","onliner.state.emergency")))){
+      var input=object("id","used-state","revision",1,"card",object("values",object(),"platforms",List.of("onliner"),"extras",extras));
+      var job=service.configuration(input).path("jobs").get(0);
+      var state=list(job.path("controls")).stream().filter(c->text(c,"field").equals("onliner.state")).findFirst().orElseThrow();
+      assertEquals("owned",text(state,"value"));assertEquals("с пробегом",text(state,"name"));
+      assertEquals("choose",state.path("binding").path("action").asText());assertFalse(state.path("binding").path("suggestions").path("selector").asText().isBlank());
+    }
+  }
   @Test void generationsRequireMappingsOnEveryPlatformAndHiddenIdsCannotBeSelected(){
     for(JsonNode n:DATA.path("nodes"))if(text(n,"field").equals("car.generation")){
       boolean complete=list(DATA.path("platforms")).stream().allMatch(p->DATA.path("mappings").path(text(p,"id")).path("nodes").has(text(n,"id")));
