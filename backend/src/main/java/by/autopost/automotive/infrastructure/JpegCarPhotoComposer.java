@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JpegCarPhotoComposer implements CarPhotoComposer {
   public static final int MAX_BYTES=512_000;
+  // Small bitmap numerals keep headless servers independent of native font libraries.
+  private static final String[] DIGITS={"111101101101111","010110010010111","111001111100111","111001111001111","101101111001001","111100111001111","111100111101111","111001001001001","111101111101111","111101111001111"};
   @Override public Collage compose(JsonNode images){
     if(!images.isArray()||images.isEmpty())throw new ApiException(400,"Добавьте фотографии.");
     int count=images.size(),columns=4,rows=(count+columns-1)/columns;
@@ -28,10 +30,18 @@ public class JpegCarPhotoComposer implements CarPhotoComposer {
         double scale=Math.min(Math.max(1,cell-2*padding)/(double)photo.getWidth(),Math.max(1,cell-caption-padding)/(double)photo.getHeight());
         int w=Math.max(1,(int)Math.round(photo.getWidth()*scale)),h=Math.max(1,(int)Math.round(photo.getHeight()*scale));
         g.drawImage(photo,(i%columns)*cell+(cell-w)/2,(i/columns)*cell+caption+(cell-caption-h)/2,w,h,null);photo.flush();
-        g.setColor(Color.BLACK);g.setFont(new Font(Font.SANS_SERIF,Font.BOLD,Math.max(1,caption*2/3)));g.drawString(Integer.toString(i+1),(i%columns)*cell+padding,(i/columns)*cell+caption*3/4);
+        drawNumber(g,i+1,(i%columns)*cell+padding,(i/columns)*cell+padding,Math.max(1,caption/7));
       }
     }finally{g.dispose();}
     return bounded(canvas,count);
+  }
+  private static void drawNumber(Graphics2D g,int number,int x,int y,int scale){
+    g.setColor(Color.BLACK);
+    for(char digit:Integer.toString(number).toCharArray()){
+      String pixels=DIGITS[digit-'0'];
+      for(int i=0;i<pixels.length();i++)if(pixels.charAt(i)=='1')g.fillRect(x+(i%3)*scale,y+(i/3)*scale,scale,scale);
+      x+=4*scale;
+    }
   }
   @Override public Collage composeSingle(JsonNode image){
     BufferedImage photo=decode(image,1600);

@@ -89,6 +89,33 @@ class CarCatalogTest {
     ((ObjectNode)card.path("values")).put("car.engine_capacity",1.2345);
     assertFalse(service.prepare(card).path("platforms").get(0).path("values").has("av.engine_capacity"));
   }
+  @Test void abwModificationUsesValidatedCapacityAndMappedGearboxWithoutCatalogEnumeration(){
+    for(var sample:List.of(List.of("Механика","MT"),List.of("Автоматическая","AT"),List.of("Вариатор","CVT"),List.of("Робот","AMT"))){
+      String transmission=option("car.transmission","",sample.get(0));
+      var card=object("values",object("car.engine_capacity",1.6,"car.transmission",transmission),"platforms",List.of("abw","av"));
+      var jobs=service.configuration(object("id","modification","revision",1,"card",card)).path("jobs");
+      var control=list(jobs.get(0).path("controls")).stream().filter(c->text(c,"field").equals("abw.modification")).findFirst().orElseThrow();
+      assertEquals("1.6 "+sample.get(1),text(control,"name"));assertEquals("engine_transmission",text(control.path("binding"),"match"));
+      assertTrue(has(control.path("binding").path("depends_on"),"abw.transmission"));
+      assertFalse(list(jobs.get(1).path("controls")).stream().anyMatch(c->text(c,"field").equals("abw.modification")));
+      ((ObjectNode)card.path("values")).remove("car.engine_capacity");
+      assertFalse(service.configuration(object("id","no-capacity","revision",1,"card",card)).path("jobs").get(0).path("controls").toString().contains("abw.modification"));
+    }
+  }
+  @Test void abwContactRecipeIncludesExplicitBindingsAndOptionalEmail(){
+    var card=object("values",object("car.seller_name","Продавец","car.phone","+375291112233"),"extras",object("abw",object("abw.email","seller@example.test")),"platforms",List.of("abw"));
+    var job=service.configuration(object("id","contacts","revision",1,"card",card)).path("jobs").get(0);
+    for(String field:List.of("abw.seller_name","abw.phone","abw.email")){
+      var control=list(job.path("controls")).stream().filter(c->text(c,"field").equals(field)).findFirst().orElseThrow();
+      assertTrue(control.path("binding").path("replace_existing").asBoolean());
+      assertEquals(1,control.path("binding").path("target").path("selectors").size());
+      if(field.equals("abw.phone")){
+        assertTrue(control.path("binding").path("read_disabled").asBoolean());
+        assertEquals("phone_digits_equals",text(control.path("binding").path("verify"),"kind"));
+      }
+    }
+    assertTrue(job.path("submit").isEmpty());
+  }
   @Test void mergedBmwModelResolvesTheNativeBranchOfEachGeneration(){
     String bmw=option("car.brand","","BMW"),two=option("car.model",bmw,"2 серия");
     String f22=option("car.generation",two,"F22 / F23"),g42=option("car.generation",two,"G42");

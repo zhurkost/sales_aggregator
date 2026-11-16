@@ -1,6 +1,14 @@
 (function(root){
  'use strict';
  const norm=v=>String(v??'').normalize('NFKC').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ');
+ const labelName=v=>norm(v).replace(/\s*\*\s*$/,'');
+ function modificationMatches(label,wanted){
+   const latin=v=>norm(v).replace(/[мта]/g,c=>({'м':'m','т':'t','а':'a'}[c]));
+   const spec=latin(wanted).match(/^(\d+(?:[.,]\d+)?)\s+(mt|at|cvt|amt)$/);
+   const text=latin(label),capacity=text.match(/(?:^|[^\d.,])(\d+(?:[.,]\d+)?)/);
+   return !!spec&&!!capacity&&Number(capacity[1].replace(',','.'))===Number(spec[1].replace(',','.'))
+     &&new RegExp('(?:^|[^a-zа-я])'+spec[2]+'(?:$|[^a-zа-я])').test(text);
+ }
  const visible=e=>!!e&&!e.closest('[hidden],[aria-hidden="true"]')&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden'&&(e.getClientRects().length>0||navigator.userAgent.includes('HappyDOM'));
  const query=s=>{try{return [...document.querySelectorAll(s)].filter(e=>!e.closest('#autopost-rental-helper'));}catch{return [];}};
  const enabled=e=>!e.disabled&&e.getAttribute('aria-disabled')!=='true';
@@ -21,12 +29,15 @@
    return controls.length===1?controls[0]:null;
  }
  function targets(c){const b=c.binding||{};if(b.status==='unsupported')return [];
-  if(b.target?.label){const labels=query(b.target.labels).filter(e=>visible(e)&&norm(e.textContent)===norm(b.target.label));if(labels.length!==1)return [];const box=b.target.container?labels[0].closest(b.target.container):labels[0].parentElement;const found=b.target.selector?[...box?.querySelectorAll(b.target.selector)||[]]:[box];return found.filter(e=>e&&rendered(e)&&enabled(e));}
-  if(b.target?.selectors){for(const selector of b.target.selectors){const found=query(selector).filter(e=>rendered(e)&&enabled(e));if(found.length)return found;}}const e=fallback(c);return e?[e]:[];}
+  if(b.target?.label){const labels=query(b.target.labels).filter(e=>visible(e)&&labelName(e.textContent)===labelName(b.target.label));if(labels.length!==1)return [];const box=b.target.container?labels[0].closest(b.target.container):labels[0].parentElement;const found=b.target.selector?[...box?.querySelectorAll(b.target.selector)||[]]:[box];return found.filter(e=>e&&rendered(e)&&enabled(e));}
+  if(b.target?.selectors){for(const selector of b.target.selectors){const found=query(selector).filter(e=>rendered(e)&&(enabled(e)||b.read_disabled===true));if(found.length)return found;}}const e=fallback(c);return e?[e]:[];}
  function read(c,target){const b=c.binding||{},v=b.verify||{};const candidates=v.within_target?[...target.querySelectorAll(v.within_target)].filter(rendered):v.target?.selectors? v.target.selectors.flatMap(query).filter(rendered):[target];
   // Onliner removes the identity radio group after selection and shows its name in the step header.
   if(!candidates.length&&v.fallbackTextSelectors){const labels=v.fallbackTextSelectors.flatMap(query).filter(e=>visible(e)&&!!norm(c.name)&&norm(e.textContent)===norm(c.name));return labels.length===1;}
   if(candidates.length!==1)return false;const e=candidates[0];
+  if(v.kind==='element_id_equals')return e.id===b.id_prefix+String(c.value);
+  if(v.kind==='phone_digits_equals'){const wanted=String(c.value??'').replace(/\D/g,'');return !!wanted&&String(e.value??'').replace(/\D/g,'')===wanted;}
+  if(b.match==='engine_transmission')return modificationMatches(content(e),c.name);
   if(v.kind==='checked_equals'||b.action==='set_checked')return e.checked===c.value;
   if(v.kind==='value_equals'||b.action==='set_value'||b.action==='select_option'||!b.action&&['INPUT','TEXTAREA','SELECT'].includes(e.tagName))return equal(e.value,c.value);
   return norm(e.tagName==='SELECT'?e.selectedOptions[0]?.textContent:content(e))===norm(b.displayLabels?.[c.value]??c.name);
@@ -57,7 +68,7 @@
   }
   openUsedCarForm(){
     if(this.recipe.platform!=='av'||this.usedCarOpened)return false;
-    const links=query('a,button').filter(e=>visible(e)&&enabled(e)&&(e.querySelector('.category-item__title')
+    const links=query('a,button').filter(e=>!e.matches('.newad__breadcrumb-button')&&visible(e)&&enabled(e)&&(e.querySelector('.category-item__title')
       ?norm(e.querySelector('.category-item__title').textContent)==='автомобиль с пробегом'
       :/^автомобиль с пробегом(?:\s|$)/.test(norm(e.textContent))));
     if(links.length!==1||this.protected.has(links[0]))return false;
@@ -72,12 +83,78 @@
   }
   continueAbw(changed){
     if(this.recipe.platform!=='abw')return false;
-    const buttons=query('.adverts-form > button[type="button"]').filter(e=>visible(e)&&enabled(e)&&norm(e.textContent)==='продолжить');
+    const buttons=query('.adverts-form > button[type="button"]').filter(e=>visible(e)&&enabled(e)&&['продолжить','введите цену'].includes(norm(e.textContent)));
     if(buttons.length!==1||this.protected.has(buttons[0]))return false;
-    const panel=buttons[0].parentElement;
+    let panel=buttons[0].parentElement;
+    if(panel.querySelector('[aria-busy="true"],[aria-invalid="true"]'))return false;
+    const price=panel.querySelector('input[placeholder="Цена"]');
+    if(price){
+      const fields=[...panel.querySelectorAll('input:not([type="hidden"]),textarea,select')].filter(rendered);
+      const amount=this.controls.find(c=>c.field==='abw.price'),currency=this.controls.find(c=>c.field==='abw.currency');
+      const currencyTargets=currency?targets(currency):[];
+      if(fields.length!==1||fields[0]!==price||!amount||!currency||!norm(price.value)||price.validity?.valid===false||price.matches('[class*="_inputError_"]')
+        ||!this.done.has(amount.field)||!this.done.has(currency.field)||!read(amount,price)
+        ||currencyTargets.length!==1||!panel.contains(currencyTargets[0])||!read(currency,currencyTargets[0])){
+        this.continueSnapshot=null;return false;
+      }
+      return this.continueStep(buttons[0],panel,'abw-price',changed);
+    }
+    if(norm(buttons[0].textContent)!=='продолжить')return false;
+    const contactName=panel.querySelector('input[placeholder="Имя"]'),contactPhone=panel.querySelector('input[placeholder="Номер телефона"]');
+    if(contactName&&contactPhone){
+      const inputs=[...panel.querySelectorAll('input:not([type="hidden"]),textarea,select')].filter(rendered);
+      const supplied=this.controls.filter(c=>['abw.seller_name','abw.email','abw.phone','abw.city'].includes(c.field)&&norm(c.value));
+      const unaccepted=supplied.some(c=>{const ts=targets(c);return ts.length!==1||!panel.contains(ts[0])||!read(c,ts[0]);});
+      const cities=[...panel.querySelectorAll('button')].filter(e=>visible(e)&&/город\s*\*?$/i.test(norm(e.textContent)));
+      const citySelected=cities.length===1&&!!norm(cities[0].textContent).replace(/город\s*\*?$/,'').trim();
+      if(!norm(contactName.value)||!norm(contactPhone.value)||!citySelected||unaccepted
+        ||inputs.some(e=>e.validity?.valid===false||e.getAttribute('aria-invalid')==='true'||e.matches('[class*="_inputError_"]')
+          ||e.required&&!norm(e.value))){this.continueSnapshot=null;return false;}
+      return this.continueStep(buttons[0],panel,'abw-contacts',changed);
+    }
+    if(panel.querySelector('input[type="file"].uploader-field')){
+      if(!this.photoSent||!this.done.has('photos'))return false;
+      return this.continueStep(buttons[0],panel,'abw-photos',changed);
+    }
+    const description=panel.querySelector('textarea[placeholder="Честно опишите достоинства и недостатки своего автомобиля"]');
+    if(description){
+      const control=this.controls.find(c=>c.field==='abw.description');
+      if(!control||!norm(control.value)||!this.done.has(control.field)||!read(control,description)||description.validity?.valid===false)return false;
+      return this.continueStep(buttons[0],panel,'abw-description',changed);
+    }
+    const vin=panel.querySelector('input[placeholder="VIN"]');
+    if(vin){
+      // Only the standalone VIN step, not an initial VIN lookup or a contacts/final form.
+      const fields=[...panel.querySelectorAll('input:not([type="hidden"]),textarea,select')].filter(rendered);
+      if(fields.length!==1||fields[0]!==vin||!enabled(vin)||vin.validity?.valid===false
+        ||[...panel.querySelectorAll('button')].some(e=>norm(e.textContent)==='заполнить вручную'))return false;
+      const control=this.controls.find(c=>c.field==='abw.vin'&&norm(c.value));
+      if(control&&(!this.done.has(control.field)||!read(control,vin)))return false;
+      if(!norm(vin.value)&&(vin.required||vin.getAttribute('aria-required')==='true'))return false;
+      return this.continueStep(buttons[0],panel,'abw-vin',changed);
+    }
     // Only the reviewed vehicle-details step; no publication, contacts or paid promotion steps.
-    const labels=[...panel.querySelectorAll('.item-title')].filter(visible).map(e=>norm(e.textContent));
+    let labels=[...panel.querySelectorAll('.item-title')].filter(visible).map(e=>labelName(e.textContent));
+    // ABW places the button in the nested condition/color section, beside the technical section.
+    if(['цвет кузова','состояние','наличие'].every(label=>labels.includes(label))){
+      panel=panel.parentElement?.closest('.adverts-form')||panel;
+      labels=[...panel.querySelectorAll('.item-title')].filter(visible).map(e=>labelName(e.textContent));
+    }
     if(!['марка','модель','год выпуска'].every(label=>labels.includes(label))||panel.querySelector('[aria-busy="true"]'))return false;
+    // ABW renders accepted values in item-selected; typed search text is not a selection.
+    const required=[...panel.querySelectorAll('.item-title_required')].filter(visible);
+    const missingChoice=required.some(label=>!norm(label.closest('.adverts-form-item')?.querySelector('.item-selected')?.textContent));
+    const inputs=[...panel.querySelectorAll('input,select,textarea')].filter(e=>rendered(e)&&enabled(e));
+    const missingInput=inputs.some(e=>e.validity?.valid===false||e.getAttribute('aria-invalid')==='true'
+      ||(e.required||e.getAttribute('aria-required')==='true'||e.getAttribute('placeholder')==='Пробег, км')&&!norm(e.value));
+    const unaccepted=this.controls.some(c=>{
+      if(c.value==null||c.binding?.status==='unsupported'||this.protected.has(c))return false;
+      return targets(c).some(e=>panel.contains(e)&&!this.protected.has(e)&&!read(c,e)
+        &&!(c.binding?.match==='engine_transmission'&&norm(e.querySelector('.item-selected')?.textContent)));
+    });
+    if(missingChoice||missingInput||unaccepted||[...panel.querySelectorAll('[aria-invalid="true"]')].some(visible)){
+      this.continueSnapshot=null;return false;
+    }
     return this.continueStep(buttons[0],panel,'abw-details',changed);
   }
   continueOnliner(changed){
@@ -103,19 +180,30 @@
     this.continueAttempts??=new Set();if(this.continueAttempts.has(signature))return false;
     this.continueAttempts.add(signature);this.click(button);return true;
   }
-  ready(){return this.recipe.platform==='kufar'?query('[data-name="cars_brand_v2"]').some(visible):query('input,select,textarea').some(visible);}
-  blockedReason(){return null;}
+  ready(){return this.recipe.platform==='kufar'?query('[data-name="cars_brand_v2"]').some(visible):query('input,select,textarea').some(this.recipe.platform==='av'?rendered:visible);}
+  blockedReason(){
+    if(this.recipe.platform==='abw'){
+      const c=this.controls.find(c=>c.field==='abw.phone'&&norm(c.value));
+      if(c){const ts=targets(c);if(ts.length===1&&(!enabled(ts[0])||ts[0].readOnly)&&!read(c,ts[0]))
+        return 'Телефон в объявлении отличается от телефона аккаунта ABW. Поле заблокировано площадкой; проверьте номер перед продолжением.';}
+    }
+    return null;
+  }
   awaitingPhotos(){return this.photoSent&&this.photos.length&&!this.done.has('photos');}
   remaining(){return [...this.controls.filter(c=>!this.done.has(c.field)).map(c=>c.label||c.field),...(this.photos.length&&!this.done.has('photos')?['Фотографии']:[]),...(this.recipe.issues||[])];}
   async photo(){
-    if(!this.photos.length||this.done.has('photos'))return false;
+    if(!this.photos.length||this.done.has('photos')&&this.recipe.platform!=='abw')return false;
     const b=this.recipe.photoBinding||{};
     if(this.photoSent){
       const v=b.verify;if(!v?.accepted_src_prefix)return false;
       const containers=(v.target?.selectors||[]).flatMap(query).filter(visible),items=containers.flatMap(e=>[...e.querySelectorAll(v.items_selector)]);
       let count=0;
       for(const item of items){const img=item.querySelector(v.image_selector);if(!img)continue;
-        if(v.image_source==='background_image'){const source=getComputedStyle(img).backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1];if(source?.startsWith(v.accepted_src_prefix)){const probe=new Image();probe.src=source;if(probe.complete&&probe.naturalWidth>0)count++;}}
+        if(v.image_source==='background_image'){const source=getComputedStyle(img).backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1];if(source?.startsWith(v.accepted_src_prefix)){
+          this.photoProbes??=new Map();let probe=this.photoProbes.get(source);
+          if(!probe){probe=new Image();probe.src=source;this.photoProbes.set(source,probe);}
+          if(probe.complete&&probe.naturalWidth>0)count++;
+        }}
         else if(img.src?.startsWith(v.accepted_src_prefix)&&img.complete&&img.naturalWidth>0)count++;
       }
       const counters=(v.counter_target?.selectors||[]).flatMap(query).filter(visible);
@@ -123,7 +211,8 @@
       if(counters.length===1){const label=counters[0].textContent.trim(),match=label.match(new RegExp(v.counter?.pattern||'^(\\d+)\\s*(?:/|из)\\s*\\d+'));
         if(match)counterOK=(v.counter?.mode==='remaining'?v.counter.capacity-Number(match[1]):Number(match[1]))===count;
       }
-      if(count===this.photos.length&&counterOK){this.done.add('photos');return true;}return false;
+      if(count===this.photos.length&&counterOK){const changed=!this.done.has('photos');this.done.add('photos');return changed;}
+      this.done.delete('photos');return false;
     }
     const inputs=(b.target?.selectors||['input[type=file]']).flatMap(query).filter(e=>e.type==='file'&&enabled(e));
     if(inputs.length!==1||this.protected.has(inputs[0])||inputs[0].files?.length)return false;
@@ -148,11 +237,14 @@
       const ts=targets(c);if(ts.length!==1)continue;const e=ts[0];
       if(read(c,e)){this.done.add(c.field);if(this.activeDropdown===c.field)this.resumeQueries();continue;}
       this.done.delete(c.field);
-      if(this.protected.has(e)||this.protected.has(c))continue;
+      if(this.protected.has(e)||this.protected.has(c)||!enabled(e)||e.readOnly)continue;
       const action=c.binding?.action;
+      if(c.binding?.preserve_selected&&query(c.binding.preserve_selected).some(rendered))continue;
+      // Preserve a modification already selected manually or restored by ABW.
+      if(c.binding?.match==='engine_transmission'&&norm(e.querySelector('.item-selected')?.textContent))continue;
       if(action==='set_value'||!action&&c.fieldType!=='enum'&&['INPUT','TEXTAREA'].includes(e.tagName)){
         // Existing form values are preserved, even if different from this card.
-        if(e.value||e.type==='file'||['radio','checkbox'].includes(e.type)||this.tried.has(e))continue;
+        if(e.value&&!c.binding?.replace_existing||e.type==='file'||['radio','checkbox'].includes(e.type)||this.tried.has(e))continue;
         this.tried.add(e);setValue(e,c.value);changed=true;continue;
       }
       if(action==='set_checked'){
@@ -177,7 +269,8 @@
       if(c.binding?.searchSelector){const search=query(c.binding.searchSelector).filter(visible);if(search.length===1&&!search[0].value&&!this.protected.has(search[0])){setValue(search[0],c.name);this.dropdownTicks=0;changed=true;break;}}
       let candidates=isSelect?[...e.options]:(c.binding?.suggestions?.within_target?[...e.querySelectorAll(c.binding.suggestions.within_target)]:c.binding?.suggestions?.selector?query(c.binding.suggestions.selector):query('[role=option],.dropdown-list__item,.select__option'));
       if(this.recipe.platform==='kufar'&&c.binding?.suggestions?.selector?.includes('popup-body')&&this.activeDropdown!==c.field)candidates=[];
-      candidates=candidates.filter(x=>enabled(x)&&rendered(x)&&(c.binding?.match==='value'?equal(x.value,c.value):norm(content(x))===norm(c.binding?.displayLabels?.[c.value]??c.name)));
+      candidates=candidates.filter(x=>enabled(x)&&rendered(x)&&(c.binding?.match==='element_id'?x.id===c.binding.id_prefix+String(c.value):c.binding?.match==='value'?equal(x.value,c.value):c.binding?.match==='engine_transmission'?modificationMatches(content(x),c.name):norm(content(x))===norm(c.binding?.optionLabels?.[c.value]??c.binding?.displayLabels?.[c.value]??c.name)));
+      if(c.binding?.match==='engine_transmission')candidates=candidates.slice(0,1);
       if(candidates.length===1){const option=candidates[0];
         if(this.tried.has(option))continue;this.tried.add(option);
         if(option.tagName==='OPTION')setValue(option.parentElement,option.value);

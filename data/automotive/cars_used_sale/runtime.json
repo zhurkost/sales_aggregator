@@ -1466063,7 +1466063,31 @@
       {
         "option_id": "av.brand",
         "status": "needs_review",
-        "reason": "Справочник обогащён ответами av.by; действие в браузере и чтение установленного значения ещё не проверены."
+        "reason": "Карточки марки и их DOM ID прочитаны в Chrome 2026-11-16. Выбор проверен локально; переход на следующий шаг в браузере ещё не подтверждён.",
+        "action": "choose",
+        "open": false,
+        "match": "element_id",
+        "id_prefix": "catalogItem-brand_",
+        "target": {
+          "selectors": [
+            "main"
+          ]
+        },
+        "suggestions": {
+          "selector": "main input.catalog__control[id^=\"catalogItem-brand_\"]"
+        },
+        "preserve_selected": "main input.catalog__control[id^=\"catalogItem-brand_\"]:checked",
+        "verify": {
+          "kind": "element_id_equals",
+          "target": {
+            "selectors": [
+              "main input.catalog__control[id^=\"catalogItem-brand_\"]:checked"
+            ]
+          },
+          "fallbackTextSelectors": [
+            "main .newad__breadcrumb-button"
+          ]
+        }
       },
       {
         "option_id": "av.model",
@@ -1466513,7 +1466537,23 @@
       {
         "option_id": "abw.photo",
         "status": "needs_review",
-        "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+        "reason": "DOM и девять серверных превью прочитаны в Chrome 2026-11-16. Переход после фото проверен пользователем; автоматическая проверка приёма покрыта локальными тестами.",
+        "target": {
+          "selectors": [
+            "input[type=\"file\"].uploader-field"
+          ]
+        },
+        "verify": {
+          "target": {
+            "selectors": [
+              ".form__photos"
+            ]
+          },
+          "items_selector": ".form__image-wrapper",
+          "image_selector": ".form__image",
+          "image_source": "background_image",
+          "accepted_src_prefix": "https://static.abw.by/upload/"
+        }
       },
       {
         "option_id": "abw.video",
@@ -1466523,18 +1466563,41 @@
       {
         "option_id": "abw.description",
         "status": "needs_review",
-        "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+        "reason": "Подпись поля подтверждена в Chrome 2026-11-16; перенос и переход проверяются локальными DOM-тестами.",
+        "action": "set_value",
+        "target": {
+          "selectors": [
+            "textarea[placeholder=\"Честно опишите достоинства и недостатки своего автомобиля\"]"
+          ]
+        },
+        "verify": {
+          "kind": "value_equals"
+        }
       },
       {
         "option_id": "abw.vin",
         "status": "needs_review",
-        "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+        "reason": "Поле VIN прочитано в открытой форме ABW 2026-11-16; заполнение и переход проверены локальными DOM-тестами.",
+        "action": "set_value",
+        "target": {
+          "selectors": [
+            "input[placeholder=\"VIN\"]"
+          ]
+        },
+        "verify": {
+          "kind": "value_equals"
+        }
       },
       {
         "option_id": "abw.price",
         "status": "needs_review",
         "reason": "Ввод цены по точной подписи из FormPrice; валюта выбирается первой.",
         "action": "set_value",
+        "target": {
+          "selectors": [
+            "input[placeholder=\"Цена\"]"
+          ]
+        },
         "depends_on": [
           "abw.currency"
         ],
@@ -1466545,17 +1466608,48 @@
       {
         "option_id": "abw.seller_name",
         "status": "needs_review",
-        "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+        "reason": "Поле Имя прочитано в форме контактов ABW; перенос из объявления проверяется локально.",
+        "action": "set_value",
+        "replace_existing": true,
+        "target": {
+          "selectors": [
+            "input[placeholder=\"Имя\"]"
+          ]
+        },
+        "verify": {
+          "kind": "value_equals"
+        }
       },
       {
         "option_id": "abw.email",
         "status": "needs_review",
-        "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+        "reason": "Поле E-mail прочитано в форме контактов ABW; переносится только указанное в объявлении значение.",
+        "action": "set_value",
+        "replace_existing": true,
+        "target": {
+          "selectors": [
+            "input[placeholder=\"E-mail\"]"
+          ]
+        },
+        "verify": {
+          "kind": "value_equals"
+        }
       },
       {
         "option_id": "abw.phone",
         "status": "needs_review",
-        "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+        "reason": "Телефон аккаунта может быть disabled. Разрешено только чтение заблокированного поля; доступное поле заполняется из объявления.",
+        "action": "set_value",
+        "replace_existing": true,
+        "read_disabled": true,
+        "target": {
+          "selectors": [
+            "input[placeholder=\"Номер телефона\"]"
+          ]
+        },
+        "verify": {
+          "kind": "phone_digits_equals"
+        }
       },
       {
         "option_id": "abw.city",
@@ -1466586,6 +1466680,12 @@
           "usd": "$",
           "eur": "€",
           "rub": "₽"
+        },
+        "optionLabels": {
+          "byn": "BYN",
+          "usd": "USD",
+          "eur": "EUR",
+          "rub": "RUB"
         },
         "verify": {
           "kind": "selected_text_equals"

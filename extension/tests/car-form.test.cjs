@@ -59,6 +59,40 @@ test('AV enters the used-car form once without choosing new cars or publishing',
  await form.tick();assert.equal(clicks.length,0);form.recipe.platform='av';assert.equal(form.ready(),false);
  await form.tick();await form.tick();assert.equal(clicks.length,1);assert.match(clicks[0],/^Автомобиль с пробегом/);
 });
+
+test('AV never reopens the used-car breadcrumb and recognizes labelled hidden radio controls',async t=>{
+ const {w,form}=await fixture(t,'<button class="newad__breadcrumb-button">Автомобиль с пробегом</button><label for="catalogItem-brand_545"><input style="display:none" id="catalogItem-brand_545" type="radio">Kia</label>',[]);
+ form.recipe.platform='av';
+ w.document.querySelector('button').onclick=()=>assert.fail('Breadcrumb resets the selected car');
+ assert(form.ready(),'The visible label makes the catalog usable even when the native radio is hidden');
+ await form.tick();await form.tick();
+ w.document.querySelector('label').hidden=true;assert.equal(form.ready(),false,'A hidden catalog is not usable');
+});
+
+test('AV chooses a brand by native catalog ID, verifies it and never clicks the breadcrumb',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.brand'];
+ const control={field:'av.brand',label:'Марка',fieldType:'enum',value:545,name:'Kia',binding};
+ const {w,form}=await fixture(t,'<main><button class="newad__breadcrumb-button">Автомобиль с пробегом</button><ul class="catalog__items"><li><label for="catalogItem-brand_545"><input class="catalog__control" style="display:none" id="catalogItem-brand_545" name="catalogItem-brand_545" type="radio">Kia</label></li><li><label><input class="catalog__control" id="catalogItem-brand_8" type="radio">Kia</label></li></ul></main>',[control]);
+ form.recipe.platform='av';w.document.querySelector('button').onclick=()=>assert.fail('Do not reset the form');
+ await form.tick();await form.tick();assert(w.document.getElementById('catalogItem-brand_545').checked);assert(!w.document.getElementById('catalogItem-brand_8').checked);assert(form.done.has('av.brand'));
+ w.document.querySelector('ul').remove();w.document.querySelector('main').insertAdjacentHTML('beforeend','<button class="newad__breadcrumb-button">Kia</button><input placeholder="Модель">');
+ for(const b of w.document.querySelectorAll('button'))b.onclick=()=>assert.fail('Never click selected identity breadcrumbs');
+ await form.tick();assert(form.done.has('av.brand'),'Keep the prerequisite when the catalog is replaced by the model step');
+ w.document.querySelectorAll('button')[1].textContent='BMW';await form.tick();assert(!form.done.has('av.brand'));
+});
+
+test('AV preserves an existing brand and rejects absent or duplicate native IDs',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.brand'];
+ for(const scenario of ['existing','absent','duplicate']){
+  const {w,form}=await fixture(t,'<main><label><input class="catalog__control" id="catalogItem-brand_8" type="radio">BMW</label><label><input class="catalog__control" id="catalogItem-brand_545" type="radio">Kia</label></main>',[{field:'av.brand',label:'Марка',fieldType:'enum',value:545,name:'Kia',binding}]);
+  form.recipe.platform='av';
+  if(scenario==='existing')w.document.getElementById('catalogItem-brand_8').checked=true;
+  if(scenario==='absent')w.document.getElementById('catalogItem-brand_545').remove();
+  if(scenario==='duplicate')w.document.querySelector('main').insertAdjacentHTML('beforeend','<label><input class="catalog__control" id="catalogItem-brand_545" type="radio">Kia</label>');
+  for(const e of w.document.querySelectorAll('input'))e.onclick=()=>assert.fail(scenario);
+  await form.tick();await form.tick();assert(!form.done.has('av.brand'));
+ }
+});
 test('Kufar enters only an empty car category and waits for each dependent choice',async t=>{
  const {w,form}=await fixture(t,'<button data-testid="ain-show-all-categories">Выбрать категорию</button><button>Опубликовать</button>',[]);form.recipe.platform='kufar';
  const clicked=[];w.document.querySelector('button').onclick=()=>{clicked.push('open');w.document.body.insertAdjacentHTML('beforeend','<ul data-testid="kufar-chose-category-popup"><li>Авто и запчасти</li><li>Недвижимость</li></ul>');w.document.querySelector('li').onclick=()=>{clicked.push('parent');w.document.querySelector('ul').innerHTML='<li><div data-testid="sub-category-2010">Легковые авто</div></li><li>Мотоциклы</li>';w.document.querySelector('[data-testid="sub-category-2010"]').onclick=()=>{clicked.push('cars');w.document.body.insertAdjacentHTML('beforeend','<div data-name="cars_brand_v2"></div>');};};};
@@ -85,13 +119,176 @@ test('ABW does not continue disabled, ambiguous, unreviewed or other-site steps'
  }
 });
 
-test('ABW selects and verifies each currency by its displayed symbol',async t=>{
+test('ABW selects currency by ISO code and verifies its displayed symbol',async t=>{
  const base=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.currency'];
  for(const [code,symbol] of Object.entries(base.displayLabels)){
   const c={field:'abw.currency',value:code,name:code.toUpperCase(),binding:base};
-  const {w,form}=await fixture(t,'<input><div class="form__currency">Выберите</div>'+Object.values(base.displayLabels).map(s=>'<div class="form__currency-list-item">'+s+'</div>').join(''),[c]);
-  for(const item of w.document.querySelectorAll('.form__currency-list-item'))item.onclick=()=>w.document.querySelector('.form__currency').textContent=item.textContent;
+  const {w,form}=await fixture(t,'<input><div class="form__currency">Выберите</div>'+Object.values(base.optionLabels).map(s=>'<div class="form__currency-list-item">'+s+'</div>').join(''),[c]);
+  for(const item of w.document.querySelectorAll('.form__currency-list-item'))item.onclick=()=>w.document.querySelector('.form__currency').textContent=base.displayLabels[item.textContent.toLowerCase()];
   await form.tick();await form.tick();assert.equal(w.document.querySelector('.form__currency').textContent,symbol);assert(form.done.has(c.field));
+ }
+});
+
+const abwModification={field:'abw.modification',label:'Модификация',value:'1.6 MT',name:'1.6 MT',binding:{action:'choose',match:'engine_transmission',target:{label:'Модификация',labels:'.item-title',container:'.adverts-form-item',selector:'.item-header'},suggestions:{selector:'.list_modification .card_modification'},verify:{kind:'selected_text_equals',within_target:'.item-selected'}}};
+test('ABW selects all supported currencies before setting price and confirms the standalone price step',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
+ for(const [code,symbol] of Object.entries(b['abw.currency'].displayLabels)){
+  const controls=[{field:'abw.price',value:24500,binding:b['abw.price']},{field:'abw.currency',value:code,name:code.toUpperCase(),binding:b['abw.currency']}];
+  const {w,form}=await fixture(t,'<div class="adverts-form"><input placeholder="Цена"><div class="form__currency">'+(code==='byn'?'$':'Br')+'</div>'+Object.values(b['abw.currency'].optionLabels).map(s=>'<div class="form__currency-list-item">'+s+'</div>').join('')+'<button type="button">Введите цену</button></div>',controls);
+  const order=[];let next=0;
+  for(const option of w.document.querySelectorAll('.form__currency-list-item'))option.onclick=()=>{order.push('currency');w.document.querySelector('.form__currency').textContent=b['abw.currency'].displayLabels[option.textContent.toLowerCase()];};
+  const input=w.document.querySelector('input');input.oninput=()=>{assert.equal(w.document.querySelector('.form__currency').textContent,symbol);order.push('price');input.value='24 500';if(code!=='byn')w.document.querySelector('button').textContent='Продолжить';};
+  w.document.querySelector('button').onclick=()=>{next++;assert(form.done.has('abw.price'));assert(form.done.has('abw.currency'));};
+  for(let i=0;i<7;i++)await form.tick();assert.deepEqual(order,['currency','price']);assert.equal(next,1);assert.equal(input.value,'24 500');
+ }
+});
+test('ABW does not confirm price with absent currency, pending validation, foreign values or contact inputs',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
+ for(const scenario of ['no-currency','wrong-currency','error','foreign-price','contacts']){
+  const controls=[{field:'abw.price',value:24500,binding:b['abw.price']}];
+  if(scenario!=='no-currency')controls.push({field:'abw.currency',value:'usd',name:'USD',binding:b['abw.currency']});
+  const {w,form}=await fixture(t,'<div class="adverts-form"><input placeholder="Цена"><div class="form__currency">'+(scenario==='wrong-currency'?'Br':'$')+'</div><button type="button">Введите цену</button></div>',controls);
+  const input=w.document.querySelector('input');let next=0;w.document.querySelector('button').onclick=()=>next++;
+  if(scenario==='error')input.className='_inputError_1n9xe_56';
+  if(scenario==='foreign-price')input.value='9900';
+  if(scenario==='contacts')w.document.querySelector('.adverts-form').insertAdjacentHTML('beforeend','<input type="tel">');
+  for(let i=0;i<8;i++)await form.tick();assert.equal(next,0,scenario);
+  if(scenario==='error'){input.className='';for(let i=0;i<3;i++)await form.tick();assert.equal(next,1);}
+  if(scenario==='foreign-price')assert.equal(input.value,'9900');
+ }
+});
+const abwItem=(label,selected='',choices='')=>`<div class="adverts-form-item"><div class="item-header"><p class="item-title item-title_required">${label}</p><p class="item-selected">${selected}</p></div>${choices}</div>`;
+const abwDetails=()=>abwItem('Марка','Kia')+abwItem('Модель','Rio')+abwItem('Год выпуска','2023');
+const abwContacts=()=>'<div class="adverts-form"><input placeholder="Имя" value="Account"><input placeholder="E-mail"><input placeholder="Номер телефона" disabled value="+375 29 111 22 33"><button type="button">Минск Город *</button><button type="button">Продолжить</button></div>';
+test('ABW sets supplied contacts over account defaults, reads locked matching phone and continues once',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
+ for(const locked of [true,false]){
+  const controls=[['seller_name','Продавец'],['email','seller@example.test'],['phone','+375291112233']].map(([key,value])=>({field:'abw.'+key,value,binding:b['abw.'+key]}));
+  const {w,form}=await fixture(t,abwContacts(),controls);let next=0;
+  const phone=w.document.querySelector('[placeholder="Номер телефона"]');if(!locked){phone.disabled=false;phone.value='';}
+  w.document.querySelectorAll('button')[1].onclick=()=>next++;
+  for(let i=0;i<5;i++)await form.tick();
+  assert.equal(w.document.querySelector('[placeholder="Имя"]').value,'Продавец');assert.equal(w.document.querySelector('[placeholder="E-mail"]').value,'seller@example.test');
+  assert.equal(phone.value,locked?'+375 29 111 22 33':'+375291112233');assert.equal(next,1);assert(form.done.has('abw.phone'));assert.equal(form.blockedReason(),null);
+ }
+});
+test('ABW cannot continue with mismatched locked phone, incomplete contacts, rejected email or manual edits',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
+ for(const scenario of ['phone','name','city','email','manual']){
+  const controls=scenario==='phone'?[{field:'abw.phone',value:'+375291112244',binding:b['abw.phone']}]:scenario==='manual'?[{field:'abw.seller_name',value:'Card name',binding:b['abw.seller_name']}]:[];
+  const {w,form}=await fixture(t,abwContacts(),controls);
+  if(scenario==='name')w.document.querySelector('[placeholder="Имя"]').value='';
+  if(scenario==='city')w.document.querySelector('button').textContent='Город *';
+  if(scenario==='email')w.document.querySelector('[placeholder="E-mail"]').className='_inputError_1n9xe_56';
+  if(scenario==='manual')form.protect(w.document.querySelector('[placeholder="Имя"]'));
+  w.document.querySelectorAll('button')[1].onclick=()=>assert.fail(scenario);
+  for(let i=0;i<4;i++)await form.tick();
+  if(scenario==='phone')assert.match(form.blockedReason(),/Телефон.*отличается/);
+  if(scenario==='manual')assert.equal(w.document.querySelector('[placeholder="Имя"]').value,'Account');
+ }
+});
+test('ABW preserves unsupplied contacts and never presses the publication button',async t=>{
+ const {w,form}=await fixture(t,abwContacts(),[]);let next=0;const button=w.document.querySelectorAll('button')[1];button.onclick=()=>next++;
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,1);assert.equal(w.document.querySelector('[placeholder="E-mail"]').value,'');
+ button.textContent='Опубликовать';button.onclick=()=>assert.fail('Never publish');form.retry();for(let i=0;i<3;i++)await form.tick();
+});
+test('ABW nested condition section validates sibling technical fields before Continue',async t=>{
+ const {w,form}=await fixture(t,'<div class="adverts-form"><div class="adverts-form">'+abwDetails()+abwItem('Модификация')+'</div><div class="adverts-form">'+abwItem('Цвет кузова','черный')+abwItem('Состояние','с пробегом')+abwItem('Наличие','в наличии')+'<input placeholder="Пробег, км" value="12345"><button type="button">Продолжить</button></div></div>',[]);
+ let next=0;w.document.querySelector('button').onclick=()=>next++;
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,0);
+ w.document.querySelectorAll('.item-selected')[3].textContent='1.6 MT 123 л.с.';
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,1);
+});
+test('ABW selects volume and gearbox, verifies acceptance and only then continues',async t=>{
+ const options=['1.4 MT 100 л.с.','1.6 AT 123 л.с.','11.6 MT 123 л.с.','1.6 AMT 123 л.с.','1,6 МТ 123 л.с.','1.6 MT 130 л.с.'];
+ const html='<div class="adverts-form">'+abwDetails()+abwItem('Модификация','','<div class="list_modification">'+options.map(s=>'<div class="card_modification">'+s+'</div>').join('')+'</div>')+'<input placeholder="Пробег, км" value="12000"><button type="button">Продолжить</button></div>';
+ const {w,form}=await fixture(t,html,[abwModification]);let selected='',next=0;
+ for(const option of w.document.querySelectorAll('.card_modification'))option.onclick=()=>{selected=option.textContent;};
+ w.document.querySelector('button').onclick=()=>next++;
+ await form.tick();assert.equal(selected,'1,6 МТ 123 л.с.');
+ for(let i=0;i<4;i++)await form.tick();assert.equal(next,0,'A click alone is not acceptance');
+ w.document.querySelector('.list_modification').closest('.adverts-form-item').querySelector('.item-selected').textContent=selected;
+ for(let i=0;i<3;i++)await form.tick();assert(form.done.has('abw.modification'));assert.equal(next,1);
+ await form.tick();assert.equal(next,1);
+});
+test('ABW waits for every required selection and mileage, and does not consume Continue early',async t=>{
+ const {w,form}=await fixture(t,'<div class="adverts-form">'+abwDetails()+abwItem('Модификация')+'<input placeholder="Пробег, км"><button type="button">Продолжить</button></div>',[]);let next=0;
+ w.document.querySelector('button').onclick=()=>next++;
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,0);
+ w.document.querySelectorAll('.item-selected')[3].textContent='1.6 MT 123 л.с.';
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,0);
+ const input=w.document.querySelector('input');input.value='12000';input.setAttribute('aria-invalid','true');
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,0);
+ input.removeAttribute('aria-invalid');
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,1);
+});
+test('ABW modification preserves existing choices and cannot use a different engine or gearbox',async t=>{
+ for(const existing of ['', '1.4 MT 100 л.с.']){
+  const {w,form}=await fixture(t,'<input>'+abwItem('Модификация',existing,'<div class="list_modification"><div class="card_modification">1.4 MT 100 л.с.</div><div class="card_modification">1.6 AT 123 л.с.</div></div>'),[abwModification]);
+  for(const e of w.document.querySelectorAll('.card_modification'))e.onclick=()=>assert.fail('Must not select another engine/gearbox');
+  for(let i=0;i<4;i++)await form.tick();assert.equal(w.document.querySelector('.item-selected').textContent,existing);assert(!form.done.has('abw.modification'));
+ }
+});
+test('ABW advances after all server photo previews load, reusing asynchronous probes',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
+ const {w,form}=await fixture(t,'<div class="adverts-form"><div class="form__photos"><div class="form__image-wrapper"><div class="form__image" style="background-image:url(https://static.abw.by/upload/a.webp)"></div></div><div class="form__image-wrapper"><div class="form__image" style="background-image:url(blob:pending)"></div></div></div><input class="uploader-field" type="file"><button type="button">Продолжить</button></div>',[]);
+ let next=0;const probes=[];w.Image=class {constructor(){this.complete=false;this.naturalWidth=0;probes.push(this);}};
+ form.photos=[{},{}];form.photoSent=true;form.recipe.photoBinding=bindings['abw.photo'];
+ w.document.querySelector('button').onclick=()=>next++;
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,0);assert.equal(probes.length,1);
+ probes[0].complete=true;probes[0].naturalWidth=100;
+ await form.tick();assert.equal(next,0,'One accepted photo cannot stand in for the full batch');
+ w.document.querySelectorAll('.form__image')[1].style.backgroundImage='url(https://static.abw.by/upload/b.webp)';
+ await form.tick();assert.equal(probes.length,2);assert.equal(next,0);
+ probes[1].complete=true;probes[1].naturalWidth=100;
+ for(let i=0;i<3;i++)await form.tick();assert(form.done.has('photos'));assert.equal(next,1);assert.equal(probes.length,2);
+ await form.tick();assert.equal(next,1);
+});
+test('ABW fills the actual description placeholder then advances, but never advances contacts',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.description'];
+ const c={field:'abw.description',label:'Описание',value:'Kia Rio, ухоженный автомобиль.',name:'Kia Rio, ухоженный автомобиль.',binding};
+ const {w,form}=await fixture(t,'<div class="adverts-form"><textarea placeholder="Честно опишите достоинства и недостатки своего автомобиля"></textarea><button type="button">Продолжить</button></div>',[c]);let next=0;
+ w.document.querySelector('button').onclick=()=>next++;
+ await form.tick();assert.equal(w.document.querySelector('textarea').value,c.value);assert.equal(next,0);
+ for(let i=0;i<3;i++)await form.tick();assert.equal(next,1);assert(form.done.has(c.field));
+ w.document.querySelector('.adverts-form').innerHTML='<input type="tel"><button type="button">Продолжить</button><button type="submit">Опубликовать</button>';
+ for(const b of w.document.querySelectorAll('button'))b.onclick=()=>assert.fail('Contacts/final submission must stay manual');
+ for(let i=0;i<3;i++)await form.tick();
+});
+test('ABW refuses description transition while the site rejects the value',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.description'];
+ const {w,form}=await fixture(t,'<div class="adverts-form"><textarea placeholder="Честно опишите достоинства и недостатки своего автомобиля"></textarea><button type="button">Продолжить</button></div>',[{field:'abw.description',value:'Описание авто',binding}]);
+ w.document.querySelector('textarea').addEventListener('input',e=>{e.target.value='';});w.document.querySelector('button').onclick=()=>assert.fail('Description has not been accepted');
+ for(let i=0;i<4;i++)await form.tick();
+});
+test('ABW fills the standalone VIN step and continues once after verifying the value',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.vin'];
+ const value='TESTVIN1234567890';
+ const {w,form}=await fixture(t,'<div class="adverts-form"><input placeholder="VIN" maxlength="17"><button type="button">Продолжить</button></div>',[{field:'abw.vin',value,binding}]);
+ let next=0;w.document.querySelector('button').onclick=()=>next++;
+ await form.tick();assert.equal(w.document.querySelector('input').value,value);assert.equal(next,0);
+ for(let i=0;i<4;i++)await form.tick();assert.equal(next,1);assert(form.done.has('abw.vin'));
+});
+test('ABW VIN waits on rejected values, preserves manual input and excludes lookup/contact steps',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.vin'];
+ for(const scenario of ['invalid','rejected','manual','lookup','contacts']){
+  const {w,form}=await fixture(t,'<div class="adverts-form"><input placeholder="VIN"><button type="button">Продолжить</button></div>',[{field:'abw.vin',value:'TESTVIN1234567890',binding}]);
+  const input=w.document.querySelector('input'),panel=w.document.querySelector('.adverts-form');
+  if(scenario==='invalid')input.setCustomValidity('VIN не принят');
+  if(scenario==='rejected')input.oninput=()=>{input.value='';};
+  if(scenario==='manual')input.value='USERVIN1234567890';
+  if(scenario==='lookup')panel.insertAdjacentHTML('beforeend','<button>Заполнить вручную</button>');
+  if(scenario==='contacts')panel.insertAdjacentHTML('beforeend','<input type="tel">');
+  for(const button of w.document.querySelectorAll('button'))button.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<4;i++)await form.tick();
+  if(scenario==='manual')assert.equal(input.value,'USERVIN1234567890');
+ }
+});
+test('ABW leaves a missing VIN blank and passes only an optional standalone VIN step',async t=>{
+ for(const required of [false,true]){
+  const {w,form}=await fixture(t,'<div class="adverts-form"><input placeholder="VIN" '+(required?'required':'')+'><button type="button">Продолжить</button></div>',[]);let next=0;
+  w.document.querySelector('button').onclick=()=>next++;
+  for(let i=0;i<4;i++)await form.tick();assert.equal(w.document.querySelector('input').value,'');assert.equal(next,required?0:1);
  }
 });
 test('Onliner technical controls are scoped by label, not changing block positions',async t=>{

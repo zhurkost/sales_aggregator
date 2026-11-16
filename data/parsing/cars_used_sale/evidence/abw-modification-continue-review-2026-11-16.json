@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-16",
+  "source": "User Chrome, read-only JSON.stringify DOM inspection in Console",
+  "page": "https://abw.by/create/cars",
+  "direct_network_requests_sent": false,
+  "live_clicked": true,
+  "live_click_authorization": "User explicitly requested JS Continue on details and photos. Commands entered by assistant and executed in Console by user.",
+  "observed_transitions": ["Состояние и цвет → Фото и видео", "Фото и видео → Описание"],
+  "actual_button_panel_labels": ["Цвет кузова", "Состояние", "Наличие"],
+  "actual_button_panel_parent_class": "adverts-form",
+  "photos": {
+    "input": "input[type=file].uploader-field",
+    "container": ".form__photos",
+    "items": ".form__image-wrapper",
+    "image": ".form__image",
+    "image_source": "background-image",
+    "accepted_src_prefix": "https://static.abw.by/upload/",
+    "observed_accepted_images": 9
+  },
+  "description_placeholder": "Честно опишите достоинства и недостатки своего автомобиля",
+  "contacts": {
+    "observed_fields": ["Имя", "E-mail", "Номер телефона", "Город"],
+    "observed_phone_disabled": true,
+    "observed_next_button": "Продолжить",
+    "policy": "Fill supplied name/email and editable phone. Compare locked phone by digits without changing its disabled state. Preserve trusted user edits; require accepted supplied values and populated required contacts/city before Continue.",
+    "live_contact_fill_verified": false,
+    "validation": "Local DOM tests and generated backend recipe test."
+  },
+  "price": {
+    "input_selector": "input[placeholder=\"Цена\"]",
+    "observed_input_error_class": "_inputError_1n9xe_56",
+    "currency_selector": ".form__currency",
+    "observed_currency_text": "Br",
+    "observed_dropdown_labels": ["BYN", "USD", "EUR", "RUB"],
+    "button_text": "Введите цену",
+    "button_type": "button",
+    "button_parent_class": "adverts-form",
+    "live_price_clicked": false,
+    "source": "User Chrome: accessibility tree and read-only Console DOM inspection"
+  },
+  "continue": {
+    "selector": ".adverts-form > button[type=\"button\"]",
+    "text": "Продолжить",
+    "disabled": false,
+    "required_choice_marker": ".item-title_required",
+    "accepted_choice": ".adverts-form-item .item-selected",
+    "mileage": "input[placeholder=\"Пробег, км\"]"
+  },
+  "modification": {
+    "label": "Модификация",
+    "options_selector": ".list_modification .card_modification",
+    "selected_option_selector": ".card_modification_selected",
+    "observed_options": ["1.4 MT 100 л.с.", "1.6 MT 123 л.с.", "Другая модификация"],
+    "observed_selected": "1.6 MT 123 л.с.",
+    "policy": "Match engine volume and transmission abbreviation from the server recipe. Select the first matching live option, preserve existing selection, verify item-selected before Continue."
+  },
+  "validation": "Live details/photo transitions confirmed; description fill and transition verified in local DOM tests."
+}

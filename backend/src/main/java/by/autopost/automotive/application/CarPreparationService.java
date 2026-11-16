@@ -122,6 +122,21 @@ public class CarPreparationService {
         controls.add(object("field",e.getKey(),"label",text(field,"name"),"fieldType",text(field,"type"),"selector","body","action","text","value",e.getValue().path("value"),"name",e.getValue().path("name"),"binding",binding));
       });
       String photoField=catalog.data().path("mappings").path(text(p,"platform")).path("fields").path("car.photos").asText();
+      if(text(p,"platform").equals("abw")&&prepared.path("values").has("car.engine_capacity")){
+        String gearbox=switch(CarCatalogService.normalize(text(p.path("values").path("abw.transmission"),"name"))){
+          case "механика"->"MT";case "автомат"->"AT";case "вариатор"->"CVT";case "робот"->"AMT";default->"";
+        };
+        if(!gearbox.isBlank()){
+          String selection=prepared.path("values").path("car.engine_capacity").decimalValue().stripTrailingZeros().toPlainString()+" "+gearbox;
+          // ABW exposes modifications only for the selected car. Match the live choices,
+          // without adding model-specific modifications to the shared catalog.
+          controls.add(object("field","abw.modification","label","Модификация","fieldType","enum","selector","body","action","text","value",selection,"name",selection,
+            "binding",object("action","choose","match","engine_transmission","depends_on",List.of("abw.brand","abw.model","abw.year","abw.generation","abw.body","abw.engine","abw.gear","abw.transmission"),
+              "target",object("label","Модификация","labels",".item-title","container",".adverts-form-item","selector",".item-header"),
+              "suggestions",object("selector",".list_modification .card_modification"),"expandSelector",".card_more-modification",
+              "verify",object("kind","selected_text_equals","within_target",".item-selected"))));
+        }
+      }
       JsonNode photoBinding=list(catalog.data().path("bindings").path(text(p,"platform"))).stream().filter(b->text(b,"option_id").equals(photoField)).findFirst().orElse(object());
       jobs.add(object("platform",text(p,"platform"),"startUrl",text(p,"startUrl"),"format",1,"contract","cars-v1","controls",controls,"photoBinding",photoBinding,"ready",List.of(object("selector","body")),"setup",array(),"next",array(),"submit",array(),"issues",p.path("issues")));
     }
