@@ -1,0 +1,132 @@
+{
+  "category_id": "cars_used_sale",
+  "platform": "abw",
+  "fields": [
+    {
+      "option_id": "abw.brand",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.model",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены.",
+      "depends_on": [
+        "abw.brand"
+      ]
+    },
+    {
+      "option_id": "abw.year",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.generation",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены.",
+      "depends_on": [
+        "abw.model"
+      ]
+    },
+    {
+      "option_id": "abw.body",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.engine",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.gear",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.transmission",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.modification",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.mileage",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.color",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.condition",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.availability",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.photo",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.video",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.description",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.vin",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.price",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.seller_name",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.email",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.phone",
+      "status": "needs_review",
+      "reason": "Поле прочитано из UI; DOM-селектор, установка и чтение результата ещё не проверены."
+    },
+    {
+      "option_id": "abw.city",
+      "status": "needs_review",
+      "reason": "Справочник и ID подтверждены записанным ответом create/options. Город выбирается в одном списке с группами областей; запись/чтение через DOM ещё не проверены."
+    },
+    {
+      "option_id": "abw.region",
+      "status": "needs_review",
+      "reason": "Служебная группировка списка города, не самостоятельный элемент формы. Нативного ID области нет."
+    },
+    {
+      "option_id": "abw.currency",
+      "status": "needs_review",
+      "reason": "Коды и символы из FormPrice в клиенте ABW, сохранённом в HAR. Чтение и установка в живой форме ещё не проверены."
+    }
+  ]
+}

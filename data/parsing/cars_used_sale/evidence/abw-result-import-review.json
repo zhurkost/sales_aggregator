@@ -1,0 +1,193 @@
+{
+  "source_file": "abw-research-result.json",
+  "sha256": "2b4928bb7a2cfeb402ed79933190532d563c459c340f143d1520ff41fe02d391",
+  "bytes": 17948059,
+  "imported_at": "2026-11-15T06:59:47.800Z",
+  "scope": "catalog_only_preserve_flat",
+  "stats": {
+    "status": "observed_scope_with_gaps",
+    "brands": 398,
+    "models": 4527,
+    "generations": 9211,
+    "completedModels": 4509,
+    "requests": 56338,
+    "brandRootLoaded": true,
+    "branchesNeedingReview": 18,
+    "current": {
+      "brand": "УАЗ",
+      "model": "Астеро",
+      "stage": "Обход завершён"
+    },
+    "deferredModels": 18,
+    "pendingKnownModels": 0,
+    "next": null
+  },
+  "validation": {
+    "fields": 22,
+    "choices": 14175
+  },
+  "retained_existing_ids": 515,
+  "source_flat_counts": {
+    "body": 2,
+    "engine": 1,
+    "gear": 1,
+    "transmission": 2
+  },
+  "merged_flat_counts": {
+    "body": 13,
+    "engine": 5,
+    "gear": 3,
+    "transmission": 4
+  },
+  "flat_recovery": "evidence/abw-flat-recovery-2026-11-15.json",
+  "restored_flat_choices": 19,
+  "unresolved_models": [
+    {
+      "brand": "Aston Martin",
+      "model": "DB2",
+      "key": "number:152/number:3356",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Aston Martin",
+      "model": "DB4",
+      "key": "number:152/number:3357",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Aston Martin",
+      "model": "DB6",
+      "key": "number:152/number:3358",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Aston Martin",
+      "model": "Valhalla",
+      "key": "number:152/number:276881",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Audi",
+      "model": "E",
+      "key": "number:153/number:276883",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Cadillac",
+      "model": "Vistiq",
+      "key": "number:176/number:276907",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "DS",
+      "model": "No8",
+      "key": "number:204/number:276926",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Hyundai",
+      "model": "IONIQ 9",
+      "key": "number:241/number:276959",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Jaecoo",
+      "model": "J5",
+      "key": "number:173695/number:276967",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Kia",
+      "model": "Syros",
+      "key": "number:254/number:276984",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Kia",
+      "model": "Tasman",
+      "key": "number:254/number:276985",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "OMODA",
+      "model": "C7",
+      "key": "number:173714/number:277008",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Qiyuan",
+      "model": "C798",
+      "key": "number:173723/number:277017",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Scout",
+      "model": "Terra",
+      "key": "number:276870/number:277026",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Scout",
+      "model": "Traveler",
+      "key": "number:276870/number:277027",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Sollers",
+      "model": "SP7",
+      "key": "number:173737/number:277033",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Suzuki",
+      "model": "e Vitara",
+      "key": "number:344/number:277037",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    },
+    {
+      "brand": "Toyota",
+      "model": "bZ3C",
+      "key": "number:354/number:277039",
+      "complete": false,
+      "generations": 0,
+      "reason": "Нет годов модели; полнота не подтверждена"
+    }
+  ],
+  "geography_collected": false,
+  "browser_binding_executed": false,
+  "network_requests_during_import": 0
+}

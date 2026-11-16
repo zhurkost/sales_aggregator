@@ -1,0 +1,154 @@
+{
+  "source": "User-exported abw-cities.har",
+  "endpoint": "https://b.abw.by/api/v2/create/options",
+  "script_sha256": "393d3b7aaae731745088e8cad4be1e858f694cb7e911062c4475b08faa00b665",
+  "options": {
+    "engine": [
+      {
+        "id": 18343,
+        "title": "бензин"
+      },
+      {
+        "id": 18346,
+        "title": "газ"
+      },
+      {
+        "id": 18345,
+        "title": "гибрид"
+      },
+      {
+        "id": 18344,
+        "title": "дизель"
+      },
+      {
+        "id": 18347,
+        "title": "электро"
+      }
+    ],
+    "gear": [
+      {
+        "id": 18351,
+        "title": "задний"
+      },
+      {
+        "id": 18349,
+        "title": "передний"
+      },
+      {
+        "id": 18350,
+        "title": "полный"
+      }
+    ],
+    "transmission": [
+      {
+        "id": 18353,
+        "title": "автомат"
+      },
+      {
+        "id": 18354,
+        "title": "вариатор"
+      },
+      {
+        "id": 18352,
+        "title": "механика"
+      },
+      {
+        "id": 18355,
+        "title": "робот"
+      }
+    ],
+    "color": [
+      {
+        "id": 2,
+        "title": "белый"
+      },
+      {
+        "id": 17,
+        "title": "черный"
+      },
+      {
+        "id": 15,
+        "title": "синий"
+      },
+      {
+        "id": 14,
+        "title": "серый"
+      },
+      {
+        "id": 13,
+        "title": "серебристый"
+      },
+      {
+        "id": 10,
+        "title": "красный"
+      },
+      {
+        "id": 6,
+        "title": "желтый"
+      },
+      {
+        "id": 7,
+        "title": "зеленый"
+      },
+      {
+        "id": 9,
+        "title": "коричневый"
+      },
+      {
+        "id": 11,
+        "title": "оранжевый"
+      },
+      {
+        "id": 16,
+        "title": "фиолетовый"
+      }
+    ],
+    "state": [
+      {
+        "id": 75703,
+        "title": "новый"
+      },
+      {
+        "id": 75705,
+        "title": "с повреждениями"
+      },
+      {
+        "id": 75704,
+        "title": "с пробегом"
+      }
+    ],
+    "availability": [
+      {
+        "id": 173083,
+        "title": "в наличии"
+      },
+      {
+        "id": 281580,
+        "title": "в пути"
+      },
+      {
+        "id": 173084,
+        "title": "под заказ"
+      }
+    ]
+  },
+  "currency": [
+    {
+      "id": "byn",
+      "title": "BYN"
+    },
+    {
+      "id": "usd",
+      "title": "USD"
+    },
+    {
+      "id": "eur",
+      "title": "EUR"
+    },
+    {
+      "id": "rub",
+      "title": "RUB"
+    }
+  ],
+  "browser_fill_verified": false
+}

@@ -1,0 +1,16 @@
+{
+  "brands": 233,
+  "models": 2773,
+  "generations": 6614,
+  "fields": 103,
+  "treeNodes": 9782,
+  "ready": 103,
+  "needs_review": 0,
+  "unsupported": 0,
+  "at": "2026-11-12T14:13:45.573Z",
+  "catalog_sha256": "cb81ba6c1b0b41781f97edf6b77f3ebd2951661bcf0421ffc1e550b08e02bbb4",
+  "schema_sha256": "f11217c788626cca20eb8cba058064d12ba1054223e308a207d71fd983addbaf",
+  "binding_sha256": "58ee2b092752fc88bc4be0793521560feda9935dd146fb5a4bc91bd7902db935",
+  "year_filter": false,
+  "years_collected": false
+}

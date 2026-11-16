@@ -1,0 +1,408 @@
+{
+  "step": "tech-petrol-stable",
+  "url": "https://ab.onliner.by/create/tech",
+  "observed_at": "2026-11-12T13:36:00.928Z",
+  "groups": [
+    {
+      "label": "Год выпуска",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "select.button-style__select.vehicle-form__button-select",
+          "tag": "SELECT",
+          "name": "",
+          "type": "select-one",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": true
+    },
+    {
+      "label": "Поколение",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "input[name=\"generation\"][value=\"6682\"]",
+          "tag": "INPUT",
+          "name": "generation",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "(FB) Рестайлинг",
+          "code": "6682"
+        },
+        {
+          "selector": "input[name=\"generation\"][value=\"6697\"]",
+          "tag": "INPUT",
+          "name": "generation",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "X",
+          "code": "6697"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Модификация (необязательно)",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "input[placeholder=\"Например, GT, CL, LX, WRC\"]",
+          "tag": "INPUT",
+          "name": "",
+          "type": "text",
+          "placeholder": "Например, GT, CL, LX, WRC",
+          "disabled": false,
+          "required": false,
+          "maxlength": "30",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Тип кузова",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "input[name=\"bodyType\"][value=\"sedan\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Седан",
+          "code": "sedan"
+        },
+        {
+          "selector": "input[name=\"bodyType\"][value=\"suv\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Внедорожник",
+          "code": "suv"
+        },
+        {
+          "selector": "input[name=\"bodyType\"][value=\"universal\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Универсал",
+          "code": "universal"
+        },
+        {
+          "selector": "input[name=\"bodyType\"][value=\"hatchback\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Хетчбэк",
+          "code": "hatchback"
+        },
+        {
+          "selector": "input[name=\"bodyType\"][value=\"liftback\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Лифтбэк",
+          "code": "liftback"
+        },
+        {
+          "selector": "input[name=\"bodyType\"][value=\"minivan\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Минивэн",
+          "code": "minivan"
+        },
+        {
+          "selector": "input[name=\"bodyType\"][value=\"minibus\"]",
+          "tag": "INPUT",
+          "name": "bodyType",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Микроавтобус",
+          "code": "minibus"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Двигатель",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2)",
+      "inputs": [],
+      "links": [
+        {
+          "label": "Бензин",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "Дизель",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        },
+        {
+          "label": "Электро",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(3)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Двигатель",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Газобаллонное оборудование"
+        },
+        {
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Гибрид"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Объем двигателя",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "text",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "5",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Мощность двигателя (необязательно)",
+      "selector": "div.vehicle-form__group.vehicle-form__group_width_xxssmm",
+      "inputs": [
+        {
+          "selector": "input.input-style.input-style_primary.input-style_base.vehicle-form__input.vehicle-form__input_width_full",
+          "tag": "INPUT",
+          "name": "",
+          "type": "tel",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "4",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Мощность двигателя (необязательно)",
+      "selector": "div.vehicle-form__group.vehicle-form__group_width_xxxsss",
+      "inputs": [],
+      "links": [
+        {
+          "label": "л.с.",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "кВт",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Крутящий момент (необязательно)",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(4) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "tel",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "4",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Привод",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [],
+      "links": [
+        {
+          "label": "Передний",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "Задний",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        },
+        {
+          "label": "Полный",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(3)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Коробка передач",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [],
+      "links": [
+        {
+          "label": "Автоматическая",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "Механическая",
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "",
+      "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(9) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(9) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Ручное управление для людей с ограниченными возможностями"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    }
+  ]
+}

@@ -1,0 +1,1958 @@
+{
+  "created": "2026-11-16T09:55:25.010Z",
+  "sourceHashes": {
+    "kufar": "5623180efeda6f92ae3fe4aab8e0a3ba0c2127f302ee06cf71f5e5c8a80c9874",
+    "onliner": "87314ac28ef3e0d8057363a1ceb466d238a685d35554c851fa46f112c53cde3e",
+    "av": "6d67b553de8b8590911a7c416e9ac10bf1756e979134268d3068b2c44970b012",
+    "abw": "54cb58aa16ad3020fe7beed9140780b51a7b96cdf4230fbecbbcfcf4273437c4"
+  },
+  "nodes": 18193,
+  "fields": 24,
+  "ambiguous": [
+    {
+      "field": "car.generation",
+      "parent": "car.option.5b2ff2e0-b9e6-4e3b-b4fe-a1de9d86993a",
+      "name": "III (EVO)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_abarth.model_punto.generation_punto_iii",
+        "kufar.catalog.category_2010.mark_abarth.model_punto.generation_punto_evo"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_abarth.model_punto.generation_punto_evo"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.5b2ff2e0-b9e6-4e3b-b4fe-a1de9d86993a",
+      "name": "III (EVO)",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A10297.number%3A10301.number%3A12864",
+        "av.generation.number%3A10297.number%3A10301.number%3A12863"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A10297.number%3A10301.number%3A12863"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.b7bddb9b-a558-4cac-bad4-016146f205ce",
+      "name": "I (955) Рестайлинг",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_alfa_romeo.model_mito.generation_mito_955restajling",
+        "kufar.catalog.category_2010.mark_alfa_romeo.model_mito.generation_mito_i_restajling20176738"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_alfa_romeo.model_mito.generation_mito_955restajling"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.c55afdd8-d75c-4b8e-bc96-711ef0a1f1c5",
+      "name": "II",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_austin_healey.model_3000.generation_3000_ii_bj721373586",
+        "kufar.catalog.category_2010.mark_austin_healey.model_3000.generation_3000_ii_bn7_bt721373436"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_austin_healey.model_3000.generation_3000_ii_bj721373586"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.c55afdd8-d75c-4b8e-bc96-711ef0a1f1c5",
+      "name": "II",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A156.number%3A557.number%3A3775",
+        "abw.generation.abw.model.abw.brand.number%3A156.number%3A557.number%3A3776"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A156.number%3A557.number%3A3775"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4a9b96e1-851e-43d1-bc78-f957a74be342",
+      "name": "I (EC3)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.223.3142.6624",
+        "onliner.generation.223.3142.6625"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.223.3142.6624"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.dd3a7cb9-1335-464b-b5fe-4227110cea41",
+      "name": "III",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_bmw.model_1er.generation_1_serii_iii_f4021573418",
+        "kufar.catalog.category_2010.mark_bmw.model_1er.generation_1serii_f52"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_bmw.model_1er.generation_1_serii_iii_f4021573418"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.dd3a7cb9-1335-464b-b5fe-4227110cea41",
+      "name": "III",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A8.number%3A5860.number%3A13992",
+        "av.generation.number%3A8.number%3A5860.number%3A11734"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A8.number%3A5860.number%3A11734"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.dd3a7cb9-1335-464b-b5fe-4227110cea41",
+      "name": "III",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A587.number%3A174963",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A587.number%3A174964"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A587.number%3A174963"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.77590972-66c5-4209-a55b-2fccf1ffa280",
+      "name": "2 серия",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_bmw.model_2er",
+        "kufar.catalog.category_2010.mark_bmw.model_2serija"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_bmw.model_2er"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.714d6fd2-5dad-4103-b1cf-d4821cb97696",
+      "name": "VI Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3073.6511",
+        "onliner.generation.5.3073.6323"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3073.6323"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.714d6fd2-5dad-4103-b1cf-d4821cb97696",
+      "name": "VI Рестайлинг",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A8.number%3A5863.number%3A12822",
+        "av.generation.number%3A8.number%3A5863.number%3A10035"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A8.number%3A5863.number%3A10035"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.714d6fd2-5dad-4103-b1cf-d4821cb97696",
+      "name": "VI",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3073.6510",
+        "onliner.generation.5.3073.6374"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3073.6374"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.714d6fd2-5dad-4103-b1cf-d4821cb97696",
+      "name": "VI",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A8.number%3A5863.number%3A4819",
+        "av.generation.number%3A8.number%3A5863.number%3A4431"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A8.number%3A5863.number%3A4431"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3d8b2dd2-cef8-4819-9581-7ee3d0917e5e",
+      "name": "G22 / G23 / G26 Gran Coupe",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3074.7258",
+        "onliner.generation.5.3074.6677"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3074.6677"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3d8b2dd2-cef8-4819-9581-7ee3d0917e5e",
+      "name": "G22 / G23 / G26 Gran Coupe",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A601.number%3A174970",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A601.number%3A174971"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A601.number%3A174970"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3d8b2dd2-cef8-4819-9581-7ee3d0917e5e",
+      "name": "F32 / F33 / F36 Gran Coupe Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3074.6513",
+        "onliner.generation.5.3074.6337"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3074.6337"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3d8b2dd2-cef8-4819-9581-7ee3d0917e5e",
+      "name": "F32 / F33 / F36 Gran Coupe",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3074.6512",
+        "onliner.generation.5.3074.6259"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3074.6259"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3d8b2dd2-cef8-4819-9581-7ee3d0917e5e",
+      "name": "G22 / G23 / G26 Gran Coupe Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3074.7663",
+        "onliner.generation.5.3074.8107"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3074.7663"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3d8b2dd2-cef8-4819-9581-7ee3d0917e5e",
+      "name": "G22 / G23 / G26 Gran Coupe Рестайлинг",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A601.number%3A277097",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A601.number%3A269393"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A601.number%3A269393"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.96fc120f-6d24-4f11-b6fd-773f6c25c336",
+      "name": "VI Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3075.6515",
+        "onliner.generation.5.3075.6260"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3075.6260"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.96fc120f-6d24-4f11-b6fd-773f6c25c336",
+      "name": "VI Рестайлинг",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A8.number%3A5865.number%3A11770",
+        "av.generation.number%3A8.number%3A5865.number%3A12865"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A8.number%3A5865.number%3A11770"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.96fc120f-6d24-4f11-b6fd-773f6c25c336",
+      "name": "VI",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.3075.6514",
+        "onliner.generation.5.3075.6261"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.3075.6261"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.96fc120f-6d24-4f11-b6fd-773f6c25c336",
+      "name": "VI",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A8.number%3A5865.number%3A4443",
+        "av.generation.number%3A8.number%3A5865.number%3A4818"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A8.number%3A5865.number%3A4443"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.68c93ceb-6a40-4a87-aa33-7668e93132b1",
+      "name": "G82 / G83",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A618.number%3A174989",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A618.number%3A174988"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A618.number%3A174988"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.e04b934c-0e65-4074-9c5a-cfc4595a2267",
+      "name": "III (F95)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.1165.8112",
+        "onliner.generation.5.1165.6377"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.1165.6377"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.961a2fe8-7bd7-45b4-aa84-ca6759c664d4",
+      "name": "II Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.1173.6380",
+        "onliner.generation.5.1173.6109"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.1173.6109"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.961a2fe8-7bd7-45b4-aa84-ca6759c664d4",
+      "name": "II",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.1173.6059",
+        "onliner.generation.5.1173.6060"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.1173.6059"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4d61c960-71db-4a82-8377-5f9cc9016851",
+      "name": "I",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_bmw.model_i3.generation_i3_g28",
+        "kufar.catalog.category_2010.mark_bmw.model_i3.generation_i3_i_i0120342220"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_bmw.model_i3.generation_i3_g28"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4d61c960-71db-4a82-8377-5f9cc9016851",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.5.2604.7573",
+        "onliner.generation.5.2604.6228"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.5.2604.6228"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4d61c960-71db-4a82-8377-5f9cc9016851",
+      "name": "I",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A8.number%3A2691.number%3A13067",
+        "av.generation.number%3A8.number%3A2691.number%3A134"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A8.number%3A2691.number%3A13067"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4d61c960-71db-4a82-8377-5f9cc9016851",
+      "name": "I",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A614.number%3A3889",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A614.number%3A174977"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A614.number%3A174977"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4d61c960-71db-4a82-8377-5f9cc9016851",
+      "name": "I Рестайлинг",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A614.number%3A3888",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A614.number%3A277098"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A614.number%3A277098"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d384692a-b8e6-4340-8bf6-3f5869ee919d",
+      "name": "I (G26)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A172792.number%3A172793",
+        "abw.generation.abw.model.abw.brand.number%3A166.number%3A172792.number%3A269395"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A166.number%3A172792.number%3A172793"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d6c6a9dc-4446-4013-9aa9-ac97e74db3c3",
+      "name": "I Рестайлинг 2",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_byd.model_han.generation_han_idm2jrestajling",
+        "kufar.catalog.category_2010.mark_byd.model_han.generation_han_iev2jrestajling"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_byd.model_han.generation_han_idm2jrestajling"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d6c6a9dc-4446-4013-9aa9-ac97e74db3c3",
+      "name": "I Рестайлинг 2",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A5459.number%3A10089.number%3A14113",
+        "av.generation.number%3A5459.number%3A10089.number%3A14114"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A5459.number%3A10089.number%3A14113"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d6c6a9dc-4446-4013-9aa9-ac97e74db3c3",
+      "name": "I Рестайлинг",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_byd.model_han.generation_han_idmrestajling",
+        "kufar.catalog.category_2010.mark_byd.model_han.generation_han_ievrestajling"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_byd.model_han.generation_han_idmrestajling"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d6c6a9dc-4446-4013-9aa9-ac97e74db3c3",
+      "name": "I Рестайлинг",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A5459.number%3A10089.number%3A12920",
+        "av.generation.number%3A5459.number%3A10089.number%3A12921"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A5459.number%3A10089.number%3A12920"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d6c6a9dc-4446-4013-9aa9-ac97e74db3c3",
+      "name": "I",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A5459.number%3A10089.number%3A10152",
+        "av.generation.number%3A5459.number%3A10089.number%3A12919"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A5459.number%3A10089.number%3A10152"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.c7ecc693-96c5-4e13-969a-be91fde11c96",
+      "name": "I Рестайлинг",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_byd.model_songPlusEV.generation_songPlusEVI2rest",
+        "kufar.catalog.category_2010.mark_byd.model_songPlusEV.generation_songPlusEVI3rest",
+        "kufar.catalog.category_2010.mark_byd.model_songPlusEV.generation_songPlusEVIrest"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_byd.model_songPlusEV.generation_songPlusEVI2rest"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.7bab33bf-9b71-4119-8a38-11b64074dd29",
+      "name": "I (EV)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_byd.model_yuan.generation_I",
+        "kufar.catalog.category_2010.mark_byd.model_yuan.generation_Iev"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_byd.model_yuan.generation_I"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.ee1bf0c3-90c6-439c-af6a-aa47c2436abb",
+      "name": "Cs35 Plus",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.model.153.3350",
+        "onliner.model.153.2948"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.model.153.3350"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.aed885df-baf6-47d7-a6d1-5affb8f3ea21",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.153.3350.7238",
+        "onliner.generation.153.2948.4730"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.153.2948.4730"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.00fde8c7-d8f1-4ead-9903-0e54401193df",
+      "name": "CrossEastar",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.model.9.1954",
+        "onliner.model.9.385"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.model.9.1954"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.00fde8c7-d8f1-4ead-9903-0e54401193df",
+      "name": "CrossEastar",
+      "platform": "av",
+      "candidates": [
+        "av.model.number%3A1998.number%3A5157",
+        "av.model.number%3A1998.number%3A10037"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.model.number%3A1998.number%3A10037"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2b5e95e7-88c0-49fd-a890-2e475c19033c",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.9.1954.2560",
+        "onliner.generation.9.385.4733"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.9.1954.2560"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2b5e95e7-88c0-49fd-a890-2e475c19033c",
+      "name": "I",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A1998.number%3A5157.number%3A3001",
+        "av.generation.number%3A1998.number%3A10037.number%3A10058"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A1998.number%3A10037.number%3A10058"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.402d04d0-4686-470b-9695-88c422471d5c",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.9.326.6545",
+        "onliner.generation.9.326.160"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.9.326.160"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.9c3bc9d6-b4fa-44c7-9000-f8c4b8ddda12",
+      "name": "IV Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.10.386.168",
+        "onliner.generation.10.386.1873"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.10.386.168"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.0c0bb836-6e22-4e8e-bf82-ead6f970f1dd",
+      "name": "I (V250) Рестайлинг",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A184.number%3A795.number%3A4237",
+        "abw.generation.abw.model.abw.brand.number%3A184.number%3A795.number%3A175176"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A184.number%3A795.number%3A175176"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.5e60e2b3-71f0-4591-8d94-ca140a53aaf7",
+      "name": "IV",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.10.1080.3388",
+        "onliner.generation.10.1080.3390"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.10.1080.3388"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.025b730d-8676-4551-9e0a-3db0846d7b77",
+      "name": "III (TRAX)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A184.number%3A834.number%3A4315",
+        "abw.generation.abw.model.abw.brand.number%3A184.number%3A834.number%3A175207"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A184.number%3A834.number%3A175207"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.f9e3d280-8230-4856-bef7-4b2e257ca881",
+      "name": "V (C2011)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_chrysler.model_grandVoyager.generation_grandVoyager_V_2011",
+        "kufar.catalog.category_2010.mark_chrysler.model_grandVoyager.generation_grandVoyager_V"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_chrysler.model_grandVoyager.generation_grandVoyager_V"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.f9e3d280-8230-4856-bef7-4b2e257ca881",
+      "name": "IV (C2004)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_chrysler.model_grandVoyager.generation_grandVoyager_IV_2004",
+        "kufar.catalog.category_2010.mark_chrysler.model_grandVoyager.generation_grandVoyager_IV"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_chrysler.model_grandVoyager.generation_grandVoyager_IV"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.257ca225-cbc9-4b07-ae58-84efb7c82ac9",
+      "name": "I (RU) Рестайлинг",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_chrysler.model_pacifica.generation_pacifica_ru_restajling22721160",
+        "kufar.catalog.category_2010.mark_chrysler.model_pacifica.generation_pacifica_irestajling"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_chrysler.model_pacifica.generation_pacifica_irestajling"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.257ca225-cbc9-4b07-ae58-84efb7c82ac9",
+      "name": "I (RU) Рестайлинг",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A42.number%3A167.number%3A11953",
+        "av.generation.number%3A42.number%3A167.number%3A11952"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A42.number%3A167.number%3A11952"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.0dcc47bb-d2a8-4a61-9f03-9d0d9737b45a",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.14.567.4347",
+        "onliner.generation.14.567.267"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.14.567.267"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2c108fd1-841c-494e-be1a-f93293a33d95",
+      "name": "I (A35)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.15.148.6585",
+        "onliner.generation.15.148.6584"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.15.148.6584"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.aef4e12b-5978-40b5-a26d-86d291e28cb7",
+      "name": "V",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.15.272.278",
+        "onliner.generation.15.272.277"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.15.272.277"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.95a9d568-835a-4a21-bfe2-5355a5586b07",
+      "name": "II",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A192.number%3A1006.number%3A175269",
+        "abw.generation.abw.model.abw.brand.number%3A192.number%3A1006.number%3A4622"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A192.number%3A1006.number%3A175269"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.e5a19cc2-109c-40f0-a3a5-17d538ef6ef3",
+      "name": "I (M100)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A192.number%3A1008.number%3A4625",
+        "abw.generation.abw.model.abw.brand.number%3A192.number%3A1008.number%3A277171"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A192.number%3A1008.number%3A277171"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.8028544f-71da-46db-9ec6-e4865bafa603",
+      "name": "VI",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A4698",
+        "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A269455"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A269455"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.8028544f-71da-46db-9ec6-e4865bafa603",
+      "name": "V (LX)",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A45.number%3A1904.number%3A504",
+        "av.generation.number%3A45.number%3A1904.number%3A3510"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A45.number%3A1904.number%3A3510"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.8028544f-71da-46db-9ec6-e4865bafa603",
+      "name": "V (LX)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A4699",
+        "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A277175"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A277175"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.8028544f-71da-46db-9ec6-e4865bafa603",
+      "name": "VII (LD)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A175296",
+        "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A269454"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A200.number%3A1061.number%3A175296"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4b54f352-82e2-4553-8a9d-0e1a5ff91de9",
+      "name": "I (PRO) Рестайлинг",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A201.number%3A174012.number%3A269458",
+        "abw.generation.abw.model.abw.brand.number%3A201.number%3A174012.number%3A269457"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A201.number%3A174012.number%3A269457"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.23a0e790-e5e5-4ebd-9066-c20fc2f145f3",
+      "name": "I (PLUS)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A201.number%3A269246.number%3A277181",
+        "abw.generation.abw.model.abw.brand.number%3A201.number%3A269246.number%3A269465"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A201.number%3A269246.number%3A269465"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.f6e539d0-a111-4392-a523-84a9ff465164",
+      "name": "290 / 295",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.18.709.6534",
+        "onliner.generation.18.709.6596"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.18.709.6534"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.bf15a191-9c69-454f-8865-5a0acb37b242",
+      "name": "III (USA)",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A330.number%3A342.number%3A670",
+        "av.generation.number%3A330.number%3A342.number%3A4847"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A330.number%3A342.number%3A4847"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.9e9a96c2-142b-4bf2-a90a-d08053a0fc11",
+      "name": "IV",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.19.2915.7324",
+        "onliner.generation.19.2915.4355"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.19.2915.4355"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.22127cd9-4f42-4227-aa9f-2a0cacc6dafd",
+      "name": "IV (USA)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.19.1090.7744",
+        "onliner.generation.19.1090.6598"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.19.1090.6598"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.22127cd9-4f42-4227-aa9f-2a0cacc6dafd",
+      "name": "III (USA)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.19.1090.3442",
+        "onliner.generation.19.1090.6599"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.19.1090.3442"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.22127cd9-4f42-4227-aa9f-2a0cacc6dafd",
+      "name": "II (USA)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.19.1090.416",
+        "onliner.generation.19.1090.6600"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.19.1090.416"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.22127cd9-4f42-4227-aa9f-2a0cacc6dafd",
+      "name": "I (USA)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.19.1090.417",
+        "onliner.generation.19.1090.6601"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.19.1090.417"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.742799c0-3a35-4d3f-9f37-1447bb6293e5",
+      "name": "II (2) Рестайлинг",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_geely.model_boyue.generation_boyueII2rest",
+        "kufar.catalog.category_2010.mark_geely.model_boyue.generation_boyueIIrest"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_geely.model_boyue.generation_boyueII2rest"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.c9c55227-b0d0-4d2a-8a00-cb78448971be",
+      "name": "I",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A236.number%3A1412.number%3A173022",
+        "abw.generation.abw.model.abw.brand.number%3A236.number%3A1412.number%3A5289"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A236.number%3A1412.number%3A173022"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d26b664e-a2ed-405e-b3ce-71fd6cc9caa2",
+      "name": "CF / CL / CM Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.23.22.1882",
+        "onliner.generation.23.22.3452"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.23.22.1882"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d26b664e-a2ed-405e-b3ce-71fd6cc9caa2",
+      "name": "CF / CL / CM",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.23.22.452",
+        "onliner.generation.23.22.3255"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.23.22.3255"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.5a005a02-2563-4334-9e99-8328eb1d5d44",
+      "name": "FK / FN Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.23.338.459",
+        "onliner.generation.23.338.2032"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.23.338.2032"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.5a005a02-2563-4334-9e99-8328eb1d5d44",
+      "name": "FK / FN",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.23.338.460",
+        "onliner.generation.23.338.461"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.23.338.460"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.5a005a02-2563-4334-9e99-8328eb1d5d44",
+      "name": "EG / EH / EJ / EK",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.23.338.463",
+        "onliner.generation.23.338.464"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.23.338.463"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4e09ec02-00f7-4d81-b275-9b4bcf253133",
+      "name": "III (USA)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_honda.model_hr_v.generation_hrv_iii",
+        "kufar.catalog.category_2010.mark_honda.model_hr_v.generation_hrv_iiiusa"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_honda.model_hr_v.generation_hrv_iii"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4e09ec02-00f7-4d81-b275-9b4bcf253133",
+      "name": "III (USA)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.23.534.7050",
+        "onliner.generation.23.534.7791"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.23.534.7050"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4e09ec02-00f7-4d81-b275-9b4bcf253133",
+      "name": "III (USA)",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A383.number%3A401.number%3A12116",
+        "av.generation.number%3A383.number%3A401.number%3A12949"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A383.number%3A401.number%3A12116"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.6f9d926e-327b-473a-98fb-e3839c1f333f",
+      "name": "I (X3)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A241.number%3A1500.number%3A173101",
+        "abw.generation.abw.model.abw.brand.number%3A241.number%3A1500.number%3A5522"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A241.number%3A1500.number%3A173101"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d5013e65-113e-48f6-9a73-e765f07e69a5",
+      "name": "IV (EF)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.25.818.543",
+        "onliner.generation.25.818.544"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.25.818.543"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.1d6ca996-52b0-406b-a5ad-45568350ad21",
+      "name": "I (CKD)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A243.number%3A1578.number%3A175781",
+        "abw.generation.abw.model.abw.brand.number%3A243.number%3A1578.number%3A5709"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A243.number%3A1578.number%3A175781"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.ae3d281e-8e88-44e4-964f-7773f875e6cb",
+      "name": "I (E25)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_isuzu.model_fargo.generation_fargo_e2521494781",
+        "kufar.catalog.category_2010.mark_isuzu.model_fargo.generation_fargo_i21608343"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_isuzu.model_fargo.generation_fargo_e2521494781"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.ae3d281e-8e88-44e4-964f-7773f875e6cb",
+      "name": "I (E25)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A247.number%3A174250.number%3A175789",
+        "abw.generation.abw.model.abw.brand.number%3A247.number%3A174250.number%3A175790"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A247.number%3A174250.number%3A175789"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.eb18b635-4170-4fa0-87cd-f7fb9ff2cd04",
+      "name": "Iev7l",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jac.model_iev7l",
+        "kufar.catalog.category_2010.mark_jac.model_iEV7L"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jac.model_iev7l"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.357396aa-eedf-43aa-b551-17437181eba1",
+      "name": "I",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jac.model_iev7l.generation_iev7l_i22509189",
+        "kufar.catalog.category_2010.mark_jac.model_iEV7L.generation_iEV7L_I"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jac.model_iEV7L.generation_iEV7L_I"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.eb18b635-4170-4fa0-87cd-f7fb9ff2cd04",
+      "name": "Iev7s",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jac.model_iev7s",
+        "kufar.catalog.category_2010.mark_jac.model_iEV7S"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jac.model_iev7s"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4b23174d-cecb-44f4-a137-91372716cd2f",
+      "name": "I",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jac.model_iev7s.generation_iev7s_i21500400",
+        "kufar.catalog.category_2010.mark_jac.model_iEV7S.generation_iEV7S_I"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jac.model_iEV7S.generation_iEV7S_I"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.eb18b635-4170-4fa0-87cd-f7fb9ff2cd04",
+      "name": "J7",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jac.model_j7",
+        "kufar.catalog.category_2010.mark_jac.model_j7_binyue"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jac.model_j7"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.eb18b635-4170-4fa0-87cd-f7fb9ff2cd04",
+      "name": "J7",
+      "platform": "abw",
+      "candidates": [
+        "abw.model.abw.brand.number%3A248.number%3A181034",
+        "abw.model.abw.brand.number%3A248.number%3A1618"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.model.abw.brand.number%3A248.number%3A1618"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.218fd590-ab59-46cc-89e3-c5ce0ccb5e7f",
+      "name": "I",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A248.number%3A181034.number%3A181041",
+        "abw.generation.abw.model.abw.brand.number%3A248.number%3A1618.number%3A5769"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A248.number%3A1618.number%3A5769"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.1601a63a-db6b-41f6-9a9b-e28677088060",
+      "name": "II",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jaguar.model_xj.generation_xj_ii_x3081696",
+        "kufar.catalog.category_2010.mark_jaguar.model_xj.generation_xj_ii_x3001695",
+        "kufar.catalog.category_2010.mark_jaguar.model_xj.generation_xj_ii_xj401698"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jaguar.model_xj.generation_xj_ii_x3001695"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.1601a63a-db6b-41f6-9a9b-e28677088060",
+      "name": "II",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.30.399.4807",
+        "onliner.generation.30.399.590",
+        "onliner.generation.30.399.4982"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.30.399.4807"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.1601a63a-db6b-41f6-9a9b-e28677088060",
+      "name": "II",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A526.number%3A532.number%3A1075",
+        "av.generation.number%3A526.number%3A532.number%3A3788"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A526.number%3A532.number%3A1075"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.1601a63a-db6b-41f6-9a9b-e28677088060",
+      "name": "II",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1636.number%3A5799",
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1636.number%3A5800",
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1636.number%3A5801"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A249.number%3A1636.number%3A5799"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "III",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jaguar.model_xjr.generation_xjr_iii_x35854422",
+        "kufar.catalog.category_2010.mark_jaguar.model_xjr.generation_xjr_iii_x35054420"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jaguar.model_xjr.generation_xjr_iii_x35054420"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "III",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.30.2523.2214",
+        "onliner.generation.30.2523.2215"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.30.2523.2214"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "III",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A526.number%3A536.number%3A3792",
+        "av.generation.number%3A526.number%3A536.number%3A3791"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A526.number%3A536.number%3A3791"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "III",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1638.number%3A5808",
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1638.number%3A5809"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A249.number%3A1638.number%3A5808"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "II",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_jaguar.model_xjr.generation_xjr_ii_x30854418",
+        "kufar.catalog.category_2010.mark_jaguar.model_xjr.generation_xjr_ii_x30054416"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_jaguar.model_xjr.generation_xjr_ii_x30054416"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "II",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.30.2523.2216",
+        "onliner.generation.30.2523.2217"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.30.2523.2216"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "II",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A526.number%3A536.number%3A3790",
+        "av.generation.number%3A526.number%3A536.number%3A3789"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A526.number%3A536.number%3A3789"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3866134f-77d6-4421-ae80-2973923cc488",
+      "name": "II",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1638.number%3A5810",
+        "abw.generation.abw.model.abw.brand.number%3A249.number%3A1638.number%3A5811"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A249.number%3A1638.number%3A5810"
+    },
+    {
+      "field": "car.brand",
+      "parent": null,
+      "name": "LADA",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.manufacturer.203",
+        "onliner.manufacturer.65"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.manufacturer.65"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.00a91c2f-1950-4971-8de9-f7adb0e10f53",
+      "name": "IV",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A287.number%3A2139.number%3A269590",
+        "abw.generation.abw.model.abw.brand.number%3A287.number%3A2139.number%3A277356"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A287.number%3A2139.number%3A269590"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.60e95815-8648-4bac-9a71-296ec04aa879",
+      "name": "II",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_mazda.model_929.generation_929_ii_hb2072",
+        "kufar.catalog.category_2010.mark_mazda.model_929.generation_929_la42071"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_mazda.model_929.generation_929_ii_hb2072"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.60e95815-8648-4bac-9a71-296ec04aa879",
+      "name": "II",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A634.number%3A644.number%3A3292",
+        "av.generation.number%3A634.number%3A644.number%3A3286"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A634.number%3A644.number%3A3286"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.60e95815-8648-4bac-9a71-296ec04aa879",
+      "name": "II",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A278.number%3A1944.number%3A6394",
+        "abw.generation.abw.model.abw.brand.number%3A278.number%3A1944.number%3A6395"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A278.number%3A1944.number%3A6394"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "V",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3098.7172",
+        "onliner.generation.41.3098.7170"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3098.7170"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "IV Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3098.7167",
+        "onliner.generation.41.3098.7169"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3098.7167"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "IV",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3098.7168",
+        "onliner.generation.41.3098.7166"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3098.7166"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "I",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_mercedesbenz.model_e_klasse.generation_eklass_i_w1242217",
+        "kufar.catalog.category_2010.mark_mercedesbenz.model_e_klasse.generation_eklass_iw123"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_mercedesbenz.model_e_klasse.generation_eklass_i_w1242217"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3098.7163",
+        "onliner.generation.41.3098.7162",
+        "onliner.generation.41.3098.6213",
+        "onliner.generation.41.3098.6508"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3098.6213"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "I",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A683.number%3A5884.number%3A4551",
+        "av.generation.number%3A683.number%3A5884.number%3A4552"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A683.number%3A5884.number%3A4551"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "213 / 238 Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3098.6488",
+        "onliner.generation.41.3098.7171"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3098.6488"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a9a3cff3-78d4-4afa-8b1d-3dad3f31c79d",
+      "name": "A124 / C124 / S124 / W124 Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3098.7165",
+        "onliner.generation.41.3098.7164"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3098.7164"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.073958ef-ecbc-42c9-8c48-e474eb515726",
+      "name": "III",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3100.6344",
+        "onliner.generation.41.3100.6242"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3100.6242"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.073958ef-ecbc-42c9-8c48-e474eb515726",
+      "name": "III",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A683.number%3A774.number%3A4570",
+        "av.generation.number%3A683.number%3A774.number%3A4575"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A683.number%3A774.number%3A4570"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.073958ef-ecbc-42c9-8c48-e474eb515726",
+      "name": "III",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A281.number%3A2037.number%3A176088",
+        "abw.generation.abw.model.abw.brand.number%3A281.number%3A2037.number%3A6618"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A281.number%3A2037.number%3A176088"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.073958ef-ecbc-42c9-8c48-e474eb515726",
+      "name": "W460 / W461",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3100.6309",
+        "onliner.generation.41.3100.6214"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3100.6214"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2df5482c-346f-4866-8e9e-4bb23fb51e02",
+      "name": "II",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.41.3101.6459",
+        "onliner.generation.41.3101.6181"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.41.3101.6181"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2df5482c-346f-4866-8e9e-4bb23fb51e02",
+      "name": "II",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A683.number%3A5886.number%3A4576",
+        "av.generation.number%3A683.number%3A5886.number%3A4580"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A683.number%3A5886.number%3A4576"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2df5482c-346f-4866-8e9e-4bb23fb51e02",
+      "name": "II",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A281.number%3A2038.number%3A176089",
+        "abw.generation.abw.model.abw.brand.number%3A281.number%3A2038.number%3A6626"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A281.number%3A2038.number%3A176089"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.66a00605-f5c3-4448-a8b0-952632fc20ce",
+      "name": "II (W639)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A281.number%3A2071.number%3A6719",
+        "abw.generation.abw.model.abw.brand.number%3A281.number%3A2071.number%3A269586"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A281.number%3A2071.number%3A269586"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.7ac76c65-41a7-4ed5-a794-8982aafe1c97",
+      "name": "IV",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.44.354.834",
+        "onliner.generation.44.354.835"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.44.354.834"
+    },
+    {
+      "field": "car.model",
+      "parent": "car.option.dcdd5cdb-675f-46d0-b255-1db3a0f853cb",
+      "name": "I-Miev",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_mitsubishi.model_i_miev",
+        "kufar.catalog.category_2010.mark_mitsubishi.model_i"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_mitsubishi.model_i"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.288f6f9e-7c86-407b-981e-9c551546833a",
+      "name": "I",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_nissan.model_240sx.generation_240sx_s1420973291",
+        "kufar.catalog.category_2010.mark_nissan.model_240sx.generation_240sx_s1320348980"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_nissan.model_240sx.generation_240sx_s1320348980"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.288f6f9e-7c86-407b-981e-9c551546833a",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.45.175.3550",
+        "onliner.generation.45.175.3551"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.45.175.3550"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.288f6f9e-7c86-407b-981e-9c551546833a",
+      "name": "I",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A892.number%3A896.number%3A1599",
+        "av.generation.number%3A892.number%3A896.number%3A1600"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A892.number%3A896.number%3A1599"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.288f6f9e-7c86-407b-981e-9c551546833a",
+      "name": "I",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A293.number%3A2251.number%3A7057",
+        "abw.generation.abw.model.abw.brand.number%3A293.number%3A2251.number%3A7058"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A293.number%3A2251.number%3A7057"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d2a34eb1-9157-443a-ac4c-8e20d057b643",
+      "name": "VII",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A892.number%3A926.number%3A1702",
+        "av.generation.number%3A892.number%3A926.number%3A1701"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A892.number%3A926.number%3A1701"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.af582a6a-74a0-4c94-a5e5-4e15f05b4ebf",
+      "name": "VI",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A892.number%3A936.number%3A1730",
+        "av.generation.number%3A892.number%3A936.number%3A1729"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A892.number%3A936.number%3A1729"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.e73321aa-f5ca-4660-89b8-bbcacdb62dbc",
+      "name": "VI",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.45.2653.5293",
+        "onliner.generation.45.2653.3741"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.45.2653.3741"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.e73321aa-f5ca-4660-89b8-bbcacdb62dbc",
+      "name": "VI",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A293.number%3A2329.number%3A7276",
+        "abw.generation.abw.model.abw.brand.number%3A293.number%3A2329.number%3A176261"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A293.number%3A2329.number%3A176261"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2dec9a32-254d-44bf-8a20-90aac9fddd42",
+      "name": "II (R50)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_nissan.model_terrano.generation_terrano_r5020194290",
+        "kufar.catalog.category_2010.mark_nissan.model_terrano.generation_terrano_ii2719"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_nissan.model_terrano.generation_terrano_ii2719"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2dec9a32-254d-44bf-8a20-90aac9fddd42",
+      "name": "II (R50)",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A892.number%3A960.number%3A12298",
+        "av.generation.number%3A892.number%3A960.number%3A1837"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A892.number%3A960.number%3A12298"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2dec9a32-254d-44bf-8a20-90aac9fddd42",
+      "name": "II (R50)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A293.number%3A2346.number%3A7346",
+        "abw.generation.abw.model.abw.brand.number%3A293.number%3A2346.number%3A7347"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A293.number%3A2346.number%3A7346"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.a244f647-b89c-4cca-bb40-ae51d31887c0",
+      "name": "VII",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A1364.number%3A1378.number%3A4831",
+        "av.generation.number%3A1364.number%3A1378.number%3A4053"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A1364.number%3A1378.number%3A4053"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.4a05a1b6-d3b4-4845-8cd6-3bdf630ac3ed",
+      "name": "III (OV24)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A296.number%3A2396.number%3A269602",
+        "abw.generation.abw.model.abw.brand.number%3A296.number%3A2396.number%3A277394"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A296.number%3A2396.number%3A269602"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.d83ee2d9-ff1c-4659-87f3-d89ef74036c8",
+      "name": "I (CC)",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A989.number%3A996.number%3A1997",
+        "av.generation.number%3A989.number%3A996.number%3A4854"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A989.number%3A996.number%3A1997"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.3b87106b-9fdb-4d36-a1b2-f26b1309895e",
+      "name": "II",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.50.48.4545",
+        "onliner.generation.50.48.4546"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.50.48.4545"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.b5e94f20-3829-4c2a-b62b-f95c352d9840",
+      "name": "II (987)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.50.463.2047",
+        "onliner.generation.50.463.1053"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.50.463.1053"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.faf58cfe-a4b6-4186-8d90-ad862a069718",
+      "name": "I",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.286.3725.7937",
+        "onliner.generation.286.3725.7936"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.286.3725.7936"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.881b4ed2-509f-4763-a625-a3f8ad212136",
+      "name": "I (TYPE994)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_skoda.model_felicia.generation_felicia_i3208",
+        "kufar.catalog.category_2010.mark_skoda.model_felicia.generation_felicia_type_99420783290"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_skoda.model_felicia.generation_felicia_i3208"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.881b4ed2-509f-4763-a625-a3f8ad212136",
+      "name": "I (TYPE994)",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.57.367.1145",
+        "onliner.generation.57.367.3101"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.57.367.1145"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.881b4ed2-509f-4763-a625-a3f8ad212136",
+      "name": "I (TYPE994)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A335.number%3A2764.number%3A8152",
+        "abw.generation.abw.model.abw.brand.number%3A335.number%3A2764.number%3A8153"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A335.number%3A2764.number%3A8152"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.b6a36a77-035d-4e22-8183-5286766f9ffc",
+      "name": "I (FL)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_skoda.model_praktik.generation_praktik_Ifl",
+        "kufar.catalog.category_2010.mark_skoda.model_praktik.generation_praktik_I"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_skoda.model_praktik.generation_praktik_I"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.77093aaa-6865-472b-aff1-b9536268fa7f",
+      "name": "III Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.58.368.4079",
+        "onliner.generation.58.368.4080"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.58.368.4079"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.f621ed8b-59e3-4cef-bb79-3410dc0385b1",
+      "name": "III",
+      "platform": "av",
+      "candidates": [
+        "av.generation.number%3A1181.number%3A1196.number%3A3212",
+        "av.generation.number%3A1181.number%3A1196.number%3A2402"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "av.generation.number%3A1181.number%3A1196.number%3A2402"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.65489fa7-827e-4111-a5a6-f4fcdf624621",
+      "name": "IV",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A354.number%3A2965.number%3A8659",
+        "abw.generation.abw.model.abw.brand.number%3A354.number%3A2965.number%3A277486"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A354.number%3A2965.number%3A277486"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.1ff91d2b-b11c-40e0-804c-10c0c2df6131",
+      "name": "VI (AE100 / AE101)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A354.number%3A3049.number%3A8876",
+        "abw.generation.abw.model.abw.brand.number%3A354.number%3A3049.number%3A8878"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A354.number%3A3049.number%3A8876"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.2ba36477-7d3e-4012-9cf3-ea537b508828",
+      "name": "II Рестайлинг",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A364.number%3A3217.number%3A277523",
+        "abw.generation.abw.model.abw.brand.number%3A364.number%3A3217.number%3A176912"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A364.number%3A3217.number%3A176912"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.feea1722-f4bf-4b34-b1de-bebb32e20b11",
+      "name": "I (FL)",
+      "platform": "kufar",
+      "candidates": [
+        "kufar.catalog.category_2010.mark_vortex.model_tingo.generation_tingo_i_fl50768",
+        "kufar.catalog.category_2010.mark_vortex.model_tingo.generation_tingo_i50766"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "kufar.catalog.category_2010.mark_vortex.model_tingo.generation_tingo_i_fl50768"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.feea1722-f4bf-4b34-b1de-bebb32e20b11",
+      "name": "I (FL)",
+      "platform": "abw",
+      "candidates": [
+        "abw.generation.abw.model.abw.brand.number%3A365.number%3A3220.number%3A9247",
+        "abw.generation.abw.model.abw.brand.number%3A365.number%3A3220.number%3A9248"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "abw.generation.abw.model.abw.brand.number%3A365.number%3A3220.number%3A9247"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.feea1722-f4bf-4b34-b1de-bebb32e20b11",
+      "name": "I (FL) Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.167.2420.1397",
+        "onliner.generation.167.2420.2294"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.167.2420.1397"
+    },
+    {
+      "field": "car.generation",
+      "parent": "car.option.c9beb47b-6f88-4b61-9b05-7095db8c22f1",
+      "name": "I (2) Рестайлинг",
+      "platform": "onliner",
+      "candidates": [
+        "onliner.generation.285.3793.8252",
+        "onliner.generation.285.3793.8251"
+      ],
+      "resolution": "preferred_native_variant",
+      "selected": "onliner.generation.285.3793.8251"
+    }
+  ],
+  "unmappedPolicy": "Scoped equivalence prefers a match; explicit market, restyling and contradictory ordinal distinctions remain separate. Native alternatives are retained in review.",
+  "limitations": [
+    "Chassis codes are linked to ordinals only by explicit sibling labels or reviewed scoped aliases; market/body qualifiers and restyling remain distinct.",
+    "Region grouping differs for Minsk; no cross-parent fallback.",
+    "ABW has 18 incomplete generation branches.",
+    "AV/ABW browser bindings require live verification."
+  ]
+}

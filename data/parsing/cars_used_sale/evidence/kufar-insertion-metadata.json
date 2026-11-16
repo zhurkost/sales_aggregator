@@ -1,0 +1,6762 @@
+{
+  "format_version": "2.2",
+  "category_id": "cars_used_sale",
+  "platform": "kufar",
+  "metadata_source": {
+    "url": "https://api.kufar.by/insertion/v1/meta/bootstrap?application=ad_insertion&category=2010&company_ad=0&parent=2000&platform=web&routing=web_ad_insertion&taxonomy-version=2",
+    "observed_at": "2026-11-12T09:34:09.947Z",
+    "sha256": "07ea5560d813db2dc949dacb3f0737368efa31ee8cef84ca8dd2f4598c91d42a"
+  },
+  "scope": {
+    "category": "2010",
+    "company_ad": "0",
+    "condition": "1",
+    "sample": [
+      "Kia",
+      "Rio",
+      "IV Рестайлинг"
+    ],
+    "year_filter": false
+  },
+  "refs": {
+    "4": {
+      "variation_id": 4,
+      "name": "cars_sunroof",
+      "url_name": "csr",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 265,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 266,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Люк / панорамная крыша",
+          "by": "Люк / панарамны дах"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10": {
+      "variation_id": 10,
+      "name": "cars_seatwarmer",
+      "url_name": "csw",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 267,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 268,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Обогрев сидений",
+          "by": "Абаграванне сядзенняў"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Есть",
+            "by": "Ёсць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "12": {
+      "variation_id": 12,
+      "name": "cars_climate",
+      "url_name": "ccnd",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 261,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 262,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Кондиционер / климат-контроль",
+          "by": "Кандыцыянер / клімат-кантроль"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "15": {
+      "variation_id": 15,
+      "name": "cars_cruise_control",
+      "url_name": "ccl",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 263,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 264,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Круиз-контроль",
+          "by": "Круіз-кантроль"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "25": {
+      "variation_id": 25,
+      "name": "cars_alloy_wheels",
+      "url_name": "caw",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 281,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 282,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Легкосплавные диски",
+          "by": "Лёгкасплаўныя дыскi"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "43": {
+      "variation_id": 43,
+      "name": "cars_parktronic",
+      "url_name": "cpt",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 271,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 272,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Парктроник / камера",
+          "by": "Парктронiк / камера"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "56": {
+      "variation_id": 56,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19196,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19197,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19198,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Брест",
+            "by": "Брэст"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "150",
+          "labels": {
+            "ru": "Брестский район",
+            "by": "Брэсцкі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "37",
+          "labels": {
+            "ru": "Барановичи",
+            "by": "Баранавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "38",
+          "labels": {
+            "ru": "Береза",
+            "by": "Бяроза"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "123",
+          "labels": {
+            "ru": "Белоозёрск",
+            "by": "Белаазёрск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "148",
+          "labels": {
+            "ru": "Высокое",
+            "by": "Высокае"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "48",
+          "labels": {
+            "ru": "Ганцевичи",
+            "by": "Ганцавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "159",
+          "labels": {
+            "ru": "Городище",
+            "by": "Гарадзішча"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "147",
+          "labels": {
+            "ru": "Давид - Городок",
+            "by": "Давід - Гарадок"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "49",
+          "labels": {
+            "ru": "Дрогичин",
+            "by": "Драгічын"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "50",
+          "labels": {
+            "ru": "Жабинка",
+            "by": "Жабінка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "51",
+          "labels": {
+            "ru": "Иваново",
+            "by": "Іванава"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "52",
+          "labels": {
+            "ru": "Ивацевичи",
+            "by": "Івацэвічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "53",
+          "labels": {
+            "ru": "Каменец",
+            "by": "Камянец"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Кобрин",
+            "by": "Кобрын"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Лунинец",
+            "by": "Лунінец"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "54",
+          "labels": {
+            "ru": "Ляховичи",
+            "by": "Ляхавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "55",
+          "labels": {
+            "ru": "Малорита",
+            "by": "Маларыта"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "146",
+          "labels": {
+            "ru": "Микашевичи",
+            "by": "Мікашэвічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Пинск",
+            "by": "Пінск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "56",
+          "labels": {
+            "ru": "Пружаны",
+            "by": "Пружаны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "160",
+          "labels": {
+            "ru": "Ружаны",
+            "by": "Ружаны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "57",
+          "labels": {
+            "ru": "Столин",
+            "by": "Столін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "161",
+          "labels": {
+            "ru": "Телеханы",
+            "by": "Целяханы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "31",
+          "labels": {
+            "ru": "Другие города",
+            "by": "Іншыя гарады"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "57": {
+      "variation_id": 57,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19199,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19200,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19201,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Гомель",
+            "by": "Гомель"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "152",
+          "labels": {
+            "ru": "Гомельский район",
+            "by": "Гомельскі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "162",
+          "labels": {
+            "ru": "Большевик",
+            "by": "Бальшавік"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "128",
+          "labels": {
+            "ru": "Брагин",
+            "by": "Брагін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "58",
+          "labels": {
+            "ru": "Буда-Кошелево",
+            "by": "Буда-Кашалёва"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "149",
+          "labels": {
+            "ru": "Василевичи",
+            "by": "Васілевічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "59",
+          "labels": {
+            "ru": "Ветка",
+            "by": "Ветка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "60",
+          "labels": {
+            "ru": "Добруш",
+            "by": "Добруш"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "61",
+          "labels": {
+            "ru": "Ельск",
+            "by": "Ельск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "62",
+          "labels": {
+            "ru": "Житковичи",
+            "by": "Жыткавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Жлобин",
+            "by": "Жлобін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "63",
+          "labels": {
+            "ru": "Калинковичи",
+            "by": "Калінкавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "129",
+          "labels": {
+            "ru": "Корма",
+            "by": "Карма"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "163",
+          "labels": {
+            "ru": "Костюковка",
+            "by": "Касцюкоўка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "130",
+          "labels": {
+            "ru": "Лельчицы",
+            "by": "Лельчыцы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "131",
+          "labels": {
+            "ru": "Лоев",
+            "by": "Лоеў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "Мозырь",
+            "by": "Мазыр"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "132",
+          "labels": {
+            "ru": "Октябрьский",
+            "by": "Акцябрскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "64",
+          "labels": {
+            "ru": "Наровля",
+            "by": "Нароўля"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "164",
+          "labels": {
+            "ru": "Паричи",
+            "by": "Парычы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "65",
+          "labels": {
+            "ru": "Петриков",
+            "by": "Петрыкаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "8",
+          "labels": {
+            "ru": "Речица",
+            "by": "Рэчыца"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "66",
+          "labels": {
+            "ru": "Рогачев",
+            "by": "Рагачоў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "39",
+          "labels": {
+            "ru": "Светлогорск",
+            "by": "Светлагорск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "165",
+          "labels": {
+            "ru": "Тереховка",
+            "by": "Церахоўка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "166",
+          "labels": {
+            "ru": "Туров",
+            "by": "Тураў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "167",
+          "labels": {
+            "ru": "Уваровичи",
+            "by": "Уваравічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "67",
+          "labels": {
+            "ru": "Хойники",
+            "by": "Хойнікі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "68",
+          "labels": {
+            "ru": "Чечерск",
+            "by": "Чачэрск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "32",
+          "labels": {
+            "ru": "Другие города",
+            "by": "Іншыя гарады"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "58": {
+      "variation_id": 58,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19214,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19215,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19216,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "9",
+          "labels": {
+            "ru": "Гродно",
+            "by": "Гродна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "153",
+          "labels": {
+            "ru": "Гродненский район",
+            "by": "Гродзенскі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "168",
+          "labels": {
+            "ru": "Большая Берестовица",
+            "by": "Вялікая Бераставіца"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "69",
+          "labels": {
+            "ru": "Березовка",
+            "by": "Бярозаўка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "133",
+          "labels": {
+            "ru": "Берестовица",
+            "by": "Бераставіца"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "40",
+          "labels": {
+            "ru": "Волковыск",
+            "by": "Ваўкавыск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "134",
+          "labels": {
+            "ru": "Вороново",
+            "by": "Воранава"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "70",
+          "labels": {
+            "ru": "Дятлово",
+            "by": "Дзятлава"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "135",
+          "labels": {
+            "ru": "Зельва",
+            "by": "Зэльва"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "71",
+          "labels": {
+            "ru": "Ивье",
+            "by": "Іўе"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "136",
+          "labels": {
+            "ru": "Кореличи",
+            "by": "Карэлічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "169",
+          "labels": {
+            "ru": "Красносельский",
+            "by": "Краснасельскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "Лида",
+            "by": "Ліда"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "72",
+          "labels": {
+            "ru": "Мосты",
+            "by": "Масты"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "170",
+          "labels": {
+            "ru": "Мир",
+            "by": "Мір"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "73",
+          "labels": {
+            "ru": "Новогрудок",
+            "by": "Навагрудак"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "74",
+          "labels": {
+            "ru": "Островец",
+            "by": "Астравец"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "75",
+          "labels": {
+            "ru": "Ошмяны",
+            "by": "Ашмяны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "171",
+          "labels": {
+            "ru": "Радунь",
+            "by": "Радунь"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "172",
+          "labels": {
+            "ru": "Россь",
+            "by": "Рось"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "76",
+          "labels": {
+            "ru": "Свислочь",
+            "by": "Свіслач"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "77",
+          "labels": {
+            "ru": "Скидель",
+            "by": "Скідзель"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "11",
+          "labels": {
+            "ru": "Слоним",
+            "by": "Слонім"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "41",
+          "labels": {
+            "ru": "Сморгонь",
+            "by": "Смаргонь"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "78",
+          "labels": {
+            "ru": "Щучин",
+            "by": "Шчучын"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "33",
+          "labels": {
+            "ru": "Другие города",
+            "by": "Іншыя гарады"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "59": {
+      "variation_id": 59,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19202,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19203,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19204,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "13",
+          "labels": {
+            "ru": "Могилев",
+            "by": "Магілёў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "154",
+          "labels": {
+            "ru": "Могилевский район",
+            "by": "Магілёўскі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "137",
+          "labels": {
+            "ru": "Белыничи",
+            "by": "Бялынічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "12",
+          "labels": {
+            "ru": "Бобруйск",
+            "by": "Бабруйск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "79",
+          "labels": {
+            "ru": "Быхов",
+            "by": "Быхаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "80",
+          "labels": {
+            "ru": "Глуск",
+            "by": "Глуск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "42",
+          "labels": {
+            "ru": "Горки",
+            "by": "Горкі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "138",
+          "labels": {
+            "ru": "Дрибин",
+            "by": "Дрыбін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "173",
+          "labels": {
+            "ru": "Елизово",
+            "by": "Ялізава"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "81",
+          "labels": {
+            "ru": "Кировск",
+            "by": "Кіраўск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "82",
+          "labels": {
+            "ru": "Климовичи",
+            "by": "Клімавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "83",
+          "labels": {
+            "ru": "Кличев",
+            "by": "Клічаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "139",
+          "labels": {
+            "ru": "Краснополье",
+            "by": "Краснаполле"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "140",
+          "labels": {
+            "ru": "Круглое",
+            "by": "Круглае"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "84",
+          "labels": {
+            "ru": "Костюковичи",
+            "by": "Касцюковічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "43",
+          "labels": {
+            "ru": "Кричев",
+            "by": "Крычаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "85",
+          "labels": {
+            "ru": "Мстиславль",
+            "by": "Мсціслаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "14",
+          "labels": {
+            "ru": "Осиповичи",
+            "by": "Асіповічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "86",
+          "labels": {
+            "ru": "Славгород",
+            "by": "Слаўгарад"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "87",
+          "labels": {
+            "ru": "Чаусы",
+            "by": "Чавусы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "88",
+          "labels": {
+            "ru": "Чериков",
+            "by": "Чэрыкаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "89",
+          "labels": {
+            "ru": "Шклов",
+            "by": "Шклоў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "141",
+          "labels": {
+            "ru": "Хотимск",
+            "by": "Хоцімск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "34",
+          "labels": {
+            "ru": "Другие города",
+            "by": "Іншыя гарады"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "60": {
+      "variation_id": 60,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19205,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19206,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19207,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "142",
+          "labels": {
+            "ru": "Минский район",
+            "by": "Мінскі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "91",
+          "labels": {
+            "ru": "Березино",
+            "by": "Беразіно"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "15",
+          "labels": {
+            "ru": "Борисов",
+            "by": "Барысаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "158",
+          "labels": {
+            "ru": "Боровляны",
+            "by": "Бараўляны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "92",
+          "labels": {
+            "ru": "Вилейка",
+            "by": "Вілейка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "93",
+          "labels": {
+            "ru": "Воложин",
+            "by": "Валожын"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "174",
+          "labels": {
+            "ru": "Городея",
+            "by": "Гарадзея"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "94",
+          "labels": {
+            "ru": "Дзержинск",
+            "by": "Дзяржынск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "182",
+          "labels": {
+            "ru": "Ждановичи",
+            "by": "Ждановічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "44",
+          "labels": {
+            "ru": "Жодино",
+            "by": "Жодзіна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "143",
+          "labels": {
+            "ru": "Заславль",
+            "by": "Заслаўе"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "175",
+          "labels": {
+            "ru": "Зеленый Бор",
+            "by": "Зялёны Бор"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "176",
+          "labels": {
+            "ru": "Ивенец",
+            "by": "Івянец"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "95",
+          "labels": {
+            "ru": "Клецк",
+            "by": "Клецк"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "96",
+          "labels": {
+            "ru": "Копыль",
+            "by": "Копыль"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "97",
+          "labels": {
+            "ru": "Крупки",
+            "by": "Крупкі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "98",
+          "labels": {
+            "ru": "Логойск",
+            "by": "Лагойск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "99",
+          "labels": {
+            "ru": "Любань",
+            "by": "Любань"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "122",
+          "labels": {
+            "ru": "Марьина Горка",
+            "by": "Мар'іна Горка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "180",
+          "labels": {
+            "ru": "Мачулищи",
+            "by": "Мачулiшчы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "16",
+          "labels": {
+            "ru": "Молодечно",
+            "by": "Маладзечна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "100",
+          "labels": {
+            "ru": "Мядель",
+            "by": "Мядзел"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "101",
+          "labels": {
+            "ru": "Несвиж",
+            "by": "Нясвіж"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "156",
+          "labels": {
+            "ru": "Плещеницы",
+            "by": "Плешчаніцы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "157",
+          "labels": {
+            "ru": "Радошковичи",
+            "by": "Радашковічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "145",
+          "labels": {
+            "ru": "Руденск",
+            "by": "Рудзенск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "17",
+          "labels": {
+            "ru": "Слуцк",
+            "by": "Слуцк"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "102",
+          "labels": {
+            "ru": "Смолевичи",
+            "by": "Смалявічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "177",
+          "labels": {
+            "ru": "Смиловичи",
+            "by": "Смілавічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "45",
+          "labels": {
+            "ru": "Солигорск",
+            "by": "Салігорск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "178",
+          "labels": {
+            "ru": "Старобин",
+            "by": "Старобін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "103",
+          "labels": {
+            "ru": "Старые Дороги",
+            "by": "Старыя Дарогі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "104",
+          "labels": {
+            "ru": "Столбцы",
+            "by": "Стоўбцы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "105",
+          "labels": {
+            "ru": "Узда",
+            "by": "Узда"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "144",
+          "labels": {
+            "ru": "Фаниполь",
+            "by": "Фаніпаль"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "106",
+          "labels": {
+            "ru": "Червень",
+            "by": "Чэрвень"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "35",
+          "labels": {
+            "ru": "Другие города",
+            "by": "Іншыя гарады"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "61": {
+      "variation_id": 61,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19208,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19209,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19210,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "18",
+          "labels": {
+            "ru": "Витебск",
+            "by": "Віцебск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "151",
+          "labels": {
+            "ru": "Витебский район",
+            "by": "Віцебскі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "125",
+          "labels": {
+            "ru": "Бешенковичи",
+            "by": "Бешанковічы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "107",
+          "labels": {
+            "ru": "Барань",
+            "by": "Барань"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "108",
+          "labels": {
+            "ru": "Браслав",
+            "by": "Браслаў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "155",
+          "labels": {
+            "ru": "Браславский район",
+            "by": "Браслаўскі раён"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "109",
+          "labels": {
+            "ru": "Верхнедвинск",
+            "by": "Верхнядзвінск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "179",
+          "labels": {
+            "ru": "Ветрино",
+            "by": "Ветрына"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "110",
+          "labels": {
+            "ru": "Глубокое",
+            "by": "Глыбокае"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "111",
+          "labels": {
+            "ru": "Городок",
+            "by": "Гарадок"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "112",
+          "labels": {
+            "ru": "Докшицы",
+            "by": "Докшыцы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "113",
+          "labels": {
+            "ru": "Дубровно",
+            "by": "Дуброўна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "181",
+          "labels": {
+            "ru": "Коханово",
+            "by": "Коханава"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "114",
+          "labels": {
+            "ru": "Лепель",
+            "by": "Лепель"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "115",
+          "labels": {
+            "ru": "Лиозно",
+            "by": "Лёзна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "116",
+          "labels": {
+            "ru": "Миоры",
+            "by": "Мёры"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "117",
+          "labels": {
+            "ru": "Новолукомль",
+            "by": "Новалукомль"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "46",
+          "labels": {
+            "ru": "Новополоцк",
+            "by": "Наваполацк"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "19",
+          "labels": {
+            "ru": "Орша",
+            "by": "Орша"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "20",
+          "labels": {
+            "ru": "Полоцк",
+            "by": "Полацк"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "47",
+          "labels": {
+            "ru": "Поставы",
+            "by": "Паставы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "118",
+          "labels": {
+            "ru": "Россоны",
+            "by": "Расоны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "119",
+          "labels": {
+            "ru": "Сенно",
+            "by": "Сянно"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "120",
+          "labels": {
+            "ru": "Толочин",
+            "by": "Талочын"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "126",
+          "labels": {
+            "ru": "Ушачи",
+            "by": "Ушачы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "121",
+          "labels": {
+            "ru": "Чашники",
+            "by": "Чашнікі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "127",
+          "labels": {
+            "ru": "Шарковщина",
+            "by": "Шаркаўшчына"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "124",
+          "labels": {
+            "ru": "Шумилино",
+            "by": "Шуміліна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "36",
+          "labels": {
+            "ru": "Другие города",
+            "by": "Іншыя гарады"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "62": {
+      "variation_id": 62,
+      "name": "area",
+      "url_name": "ar",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19211,
+          "args": null,
+          "depends_on": null,
+          "name": "v_area",
+          "type": "validator"
+        },
+        {
+          "action_id": 19212,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19213,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Город / Район",
+          "by": "Горад / Раён"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "22",
+          "labels": {
+            "ru": "Центральный",
+            "by": "Цэнтральны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "23",
+          "labels": {
+            "ru": "Советский",
+            "by": "Савецкі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "24",
+          "labels": {
+            "ru": "Первомайский",
+            "by": "Першамайскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "25",
+          "labels": {
+            "ru": "Партизанский",
+            "by": "Партызанскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "26",
+          "labels": {
+            "ru": "Заводской",
+            "by": "Заводскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "27",
+          "labels": {
+            "ru": "Ленинский",
+            "by": "Ленінскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "28",
+          "labels": {
+            "ru": "Октябрьский",
+            "by": "Кастрычніцкі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "29",
+          "labels": {
+            "ru": "Московский",
+            "by": "Маскоўскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "30",
+          "labels": {
+            "ru": "Фрунзенский",
+            "by": "Фрунзенскі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "144": {
+      "variation_id": 144,
+      "name": "cars_alarm",
+      "url_name": "alm",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 277,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 278,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Защита от угона",
+          "by": "Абарона ад згону"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "145": {
+      "variation_id": 145,
+      "name": "cars_navigation",
+      "url_name": "cnv",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 273,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 274,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Штатная навигация",
+          "by": "Штатная навігацыя"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "148": {
+      "variation_id": 148,
+      "name": "region",
+      "url_name": "rgn",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19020,
+          "args": null,
+          "depends_on": null,
+          "name": "v_region",
+          "type": "validator"
+        },
+        {
+          "action_id": 19021,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 19022,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Регион",
+          "by": "Рэгіён"
+        },
+        "placeholder": {
+          "ru": "Вся Беларусь",
+          "by": "Уся Беларусь"
+        }
+      },
+      "values": [
+        {
+          "value": "7",
+          "labels": {
+            "ru": "Минск",
+            "by": "Мінск"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Брестская область",
+            "by": "Брэсцкая вобласць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Гомельская область",
+            "by": "Гомельская вобласць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Гродненская область",
+            "by": "Гродзенская вобласць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Могилевская область",
+            "by": "Магілёўская вобласць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Минская область",
+            "by": "Мінская вобласць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Витебская область",
+            "by": "Віцебская вобласць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "155": {
+      "variation_id": 155,
+      "name": "cars_aux",
+      "url_name": "aux",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 275,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 276,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "AUX / USB / Bluetooth",
+          "by": "AUX / USB / Bluetooth"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "158": {
+      "variation_id": 158,
+      "name": "cars_abs",
+      "url_name": "abs",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 269,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 270,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "ABS / ESP / ASR",
+          "by": "ABS / ESP / ASR"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1438": {
+      "variation_id": 1438,
+      "name": "possible_exchange",
+      "url_name": "pse",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 13067,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 13068,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Возможен обмен",
+          "by": "Магчымы абмен"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Так"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1511": {
+      "variation_id": 1511,
+      "name": "body",
+      "url_name": "bdy",
+      "required": true,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "text_area",
+        "type": "text_area"
+      },
+      "actions": [
+        {
+          "action_id": 16536,
+          "args": null,
+          "depends_on": null,
+          "name": "m_body",
+          "type": "mutator"
+        },
+        {
+          "action_id": 16537,
+          "args": null,
+          "depends_on": null,
+          "name": "v_body",
+          "type": "validator"
+        },
+        {
+          "action_id": 16538,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 16539,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        },
+        {
+          "action_id": 16540,
+          "args": {
+            "max": 4000,
+            "min": 20
+          },
+          "depends_on": null,
+          "name": "v_length",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Описание",
+          "by": "Апісанне"
+        },
+        "placeholder": {
+          "ru": "Расскажите подробности и детали, чтобы привлечь внимание к объявлению",
+          "by": "Раскажыце падрабязнасці і дэталі, каб прыцягнуць увагу да аб'явы"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1512": {
+      "variation_id": 1512,
+      "name": "subject",
+      "url_name": "sbj",
+      "required": true,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "input",
+        "type": "input"
+      },
+      "actions": [
+        {
+          "action_id": 13254,
+          "args": null,
+          "depends_on": null,
+          "name": "m_subject",
+          "type": "mutator"
+        },
+        {
+          "action_id": 13255,
+          "args": null,
+          "depends_on": null,
+          "name": "v_subject",
+          "type": "validator"
+        },
+        {
+          "action_id": 13256,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 13257,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        },
+        {
+          "action_id": 13258,
+          "args": {
+            "max": 100,
+            "min": 2
+          },
+          "depends_on": null,
+          "name": "v_length",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Название товара/услуги",
+          "by": "Назва тавара/паслугі"
+        },
+        "placeholder": {
+          "ru": "Например, телевизор Horizont",
+          "by": "Напрыклад, каляска Chicco Multiway"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1514": {
+      "variation_id": 1514,
+      "name": "email",
+      "url_name": "eml",
+      "required": true,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": null,
+        "type": null
+      },
+      "actions": [
+        {
+          "action_id": 16695,
+          "args": null,
+          "depends_on": null,
+          "name": "v_email",
+          "type": "validator"
+        },
+        {
+          "action_id": 16696,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 16697,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "E-mail",
+          "by": "E-mail"
+        },
+        "placeholder": {
+          "ru": "support@kufar.by",
+          "by": "support@kufar.by"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1515": {
+      "variation_id": 1515,
+      "name": "phone",
+      "url_name": "phn",
+      "required": true,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": null,
+      "actions": [
+        {
+          "action_id": 1002,
+          "args": null,
+          "depends_on": null,
+          "name": "m_phone",
+          "type": "mutator"
+        },
+        {
+          "action_id": 1003,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 1004,
+          "args": null,
+          "depends_on": null,
+          "name": "v_phone",
+          "type": "validator"
+        },
+        {
+          "action_id": 1005,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Телефон",
+          "by": "Тэлефон"
+        },
+        "placeholder": {
+          "ru": "+375(__)___-__-__",
+          "by": "+375(__)___-__-__"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1523": {
+      "variation_id": 1523,
+      "name": "condition",
+      "url_name": "cnd",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select_chips"
+      },
+      "actions": [
+        {
+          "action_id": 4929,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 4930,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Состояние",
+          "by": "Стан"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "С пробегом",
+            "by": "З прабегам"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Новый",
+            "by": "Новы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1568": {
+      "variation_id": 1568,
+      "name": "repair_needed",
+      "url_name": "rpn",
+      "required": false,
+      "type": "bool",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "checkbox",
+        "type": "checkbox"
+      },
+      "actions": [
+        {
+          "action_id": 283,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 284,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Требует ремонта",
+          "by": "Патрабуе рамонту"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Да",
+            "by": "Да"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "0",
+          "labels": {
+            "ru": "-",
+            "by": "-"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1573": {
+      "variation_id": 1573,
+      "name": "cars_type",
+      "url_name": "crt",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 14229,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 14230,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Тип кузова",
+          "by": "Тып кузава"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Седан",
+            "by": "Седан"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Универсал",
+            "by": "Універсал"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Хэтчбек",
+            "by": "Хэтчбэк"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Минивэн",
+            "by": "Мінівэн"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Внедорожник",
+            "by": "Пазадарожнік"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Купе",
+            "by": "Купэ"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "Кабриолет",
+            "by": "Кабрыялет"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "8",
+          "labels": {
+            "ru": "Микроавтобус",
+            "by": "Мікрааўтобус"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "9",
+          "labels": {
+            "ru": "Фургон",
+            "by": "Фургон"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "Пикап",
+            "by": "Пікап"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "11",
+          "labels": {
+            "ru": "Лимузин",
+            "by": "Лімузін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "12",
+          "labels": {
+            "ru": "Лифтбек",
+            "by": "Ліфтбэк"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1574": {
+      "variation_id": 1574,
+      "name": "cars_color",
+      "url_name": "crc",
+      "required": false,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 1917,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 1918,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Цвет",
+          "by": "Колер"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Белый",
+            "by": "Белы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Серый / серебристый",
+            "by": "Шэры / серабрысты"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Черный",
+            "by": "Чорны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Красный / оранжевый",
+            "by": "Чырвоны / аранжавы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Синий / фиолетовый",
+            "by": "Сіні / фіялетавы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Зеленый",
+            "by": "Зялёны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "Желтый / золотистый",
+            "by": "Жоўты / залацісты"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "8",
+          "labels": {
+            "ru": "Коричневый",
+            "by": "Карычневы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1575": {
+      "variation_id": 1575,
+      "name": "cars_engine",
+      "url_name": "cre",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select_chips"
+      },
+      "actions": [
+        {
+          "action_id": 14334,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 14335,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Тип двигателя",
+          "by": "Тып рухавіка"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Бензин",
+            "by": "Бензін"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Бензин (пропан-бутан)",
+            "by": "Бензін (прапан-бутан)"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Бензин (метан)",
+            "by": "Бензін (метан)"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Бензин (гибрид)",
+            "by": "Бензін (гібрыд)"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Дизель",
+            "by": "Дызель"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "Дизель (гибрид)",
+            "by": "Дызель (гібрыд)"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Электричество",
+            "by": "Электрычнасць"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1576": {
+      "variation_id": 1576,
+      "name": "cars_drive",
+      "url_name": "crd",
+      "required": false,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select_chips"
+      },
+      "actions": [
+        {
+          "action_id": 4892,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 4893,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Привод",
+          "by": "Прывод"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Передний",
+            "by": "Пярэдні"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Задний",
+            "by": "Задні"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Полный",
+            "by": "Поўны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1577": {
+      "variation_id": 1577,
+      "name": "cars_gearbox",
+      "url_name": "crg",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select_chips"
+      },
+      "actions": [
+        {
+          "action_id": 14301,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 14302,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Коробка передач",
+          "by": "Каробка перадач"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Автоматическая",
+            "by": "Аўтаматычная"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Механика",
+            "by": "Механіка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1579": {
+      "variation_id": 1579,
+      "name": "cars_capacity",
+      "url_name": "crca",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 15213,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 15214,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Объем, л",
+          "by": "Аб'ём, л"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "до 1 л",
+            "by": "да 1 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "1.0 л",
+            "by": "1.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "1.1 л",
+            "by": "1.1 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "1.2 л",
+            "by": "1.2 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "1.3 л",
+            "by": "1.3 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "1.4 л",
+            "by": "1.4 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "1.5 л",
+            "by": "1.5 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "8",
+          "labels": {
+            "ru": "1.6 л",
+            "by": "1.6 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "9",
+          "labels": {
+            "ru": "1.7 л",
+            "by": "1.7 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "1.8 л",
+            "by": "1.8 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "11",
+          "labels": {
+            "ru": "1.9 л",
+            "by": "1.9 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "12",
+          "labels": {
+            "ru": "2.0 л",
+            "by": "2.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "13",
+          "labels": {
+            "ru": "2.1 л",
+            "by": "2.1 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "14",
+          "labels": {
+            "ru": "2.2 л",
+            "by": "2.2 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "15",
+          "labels": {
+            "ru": "2.3 л",
+            "by": "2.3 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "16",
+          "labels": {
+            "ru": "2.4 л",
+            "by": "2.4 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "170",
+          "labels": {
+            "ru": "2.5 л",
+            "by": "2.5 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "173",
+          "labels": {
+            "ru": "2.6 л",
+            "by": "2.6 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "175",
+          "labels": {
+            "ru": "2.7 л",
+            "by": "2.7 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "180",
+          "labels": {
+            "ru": "2.8 л",
+            "by": "2.8 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "183",
+          "labels": {
+            "ru": "2.9 л",
+            "by": "2.9 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "190",
+          "labels": {
+            "ru": "3.0 л",
+            "by": "3.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "200",
+          "labels": {
+            "ru": "3.2 л",
+            "by": "3.2 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "205",
+          "labels": {
+            "ru": "3.3 л",
+            "by": "3.3 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "210",
+          "labels": {
+            "ru": "3.5 л",
+            "by": "3.5 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "211",
+          "labels": {
+            "ru": "3.6 л",
+            "by": "3.6 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "212",
+          "labels": {
+            "ru": "3.7 л",
+            "by": "3.7 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "213",
+          "labels": {
+            "ru": "3.8 л",
+            "by": "3.8 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "214",
+          "labels": {
+            "ru": "3.9 л",
+            "by": "3.9 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "220",
+          "labels": {
+            "ru": "4.0 л",
+            "by": "4.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "230",
+          "labels": {
+            "ru": "более 4 л",
+            "by": "больш за 4 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1580": {
+      "variation_id": 1580,
+      "name": "regdate",
+      "url_name": "rgd",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 19793,
+          "args": null,
+          "depends_on": null,
+          "name": "v_year",
+          "type": "validator"
+        },
+        {
+          "action_id": 19794,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Год",
+          "by": "Год"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "2026",
+          "labels": {
+            "ru": "2026",
+            "by": "2026"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2025",
+          "labels": {
+            "ru": "2025",
+            "by": "2025"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2024",
+          "labels": {
+            "ru": "2024",
+            "by": "2024"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2023",
+          "labels": {
+            "ru": "2023",
+            "by": "2023"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2022",
+          "labels": {
+            "ru": "2022",
+            "by": "2022"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2021",
+          "labels": {
+            "ru": "2021",
+            "by": "2021"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2020",
+          "labels": {
+            "ru": "2020",
+            "by": "2020"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2019",
+          "labels": {
+            "ru": "2019",
+            "by": "2019"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2018",
+          "labels": {
+            "ru": "2018",
+            "by": "2018"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2017",
+          "labels": {
+            "ru": "2017",
+            "by": "2017"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2016",
+          "labels": {
+            "ru": "2016",
+            "by": "2016"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2015",
+          "labels": {
+            "ru": "2015",
+            "by": "2015"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2014",
+          "labels": {
+            "ru": "2014",
+            "by": "2014"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2013",
+          "labels": {
+            "ru": "2013",
+            "by": "2013"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2012",
+          "labels": {
+            "ru": "2012",
+            "by": "2012"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2011",
+          "labels": {
+            "ru": "2011",
+            "by": "2011"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2010",
+          "labels": {
+            "ru": "2010",
+            "by": "2010"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2009",
+          "labels": {
+            "ru": "2009",
+            "by": "2009"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2008",
+          "labels": {
+            "ru": "2008",
+            "by": "2008"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2007",
+          "labels": {
+            "ru": "2007",
+            "by": "2007"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2006",
+          "labels": {
+            "ru": "2006",
+            "by": "2006"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2005",
+          "labels": {
+            "ru": "2005",
+            "by": "2005"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2004",
+          "labels": {
+            "ru": "2004",
+            "by": "2004"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2003",
+          "labels": {
+            "ru": "2003",
+            "by": "2003"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2002",
+          "labels": {
+            "ru": "2002",
+            "by": "2002"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2001",
+          "labels": {
+            "ru": "2001",
+            "by": "2001"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2000",
+          "labels": {
+            "ru": "2000",
+            "by": "2000"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1999",
+          "labels": {
+            "ru": "1999",
+            "by": "1999"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1998",
+          "labels": {
+            "ru": "1998",
+            "by": "1998"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1997",
+          "labels": {
+            "ru": "1997",
+            "by": "1997"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1996",
+          "labels": {
+            "ru": "1996",
+            "by": "1996"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1995",
+          "labels": {
+            "ru": "1995",
+            "by": "1995"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1994",
+          "labels": {
+            "ru": "1994",
+            "by": "1994"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1993",
+          "labels": {
+            "ru": "1993",
+            "by": "1993"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1992",
+          "labels": {
+            "ru": "1992",
+            "by": "1992"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1991",
+          "labels": {
+            "ru": "1991",
+            "by": "1991"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1990",
+          "labels": {
+            "ru": "1990",
+            "by": "1990"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1989",
+          "labels": {
+            "ru": "1989",
+            "by": "1989"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1988",
+          "labels": {
+            "ru": "1988",
+            "by": "1988"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1987",
+          "labels": {
+            "ru": "1987",
+            "by": "1987"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1986",
+          "labels": {
+            "ru": "1986",
+            "by": "1986"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1985",
+          "labels": {
+            "ru": "1985",
+            "by": "1985"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1984",
+          "labels": {
+            "ru": "1984",
+            "by": "1984"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1983",
+          "labels": {
+            "ru": "1983",
+            "by": "1983"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1982",
+          "labels": {
+            "ru": "1982",
+            "by": "1982"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1981",
+          "labels": {
+            "ru": "1981",
+            "by": "1981"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1980",
+          "labels": {
+            "ru": "1980 или ранее",
+            "by": "1980 ці раней"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1582": {
+      "variation_id": 1582,
+      "name": "mileage",
+      "url_name": "mlg",
+      "required": true,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "input",
+        "type": "input"
+      },
+      "actions": [
+        {
+          "action_id": 2252,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 2253,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        },
+        {
+          "action_id": 2254,
+          "args": null,
+          "depends_on": null,
+          "name": "v_mileage",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Пробег, км",
+          "by": "Прабег, км"
+        },
+        "placeholder": {
+          "ru": "Любой",
+          "by": "Любы"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1774": {
+      "variation_id": 1774,
+      "name": "images",
+      "url_name": "img",
+      "required": false,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": null,
+        "type": null
+      },
+      "actions": [
+        {
+          "action_id": 15293,
+          "args": null,
+          "depends_on": null,
+          "name": "v_photo_count",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Фотографии",
+          "by": "Фатаграфіі"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1775": {
+      "variation_id": 1775,
+      "name": "currency",
+      "url_name": "cur",
+      "required": true,
+      "type": "string",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 943,
+          "args": null,
+          "depends_on": null,
+          "name": "v_currency",
+          "type": "validator"
+        },
+        {
+          "action_id": 944,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Выбор валюты",
+          "by": "Выбар валюты"
+        },
+        "placeholder": {
+          "ru": "Любoй",
+          "by": "Любы"
+        }
+      },
+      "values": [
+        {
+          "value": "BYR",
+          "labels": {
+            "ru": "р.",
+            "by": "р."
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "USD",
+          "labels": {
+            "ru": "$",
+            "by": "$"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "EUR",
+          "labels": {
+            "ru": "€",
+            "by": "€"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "1776": {
+      "variation_id": 1776,
+      "name": "price",
+      "url_name": "prc",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "input",
+        "type": "input"
+      },
+      "actions": [
+        {
+          "action_id": 19949,
+          "args": null,
+          "depends_on": null,
+          "name": "v_price",
+          "type": "validator"
+        },
+        {
+          "action_id": 19950,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Цена",
+          "by": "Цана"
+        },
+        "placeholder": {
+          "ru": "Например: 0,99",
+          "by": "Напрыклад: 0,99"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "2116": {
+      "variation_id": 2116,
+      "name": "name",
+      "url_name": "nme",
+      "required": true,
+      "type": "string",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "input",
+        "type": "input"
+      },
+      "actions": [
+        {
+          "action_id": 2331,
+          "args": null,
+          "depends_on": null,
+          "name": "v_name",
+          "type": "validator"
+        },
+        {
+          "action_id": 2332,
+          "args": null,
+          "depends_on": null,
+          "name": "v_required",
+          "type": "validator"
+        },
+        {
+          "action_id": 2333,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        },
+        {
+          "action_id": 2334,
+          "args": {
+            "max": 100,
+            "min": 2
+          },
+          "depends_on": null,
+          "name": "v_length",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Имя",
+          "by": "Імя"
+        },
+        "placeholder": {
+          "ru": "Имя",
+          "by": "Імя"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "2782": {
+      "variation_id": 2782,
+      "name": "vehicle_vin",
+      "url_name": "vin",
+      "required": false,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "input",
+        "type": "input"
+      },
+      "actions": [
+        {
+          "action_id": 21443,
+          "args": null,
+          "depends_on": null,
+          "name": "v_vin",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Номер VIN",
+          "by": "Нумар VIN"
+        },
+        "placeholder": {
+          "ru": "Введите 17-значный номер",
+          "by": "Увядзіце 17-значны нумар"
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "7294": {
+      "variation_id": 7294,
+      "name": "cars_brand_v2",
+      "url_name": "cbnd2",
+      "required": true,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select_external",
+        "type": "select_search_external"
+      },
+      "actions": null,
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Марка",
+          "by": "Марка"
+        },
+        "placeholder": {
+          "ru": "Введите название",
+          "by": "Увядзіце назву"
+        }
+      },
+      "values": null,
+      "external_values_url": "https://api.kufar.by/catalog/v1/nodes?tag=category_2010&view=taxonomy",
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "7296": {
+      "variation_id": 7296,
+      "name": "cars_model_v2",
+      "url_name": "cmdl2",
+      "required": false,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select_external",
+        "type": "select_search_external"
+      },
+      "actions": null,
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Модель",
+          "by": "Мадэль"
+        },
+        "placeholder": {
+          "ru": "Введите название",
+          "by": "Увядзіце назву"
+        }
+      },
+      "values": null,
+      "external_values_url": "https://api.kufar.by/catalog/v1/nodes?tag=${cars_brand_v2.value}&view=taxonomy",
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "7303": {
+      "variation_id": 7303,
+      "name": "cars_gen_v2",
+      "url_name": "cgen2",
+      "required": false,
+      "type": "string",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select_external",
+        "type": "select_search_external"
+      },
+      "actions": null,
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Поколение",
+          "by": "Пакаленне"
+        },
+        "placeholder": {
+          "ru": "Введите название",
+          "by": "Увядзіце назву"
+        }
+      },
+      "values": null,
+      "external_values_url": "https://api.kufar.by/catalog/v1/nodes?tag=${cars_model_v2.value}&view=taxonomy",
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "7490": {
+      "variation_id": 7490,
+      "name": "cars_capacity",
+      "url_name": "crca",
+      "required": false,
+      "type": "int",
+      "meta": "set",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 15215,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 15216,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Объем, л",
+          "by": "Аб'ём, л"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "до 1 л",
+            "by": "да 1 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "1.0 л",
+            "by": "1.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "1.1 л",
+            "by": "1.1 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "1.2 л",
+            "by": "1.2 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "1.3 л",
+            "by": "1.3 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "1.4 л",
+            "by": "1.4 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "1.5 л",
+            "by": "1.5 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "8",
+          "labels": {
+            "ru": "1.6 л",
+            "by": "1.6 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "9",
+          "labels": {
+            "ru": "1.7 л",
+            "by": "1.7 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "1.8 л",
+            "by": "1.8 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "11",
+          "labels": {
+            "ru": "1.9 л",
+            "by": "1.9 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "12",
+          "labels": {
+            "ru": "2.0 л",
+            "by": "2.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "13",
+          "labels": {
+            "ru": "2.1 л",
+            "by": "2.1 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "14",
+          "labels": {
+            "ru": "2.2 л",
+            "by": "2.2 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "15",
+          "labels": {
+            "ru": "2.3 л",
+            "by": "2.3 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "16",
+          "labels": {
+            "ru": "2.4 л",
+            "by": "2.4 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "170",
+          "labels": {
+            "ru": "2.5 л",
+            "by": "2.5 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "173",
+          "labels": {
+            "ru": "2.6 л",
+            "by": "2.6 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "175",
+          "labels": {
+            "ru": "2.7 л",
+            "by": "2.7 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "180",
+          "labels": {
+            "ru": "2.8 л",
+            "by": "2.8 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "183",
+          "labels": {
+            "ru": "2.9 л",
+            "by": "2.9 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "190",
+          "labels": {
+            "ru": "3.0 л",
+            "by": "3.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "200",
+          "labels": {
+            "ru": "3.2 л",
+            "by": "3.2 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "205",
+          "labels": {
+            "ru": "3.3 л",
+            "by": "3.3 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "210",
+          "labels": {
+            "ru": "3.5 л",
+            "by": "3.5 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "211",
+          "labels": {
+            "ru": "3.6 л",
+            "by": "3.6 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "212",
+          "labels": {
+            "ru": "3.7 л",
+            "by": "3.7 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "213",
+          "labels": {
+            "ru": "3.8 л",
+            "by": "3.8 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "214",
+          "labels": {
+            "ru": "3.9 л",
+            "by": "3.9 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "220",
+          "labels": {
+            "ru": "4.0 л",
+            "by": "4.0 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "230",
+          "labels": {
+            "ru": "более 4 л",
+            "by": "больш за 4 л"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "9108": {
+      "variation_id": 9108,
+      "name": "cars_autogearbox",
+      "url_name": "crag",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select_chips"
+      },
+      "actions": [
+        {
+          "action_id": 14299,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 14300,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Тип автоматической передачи",
+          "by": "Тып аўтаматычнай перадачы"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Автомат",
+            "by": "Аўтамат"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Робот",
+            "by": "Робат"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "Вариатор",
+            "by": "Варыятар"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "9298": {
+      "variation_id": 9298,
+      "name": "phone_hidden",
+      "url_name": "phh",
+      "required": true,
+      "type": "bool",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "radio_button",
+        "type": "radio_button"
+      },
+      "actions": [
+        {
+          "action_id": 19875,
+          "args": null,
+          "depends_on": null,
+          "name": "v_boolean",
+          "type": "validator"
+        },
+        {
+          "action_id": 19876,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Способ связи",
+          "by": "Спосаб сувязі"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": [
+        {
+          "value": "0",
+          "labels": {
+            "ru": "Звонки и сообщения",
+            "by": "Званкі і паведамленні"
+          },
+          "hint": {
+            "by": "<b>Будзьце асцярожны</b><br>Махляры могуць выкарыстоўваць ваш нумар тэлефона, каб звязацца з вамі праз мэсанджары і паспрабаваць падмануць. Рэкамендуемы абмяркоўваць дэталі здзелкі на Куфары.",
+            "ru": "<b>Будьте осторожны</b><br>Мошенники могут использовать ваш номер телефона, чтобы связаться с вами через мессенджеры и попытаться обмануть. Рекомендуем обсуждать детали сделки на Куфаре."
+          },
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Только сообщения",
+            "by": "Толькі паведамленні"
+          },
+          "hint": {
+            "by": "<b>Ваш тэлефон будзе скрыт</b><br>Пакупнікі не змогуць вам патэлефанаваць. Калі ласка, адказвайце на паведамленні своечасова.",
+            "ru": "<b>Ваш телефон будет скрыт</b><br>Покупатели не смогут вам позвонить. Пожалуйста, отвечайте на сообщения своевременно."
+          },
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "9472": {
+      "variation_id": 9472,
+      "name": "cars_battery_capacity",
+      "url_name": "crbc",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "input",
+        "type": "input"
+      },
+      "actions": [
+        {
+          "action_id": 15283,
+          "args": null,
+          "depends_on": null,
+          "name": "v_float",
+          "type": "validator"
+        },
+        {
+          "action_id": 15284,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Ёмкость батареи, кВт/ч",
+          "by": "Ёмістасць батарэі, кВт/г"
+        },
+        "placeholder": {
+          "ru": "",
+          "by": ""
+        }
+      },
+      "values": null,
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10105": {
+      "variation_id": 10105,
+      "name": "cars_seats",
+      "url_name": "crs",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 20313,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 20314,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Количество посадочных мест",
+          "by": "Колькасць пасадачных месцаў"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "2",
+            "by": "2"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "4",
+            "by": "4"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "5",
+            "by": "5"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "6",
+            "by": "6"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "7",
+            "by": "7"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "8",
+            "by": "8"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10330": {
+      "variation_id": 10330,
+      "name": "cars_interior_color",
+      "url_name": "cric",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 18155,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 18156,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Цвет салона",
+          "by": "Колер салона"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Светлый",
+            "by": "Светлы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Комби",
+            "by": "Комбі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "Тёмный",
+            "by": "Цёмны"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10335": {
+      "variation_id": 10335,
+      "name": "cars_interior_material",
+      "url_name": "crim",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select"
+      },
+      "actions": [
+        {
+          "action_id": 18221,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 18222,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Материал салона",
+          "by": "Матэрыял салона"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Натуральная кожа",
+            "by": "Натуральная скура"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Искусственная кожа",
+            "by": "Штучная скура"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "10",
+          "labels": {
+            "ru": "Ткань",
+            "by": "Тканіна"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "15",
+          "labels": {
+            "ru": "Велюр",
+            "by": "Велюр"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "20",
+          "labels": {
+            "ru": "Алькантара",
+            "by": "Алькантара"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "25",
+          "labels": {
+            "ru": "Комбинированные материалы",
+            "by": "Камбінаваныя матэрыялы"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10337": {
+      "variation_id": 10337,
+      "name": "cars_features",
+      "url_name": "crf",
+      "required": false,
+      "type": "int",
+      "meta": "set",
+      "multi": true,
+      "ui_component": {
+        "fallback_type": "multiselect_or",
+        "type": "multiselect_or"
+      },
+      "actions": [
+        {
+          "action_id": 18165,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Характеристики",
+          "by": "Характарыстыкі"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Фаркоп",
+            "by": "Фаркоп"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Заводская тонировка",
+            "by": "Завадская таніроўка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Обогрев руля",
+            "by": "Абаграванне руля"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Бесключевой доступ",
+            "by": "Бясключавы доступ"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Электропривод двери багажника",
+            "by": "Электрапрывад дзвярэй багажніка"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Передние электро-стеклоподъёмники",
+            "by": "Пярэднія электра-шклапад'ёмнікі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "7",
+          "labels": {
+            "ru": "Задние электро-стеклоподъёмники",
+            "by": "Заднія электра-шклапад'ёмнікі"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "8",
+          "labels": {
+            "ru": "Электрорегулировка сидений",
+            "by": "Электрарэгуляванне сядзенняў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "9",
+          "labels": {
+            "ru": "Память положения сидений",
+            "by": "Памяць становішча сядзенняў"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10340": {
+      "variation_id": 10340,
+      "name": "cars_lights",
+      "url_name": "crlg",
+      "required": false,
+      "type": "int",
+      "meta": "set",
+      "multi": true,
+      "ui_component": {
+        "fallback_type": "multiselect_or",
+        "type": "multiselect_or"
+      },
+      "actions": [
+        {
+          "action_id": 18168,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Фары",
+          "by": "Фары"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Ксеноновые/биксеноновые",
+            "by": "Ксенонавыя/біксенонавыя"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Противотуманные",
+            "by": "Супрацьтуманныя"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "3",
+          "labels": {
+            "ru": "Светодиодные",
+            "by": "Святлодыёдныя"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "4",
+          "labels": {
+            "ru": "Матричные",
+            "by": "Матрычныя"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "5",
+          "labels": {
+            "ru": "Лазерные",
+            "by": "Лазерныя"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "6",
+          "labels": {
+            "ru": "Адаптивные",
+            "by": "Адаптыўныя"
+          },
+          "hint": null,
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    },
+    "10838": {
+      "variation_id": 10838,
+      "name": "auction",
+      "url_name": "auai",
+      "required": false,
+      "type": "int",
+      "meta": "free",
+      "multi": false,
+      "ui_component": {
+        "fallback_type": "select",
+        "type": "select_chips"
+      },
+      "actions": [
+        {
+          "action_id": 21441,
+          "args": null,
+          "depends_on": null,
+          "name": "v_integer",
+          "type": "validator"
+        },
+        {
+          "action_id": 21442,
+          "args": null,
+          "depends_on": null,
+          "name": "v_single",
+          "type": "validator"
+        }
+      ],
+      "grouping": null,
+      "labels": {
+        "name": {
+          "ru": "Торг",
+          "by": "Торг"
+        },
+        "placeholder": {
+          "ru": "Выберите",
+          "by": "Выберыце"
+        }
+      },
+      "values": [
+        {
+          "value": "1",
+          "labels": {
+            "ru": "Без торга",
+            "by": "Без торгу"
+          },
+          "hint": {
+            "by": "Пакажам пакупнікам, што цана канчатковая",
+            "ru": "Покажем покупателям, что цена окончательная"
+          },
+          "image_url": null,
+          "variations": []
+        },
+        {
+          "value": "2",
+          "labels": {
+            "ru": "Торг уместен",
+            "by": "Торг дарэчны"
+          },
+          "hint": {
+            "by": "Дадамо ў аб'яву магчымасць «Прапанаваць цану»",
+            "ru": "Добавим в объявление возможность «Предложить цену»"
+          },
+          "image_url": null,
+          "variations": []
+        }
+      ],
+      "external_values_url": null,
+      "range": null,
+      "min_taxonomy_version": 0,
+      "hint": null,
+      "image_url": null,
+      "is_type": false,
+      "parent_nested": null
+    }
+  },
+  "rules": [
+    {
+      "rule": {},
+      "refs": [
+        "1784",
+        "1793",
+        "1515",
+        "8547",
+        "1777",
+        "1522",
+        "1790",
+        "12727",
+        "2116",
+        "1780",
+        "1782",
+        "1791",
+        "8950",
+        "8975",
+        "875",
+        "1789",
+        "1519",
+        "12251",
+        "148",
+        "1798",
+        "1788",
+        "1779",
+        "8533",
+        "1803",
+        "1510",
+        "1786",
+        "1799",
+        "1511",
+        "1774",
+        "1781",
+        "1792",
+        "5115",
+        "6980",
+        "1801",
+        "1794",
+        "1885",
+        "1800",
+        "1778",
+        "1785",
+        "1881",
+        "1882",
+        "1787",
+        "1775",
+        "1514",
+        "9298",
+        "4221",
+        "8368",
+        "8865",
+        "12726",
+        "1776",
+        "1512",
+        "1593",
+        "10691"
+      ]
+    },
+    {
+      "rule": {
+        "category": "2010"
+      },
+      "refs": [
+        "8571",
+        "9982",
+        "12",
+        "144",
+        "2782",
+        "10",
+        "25",
+        "10330",
+        "155",
+        "1575",
+        "10105",
+        "10335",
+        "1576",
+        "158",
+        "10337",
+        "1582",
+        "1523",
+        "145",
+        "10340",
+        "43",
+        "7294",
+        "1573",
+        "4",
+        "1574",
+        "1577",
+        "15",
+        "1580",
+        "1579"
+      ]
+    },
+    {
+      "rule": {
+        "company_ad": "0"
+      },
+      "refs": [
+        "1438"
+      ]
+    },
+    {
+      "rule": {
+        "region": "1"
+      },
+      "refs": [
+        "56"
+      ]
+    },
+    {
+      "rule": {
+        "region": "2"
+      },
+      "refs": [
+        "57"
+      ]
+    },
+    {
+      "rule": {
+        "region": "3"
+      },
+      "refs": [
+        "58"
+      ]
+    },
+    {
+      "rule": {
+        "region": "4"
+      },
+      "refs": [
+        "59"
+      ]
+    },
+    {
+      "rule": {
+        "region": "5"
+      },
+      "refs": [
+        "60"
+      ]
+    },
+    {
+      "rule": {
+        "region": "6"
+      },
+      "refs": [
+        "61"
+      ]
+    },
+    {
+      "rule": {
+        "region": "7"
+      },
+      "refs": [
+        "62"
+      ]
+    },
+    {
+      "rule": {
+        "cars_brand_v2": "$any",
+        "category": "2010"
+      },
+      "refs": [
+        "7296"
+      ]
+    },
+    {
+      "rule": {
+        "cars_engine": "5",
+        "category": "2010"
+      },
+      "refs": [
+        "7490",
+        "9472"
+      ]
+    },
+    {
+      "rule": {
+        "cars_gearbox": "1",
+        "category": "2010"
+      },
+      "refs": [
+        "9108"
+      ]
+    },
+    {
+      "rule": {
+        "cars_model_v2": "$any",
+        "category": "2010"
+      },
+      "refs": [
+        "7303"
+      ]
+    },
+    {
+      "rule": {
+        "category": "2010",
+        "company_ad": "0"
+      },
+      "refs": [
+        "10838"
+      ]
+    },
+    {
+      "rule": {
+        "category": "2010",
+        "condition": "1"
+      },
+      "refs": [
+        "1568"
+      ]
+    }
+  ],
+  "excluded_metadata_candidates": [
+    "cars_engine_power",
+    "vin_report",
+    "content_video",
+    "cars_availability",
+    "cars_delivery_country",
+    "leasing_pro",
+    "confiscated"
+  ],
+  "notes": [
+    "Excluded candidates were not observed in the reviewed private forms; partner/account branches need separate research. Authenticated accessibility review is recorded in kufar-authenticated-review.json.",
+    "Transport validator names are evidence, not guessed validation parameters.",
+    "UI binding ready is a verified declarative recipe, not proof that the production extension implements schema 2.2."
+  ]
+}

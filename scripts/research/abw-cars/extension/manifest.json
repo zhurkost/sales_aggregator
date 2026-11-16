@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "ABW — сборщик справочников",
+  "version": "0.6.1",
+  "description": "Отдельное исследование cars_used_sale. Не изменяет Автопост или сборщик AV.by.",
+  "permissions": ["storage", "unlimitedStorage"],
+  "host_permissions": ["https://b.abw.by/*"],
+  "action": {"default_title": "Открыть сборщик ABW"},
+  "background": {"service_worker": "launch.js"}
+}

@@ -1,0 +1,560 @@
+{
+  "at": "2026-11-12T13:16:50.231Z",
+  "results": [
+    {
+      "name": "audio_system",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "premium"
+      ],
+      "labels": [
+        "Премиальная аудиосистема"
+      ],
+      "emptyAfterClear": null,
+      "display": "Премиальная аудиосистема"
+    },
+    {
+      "name": "power_windows",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "all"
+      ],
+      "labels": [
+        "Электростеклоподъемники все"
+      ],
+      "emptyAfterClear": null,
+      "display": "Электростеклоподъемники все"
+    },
+    {
+      "name": "wheel_configuration",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "electro"
+      ],
+      "labels": [
+        "Электрорегулировка руля"
+      ],
+      "emptyAfterClear": null,
+      "display": "Электрорегулировка руля"
+    },
+    {
+      "name": "suspension",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "springloaded",
+        "pneumatic"
+      ],
+      "labels": [
+        "Пружинная подвеска",
+        "Пневматическая подвеска"
+      ],
+      "emptyAfterClear": true,
+      "display": "Подвеска"
+    },
+    {
+      "name": "conditioner",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "climate_control"
+      ],
+      "labels": [
+        "Климат-контроль"
+      ],
+      "emptyAfterClear": null,
+      "display": "Климат-контроль"
+    },
+    {
+      "name": "parktronic",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "rear",
+        "front"
+      ],
+      "labels": [
+        "Парктроник задний",
+        "Парктроник передний"
+      ],
+      "emptyAfterClear": true,
+      "display": "Парктроник"
+    },
+    {
+      "name": "camera",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "backview",
+        "wholeview"
+      ],
+      "labels": [
+        "Камера заднего вида",
+        "Камера 360°"
+      ],
+      "emptyAfterClear": true,
+      "display": "Камера"
+    },
+    {
+      "name": "headlamps",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "xenon"
+      ],
+      "labels": [
+        "Ксеноновые / Биксеноновые фары"
+      ],
+      "emptyAfterClear": null,
+      "display": "Ксеноновые / Биксеноновые фары"
+    },
+    {
+      "name": "electrical_heating",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "side_mirrors",
+        "wiper"
+      ],
+      "labels": [
+        "Электрообогрев боковых зеркал",
+        "Электрообогрев зоны стеклоочистителей"
+      ],
+      "emptyAfterClear": true,
+      "display": "Электрообогрев"
+    },
+    {
+      "name": "wheels",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "alloy"
+      ],
+      "labels": [
+        "Литые диски"
+      ],
+      "emptyAfterClear": null,
+      "display": "Литые диски"
+    },
+    {
+      "name": "wheels_size",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "R13"
+      ],
+      "labels": [
+        "R13"
+      ],
+      "emptyAfterClear": null,
+      "display": "R13"
+    },
+    {
+      "name": "alarm_system",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "with_reaction"
+      ],
+      "labels": [
+        "Сигнализация с обратной связью"
+      ],
+      "emptyAfterClear": null,
+      "display": "Сигнализация с обратной связью"
+    },
+    {
+      "name": "number_of_seats",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "3"
+      ],
+      "labels": [
+        "3 места"
+      ],
+      "emptyAfterClear": null,
+      "display": "3 места"
+    },
+    {
+      "name": "compartment_decoration",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "velour"
+      ],
+      "labels": [
+        "Велюр"
+      ],
+      "emptyAfterClear": null,
+      "display": "Велюр"
+    },
+    {
+      "name": "compartment_color",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "dark"
+      ],
+      "labels": [
+        "Темный салон"
+      ],
+      "emptyAfterClear": null,
+      "display": "Темный салон"
+    },
+    {
+      "name": "seat_adjustment",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "mechanical_driver",
+        "mechanical_front"
+      ],
+      "labels": [
+        "Механическая регулировка сиденья водителя",
+        "Механическая регулировка сиденья переднего пассажира"
+      ],
+      "emptyAfterClear": true,
+      "display": "Регулировка сидений"
+    },
+    {
+      "name": "heated_seats",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "front",
+        "back"
+      ],
+      "labels": [
+        "Подогрев передних сидений",
+        "Подогрев задних сидений"
+      ],
+      "emptyAfterClear": true,
+      "display": "Подогрев сидений"
+    },
+    {
+      "name": "seats_aeration",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "front",
+        "back"
+      ],
+      "labels": [
+        "Вентиляция передних сидений",
+        "Вентиляция задних сидений"
+      ],
+      "emptyAfterClear": true,
+      "display": "Вентиляция сидений"
+    },
+    {
+      "name": "seats_massage",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "front",
+        "back"
+      ],
+      "labels": [
+        "Передние сиденья с массажем",
+        "Задние сиденья с массажем"
+      ],
+      "emptyAfterClear": true,
+      "display": "Сиденья с массажем"
+    },
+    {
+      "name": "cruise_control",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "adaptive"
+      ],
+      "labels": [
+        "Адаптивный круиз-контроль"
+      ],
+      "emptyAfterClear": null,
+      "display": "Адаптивный круиз-контроль"
+    },
+    {
+      "name": "auxiliary_system",
+      "opened": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full dropdown-style_visible",
+      "closed": "dropdown-style dropdown-style_primary dropdown-style_small dropdown-style_bottom dropdown-style_specific vehicle-form__dropdown vehicle-form__dropdown_width_full",
+      "checked": [
+        "abs",
+        "stabilization_system"
+      ],
+      "labels": [
+        "Антиблокировочная система (ABS)",
+        "Система стабилизации"
+      ],
+      "emptyAfterClear": true,
+      "display": "Вспомогательные системы"
+    },
+    {
+      "label": "Навигационная система",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "CarPlay",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Яндекс.Авто",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Android Auto",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Bluetooth",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "AUX",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "USB",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Розетка 12V",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Розетка 220V",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Мультимедиасистема для задних пассажиров",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Бортовой компьютер",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Автономный отопитель",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Бесключевой доступ",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Цифровая приборная панель",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Дистанционный запуск двигателя",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Мультируль",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Электропривод крышки багажника",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Система активной помощи при парковке",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Противотуманные фары",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Омыватель фар",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Датчик дождя",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Датчик света",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Система адаптивного освещения",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Автоматическое управление дальним светом",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Фаркоп",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Тонированные стекла",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Центральный замок",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Память положения сидений",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(8) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Третий ряд сидений",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Панорамная крыша",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Люк",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Отделка кожей рулевого колеса",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Обогрев рулевого колеса",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(5) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Отделка кожей рычага КПП",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(6) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Черный потолок",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(7) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Доводчики дверей",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(8) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Отделка потолка алькантарой",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Передний центральный подлокотник",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Салонное зеркало с автозатемнением",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Электроскладывание зеркал заднего вида",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Электрорегулировка зеркал заднего вида",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(5) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Зеркала заднего вида с автозатемнением",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(6) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Подрулевые лепестки переключения передач",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(7) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    },
+    {
+      "label": "Система крепления детских автокресел",
+      "selector": ".vehicle-form > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(7) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+      "changed": true,
+      "restored": true
+    }
+  ]
+}

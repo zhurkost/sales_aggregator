@@ -119,6 +119,18 @@ test('worker rejects retired commands and messages from foreign origins or frame
   assert.ok((await w.request({...launch,userGesture:false})).error);
   assert.equal(w.created.length,0);
 });
+test('reload reports a recovery action without filling until the app opens a fresh tab',async()=>{
+ const w=createWorker(),payload=rentalPayload();
+ const run=await w.request({kind:'RENTAL_REQUEST',type:'RENTAL_RUN',payload,userGesture:true});
+ const blocked=await w.request({kind:'RENTAL_PAGE',type:'GET',payload:{navigation:{type:'reload',referrer:payload.jobs[0].startUrl}}},payload.jobs[0].startUrl,10);
+ assert.equal(blocked.task,null);
+ const status=await w.request({kind:'RENTAL_REQUEST',type:'RENTAL_STATUS',payload});
+ assert.equal(status.jobs[0].status,'needs_action');assert.match(status.jobs[0].message,/После обновления/);
+ await w.request({kind:'RENTAL_REQUEST',type:'RENTAL_OPEN',payload:{...payload,jobId:run.jobs[0].id},userGesture:true});
+ assert.equal(w.created.length,payload.jobs.length+1);
+ const last=w.created.at(-1);const task=await w.request({kind:'RENTAL_PAGE',type:'GET'},last.url,last.id);
+ assert.ok(task.task);
+});
 test('rental photos survive worker restart, expire with the browser session and never enter local storage', async () => {
   const photo={id:'photo-1',name:'a.png',type:'image/png',dataUrl:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAE='};
   const w=createWorker();const payload=rentalPayload([photo]);

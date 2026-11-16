@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 /** Shared transport, server credential boundary and per-user request budget. */
 @Service
 public class HttpAiGateway implements AiGateway {
-  private final String key, provider, model;
+  private final String key, provider, model, visionModel;
   private final HttpClient client =
       HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
   private final Map<String, long[]> windows = new ConcurrentHashMap<>();
@@ -25,16 +25,21 @@ public class HttpAiGateway implements AiGateway {
   public HttpAiGateway(
       @Value("${autopost.ai-key}") String key,
       @Value("${autopost.ai-provider}") String provider,
-      @Value("${autopost.ai-model}") String model) {
+      @Value("${autopost.ai-model}") String model,
+      @Value("${autopost.ai-vision-model:}") String visionModel) {
     this.key = key;
     this.provider = provider;
     this.model = model;
+    this.visionModel = visionModel.isBlank() ? model : visionModel;
   }
 
   @Override
   public String model() {
     return model;
   }
+
+  @Override
+  public String visionModel() { return visionModel; }
 
   private void rateLimit(String identity) {
     long now = System.currentTimeMillis();
@@ -49,26 +54,38 @@ public class HttpAiGateway implements AiGateway {
   /** Uses only the configured server credential; callers must authenticate their workspace. */
   @Override
   public ObjectNode serverJson(String identity, String prompt, String source) {
+    return serverJson(identity, prompt, source, List.of());
+  }
+
+  @Override
+  public ObjectNode serverJson(String identity, String prompt, String source, List<String> images) {
     if (key.isBlank())
       throw new ApiException(503, "ИИ пока не подключён. Можно заполнить вручную.");
     if (!Set.of("openrouter", "deepseek").contains(provider))
       throw new ApiException(503, "Проверьте настройки сервиса ИИ на сервере.");
     rateLimit(identity);
+    if (!images.isEmpty() && provider.equals("deepseek"))
+      throw new ApiException(409, "Текущий провайдер не поддерживает фото. Для распознавания нужна модель с поддержкой изображений через OpenRouter; пока можно заполнить описание вручную.");
+    var content = array();
+    content.add(object("type", "text", "text", source));
+    for (String image : images) content.add(object("type", "image_url", "image_url", object("url", image)));
     ObjectNode payload =
         object(
             "model",
-            model,
+            images.isEmpty() ? model : visionModel,
             "messages",
             List.of(
                 object("role", "system", "content", prompt),
-                object("role", "user", "content", source)),
+                object("role", "user", "content", images.isEmpty() ? MAPPER.valueToTree(source) : content)),
             "response_format",
             object("type", "json_object"),
             "max_tokens",
             4000);
     payload.set(
         provider.equals("deepseek") ? "thinking" : "reasoning",
-        provider.equals("deepseek") ? object("type", "disabled") : object("enabled", false));
+        provider.equals("deepseek") ? object("type", "disabled")
+            : images.isEmpty() ? object("enabled", false)
+            : object("max_tokens", 1024, "exclude", true));
     try {
       return requestJson(payload);
     } catch (ApiException e) {

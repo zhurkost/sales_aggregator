@@ -1,0 +1,62 @@
+<section class="car-editor">
+ <h1>Продажа легкового автомобиля</h1><p class="muted">Автомобили с пробегом · одна карточка для четырёх площадок</p>
+ @if(error){<p class="error" role="alert">{{error}}</p>}
+ @if(schema){
+ <section class="panel"><h2>Описание и фотографии</h2>
+  <label>Расскажите об автомобиле<textarea rows="5" [(ngModel)]="description" (ngModelChange)="sourceTextChanged()" [disabled]="!!busy" placeholder="Марка, модель, поколение, год, пробег, состояние и цена…"></textarea></label>
+  <div class="photos">@for(photo of photos;track photo.id){<div><img [src]="photo.dataUrl" alt="Фото автомобиля"><button type="button" (click)="removePhoto(photo.id)" [disabled]="!!busy" aria-label="Удалить фото">×</button></div>}</div>
+  <div class="photo-upload">
+   <input #photoPicker hidden type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="addPhotos($event)" [disabled]="!!busy">
+   <button type="button" class="upload" (click)="photoPicker.click()" [disabled]="!!busy" aria-describedby="car-photo-hint">＋ Фото</button>
+   <span id="car-photo-hint" class="photo-hint">@if(photos.length){ {{photos.length}} фото }@else{ JPG, PNG, WebP }</span>
+  </div>
+  @if(photos.length){
+   <button type="button" class="secondary" (click)="recognizePhotos()" [disabled]="!!busy">Распознать с ИИ</button>
+   <p class="muted">ИИ изучит коллаж всех фото и при необходимости получит выбранные снимки отдельно или группами для уточнения. Затем распознанные данные заполнят поля с учётом вашего описания. Проверьте результат.</p>
+  }
+  <label>Распознано ИИ<textarea rows="5" [(ngModel)]="recognizedText" (ngModelChange)="sourceTextChanged('recognized')" [disabled]="!!busy" placeholder="Здесь появится результат распознавания фотографий. Его можно исправить или дополнить."></textarea></label>
+  <p class="muted">Заполнение учитывает оба текста. Неизвестные характеристики остаются пустыми, внесённые вами значения сохраняются.</p>
+  <button type="button" class="primary" (click)="analyze()" [disabled]="!!busy || (!description.trim() && !recognizedText.trim())">Заполнить с ИИ</button>
+  @for(note of notes;track $index){<p class="muted">{{note}}</p>}
+ </section>
+ <section class="panel"><h2>Основные поля</h2><div class="fields-grid">
+ @for(f of schema.fields;track f.id){@if(f.type!=='files'){
+  <div class="field" [class.wide]="f.id==='car.description'"><label [for]="'car-field-'+f.id">{{f.name}}</label>
+  @if(isChoice(f)){
+   <app-search-select [controlId]="'car-field-'+f.id" [label]="f.name" [value]="picks[f.id] || ''" [options]="options[f.id] || []"
+    [disabled]="!!busy || (!!f.parent_option_id && !picks[f.parent_option_id])" [loading]="!!loadingOptions[f.id]"
+    [hasMore]="(options[f.id]?.length || 0)<(totals[f.id] || 0)" (queryChange)="search(f,$event)" (loadMore)="loadOptions(f,true)" (valueChange)="select(f,$event)" />
+   @if(optionErrors[f.id]){<small class="error" role="alert">{{optionErrors[f.id]}} <button type="button" (click)="loadOptions(f)" [disabled]="!!busy || !!loadingOptions[f.id]">Повторить загрузку</button></small>}
+   @if(candidateFilters[f.id]){
+    <div class="candidate-note"><small>Вариантов по ИИ: {{candidateFilters[f.id].length}}. {{candidateReasons[f.id]}}</small>
+     @if(picks[f.id] && !candidateFilters[f.id].includes(picks[f.id])){<small>Ваше значение сохранено, хотя оно не входит в предложения ИИ.</small>}
+     <button type="button" (click)="showAll(f)" [disabled]="!!busy">Все варианты</button>
+    </div>
+   }
+  }@else if(f.id==='car.description'){
+   <textarea [id]="'car-field-'+f.id" rows="5" [ngModel]="card.values[f.id]" (ngModelChange)="set(f,$event)" [disabled]="!!busy"></textarea>
+  }@else{
+   <input [id]="'car-field-'+f.id" [type]="f.type==='integer' || f.type==='number' ? 'number' : 'text'" [attr.step]="f.id==='car.engine_capacity' ? '0.1' : f.type==='integer' ? '1' : 'any'" [ngModel]="card.values[f.id]" (ngModelChange)="set(f,$event)" [disabled]="!!busy">
+  }
+  @if(evidence[f.id]){<small class="ai-note">ИИ: {{evidence[f.id]}}</small>}
+  </div>
+ }}</div></section>
+ <section class="panel"><h2>Площадки</h2><div class="platforms">@for(p of schema.platforms;track p.id){<label class="inline"><input type="checkbox" [checked]="card.platforms.includes(p.id)" (change)="togglePlatform(p.id,$any($event.target).checked)" [disabled]="!!busy">{{p.name}}</label>}</div>
+ @for(p of schema.platforms;track p.id){@if(card.platforms.includes(p.id)){
+  <details><summary>Дополнительные поля {{p.name}}</summary><div class="fields-grid">
+   @for(f of extraFields(p.id);track f.id){<label>{{f.name}}
+    @if(f.type==='enum' || f.type==='multi_enum'){<select [multiple]="f.type==='multi_enum'" [ngModel]="extraValue(f)" (ngModelChange)="extra(f,$event)" [disabled]="!!busy"><option value="">Не указано</option>@for(o of f.options || [];track o.id){<option [value]="o.id">{{o.name}}</option>}</select>}
+    @else if(f.type==='boolean'){<select [ngModel]="extraValue(f)" (ngModelChange)="extra(f,$event)" [disabled]="!!busy"><option value="">Не указано</option><option [ngValue]="true">Да</option><option [ngValue]="false">Нет</option></select>}
+    @else{<input [type]="f.type==='integer' || f.type==='number' ? 'number' : 'text'" [ngModel]="extraValue(f)" (ngModelChange)="extra(f,$event)" [disabled]="!!busy">}
+   </label>}
+  </div></details>
+ }}</section>
+ <div class="actions"><button class="secondary" (click)="check()" [disabled]="!!busy || !card.platforms.length">Проверить карточку</button><button class="primary" (click)="publish()" [disabled]="!!busy || !card.platforms.length">Опубликовать</button></div>
+ <p class="muted">Кнопка открывает формы площадок. После характеристик ABW переходит к следующему шагу автоматически. Окончательную публикацию и продвижение вы подтверждаете самостоятельно.</p>
+ @if(!ready){<p>{{connectionMessage}}</p><p><a href="/autopost-extension.zip" download>Скачать расширение {{version}}</a> · <button (click)="connect()">Проверить подключение</button></p>}
+ @if(prepared){<section class="panel"><h2>Проверка переноса</h2>@for(issue of prepared.issues;track $index){<p class="error">{{issue}}</p>}@for(p of prepared.platforms;track p.platform){<details><summary>{{p.name}}</summary>@for(issue of p.issues;track $index){<p class="error">{{issue}}</p>}@for(row of p.values | keyvalue;track row.key){<p><b>{{row.value.label}}</b>: {{row.value.name}}</p>}</details>}</section>}
+ @for(job of jobs;track job.id){<section class="panel"><b>{{job.platform}}</b><p>{{job.message}}</p>@if(job.remaining.length){<p class="muted">Нужна проверка: {{job.remaining.join(', ')}}</p>}<button (click)="jobAction('RENTAL_OPEN',job.id)" [disabled]="!!busy">Открыть</button></section>}
+ @if(jobs.length){<button (click)="jobAction('RENTAL_STOP')" [disabled]="!!busy">Остановить заполнение</button>}
+ }
+ @if(busy){<p role="status">{{busy}}</p>}
+</section>

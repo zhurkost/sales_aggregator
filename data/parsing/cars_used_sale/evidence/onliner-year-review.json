@@ -1,0 +1,69 @@
+{
+  "at": "2026-11-12T14:12:05.808Z",
+  "verified": true,
+  "restored": true,
+  "results": [
+    {
+      "label": "recent-button",
+      "expected": 2022,
+      "route": "A",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": null
+    },
+    {
+      "label": "recent-repeat",
+      "expected": 2022,
+      "route": "A",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": null
+    },
+    {
+      "label": "older-select",
+      "expected": 2005,
+      "route": "OPTION",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": null
+    },
+    {
+      "label": "older-repeat",
+      "expected": 2005,
+      "route": "OPTION",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": null
+    },
+    {
+      "label": "older-boundary",
+      "expected": 2016,
+      "route": "OPTION",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": "2212"
+    },
+    {
+      "label": "recent-boundary",
+      "expected": 2017,
+      "route": "A",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": "2212"
+    },
+    {
+      "label": "back-to-recent",
+      "expected": 2022,
+      "route": "A",
+      "selectedCount": 1,
+      "equals": true,
+      "generation": null
+    }
+  ],
+  "root": ".vehicle-form__group:has(select.vehicle-form__button-select)",
+  "candidates": ".vehicle-form__group:has(select.vehicle-form__button-select) a.vehicle-form__button_choose, .vehicle-form__group:has(select.vehicle-form__button-select) select.vehicle-form__button-select option",
+  "selected": ".vehicle-form__group:has(select.vehicle-form__button-select) a.button-style_active, .vehicle-form__group:has(select.vehicle-form__button-select) div.button-style_active > select.vehicle-form__button-select > option:checked",
+  "yearDictionaryCollected": false,
+  "perModelYearFiltering": false,
+  "publicationAttempted": false
+}

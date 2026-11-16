@@ -11,3 +11,4 @@
 
 .property-tabs{max-width:900px;margin:0 auto 22px;display:flex;gap:16px;border-bottom:1px solid var(--line)}
 .property-tabs button{padding:10px 4px;border-bottom:2px solid transparent}.property-tabs button[aria-selected=true]{border-color:var(--blue);color:var(--blue);font-weight:600}
+.mobile-section-picker{display:none}@media(max-width:760px){.mobile-section-picker{display:grid;gap:8px;margin-bottom:20px;color:var(--muted);font-size:12px}.mobile-section-picker select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink)}}

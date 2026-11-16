@@ -25,7 +25,7 @@
       </p>
       <div class="auth-points">
         <span
-          ><app-icon name="sparkles" />Карточка недвижимости с помощью ИИ</span
+          ><app-icon name="sparkles" />Карточка объявления с помощью ИИ</span
         ><span><app-icon name="globe" />Площадки Беларуси в одном окне</span
         ><span><app-icon name="file" />Заполнение форм на площадках</span>
       </div>
@@ -108,7 +108,8 @@
       <span class="brand"><span class="brand-icon"><app-icon name="layers" /></span>Автопост<span class="brand-period">.</span></span>
       <div class="workspace-label">КАБИНЕТ ПРОДАВЦА</div>
       <nav aria-label="Разделы кабинета">
-        <button type="button" class="nav-item active" aria-current="page"><app-icon name="file" />Недвижимость</button>
+        <button type="button" class="nav-item" [class.active]="section === 'property'" [attr.aria-current]="section === 'property' ? 'page' : null" (click)="selectSection('property')"><app-icon name="file" />Недвижимость</button>
+        <button type="button" class="nav-item" [class.active]="section === 'cars'" [attr.aria-current]="section === 'cars' ? 'page' : null" (click)="selectSection('cars')"><app-icon name="file" />Автомобили</button>
       </nav>
       <div class="sidebar-note"><b>Автопост · MVP</b><p>Карточки остаются в открытой вкладке до обновления страницы.</p></div>
       <div class="sidebar-bottom">
@@ -117,10 +118,12 @@
     </aside>
     <div class="main-shell">
       <header class="topbar">
-        <div class="breadcrumbs">{{ profile.name }} <span>/</span> Недвижимость</div>
+        <div class="breadcrumbs">{{ profile.name }} <span>/</span> {{section === 'cars' ? 'Автомобили' : 'Недвижимость'}}</div>
         <div class="top-actions"><span class="country">🇧🇾 Беларусь</span><button class="text-button" (click)="showExtension = true">{{ ext ? "Помощник подключён" : "Расширение " + version }}</button><button class="mobile-logout" aria-label="Выйти из профиля" (click)="logout()" [disabled]="!!busy"><app-icon name="logout" /></button></div>
       </header>
       <main>
+        <label class="mobile-section-picker">Раздел<select [ngModel]="section" (ngModelChange)="selectSection($event)"><option value="property">Недвижимость</option><option value="cars">Автомобили</option></select></label>
+        <div [hidden]="section !== 'property'">
         <div class="property-tabs" role="tablist" aria-label="Вид объявления">
           @for (tab of deals; track tab.id; let i = $index) {
             <button type="button" role="tab" [id]="'tab-' + tab.id" [attr.aria-controls]="'panel-' + tab.id"
@@ -130,9 +133,14 @@
         </div>
         @for (tab of deals; track tab.id) {
           <section role="tabpanel" [id]="'panel-' + tab.id" [attr.aria-labelledby]="'tab-' + tab.id" [hidden]="deal !== tab.id">
-            <app-rental-editor *retainedPanel="deal === tab.id" [deal]="tab.deal" [objectKind]="tab.objectKind" [category]="tab.category" [workspaceId]="profile.id" [profileDefaults]="settings" />
+            <app-rental-editor *retainedPanel="section === 'property' && deal === tab.id" [deal]="tab.deal" [objectKind]="tab.objectKind" [category]="tab.category" [workspaceId]="profile.id" [profileDefaults]="settings" />
           </section>
         }
+        </div>
+        <div [hidden]="section !== 'cars'">
+          <div class="property-tabs" role="tablist" aria-label="Категория автомобилей"><button type="button" id="tab-cars" role="tab" aria-selected="true" aria-controls="panel-cars">Легковые</button></div>
+          <section id="panel-cars" role="tabpanel" aria-labelledby="tab-cars"><app-car-editor *retainedPanel="section === 'cars'" [workspaceId]="profile.id" [profileDefaults]="settings" /></section>
+        </div>
         <footer><span class="brand">Автопост<span class="brand-period">.</span></span><button (click)="showExtension = true">Помощь с расширением</button></footer>
       </main>
     </div>

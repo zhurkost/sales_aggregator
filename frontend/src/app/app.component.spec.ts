@@ -57,8 +57,9 @@ describe("Real estate workspace",()=>{
     const load=vi.spyOn(app,"session");
     fixture.detectChanges();await load.mock.results[0].value;fixture.detectChanges();
     const nav=fixture.nativeElement.querySelector('nav');
-    expect(nav.querySelectorAll('button')).toHaveLength(1);
-    expect(nav.textContent.trim()).toBe("Недвижимость");
+    expect(nav.querySelectorAll('button')).toHaveLength(2);
+    expect(nav.textContent).toContain("Недвижимость");
+    expect(nav.textContent).toContain("Автомобили");
     expect(fixture.nativeElement.querySelector('app-rental-editor')).not.toBeNull();
     for(const label of ["Новое объявление","Очередь и уведомления","Команда","Массовая загрузка","Справочник площадок","Интеграции"])
       expect(fixture.nativeElement.textContent).not.toContain(label);
@@ -98,7 +99,7 @@ describe("Real estate workspace",()=>{
     fixture.detectChanges();
     try {
       await vi.waitFor(() => { fixture.detectChanges(); expect(textarea()).not.toBeNull(); });
-      expect(Array.from(root.querySelectorAll('[role="tab"]'), t => t.textContent?.trim())).toEqual(["Аренда квартир", "Продажа квартир", "Аренда домов", "Продажа домов"]);
+      expect(Array.from(root.querySelectorAll('[aria-label="Вид объявления"] [role="tab"]'), t => t.textContent?.trim())).toEqual(["Аренда квартир", "Продажа квартир", "Аренда домов", "Продажа домов"]);
       expect(root.querySelector("button.publish")).not.toBeNull();
       enter("Первое объявление");
       select(1);

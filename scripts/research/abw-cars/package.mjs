@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(here,'../../..');
+const out=path.join(root,'outputs/abw-research-collector');fs.mkdirSync(out,{recursive:true});
+for(const n of fs.readdirSync(path.join(here,'extension')))fs.copyFileSync(path.join(here,'extension',n),path.join(out,n));
+for(const n of ['core.mjs','schema.mjs','geography.mjs','checkpoint-writer.mjs','RUN.txt'])fs.copyFileSync(path.join(here,n),path.join(out,n));
+fs.copyFileSync(path.join(here,'../shared/checkpoint.mjs'),path.join(out,'checkpoint.mjs'));
+fs.copyFileSync(path.join(root,'data/parsing/cars_used_sale/evidence/abw-ui-observations.json'),path.join(out,'ui.json'));
+console.log(out);

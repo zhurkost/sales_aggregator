@@ -1,0 +1,64 @@
+{
+  "observed_date": "2026-11-12",
+  "url": "https://www.kufar.by/ain/create",
+  "browser": "Existing authenticated user Chrome",
+  "sample": ["Kia", "Rio", "IV Рестайлинг"],
+  "method": "DevTools Console operated through Windows computer-use. DOM actions, React readback, reopening popups, Resource Timing and remote-image load checks. No credentials or profile values exported.",
+  "resolves": "Seven needs_review bindings from kufar-authenticated-review.json; its initial input/capture blocker is historical.",
+  "multi_select": {
+    "cars_lights": [
+      {"expected": ["Светодиодные", "Противотуманные"], "actual": ["Противотуманные", "Светодиодные"], "pass": true},
+      {"expected": ["Матричные"], "actual": ["Матричные"], "pass": true},
+      {"expected": ["Матричные"], "actual": ["Матричные"], "pass": true},
+      {"expected": [], "actual": [], "pass": true},
+      {"expected": ["Светодиодные"], "actual": ["Светодиодные"], "pass": true}
+    ],
+    "cars_features": [
+      {"expected": ["Обогрев руля", "Бесключевой доступ"], "actual": ["Обогрев руля", "Бесключевой доступ"], "pass": true},
+      {"expected": ["Фаркоп"], "actual": ["Фаркоп"], "pass": true},
+      {"expected": ["Фаркоп"], "actual": ["Фаркоп"], "pass": true},
+      {"expected": [], "actual": [], "pass": true},
+      {"expected": ["Обогрев руля", "Бесключевой доступ"], "actual": ["Обогрев руля", "Бесключевой доступ"], "pass": true}
+    ],
+    "verification": "Apply, wait for popup removal, reopen, compare the full checked-label set, Apply to close. The first 100ms fixed-delay attempt failed because the popup had not finished closing; polling the DOM lifecycle resolved it."
+  },
+  "vehicle_vin": {
+    "fixtures": ["TEST1234567890123", "TEST1234567890124", ""],
+    "readback_matches": true,
+    "aria_invalid": "false for all three inputs",
+    "events": ["input", "change", "blur"],
+    "final_empty": true,
+    "scope": "Synthetic text transfer and replacement only; no claim of real VIN validity, report purchase, vehicle decoding or server publication validation."
+  },
+  "auction": {"tested": ["Без торга", "Торг уместен", "Торг уместен"], "readback": "Selected _filled-green chip", "pass": true},
+  "phone_hidden": {"input_values_tested": ["1", "0", "0"], "label_click_values_tested": ["1", "0"], "checked_input_readback": true, "final_value": "0"},
+  "possible_exchange": {
+    "failed_approaches": "Rapid batched input.click()/label.click() tests intermittently read the previous state; a later timed loop also failed. These runs are not counted as acceptance.",
+    "accepted_approach": "Separate guarded actions on [data-name=possible_exchange] [role=checkbox], with native input.checked read in a subsequent console command after React processing.",
+    "observed_sequence": [false, true, true, false],
+    "repeat_true_did_not_click": true,
+    "unchecked_aria_checked": "",
+    "pass": true
+  },
+  "images": {
+    "initial_input": "#imageLoaderDropzone",
+    "subsequent_input": "#imageLoaderDropzoneSmall",
+    "fixtures": [
+      {"type": "image/png", "width": 640, "height": 480, "bytes": 22322, "accepted": true},
+      {"type": "image/jpeg", "width": 640, "height": 480, "bytes": 6252, "accepted": false, "reason": "Counter did not increase; cause not captured, no claim of a minimum size or duplicate detection."},
+      {"type": "image/jpeg", "width": 900, "height": 700, "bytes": 12984, "accepted": true}
+    ],
+    "upload_endpoint": "https://ads-image-uploader.kufar.by/v1/images",
+    "observed_upload_status": 200,
+    "accepted_src_prefix": "https://rms.kufar.by/v1/list_thumbs_2x/adim1/",
+    "final_counter": "Загружено 2 из 30",
+    "remote_images_loaded": 2,
+    "server_image_ids_recorded": false,
+    "acceptance": "Require expected count AND remote src AND complete/naturalWidth; the non-incrementing attempt must never be reported as success."
+  },
+  "production_runtime_modified": false,
+  "published": false,
+  "profile_changed": false,
+  "promotions_changed": false,
+  "test_images_left_in_unsubmitted_form": 2
+}

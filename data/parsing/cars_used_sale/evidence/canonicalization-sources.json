@@ -1,0 +1,26 @@
+{
+  "policy": "Scoped aliases; years are not stored or used as a selection filter.",
+  "sources": [
+    {
+      "scope": "Kia Rio DC/JB/QB/FB",
+      "url": "https://www.drom.ru/catalog/kia/rio/",
+      "note": "Generation and chassis tables; Global market, X and X-Line are retained separately."
+    },
+    {
+      "scope": "Kia Ceed ED/JD/CD",
+      "url": "https://en.wikipedia.org/wiki/Kia_Ceed",
+      "note": "Generation headings explicitly link factory codes to ordinal numbers."
+    },
+    {
+      "scope": "Kia Ceed third generation",
+      "url": "https://press.kia.com/content/dam/kiapress/IE/pressreleases/Ceed-Launch-September-2018/Ceed-press-release.pdf",
+      "note": "Manufacturer confirms the third generation."
+    },
+    {
+      "scope": "Kia Sportage JA/KM/SL/QL/NQ5",
+      "url": "https://www.adac.de/rund-ums-fahrzeug/autokatalog/marken-modelle/kia/sportage/",
+      "note": "Generation and facelift catalogue, cross-checked with the collected model branches."
+    }
+  ],
+  "otherRules": "Most equivalences derive from the four local source schemas: the same parent and explicit ordinal/chassis labels, spelling and declared alternate names. Source IDs for each group are in canonicalization-review.json."
+}

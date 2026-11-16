@@ -1,0 +1,759 @@
+{
+  "category_id": "cars_used_sale",
+  "platform": "av",
+  "status": "historical_only",
+  "checked_at": "2026-11-13",
+  "source_date": "2026-10-27",
+  "provenance": {
+    "audit": "data/av-car-form-audit.json",
+    "audit_sha256": "1e81e634048969286500ec8b6dddd038d4b80faa9019504c8cc7e0855e517cd5",
+    "extra_git_object": "01f1284095c94424a35079e61e69903ee59723d7",
+    "extra_path": "data/category-fields.json:extra.auto.cars[platform=av]",
+    "notes": "docs/avby-form-research.md"
+  },
+  "warning": "Historical HAR-derived metadata, NOT a current scrape, NOT an executable binding. Used/new branches were observed together. No completeness or live verification claimed.",
+  "fields": {
+    "salon_offer": {
+      "name": "salon_offer",
+      "label": "Предложение салона",
+      "required": false,
+      "widget": "salon_offer",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "condition_promotion": {
+      "name": "condition_promotion",
+      "label": "Подраздел",
+      "required": true,
+      "widget": "car_condition_promotion",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "brand": {
+      "name": "brand",
+      "label": "Марка",
+      "required": true,
+      "widget": "brand",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "model": {
+      "name": "model",
+      "label": "Модель",
+      "required": true,
+      "widget": "model",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "year": {
+      "name": "year",
+      "label": "Год",
+      "required": true,
+      "widget": "year",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "generation": {
+      "name": "generation",
+      "label": "Поколение",
+      "required": true,
+      "widget": "generation",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "body_type": {
+      "name": "body_type",
+      "label": "Кузов",
+      "required": true,
+      "widget": "body_type_widget",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "number_of_seats": {
+      "name": "number_of_seats",
+      "label": "Количество мест",
+      "required": false,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "transmission_type": {
+      "name": "transmission_type",
+      "label": "Коробка передач",
+      "required": true,
+      "widget": "inline_select",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "engine_type": {
+      "name": "engine_type",
+      "label": "Тип двигателя",
+      "required": true,
+      "widget": "engine_type",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "engine_capacity": {
+      "name": "engine_capacity",
+      "label": "Объем, см³",
+      "required": false,
+      "widget": "engine_capacity",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "engine_endurance": {
+      "name": "engine_endurance",
+      "label": "Запас хода, км",
+      "required": false,
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "drive_type": {
+      "name": "drive_type",
+      "label": "Привод",
+      "required": true,
+      "widget": "drive_type_widget",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "modification": {
+      "name": "modification",
+      "label": "Модификация",
+      "required": true,
+      "widget": "modification_widget",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "vin": {
+      "name": "vin",
+      "label": "Код из 17 символов",
+      "required": false,
+      "widget": "vin",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "condition": {
+      "name": "condition",
+      "label": "Состояние",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "mileage_compound_on_submission_form": {
+      "name": "mileage_compound_on_submission_form",
+      "label": "Пробег",
+      "required": true,
+      "widget": "mileage_compound",
+      "fallbackType": "compound_any",
+      "valueFormat": "value"
+    },
+    "mileage": {
+      "name": "mileage",
+      "label": "Пробег",
+      "required": true,
+      "widget": "mileage_compound_amount",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "mileage_unit": {
+      "name": "mileage_unit",
+      "label": "Единицы измерения пробега",
+      "required": true,
+      "widget": "mileage_compound_unit",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "color": {
+      "name": "color",
+      "label": "Цвет кузова",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "interior_material": {
+      "name": "interior_material",
+      "label": "Материал салона",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "interior_color": {
+      "name": "interior_color",
+      "label": "Цвет салона",
+      "required": true,
+      "widget": "inline_select",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "options": {
+      "name": "options",
+      "label": "Комплектация",
+      "required": false,
+      "widget": "options_checkbox_select",
+      "fallbackType": "select",
+      "valueFormat": "array"
+    },
+    "registration_country": {
+      "name": "registration_country",
+      "label": "Страна регистрации",
+      "required": true,
+      "widget": "registration_country",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "registration_status": {
+      "name": "registration_status",
+      "label": "Учёт",
+      "required": true,
+      "widget": "inline_select",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "description": {
+      "name": "description",
+      "label": "Описание",
+      "required": false,
+      "widget": "textarea",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "price_compound_on_submission_form": {
+      "name": "price_compound_on_submission_form",
+      "label": "Цена",
+      "required": true,
+      "widget": "price_compound",
+      "fallbackType": "compound_any",
+      "valueFormat": "value"
+    },
+    "price_amount": {
+      "name": "price_amount",
+      "label": "Цена",
+      "required": true,
+      "widget": "price_compound_amount",
+      "fallbackType": "int",
+      "valueFormat": "value"
+    },
+    "price_currency": {
+      "name": "price_currency",
+      "label": "Валюта",
+      "required": true,
+      "widget": "price_compound_currency",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "exchange_options": {
+      "name": "exchange_options",
+      "label": "Обмен",
+      "required": true,
+      "widget": "exchange_type",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "exchange_comment": {
+      "name": "exchange_comment",
+      "label": "Комментарий к обмену",
+      "required": false,
+      "widget": "exchange_comment",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "photo": {
+      "name": "photo",
+      "label": "Фотографии",
+      "required": false,
+      "fallbackType": "image_upload",
+      "valueFormat": "value"
+    },
+    "photo360": {
+      "name": "photo360",
+      "label": "Фото 360°",
+      "required": false,
+      "widget": "photo360",
+      "fallbackType": "image_upload",
+      "valueFormat": "value"
+    },
+    "video_url": {
+      "name": "video_url",
+      "label": "Видео из YouTube",
+      "required": false,
+      "widget": "video",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "place_region": {
+      "name": "place_region",
+      "label": "Область",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "place_city": {
+      "name": "place_city",
+      "label": "Город",
+      "required": true,
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "name": {
+      "name": "name",
+      "label": "Имя продавца",
+      "required": true,
+      "widget": "long_input",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "phones": {
+      "name": "phones",
+      "label": "Номер телефона",
+      "required": true,
+      "widget": "phone_compound",
+      "fallbackType": "compound_any",
+      "valueFormat": "array"
+    },
+    "phone_country": {
+      "name": "phone_country",
+      "label": "Телефонный код страны",
+      "required": true,
+      "widget": "phone_compound_country",
+      "fallbackType": "select",
+      "valueFormat": "value"
+    },
+    "phone_number": {
+      "name": "phone_number",
+      "label": "Номер телефона",
+      "required": true,
+      "widget": "phone_compound_number",
+      "fallbackType": "string",
+      "valueFormat": "value"
+    },
+    "number_masking": {
+      "name": "number_masking",
+      "label": "",
+      "required": false,
+      "widget": "number_masking_widget",
+      "fallbackType": "boolean",
+      "valueFormat": "value"
+    }
+  },
+  "additional_fields": [
+    {
+      "key": "av_condition_promotion",
+      "label": "Подраздел (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "2",
+          "Автомобиль с пробегом"
+        ],
+        [
+          "5",
+          "Новый автомобиль"
+        ]
+      ],
+      "anchor": "av-cars-condition_promotion",
+      "platform": "av",
+      "formName": "condition_promotion",
+      "description": false
+    },
+    {
+      "key": "av_generation",
+      "label": "Поколение (AV.by)",
+      "required": true,
+      "options": [],
+      "anchor": "av-cars-generation",
+      "platform": "av",
+      "formName": "generation",
+      "description": true
+    },
+    {
+      "key": "av_body_type",
+      "label": "Кузов (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "5",
+          "седан"
+        ],
+        [
+          "2",
+          "универсал"
+        ],
+        [
+          "23",
+          "внедорожник 3 дв."
+        ],
+        [
+          "6",
+          "внедорожник 5 дв."
+        ],
+        [
+          "7",
+          "кабриолет"
+        ],
+        [
+          "1",
+          "купе"
+        ],
+        [
+          "20",
+          "легковой фургон"
+        ],
+        [
+          "22",
+          "лимузин"
+        ],
+        [
+          "26",
+          "лифтбек"
+        ],
+        [
+          "21",
+          "микроавтобус грузопассажирский"
+        ],
+        [
+          "11",
+          "микроавтобус пассажирский"
+        ],
+        [
+          "4",
+          "минивэн"
+        ],
+        [
+          "8",
+          "пикап"
+        ],
+        [
+          "18",
+          "родстер"
+        ],
+        [
+          "24",
+          "хэтчбек 3 дв."
+        ],
+        [
+          "3",
+          "хэтчбек 5 дв."
+        ],
+        [
+          "19",
+          "другой"
+        ]
+      ],
+      "anchor": "av-cars-body_type",
+      "platform": "av",
+      "formName": "body_type",
+      "description": true
+    },
+    {
+      "key": "av_engine_type",
+      "label": "Тип двигателя (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1",
+          "бензин"
+        ],
+        [
+          "2",
+          "бензин (пропан-бутан)"
+        ],
+        [
+          "3",
+          "бензин (метан)"
+        ],
+        [
+          "5",
+          "дизель"
+        ],
+        [
+          "4",
+          "бензин (гибрид)"
+        ],
+        [
+          "6",
+          "дизель (гибрид)"
+        ],
+        [
+          "7",
+          "электро"
+        ]
+      ],
+      "anchor": "av-cars-engine_type",
+      "platform": "av",
+      "formName": "engine_type",
+      "description": true
+    },
+    {
+      "key": "av_drive_type",
+      "label": "Привод (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1",
+          "передний привод"
+        ],
+        [
+          "4",
+          "постоянный полный привод"
+        ],
+        [
+          "2",
+          "задний привод"
+        ],
+        [
+          "3",
+          "подключаемый полный привод"
+        ]
+      ],
+      "anchor": "av-cars-drive_type",
+      "platform": "av",
+      "formName": "drive_type",
+      "description": true
+    },
+    {
+      "key": "av_modification",
+      "label": "Модификация (AV.by)",
+      "required": true,
+      "options": [],
+      "anchor": "av-cars-modification",
+      "platform": "av",
+      "formName": "modification",
+      "description": true
+    },
+    {
+      "key": "av_condition",
+      "label": "Состояние (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "2",
+          "с пробегом"
+        ],
+        [
+          "3",
+          "аварийный"
+        ],
+        [
+          "4",
+          "на запчасти"
+        ],
+        [
+          "5",
+          "новый"
+        ]
+      ],
+      "anchor": "av-cars-condition",
+      "platform": "av",
+      "formName": "condition",
+      "description": true
+    },
+    {
+      "key": "av_interior_material",
+      "label": "Материал салона (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1",
+          "натуральная кожа"
+        ],
+        [
+          "2",
+          "искусственная кожа"
+        ],
+        [
+          "3",
+          "ткань"
+        ],
+        [
+          "4",
+          "велюр"
+        ],
+        [
+          "5",
+          "алькантара"
+        ],
+        [
+          "6",
+          "комбинированные материалы"
+        ]
+      ],
+      "anchor": "av-cars-interior_material",
+      "platform": "av",
+      "formName": "interior_material",
+      "description": true
+    },
+    {
+      "key": "av_interior_color",
+      "label": "Цвет салона (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1",
+          "светлый"
+        ],
+        [
+          "3",
+          "комби"
+        ],
+        [
+          "2",
+          "тёмный"
+        ]
+      ],
+      "anchor": "av-cars-interior_color",
+      "platform": "av",
+      "formName": "interior_color",
+      "description": true
+    },
+    {
+      "key": "av_registration_country",
+      "label": "Страна регистрации (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "2",
+          "Беларусь"
+        ],
+        [
+          "3",
+          "Россия"
+        ],
+        [
+          "1",
+          "Другая страна"
+        ]
+      ],
+      "anchor": "av-cars-registration_country",
+      "platform": "av",
+      "formName": "registration_country",
+      "description": true
+    },
+    {
+      "key": "av_registration_status",
+      "label": "Учёт (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1",
+          "на учёте в ГАИ"
+        ],
+        [
+          "2",
+          "снят с учёта"
+        ]
+      ],
+      "anchor": "av-cars-registration_status",
+      "platform": "av",
+      "formName": "registration_status",
+      "description": true
+    },
+    {
+      "key": "av_exchange_options",
+      "label": "Обмен (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1",
+          "не интересует"
+        ],
+        [
+          "2",
+          "любой вариант"
+        ],
+        [
+          "3",
+          "с доплатой покупателя"
+        ],
+        [
+          "4",
+          "с доплатой продавца"
+        ]
+      ],
+      "anchor": "av-cars-exchange_options",
+      "platform": "av",
+      "formName": "exchange_options",
+      "description": true
+    },
+    {
+      "key": "av_exchange_comment",
+      "label": "Комментарий к обмену (AV.by)",
+      "required": false,
+      "options": [],
+      "anchor": "av-cars-exchange_comment",
+      "platform": "av",
+      "formName": "exchange_comment",
+      "description": true
+    },
+    {
+      "key": "av_place_region",
+      "label": "Область (AV.by)",
+      "required": true,
+      "options": [
+        [
+          "1001",
+          "Брестская обл."
+        ],
+        [
+          "1002",
+          "Витебская обл."
+        ],
+        [
+          "1003",
+          "Гомельская обл."
+        ],
+        [
+          "1004",
+          "Гродненская обл."
+        ],
+        [
+          "1005",
+          "Минская обл."
+        ],
+        [
+          "1006",
+          "Могилевская обл."
+        ]
+      ],
+      "anchor": "av-cars-place_region",
+      "platform": "av",
+      "formName": "place_region",
+      "description": false
+    },
+    {
+      "key": "av_name",
+      "label": "Имя продавца (AV.by)",
+      "required": true,
+      "options": [],
+      "anchor": "av-cars-name",
+      "platform": "av",
+      "formName": "name",
+      "description": false
+    },
+    {
+      "key": "av_engine_endurance",
+      "label": "Запас хода, км (AV.by)",
+      "required": false,
+      "options": [],
+      "anchor": "av-cars-engine_endurance",
+      "platform": "av",
+      "formName": "engine_endurance",
+      "description": true
+    }
+  ],
+  "live_access": [
+    {
+      "surface": "user Chrome",
+      "url": "https://av.by/offer/draft/cars",
+      "result": "HTTP ERROR 423"
+    },
+    {
+      "surface": "unauthenticated Node HTTPS",
+      "url": "https://av.by/",
+      "result": "HTTP 468"
+    },
+    {
+      "surface": "in-app browser",
+      "url": "https://av.by/offer/draft/cars",
+      "result": "User explicitly authorized CAPTCHA; clicked Confirm; protection displayed Debugging Detected; form not accessible"
+    }
+  ]
+}

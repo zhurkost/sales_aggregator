@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-12T13:29:09.551Z",
+  "accepted": true,
+  "host": "content.onliner.by",
+  "loaded": true,
+  "width": 1200,
+  "height": 900,
+  "container": "div.drop-style__upload-list",
+  "items_selector": ".drop-style__upload-item:has(.drop-style__upload-image)",
+  "image_selector": ".drop-style__upload-image",
+  "image_source": "background_image",
+  "requests": [
+    {
+      "path": "/sdapi/upload.api/upload",
+      "status": 202
+    },
+    {
+      "path": "/sdapi/upload.api/upload/[upload-id]",
+      "status": 200
+    }
+  ]
+}

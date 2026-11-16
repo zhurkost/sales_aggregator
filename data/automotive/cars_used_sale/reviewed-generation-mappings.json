@@ -1,0 +1,170 @@
+[
+  {
+    "common_option_id": "car.option.92d2df48-50e1-4190-8e18-48c71e318a26",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5852.number%3A4410",
+    "target_common_option_id": "car.option.6765020f-7156-4017-99b4-c568d8f13d04",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (8U) Рестайлинг"
+  },
+  {
+    "common_option_id": "car.option.7c2b19bb-93d6-4a8b-846c-83cbfcaba93b",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5852.number%3A4409",
+    "target_common_option_id": "car.option.ffde1aef-f258-4c85-b424-a0006df71dcf",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (8U)"
+  },
+  {
+    "common_option_id": "car.option.135694df-2e90-47c5-a2cb-0aed00f1b5b0",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5960.number%3A4879",
+    "target_common_option_id": "car.option.a91da7fb-fcbc-4b0f-90d5-af0ba18d98b2",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (8R)"
+  },
+  {
+    "common_option_id": "car.option.2cd39bef-fbd9-4cc3-9abd-fa2278dad050",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5951.number%3A11885",
+    "target_common_option_id": "car.option.5aaa2a12-be8e-4454-94ec-552d751a7274",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "III (8S) Рестайлинг"
+  },
+  {
+    "common_option_id": "car.option.be670d05-ddae-4c8a-9388-ee71e0fcaa49",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5951.number%3A4866",
+    "target_common_option_id": "car.option.0252c668-e24d-400c-972e-4169b2fe6bcf",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "III (8S)"
+  },
+  {
+    "common_option_id": "car.option.8fe0caf2-d3c8-42cb-8b83-2b17780dcedf",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5951.number%3A4865",
+    "target_common_option_id": "car.option.669a9ca3-8a8b-4ca3-98b6-71a8468a3a82",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "II (8J) Рестайлинг"
+  },
+  {
+    "common_option_id": "car.option.144ec77c-7ddc-4e3d-8242-4a10b1917f5d",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A6.number%3A5951.number%3A4864",
+    "target_common_option_id": "car.option.2b2125d6-341b-46a6-aa65-b3a7d80666ad",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "II (8J)"
+  },
+  {
+    "common_option_id": "car.option.aa4f168f-0121-4f23-9af9-a410696ed150",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A1998.number%3A2005.number%3A2993",
+    "target_common_option_id": "car.option.0b99905b-9c0a-48eb-99fd-a4da8c8641fa",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (T11)"
+  },
+  {
+    "common_option_id": "car.option.768387b8-bf5a-4de5-9f5b-422d93ef08ea",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.21.217.1546",
+    "target_common_option_id": "car.option.057c37b1-c267-4405-8c6f-92c83b6a8e6e",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "III (K2XX) Рестайлинг"
+  },
+  {
+    "common_option_id": "car.option.cbbce460-6963-4800-971e-23558be65934",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.21.217.2461",
+    "target_common_option_id": "car.option.b6bfbf0d-ce5c-457e-b1ba-4eb7494967b9",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "III (K2XX)"
+  },
+  {
+    "common_option_id": "car.option.f430b53a-8c5b-4a6b-9d29-17135b77b836",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.41.3171.6657",
+    "target_common_option_id": "car.option.e80e6f50-5244-417c-836b-af3f7b17e2f2",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (C253) Рестайлинг"
+  },
+  {
+    "common_option_id": "car.option.d7276a6b-2623-4ded-8353-20cac1f23319",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.41.3171.6656",
+    "target_common_option_id": "car.option.4290607a-5beb-46b9-83aa-b84034cb7009",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (C253)"
+  },
+  {
+    "common_option_id": "car.option.ee7964b0-4422-4e93-b81e-557badebbb52",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.45.3858.8169",
+    "target_common_option_id": "car.option.25bfbba9-cb53-4f55-8a2c-83596e9d1f05",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "II (E51)"
+  },
+  {
+    "common_option_id": "car.option.5bfe76c6-07d8-40a0-9d67-441e4c5bf54e",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.50.48.4546",
+    "target_common_option_id": "car.option.5272d773-0acd-4e83-b540-c78fccae83d0",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (901, 911)"
+  },
+  {
+    "common_option_id": "car.option.864778f4-f3c0-47fe-ba1a-aa2d3cd7a814",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A1181.number%3A5999.number%3A4940",
+    "target_common_option_id": "car.option.a832e91f-5de7-4664-b5b0-c5fdac364ee5",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (X40)"
+  },
+  {
+    "common_option_id": "car.option.27965d20-b2ac-4bc1-a60d-bfc9ee038cf8",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.61.1820.1466",
+    "target_common_option_id": "car.option.05883e3f-cb4b-4f6c-a814-84951df9aeed",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "VI (X80)"
+  },
+  {
+    "common_option_id": "car.option.e62ddb97-5d9c-4b7d-91d2-14b1716e2d5c",
+    "platform": "onliner",
+    "platform_option_id": "onliner.generation.61.1820.1468",
+    "target_common_option_id": "car.option.5cb3a5a6-0f7f-4329-a50d-3a7f683a65d6",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "IV (X60)"
+  },
+  {
+    "common_option_id": "car.option.0b84676b-1425-4f22-ab6d-908210ccdf7e",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A1181.number%3A5927.number%3A4809",
+    "target_common_option_id": "car.option.e01ce6f5-cf67-4d2c-bc87-06893f8918b1",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I Рестайлинг (Zvw40/41)"
+  },
+  {
+    "common_option_id": "car.option.ac1a50ba-628a-45aa-91df-8da39f422f04",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A526.number%3A532.number%3A3787",
+    "target_common_option_id": "car.option.847565c5-95e6-4d96-a2f4-2a727231eced",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (Series 3)"
+  },
+  {
+    "common_option_id": "car.option.f6fe0cdd-e381-432a-86fd-701e4fab5c30",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A526.number%3A532.number%3A3786",
+    "target_common_option_id": "car.option.5b362301-5c3e-4333-ae74-e7aa9132b6dc",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (Series 2)"
+  },
+  {
+    "common_option_id": "car.option.eb115278-7c87-4213-a3a5-e1d408812f40",
+    "platform": "av",
+    "platform_option_id": "av.generation.number%3A526.number%3A532.number%3A3785",
+    "target_common_option_id": "car.option.e868efb7-d084-46b4-9356-c039056aa91e",
+    "reason": "same_explicit_chassis_codes",
+    "evidence": "I (Series 1)"
+  }
+]

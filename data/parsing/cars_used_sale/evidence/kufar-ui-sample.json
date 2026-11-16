@@ -1,0 +1,473 @@
+{
+  "observedAt": "2026-11-12T09:43:46.232Z",
+  "scope": "Kia Rio IV Рестайлинг; used; anonymous private insertion form; synthetic test values; no publication",
+  "fields": [
+    {
+      "inputs": [],
+      "name": "toast-container-bottom",
+      "selectedChips": [],
+      "text": ""
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": null,
+          "max": "",
+          "maxLength": 50,
+          "min": "",
+          "name": "subject",
+          "step": "",
+          "tag": "INPUT",
+          "type": "text",
+          "value": "Kia Rio IV Рестайлинг 2021"
+        }
+      ],
+      "name": "subject",
+      "selectedChips": [],
+      "text": "26 из 50 знаков"
+    },
+    {
+      "inputs": [],
+      "name": "category",
+      "selectedChips": [],
+      "text": "Авто и запчасти  Легковые автоИзменить категорию"
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": null,
+          "max": "",
+          "maxLength": 17,
+          "min": "",
+          "name": "vehicle_vin",
+          "step": "",
+          "tag": "INPUT",
+          "type": "text",
+          "value": ""
+        }
+      ],
+      "name": "vehicle_vin",
+      "selectedChips": [],
+      "text": "Добавьте VIN — ускорьте процесс продажи!Объявление с VIN ускоряет процесс продажи и вызывает доверие покупателя.VIN скрыт в объявлении и используется только для покупки отчёта.Где найти VIN"
+    },
+    {
+      "inputs": [],
+      "name": "cars_brand_v2",
+      "selectedChips": [],
+      "text": "Марка* Kia"
+    },
+    {
+      "inputs": [],
+      "name": "cars_model_v2",
+      "selectedChips": [],
+      "text": "Модель Rio"
+    },
+    {
+      "inputs": [],
+      "name": "cars_gen_v2",
+      "selectedChips": [],
+      "text": "Поколение IV Рестайлинг"
+    },
+    {
+      "inputs": [],
+      "name": "cars_type",
+      "selectedChips": [],
+      "text": "Тип кузова* Седан"
+    },
+    {
+      "inputs": [],
+      "name": "cars_seats",
+      "selectedChips": [],
+      "text": "Количество посадочных мест 5"
+    },
+    {
+      "inputs": [],
+      "name": "cars_engine",
+      "selectedChips": [
+        "Бензин"
+      ],
+      "text": "Тип двигателя* БензинБензин (пропан-бутан)Бензин (метан)Бензин (гибрид)ДизельДизель (гибрид)Электричество"
+    },
+    {
+      "inputs": [],
+      "name": "cars_drive",
+      "selectedChips": [
+        "Передний"
+      ],
+      "text": "Привод ПереднийЗаднийПолный"
+    },
+    {
+      "inputs": [],
+      "name": "cars_gearbox",
+      "selectedChips": [
+        "Автоматическая"
+      ],
+      "text": "Коробка передач* АвтоматическаяМеханика"
+    },
+    {
+      "inputs": [],
+      "name": "cars_autogearbox",
+      "selectedChips": [
+        "Автомат"
+      ],
+      "text": "Тип автоматической передачи АвтоматРоботВариатор"
+    },
+    {
+      "inputs": [],
+      "name": "cars_capacity",
+      "selectedChips": [],
+      "text": "Объем, л* 1.6 л"
+    },
+    {
+      "inputs": [],
+      "name": "regdate",
+      "selectedChips": [],
+      "text": "Год* 2021"
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": null,
+          "max": "",
+          "maxLength": -1,
+          "min": "0",
+          "name": "mileage",
+          "step": "0.1",
+          "tag": "INPUT",
+          "type": "number",
+          "value": "68000"
+        }
+      ],
+      "name": "mileage",
+      "selectedChips": [],
+      "text": "Пробег, км* "
+    },
+    {
+      "inputs": [],
+      "name": "cars_color",
+      "selectedChips": [],
+      "text": "Цвет Белый"
+    },
+    {
+      "inputs": [],
+      "name": "cars_interior_color",
+      "selectedChips": [],
+      "text": "Цвет салона Тёмный"
+    },
+    {
+      "inputs": [],
+      "name": "cars_interior_material",
+      "selectedChips": [],
+      "text": "Материал салона Ткань"
+    },
+    {
+      "inputs": [],
+      "name": "cars_lights",
+      "selectedChips": [],
+      "text": "Фары Светодиодные"
+    },
+    {
+      "inputs": [],
+      "name": "cars_features",
+      "selectedChips": [],
+      "text": "Характеристики Обогрев руля, Бесключевой доступ"
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_climate",
+      "selectedChips": [],
+      "text": "Кондиционер / климат-контроль "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_seatwarmer",
+      "selectedChips": [],
+      "text": "Обогрев сидений "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_abs",
+      "selectedChips": [],
+      "text": "ABS / ESP / ASR "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_navigation",
+      "selectedChips": [],
+      "text": "Штатная навигация "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_alloy_wheels",
+      "selectedChips": [],
+      "text": "Легкосплавные диски "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_parktronic",
+      "selectedChips": [],
+      "text": "Парктроник / камера "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_sunroof",
+      "selectedChips": [],
+      "text": "Люк / панорамная крыша "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_alarm",
+      "selectedChips": [],
+      "text": "Защита от угона "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_cruise_control",
+      "selectedChips": [],
+      "text": "Круиз-контроль "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "cars_aux",
+      "selectedChips": [],
+      "text": "AUX / USB / Bluetooth "
+    },
+    {
+      "inputs": [],
+      "name": "condition",
+      "selectedChips": [
+        "С пробегом"
+      ],
+      "text": "Состояние* С пробегомНовый"
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": "1",
+          "checked": true,
+          "max": "",
+          "maxLength": -1,
+          "min": "",
+          "name": "",
+          "step": "",
+          "tag": "INPUT",
+          "type": "checkbox"
+        }
+      ],
+      "name": "repair_needed",
+      "selectedChips": [],
+      "text": "Требует ремонта "
+    },
+    {
+      "inputs": [],
+      "name": "images",
+      "selectedChips": [],
+      "text": "Фотографии "
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": null,
+          "max": "",
+          "maxLength": 4000,
+          "min": "",
+          "name": "body",
+          "step": "",
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "Тест исследования формы Kia Rio IV Рестайлинг. Объявление не предназначено для публикации."
+        }
+      ],
+      "name": "body",
+      "selectedChips": [],
+      "text": "Тест исследования формы Kia Rio IV Рестайлинг. Объявление не предназначено для публикации.90/4000"
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": null,
+          "max": "",
+          "maxLength": 4000,
+          "min": "",
+          "name": "body",
+          "step": "",
+          "tag": "TEXTAREA",
+          "type": "textarea",
+          "value": "Тест исследования формы Kia Rio IV Рестайлинг. Объявление не предназначено для публикации."
+        }
+      ],
+      "name": "body",
+      "selectedChips": [],
+      "text": "Тест исследования формы Kia Rio IV Рестайлинг. Объявление не предназначено для публикации.90/4000"
+    },
+    {
+      "inputs": [
+        {
+          "ariaChecked": null,
+          "max": "99000000",
+          "maxLength": -1,
+          "min": "0",
+          "name": "price",
+          "step": "0.01",
+          "tag": "INPUT",
+          "type": "text",
+          "value": "34500"
+        }
+      ],
+      "name": "price",
+      "selectedChips": [],
+      "text": "ЦенаДоговорная ценаруб."
+    },
+    {
+      "inputs": [],
+      "name": "region",
+      "selectedChips": [],
+      "text": "Регион* Брестская область"
+    },
+    {
+      "inputs": [],
+      "name": "area",
+      "selectedChips": [],
+      "text": "Город / Район* Брест"
+    },
+    {
+      "inputs": [],
+      "name": "about_seller_mock",
+      "selectedChips": [],
+      "text": "Войдите или зарегистрируйтесь, чтобы добавить контакты и подать объявление. Заполненные данные сохранятся.Войти или зарегистрироваться"
+    },
+    {
+      "inputs": [],
+      "name": "snackBar-container-bottom",
+      "selectedChips": [],
+      "text": ""
+    },
+    {
+      "inputs": [],
+      "name": "toast-container-bottom",
+      "selectedChips": [],
+      "text": ""
+    }
+  ],
+  "url": "https://www.kufar.by/ain/create?isUnauthorized=1"
+}

@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "AV.by — исследование справочников",
+  "version": "0.4.0",
+  "description": "Отдельный сборщик cars_used_sale. Запускается вручную, не заполняет и не публикует объявления.",
+  "permissions": ["storage", "unlimitedStorage"],
+  "host_permissions": ["https://web-api.av.by/*"],
+  "action": {"default_title": "Открыть сборщик av.by"},
+  "background": {"service_worker": "launch.js"}
+}

@@ -1,0 +1,1295 @@
+{
+  "step": "contacts-stable-final",
+  "url": "https://ab.onliner.by/create/contacts",
+  "observed_at": "2026-11-12T13:31:39.992Z",
+  "groups": [
+    {
+      "label": "Местонахождение",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2)",
+      "inputs": [
+        {
+          "selector": "input[name=\"country\"][value=\"248\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Беларусь",
+          "code": "248"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"3159\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Россия",
+          "code": "3159"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"63\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Австрия",
+          "code": "63"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"404\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Бельгия",
+          "code": "404"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"1012\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Германия",
+          "code": "1012"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"1206\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Нидерланды",
+          "code": "1206"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"1786\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Италия",
+          "code": "1786"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"2172\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Канада",
+          "code": "2172"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"2448\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Латвия",
+          "code": "2448"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"2514\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Литва",
+          "code": "2514"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"2888\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "ОАЭ",
+          "code": "2888"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"2897\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Польша",
+          "code": "2897"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"5681\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "США",
+          "code": "5681"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"9908\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Украина",
+          "code": "9908"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"10668\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Франция",
+          "code": "10668"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"10904\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Швейцария",
+          "code": "10904"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"10968\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Эстония",
+          "code": "10968"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"11014\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Южная Корея",
+          "code": "11014"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"2374\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Китай",
+          "code": "2374"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"5666\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Словакия",
+          "code": "5666"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"10874\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Чехия",
+          "code": "10874"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"924\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Венгрия",
+          "code": "924"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"1366\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Дания",
+          "code": "1366"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"1707\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Испания",
+          "code": "1707"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"3141\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Португалия",
+          "code": "3141"
+        },
+        {
+          "selector": "input[name=\"country\"][value=\"5673\"]",
+          "tag": "INPUT",
+          "name": "country",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Словения",
+          "code": "5673"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Местонахождение",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(3)",
+      "inputs": [
+        {
+          "selector": "input[name=\"region\"][value=\"349\"]",
+          "tag": "INPUT",
+          "name": "region",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Минская обл.",
+          "code": "349"
+        },
+        {
+          "selector": "input[name=\"region\"][value=\"249\"]",
+          "tag": "INPUT",
+          "name": "region",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Брестская обл.",
+          "code": "249"
+        },
+        {
+          "selector": "input[name=\"region\"][value=\"272\"]",
+          "tag": "INPUT",
+          "name": "region",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Витебская обл.",
+          "code": "272"
+        },
+        {
+          "selector": "input[name=\"region\"][value=\"304\"]",
+          "tag": "INPUT",
+          "name": "region",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Гомельская обл.",
+          "code": "304"
+        },
+        {
+          "selector": "input[name=\"region\"][value=\"330\"]",
+          "tag": "INPUT",
+          "name": "region",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Гродненская обл.",
+          "code": "330"
+        },
+        {
+          "selector": "input[name=\"region\"][value=\"377\"]",
+          "tag": "INPUT",
+          "name": "region",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Могилевская обл.",
+          "code": "377"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Местонахождение",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(4)",
+      "inputs": [
+        {
+          "selector": "input[name=\"city\"][value=\"269\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Минск",
+          "code": "269"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"350\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Березино",
+          "code": "350"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"351\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Бобр",
+          "code": "351"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"352\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Борисов",
+          "code": "352"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"353\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Вилейка",
+          "code": "353"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"354\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Воложин",
+          "code": "354"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"355\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Городея",
+          "code": "355"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"356\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Дзержинск",
+          "code": "356"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"357\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Жодино",
+          "code": "357"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"358\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Заславль",
+          "code": "358"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"359\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Зеленый Бор",
+          "code": "359"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"360\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Ивенец",
+          "code": "360"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"361\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Клецк",
+          "code": "361"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"362\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Копыль",
+          "code": "362"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"363\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Крупки",
+          "code": "363"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"364\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Логойск",
+          "code": "364"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"15789554\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Любань",
+          "code": "15789554"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"365\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Марьина Горка",
+          "code": "365"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"367\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Молодечно",
+          "code": "367"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"368\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Мядель",
+          "code": "368"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"369\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Несвиж",
+          "code": "369"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"370\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Слуцк",
+          "code": "370"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"371\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Смолевичи",
+          "code": "371"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"372\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Солигорск",
+          "code": "372"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"373\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Старые Дороги",
+          "code": "373"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"374\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Столбцы",
+          "code": "374"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"375\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Узда",
+          "code": "375"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"15789555\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Фаниполь",
+          "code": "15789555"
+        },
+        {
+          "selector": "input[name=\"city\"][value=\"376\"]",
+          "tag": "INPUT",
+          "name": "city",
+          "type": "radio",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Червень",
+          "code": "376"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Продавец",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [],
+      "links": [
+        {
+          "label": "Частное лицо",
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "Автохаус",
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        },
+        {
+          "label": "Автодилер",
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > a:nth-of-type(3)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Имя продавца",
+      "selector": "div.vehicle-form__group.vehicle-form__group_alter",
+      "inputs": [
+        {
+          "selector": "input.input-style.input-style_primary.input-style_base.vehicle-form__input.vehicle-form__input_width_xs",
+          "tag": "INPUT",
+          "name": "",
+          "type": "text",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "50",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(5) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Хочу общаться только в чатах"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Телефон",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "input.input-style.input-style_primary.input-style_base.vehicle-form__input.vehicle-form__input_width_xxssmm",
+          "tag": "INPUT",
+          "name": "",
+          "type": "tel",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "55",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [
+        {
+          "label": "Добавить телефон",
+          "selector": "a.vehicle-form__link.vehicle-form__link_primary.vehicle-form__link_base.vehicle-form__link_nodecor",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Звонить:",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(2)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > select:nth-of-type(1)",
+          "tag": "SELECT",
+          "name": "",
+          "type": "select-one",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "",
+          "options": [
+            {
+              "value": "0",
+              "label": "0"
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            },
+            {
+              "value": "11",
+              "label": "11"
+            },
+            {
+              "value": "12",
+              "label": "12"
+            },
+            {
+              "value": "13",
+              "label": "13"
+            },
+            {
+              "value": "14",
+              "label": "14"
+            },
+            {
+              "value": "15",
+              "label": "15"
+            },
+            {
+              "value": "16",
+              "label": "16"
+            },
+            {
+              "value": "17",
+              "label": "17"
+            },
+            {
+              "value": "18",
+              "label": "18"
+            },
+            {
+              "value": "19",
+              "label": "19"
+            },
+            {
+              "value": "20",
+              "label": "20"
+            },
+            {
+              "value": "21",
+              "label": "21"
+            },
+            {
+              "value": "22",
+              "label": "22"
+            },
+            {
+              "value": "23",
+              "label": "23"
+            }
+          ]
+        },
+        {
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1) > select:nth-of-type(1)",
+          "tag": "SELECT",
+          "name": "",
+          "type": "select-one",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "",
+          "options": [
+            {
+              "value": "0",
+              "label": "0"
+            },
+            {
+              "value": "1",
+              "label": "1"
+            },
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "3",
+              "label": "3"
+            },
+            {
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "9",
+              "label": "9"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            },
+            {
+              "value": "11",
+              "label": "11"
+            },
+            {
+              "value": "12",
+              "label": "12"
+            },
+            {
+              "value": "13",
+              "label": "13"
+            },
+            {
+              "value": "14",
+              "label": "14"
+            },
+            {
+              "value": "15",
+              "label": "15"
+            },
+            {
+              "value": "16",
+              "label": "16"
+            },
+            {
+              "value": "17",
+              "label": "17"
+            },
+            {
+              "value": "18",
+              "label": "18"
+            },
+            {
+              "value": "19",
+              "label": "19"
+            },
+            {
+              "value": "20",
+              "label": "20"
+            },
+            {
+              "value": "21",
+              "label": "21"
+            },
+            {
+              "value": "22",
+              "label": "22"
+            },
+            {
+              "value": "23",
+              "label": "23"
+            }
+          ]
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Звонить:",
+      "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(3)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Круглосуточно"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    }
+  ]
+}

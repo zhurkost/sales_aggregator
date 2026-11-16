@@ -1,0 +1,1040 @@
+{
+  "category_id": "cars_used_sale",
+  "platform": "kufar",
+  "fields": [
+    {
+      "option_id": "kufar.subject",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input[name=\"subject\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.vehicle_vin",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input[name=\"vehicle_vin\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_brand_v2",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_brand_v2\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_model_v2",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_model_v2\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "depends_on": [
+        "kufar.cars_brand_v2"
+      ]
+    },
+    {
+      "option_id": "kufar.cars_gen_v2",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_gen_v2\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "depends_on": [
+        "kufar.cars_model_v2"
+      ]
+    },
+    {
+      "option_id": "kufar.cars_type",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_type\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_seats",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_seats\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_engine",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_engine\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"cars_engine\"] [role=\"button\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"cars_engine\"] [role=\"button\"][class*=\"_filled-green\"]"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "kufar.cars_drive",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_drive\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"cars_drive\"] [role=\"button\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"cars_drive\"] [role=\"button\"][class*=\"_filled-green\"]"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "kufar.cars_gearbox",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_gearbox\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"cars_gearbox\"] [role=\"button\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"cars_gearbox\"] [role=\"button\"][class*=\"_filled-green\"]"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "kufar.cars_autogearbox",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_autogearbox\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"cars_autogearbox\"] [role=\"button\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"cars_autogearbox\"] [role=\"button\"][class*=\"_filled-green\"]"
+          ]
+        }
+      },
+      "depends_on": [
+        "kufar.cars_gearbox"
+      ]
+    },
+    {
+      "option_id": "kufar.cars_capacity",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_capacity\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "depends_on": [
+        "kufar.cars_engine"
+      ]
+    },
+    {
+      "option_id": "kufar.cars_battery_capacity",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input[name=\"cars_battery_capacity\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "kufar.cars_engine"
+      ]
+    },
+    {
+      "option_id": "kufar.regdate",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"regdate\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.mileage",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input[name=\"mileage\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_color",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_color\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_interior_color",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_interior_color\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_interior_material",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_interior_material\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_lights",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_lights\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "selection_mode": "replace_set",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] label",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "commit": {
+        "target": {
+          "selectors": [
+            "[data-testid=\"popup-body\"] button[class*=\"--green-accent\"]"
+          ]
+        }
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            "[data-testid=\"popup-body\"]"
+          ]
+        },
+        "items_selector": "label:has(input[type=\"checkbox\"]:checked)",
+        "reopen": true
+      },
+      "timeout_ms": 10000
+    },
+    {
+      "option_id": "kufar.cars_features",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_features\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "selection_mode": "replace_set",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] label",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "commit": {
+        "target": {
+          "selectors": [
+            "[data-testid=\"popup-body\"] button[class*=\"--green-accent\"]"
+          ]
+        }
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            "[data-testid=\"popup-body\"]"
+          ]
+        },
+        "items_selector": "label:has(input[type=\"checkbox\"]:checked)",
+        "reopen": true
+      },
+      "timeout_ms": 10000
+    },
+    {
+      "option_id": "kufar.cars_climate",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_climate\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_seatwarmer",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_seatwarmer\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_abs",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_abs\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_navigation",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_navigation\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_alloy_wheels",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_alloy_wheels\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_parktronic",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_parktronic\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_sunroof",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_sunroof\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_alarm",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_alarm\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_cruise_control",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_cruise_control\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.cars_aux",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"cars_aux\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "kufar.condition",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"condition\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"condition\"] [role=\"button\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"condition\"] [role=\"button\"][class*=\"_filled-green\"]"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "kufar.repair_needed",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"repair_needed\"] input[type=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      },
+      "depends_on": [
+        "kufar.condition"
+      ]
+    },
+    {
+      "option_id": "kufar.images",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "#imageLoaderDropzone",
+          "#imageLoaderDropzoneSmall"
+        ]
+      },
+      "action": "upload_files",
+      "events": [
+        "change"
+      ],
+      "timeout_ms": 60000,
+      "verify": {
+        "kind": "files_accepted",
+        "target": {
+          "selectors": [
+            "[class*=\"_wrapper_photo\"]"
+          ]
+        },
+        "items_selector": "[aria-roledescription=\"sortable\"]",
+        "image_selector": "img",
+        "accepted_src_prefix": "https://rms.kufar.by/v1/list_thumbs_2x/adim1/",
+        "require_loaded": true,
+        "counter_target": {
+          "selectors": [
+            "[data-name=\"images\"] [class*=\"_counter\"]"
+          ]
+        },
+        "counter": {
+          "mode": "accepted",
+          "pattern": "^Загружено\\s+(\\d+)\\s+из\\s+\\d+$"
+        }
+      }
+    },
+    {
+      "option_id": "kufar.body",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "textarea[name=\"body\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "kufar.price_mode",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"price\"] [role=\"radiogroup\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"price\"] [role=\"radio\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"price\"] [role=\"radio\"][aria-checked=\"true\"]"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "kufar.price",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input[name=\"price\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "kufar.price_mode"
+      ]
+    },
+    {
+      "option_id": "kufar.currency",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"price\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "depends_on": [
+        "kufar.price_mode"
+      ]
+    },
+    {
+      "option_id": "kufar.possible_exchange",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"possible_exchange\"] [role=\"checkbox\"]"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"possible_exchange\"] input[type=\"checkbox\"]"
+          ]
+        }
+      },
+      "timeout_ms": 10000
+    },
+    {
+      "option_id": "kufar.auction",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"auction\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"auction\"] [role=\"button\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"auction\"] [role=\"button\"][class*=\"_filled-green\"]"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "kufar.region",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"region\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    {
+      "option_id": "kufar.area",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"area\"] [data-testid=\"base-dropdown-ui\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-testid=\"popup-body\"] [class*=\"_item_with-check\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      },
+      "depends_on": [
+        "kufar.region"
+      ]
+    },
+    {
+      "option_id": "kufar.name",
+      "status": "unsupported",
+      "reason": "В проверенной авторизованной форме поле disabled и берётся из профиля. Не заполнять и не менять настройки аккаунта. Другие состояния аккаунта не исследованы."
+    },
+    {
+      "option_id": "kufar.phone",
+      "status": "unsupported",
+      "reason": "В проверенной авторизованной форме поле disabled и берётся из профиля. Не заполнять и не менять настройки аккаунта. Другие состояния аккаунта не исследованы."
+    },
+    {
+      "option_id": "kufar.email",
+      "status": "unsupported",
+      "reason": "Поле есть в метаданных, но не представлено в проверенной авторизованной форме. Не синтезировать input и не переходить в настройки аккаунта."
+    },
+    {
+      "option_id": "kufar.phone_hidden",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "[data-name=\"phone_hidden\"]"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "[data-name=\"phone_hidden\"] [role=\"radio\"]",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "[data-name=\"phone_hidden\"] label:has(input:checked)"
+          ]
+        }
+      }
+    }
+  ]
+}

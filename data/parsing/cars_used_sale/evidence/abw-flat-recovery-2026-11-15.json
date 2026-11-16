@@ -1,0 +1,117 @@
+{
+  "recorded_at": "2026-11-15",
+  "source": "Earlier local read of C:/Users/user/Downloads/abw-research-result.json in this chat",
+  "source_requests": 24713,
+  "source_status": "paused",
+  "provenance_note": "Exact native values and labels recovered from the prior tool output in this chat. The file was subsequently replaced by a new export; no old file hash is claimed. No network requests. Completeness of flat dictionaries is not independently certified.",
+  "fields": {
+    "body": [
+      {
+        "value": 3406,
+        "name": "хэтчбек 5 дв."
+      },
+      {
+        "value": 3402,
+        "name": "седан"
+      },
+      {
+        "value": 3407,
+        "name": "купе"
+      },
+      {
+        "value": 3405,
+        "name": "кабриолет"
+      },
+      {
+        "value": 3404,
+        "name": "внедорожник 5 дв."
+      },
+      {
+        "value": 3412,
+        "name": "хэтчбек 3 дв."
+      },
+      {
+        "value": 3403,
+        "name": "универсал"
+      },
+      {
+        "value": 3410,
+        "name": "лифтбек"
+      },
+      {
+        "value": 3408,
+        "name": "пикап"
+      },
+      {
+        "value": 3411,
+        "name": "внедорожник 3 дв."
+      },
+      {
+        "value": 3409,
+        "name": "минивэн"
+      },
+      {
+        "value": 3413,
+        "name": "лимузин"
+      },
+      {
+        "value": 3415,
+        "name": "фургон"
+      }
+    ],
+    "engine": [
+      {
+        "value": 18343,
+        "name": "бензин"
+      },
+      {
+        "value": 18344,
+        "name": "дизель"
+      },
+      {
+        "value": 18347,
+        "name": "электро"
+      },
+      {
+        "value": 18345,
+        "name": "гибрид"
+      },
+      {
+        "value": 18346,
+        "name": "газ"
+      }
+    ],
+    "gear": [
+      {
+        "value": 18349,
+        "name": "передний"
+      },
+      {
+        "value": 18351,
+        "name": "задний"
+      },
+      {
+        "value": 18350,
+        "name": "полный"
+      }
+    ],
+    "transmission": [
+      {
+        "value": 18353,
+        "name": "автомат"
+      },
+      {
+        "value": 18352,
+        "name": "механика"
+      },
+      {
+        "value": 18355,
+        "name": "робот"
+      },
+      {
+        "value": 18354,
+        "name": "вариатор"
+      }
+    ]
+  }
+}

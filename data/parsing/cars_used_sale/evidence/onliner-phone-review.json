@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-12T13:59:31.655Z",
+  "verified": true,
+  "results": [
+    {
+      "label": "formatted-input",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 1
+    },
+    {
+      "label": "canonical-repeat",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 1
+    },
+    {
+      "label": "primary-with-second",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 2
+    },
+    {
+      "label": "three-rows",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 3
+    },
+    {
+      "label": "four-rows",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 4
+    },
+    {
+      "label": "five-rows",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 5
+    },
+    {
+      "label": "after-removing-test-rows",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 1
+    },
+    {
+      "label": "restored-empty",
+      "unique": true,
+      "equals": true,
+      "phoneCount": 1
+    }
+  ],
+  "secondaryPreserved": true,
+  "limit": {
+    "count": 5,
+    "disabled": true,
+    "pointerEvents": "none"
+  },
+  "chatMode": {
+    "label": "Телефон (необязательно)",
+    "visible": true,
+    "disabled": false,
+    "primaryPreserved": true
+  },
+  "chatOff": {
+    "optional": false
+  },
+  "restored": true,
+  "primarySelector": ".vehicle-form__field > .vehicle-form__line_condensed-either:first-child input[type=tel].vehicle-form__input_width_xxssmm",
+  "maxLength": 55,
+  "uiRemovesSeparators": true,
+  "serverValidationChecked": false,
+  "publicationAttempted": false,
+  "accountSettingsChanged": false,
+  "fixture": "Reserved fictional NANP 202-555-01xx; no real contact numbers saved"
+}

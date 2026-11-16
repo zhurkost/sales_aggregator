@@ -1,0 +1,895 @@
+{
+  "scope": "Belarus",
+  "country": {
+    "url": "https://ab.onliner.by/sdapi/ab.api/countries/248",
+    "observedAt": "2026-11-12T13:22:28.704Z",
+    "data": {
+      "id": 248,
+      "name": "Беларусь",
+      "slug": "belarus",
+      "regions": [
+        {
+          "id": 349,
+          "name": "Минская обл.",
+          "slug": null
+        },
+        {
+          "id": 249,
+          "name": "Брестская обл.",
+          "slug": null
+        },
+        {
+          "id": 272,
+          "name": "Витебская обл.",
+          "slug": null
+        },
+        {
+          "id": 304,
+          "name": "Гомельская обл.",
+          "slug": null
+        },
+        {
+          "id": 330,
+          "name": "Гродненская обл.",
+          "slug": null
+        },
+        {
+          "id": 377,
+          "name": "Могилевская обл.",
+          "slug": null
+        }
+      ]
+    },
+    "sha256": "8a18691e3304a924389fad2c4799f8cbc3a805b511bc620b81f04ad56111aa5e"
+  },
+  "regions": [
+    {
+      "url": "https://ab.onliner.by/sdapi/ab.api/countries/248/regions/349",
+      "observedAt": "2026-11-12T13:22:30.076Z",
+      "data": {
+        "id": 349,
+        "name": "Минская обл.",
+        "slug": null,
+        "cities": [
+          {
+            "id": 269,
+            "name": "Минск",
+            "slug": "minsk"
+          },
+          {
+            "id": 350,
+            "name": "Березино",
+            "slug": "berezino"
+          },
+          {
+            "id": 351,
+            "name": "Бобр",
+            "slug": "bobr"
+          },
+          {
+            "id": 352,
+            "name": "Борисов",
+            "slug": "borisov"
+          },
+          {
+            "id": 353,
+            "name": "Вилейка",
+            "slug": "vileyka"
+          },
+          {
+            "id": 354,
+            "name": "Воложин",
+            "slug": "volozhin"
+          },
+          {
+            "id": 355,
+            "name": "Городея",
+            "slug": "gorodeya"
+          },
+          {
+            "id": 356,
+            "name": "Дзержинск",
+            "slug": "dzerzhinsk"
+          },
+          {
+            "id": 357,
+            "name": "Жодино",
+            "slug": "zhodino"
+          },
+          {
+            "id": 358,
+            "name": "Заславль",
+            "slug": "zaslavl"
+          },
+          {
+            "id": 359,
+            "name": "Зеленый Бор",
+            "slug": "zelenyy-bor"
+          },
+          {
+            "id": 360,
+            "name": "Ивенец",
+            "slug": "ivenec"
+          },
+          {
+            "id": 361,
+            "name": "Клецк",
+            "slug": "kleck"
+          },
+          {
+            "id": 362,
+            "name": "Копыль",
+            "slug": "kopyl"
+          },
+          {
+            "id": 363,
+            "name": "Крупки",
+            "slug": "krupki"
+          },
+          {
+            "id": 364,
+            "name": "Логойск",
+            "slug": "logoysk"
+          },
+          {
+            "id": 15789554,
+            "name": "Любань",
+            "slug": "lyuban"
+          },
+          {
+            "id": 365,
+            "name": "Марьина Горка",
+            "slug": "marina-gorka"
+          },
+          {
+            "id": 367,
+            "name": "Молодечно",
+            "slug": "molodechno"
+          },
+          {
+            "id": 368,
+            "name": "Мядель",
+            "slug": "myadel"
+          },
+          {
+            "id": 369,
+            "name": "Несвиж",
+            "slug": "nesvizh"
+          },
+          {
+            "id": 370,
+            "name": "Слуцк",
+            "slug": "sluck"
+          },
+          {
+            "id": 371,
+            "name": "Смолевичи",
+            "slug": "smolevichi"
+          },
+          {
+            "id": 372,
+            "name": "Солигорск",
+            "slug": "soligorsk"
+          },
+          {
+            "id": 373,
+            "name": "Старые Дороги",
+            "slug": "starye-dorogi"
+          },
+          {
+            "id": 374,
+            "name": "Столбцы",
+            "slug": "stolbcy"
+          },
+          {
+            "id": 375,
+            "name": "Узда",
+            "slug": "uzda"
+          },
+          {
+            "id": 15789555,
+            "name": "Фаниполь",
+            "slug": "fanipol"
+          },
+          {
+            "id": 376,
+            "name": "Червень",
+            "slug": "cherven"
+          }
+        ]
+      },
+      "sha256": "6c02ea2b708ecf445579196b5e6636ffd08bf22334cc643b2b68467bebd86ef9"
+    },
+    {
+      "url": "https://ab.onliner.by/sdapi/ab.api/countries/248/regions/249",
+      "observedAt": "2026-11-12T13:22:31.420Z",
+      "data": {
+        "id": 249,
+        "name": "Брестская обл.",
+        "slug": null,
+        "cities": [
+          {
+            "id": 255,
+            "name": "Брест",
+            "slug": "brest"
+          },
+          {
+            "id": 250,
+            "name": "Антополь",
+            "slug": "antopol"
+          },
+          {
+            "id": 251,
+            "name": "Барановичи",
+            "slug": "baranovichi"
+          },
+          {
+            "id": 252,
+            "name": "Белоозерск",
+            "slug": "beloozersk"
+          },
+          {
+            "id": 253,
+            "name": "Береза",
+            "slug": "bereza"
+          },
+          {
+            "id": 256,
+            "name": "Высокое",
+            "slug": "vysokoe"
+          },
+          {
+            "id": 257,
+            "name": "Ганцевичи",
+            "slug": "gancevichi"
+          },
+          {
+            "id": 258,
+            "name": "Городище",
+            "slug": "gorodische"
+          },
+          {
+            "id": 259,
+            "name": "Давид-Городок",
+            "slug": "david-gorodok"
+          },
+          {
+            "id": 260,
+            "name": "Домачево",
+            "slug": "domachevo"
+          },
+          {
+            "id": 261,
+            "name": "Дрогичин",
+            "slug": "drogichin"
+          },
+          {
+            "id": 262,
+            "name": "Жабинка",
+            "slug": "zhabinka"
+          },
+          {
+            "id": 15789547,
+            "name": "Иваново",
+            "slug": "ivanovo"
+          },
+          {
+            "id": 263,
+            "name": "Ивацевичи",
+            "slug": "ivacevichi"
+          },
+          {
+            "id": 264,
+            "name": "Каменец",
+            "slug": "kamenec"
+          },
+          {
+            "id": 265,
+            "name": "Кобрин",
+            "slug": "kobrin"
+          },
+          {
+            "id": 15789549,
+            "name": "Коссово",
+            "slug": "kossovo"
+          },
+          {
+            "id": 266,
+            "name": "Лунинец",
+            "slug": "luninec"
+          },
+          {
+            "id": 267,
+            "name": "Ляховичи",
+            "slug": "lyahovichi"
+          },
+          {
+            "id": 268,
+            "name": "Малорита",
+            "slug": "malorita"
+          },
+          {
+            "id": 15789548,
+            "name": "Микашевичи",
+            "slug": "mikashevichi"
+          },
+          {
+            "id": 366,
+            "name": "Пинск",
+            "slug": "pinsk"
+          },
+          {
+            "id": 270,
+            "name": "Пружаны",
+            "slug": "pruzhany"
+          },
+          {
+            "id": 271,
+            "name": "Столин",
+            "slug": "stolin"
+          }
+        ]
+      },
+      "sha256": "bf2011aff464a84b0cd10ac31f5f31f0f191560abb44ecf49b27dac01adc85e9"
+    },
+    {
+      "url": "https://ab.onliner.by/sdapi/ab.api/countries/248/regions/272",
+      "observedAt": "2026-11-12T13:22:32.758Z",
+      "data": {
+        "id": 272,
+        "name": "Витебская обл.",
+        "slug": null,
+        "cities": [
+          {
+            "id": 281,
+            "name": "Витебск",
+            "slug": "vitebsk"
+          },
+          {
+            "id": 273,
+            "name": "Барань",
+            "slug": "baran"
+          },
+          {
+            "id": 274,
+            "name": "Бегомль",
+            "slug": "begoml"
+          },
+          {
+            "id": 275,
+            "name": "Бешенковичи",
+            "slug": "beshenkovichi"
+          },
+          {
+            "id": 276,
+            "name": "Богушевск",
+            "slug": "bogushevsk"
+          },
+          {
+            "id": 277,
+            "name": "Браслав",
+            "slug": "braslav"
+          },
+          {
+            "id": 278,
+            "name": "Верхнедвинск",
+            "slug": "verhnedvinsk"
+          },
+          {
+            "id": 279,
+            "name": "Ветрино",
+            "slug": "vetrino"
+          },
+          {
+            "id": 280,
+            "name": "Видзы",
+            "slug": "vidzy"
+          },
+          {
+            "id": 282,
+            "name": "Воропаево",
+            "slug": "voropaevo"
+          },
+          {
+            "id": 283,
+            "name": "Глубокое",
+            "slug": "glubokoe"
+          },
+          {
+            "id": 284,
+            "name": "Городок",
+            "slug": "gorodok"
+          },
+          {
+            "id": 285,
+            "name": "Дисна",
+            "slug": "disna"
+          },
+          {
+            "id": 286,
+            "name": "Докшицы",
+            "slug": "dokshicy"
+          },
+          {
+            "id": 287,
+            "name": "Друя",
+            "slug": "druya"
+          },
+          {
+            "id": 288,
+            "name": "Дубровно",
+            "slug": "dubrovno"
+          },
+          {
+            "id": 289,
+            "name": "Езерище",
+            "slug": "ezerische"
+          },
+          {
+            "id": 290,
+            "name": "Лепель",
+            "slug": "lepel"
+          },
+          {
+            "id": 291,
+            "name": "Лиозно",
+            "slug": "liozno"
+          },
+          {
+            "id": 292,
+            "name": "Миоры",
+            "slug": "miory"
+          },
+          {
+            "id": 15789550,
+            "name": "Новолукомль",
+            "slug": "novolukoml"
+          },
+          {
+            "id": 293,
+            "name": "Новополоцк",
+            "slug": "novopolock"
+          },
+          {
+            "id": 294,
+            "name": "Орша",
+            "slug": "orsha"
+          },
+          {
+            "id": 295,
+            "name": "Полоцк",
+            "slug": "polock"
+          },
+          {
+            "id": 296,
+            "name": "Поставы",
+            "slug": "postavy"
+          },
+          {
+            "id": 297,
+            "name": "Россоны",
+            "slug": "rossony"
+          },
+          {
+            "id": 298,
+            "name": "Сенно",
+            "slug": "senno"
+          },
+          {
+            "id": 299,
+            "name": "Толочин",
+            "slug": "tolochin"
+          },
+          {
+            "id": 300,
+            "name": "Ушачи",
+            "slug": "ushachi"
+          },
+          {
+            "id": 301,
+            "name": "Чашники",
+            "slug": "chashniki"
+          },
+          {
+            "id": 302,
+            "name": "Шарковщина",
+            "slug": "sharkovschina"
+          },
+          {
+            "id": 303,
+            "name": "Шумилино",
+            "slug": "shumilino"
+          }
+        ]
+      },
+      "sha256": "2d9a72e79d487e13438cfea5fd295e3d3481d19836ef58685bb50029ffe5bbdb"
+    },
+    {
+      "url": "https://ab.onliner.by/sdapi/ab.api/countries/248/regions/304",
+      "observedAt": "2026-11-12T13:22:34.166Z",
+      "data": {
+        "id": 304,
+        "name": "Гомельская обл.",
+        "slug": null,
+        "cities": [
+          {
+            "id": 312,
+            "name": "Гомель",
+            "slug": "gomel"
+          },
+          {
+            "id": 305,
+            "name": "Белицк",
+            "slug": "belick"
+          },
+          {
+            "id": 306,
+            "name": "Большевик",
+            "slug": "bolshevik"
+          },
+          {
+            "id": 307,
+            "name": "Брагин",
+            "slug": "bragin"
+          },
+          {
+            "id": 308,
+            "name": "Буда-Кошелево",
+            "slug": "buda-koshelevo"
+          },
+          {
+            "id": 309,
+            "name": "Василевичи",
+            "slug": "vasilevichi"
+          },
+          {
+            "id": 310,
+            "name": "Васильевка",
+            "slug": "vasilevka"
+          },
+          {
+            "id": 311,
+            "name": "Ветка",
+            "slug": "vetka"
+          },
+          {
+            "id": 313,
+            "name": "Добруш",
+            "slug": "dobrush"
+          },
+          {
+            "id": 314,
+            "name": "Ельск",
+            "slug": "elsk"
+          },
+          {
+            "id": 315,
+            "name": "Житковичи",
+            "slug": "zhitkovichi"
+          },
+          {
+            "id": 316,
+            "name": "Жлобин",
+            "slug": "zhlobin"
+          },
+          {
+            "id": 317,
+            "name": "Калинковичи",
+            "slug": "kalinkovichi"
+          },
+          {
+            "id": 318,
+            "name": "Корма",
+            "slug": "korma"
+          },
+          {
+            "id": 319,
+            "name": "Лельчицы",
+            "slug": "lelchicy"
+          },
+          {
+            "id": 320,
+            "name": "Лоев",
+            "slug": "loev"
+          },
+          {
+            "id": 321,
+            "name": "Мозырь",
+            "slug": "mozyr"
+          },
+          {
+            "id": 322,
+            "name": "Наровля",
+            "slug": "narovlya"
+          },
+          {
+            "id": 323,
+            "name": "Октябрьский",
+            "slug": "oktyabrskiy"
+          },
+          {
+            "id": 324,
+            "name": "Петриков",
+            "slug": "petrikov"
+          },
+          {
+            "id": 325,
+            "name": "Речица",
+            "slug": "rechica"
+          },
+          {
+            "id": 326,
+            "name": "Рогачев",
+            "slug": "rogachev"
+          },
+          {
+            "id": 327,
+            "name": "Светлогорск",
+            "slug": "svetlogorsk"
+          },
+          {
+            "id": 15789551,
+            "name": "Туров",
+            "slug": "turov"
+          },
+          {
+            "id": 328,
+            "name": "Хойники",
+            "slug": "hoyniki"
+          },
+          {
+            "id": 329,
+            "name": "Чечерск",
+            "slug": "chechersk"
+          }
+        ]
+      },
+      "sha256": "305a6cd55940f4c70d507a9b384456e5a544a56d13e1d970e0b2b15aa7358b14"
+    },
+    {
+      "url": "https://ab.onliner.by/sdapi/ab.api/countries/248/regions/330",
+      "observedAt": "2026-11-12T13:22:35.513Z",
+      "data": {
+        "id": 330,
+        "name": "Гродненская обл.",
+        "slug": null,
+        "cities": [
+          {
+            "id": 334,
+            "name": "Гродно",
+            "slug": "grodno"
+          },
+          {
+            "id": 15789553,
+            "name": "Березовка",
+            "slug": "berezovka"
+          },
+          {
+            "id": 331,
+            "name": "Большая Берестовица",
+            "slug": "bolshaya-berestovica"
+          },
+          {
+            "id": 332,
+            "name": "Волковыск",
+            "slug": "volkovysk"
+          },
+          {
+            "id": 333,
+            "name": "Вороново",
+            "slug": "voronovo"
+          },
+          {
+            "id": 12363228,
+            "name": "Дятлово",
+            "slug": "dyatlovo"
+          },
+          {
+            "id": 335,
+            "name": "Желудок",
+            "slug": "zheludok"
+          },
+          {
+            "id": 336,
+            "name": "Зельва",
+            "slug": "zelva"
+          },
+          {
+            "id": 337,
+            "name": "Ивье",
+            "slug": "ive"
+          },
+          {
+            "id": 338,
+            "name": "Козловщина",
+            "slug": "kozlovschina"
+          },
+          {
+            "id": 339,
+            "name": "Кореличи",
+            "slug": "korelichi"
+          },
+          {
+            "id": 340,
+            "name": "Лида",
+            "slug": "lida"
+          },
+          {
+            "id": 341,
+            "name": "Мосты",
+            "slug": "mosty"
+          },
+          {
+            "id": 342,
+            "name": "Новогрудок",
+            "slug": "novogrudok"
+          },
+          {
+            "id": 343,
+            "name": "Островец",
+            "slug": "ostrovec"
+          },
+          {
+            "id": 344,
+            "name": "Ошмяны",
+            "slug": "oshmyany"
+          },
+          {
+            "id": 345,
+            "name": "Свислочь",
+            "slug": "svisloch"
+          },
+          {
+            "id": 15789552,
+            "name": "Скидель",
+            "slug": "skidel"
+          },
+          {
+            "id": 346,
+            "name": "Слоним",
+            "slug": "slonim"
+          },
+          {
+            "id": 347,
+            "name": "Сморгонь",
+            "slug": "smorgon"
+          },
+          {
+            "id": 348,
+            "name": "Щучин",
+            "slug": "schuchin"
+          }
+        ]
+      },
+      "sha256": "2bf61d837f65badb465c6af723764a28cbbb57679d2e5552c287f20cabf6602b"
+    },
+    {
+      "url": "https://ab.onliner.by/sdapi/ab.api/countries/248/regions/377",
+      "observedAt": "2026-11-12T13:22:36.854Z",
+      "data": {
+        "id": 377,
+        "name": "Могилевская обл.",
+        "slug": null,
+        "cities": [
+          {
+            "id": 393,
+            "name": "Могилев",
+            "slug": "mogilev"
+          },
+          {
+            "id": 378,
+            "name": "Белыничи",
+            "slug": "belynichi"
+          },
+          {
+            "id": 379,
+            "name": "Бобруйск",
+            "slug": "bobruysk"
+          },
+          {
+            "id": 380,
+            "name": "Быхов",
+            "slug": "byhov"
+          },
+          {
+            "id": 381,
+            "name": "Глуск",
+            "slug": "glusk"
+          },
+          {
+            "id": 382,
+            "name": "Глуша",
+            "slug": "glusha"
+          },
+          {
+            "id": 383,
+            "name": "Горки",
+            "slug": "gorki"
+          },
+          {
+            "id": 384,
+            "name": "Гродзянка",
+            "slug": "grodzyanka"
+          },
+          {
+            "id": 385,
+            "name": "Елизово",
+            "slug": "elizovo"
+          },
+          {
+            "id": 386,
+            "name": "Кировск",
+            "slug": "kirovsk"
+          },
+          {
+            "id": 387,
+            "name": "Климовичи",
+            "slug": "klimovichi"
+          },
+          {
+            "id": 388,
+            "name": "Кличев",
+            "slug": "klichev"
+          },
+          {
+            "id": 389,
+            "name": "Костюковичи",
+            "slug": "kostyukovichi"
+          },
+          {
+            "id": 390,
+            "name": "Краснополье",
+            "slug": "krasnopole"
+          },
+          {
+            "id": 391,
+            "name": "Кричев",
+            "slug": "krichev"
+          },
+          {
+            "id": 392,
+            "name": "Круглое",
+            "slug": "krugloe"
+          },
+          {
+            "id": 394,
+            "name": "Мстиславль",
+            "slug": "mstislavl"
+          },
+          {
+            "id": 395,
+            "name": "Осиповичи",
+            "slug": "osipovichi"
+          },
+          {
+            "id": 396,
+            "name": "Славгород",
+            "slug": "slavgorod"
+          },
+          {
+            "id": 397,
+            "name": "Хотимск",
+            "slug": "hotimsk"
+          },
+          {
+            "id": 398,
+            "name": "Чаусы",
+            "slug": "chausy"
+          },
+          {
+            "id": 399,
+            "name": "Чериков",
+            "slug": "cherikov"
+          },
+          {
+            "id": 400,
+            "name": "Шклов",
+            "slug": "shklov"
+          }
+        ]
+      },
+      "sha256": "63ecb6d50273588762b1c80ca677e8a773074c661a9700c36f0b8d404274f6a8"
+    }
+  ],
+  "complete": true
+}

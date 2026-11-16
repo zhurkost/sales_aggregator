@@ -1,0 +1,2391 @@
+{
+  "category_id": "cars_used_sale",
+  "platform": "onliner",
+  "fields": [
+    {
+      "option_id": "onliner.manufacturer",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "selector": "input[name=\"manufacturer\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "target": {
+          "selectors": [
+            "input[name=\"manufacturer\"]:checked"
+          ]
+        },
+        "fallbackTextSelectors": [
+          ".vehicle-form__intro-list > .vehicle-form__intro-item:nth-child(1) > .vehicle-form__description"
+        ]
+      }
+    },
+    {
+      "option_id": "onliner.model",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "selector": "input[name=\"model\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "target": {
+          "selectors": [
+            "input[name=\"model\"]:checked"
+          ]
+        },
+        "fallbackTextSelectors": [
+          ".vehicle-form__intro-list > .vehicle-form__intro-item:nth-child(2) > .vehicle-form__description"
+        ]
+      },
+      "depends_on": [
+        "onliner.manufacturer"
+      ]
+    },
+    {
+      "option_id": "onliner.generation",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "selector": "input[name=\"generation\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "target": {
+          "selectors": [
+            "input[name=\"generation\"]:checked"
+          ]
+        }
+      },
+      "depends_on": [
+        "onliner.model",
+        "onliner.year"
+      ]
+    },
+    {
+      "option_id": "onliner.year",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(select.vehicle-form__button-select)"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "events": [
+        "input",
+        "change"
+      ],
+      "depends_on": [
+        "onliner.model"
+      ],
+      "suggestions": {
+        "selector": ".vehicle-form__group:has(select.vehicle-form__button-select) a.vehicle-form__button_choose, .vehicle-form__group:has(select.vehicle-form__button-select) select.vehicle-form__button-select option",
+        "match": "exact_text",
+        "option_action": "select_option"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".vehicle-form__group:has(select.vehicle-form__button-select) a.button-style_active, .vehicle-form__group:has(select.vehicle-form__button-select) div.button-style_active > select.vehicle-form__button-select > option:checked"
+          ]
+        }
+      },
+      "open": false
+    },
+    {
+      "option_id": "onliner.modification",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Например, GT, CL, LX, WRC\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "onliner.bodyType",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"])"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "within_target": "input[name=\"bodyType\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "within_target": "input[name=\"bodyType\"]:checked"
+      },
+      "open": false
+    },
+    {
+      "option_id": "onliner.engineType",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "label": "Двигатель",
+        "labels": ".vehicle-form__label"
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "within_target": "a.vehicle-form__button_choose"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": "a.button-style_active"
+      },
+      "open": false
+    },
+    {
+      "option_id": "onliner.engineCapacity",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) input[type=\"text\"][maxlength=\"5\"]"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.engineType"
+      ]
+    },
+    {
+      "option_id": "onliner.power",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input.input-style.input-style_primary.input-style_base.vehicle-form__input.vehicle-form__input_width_full"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "onliner.powerUnit",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "div.vehicle-form__group.vehicle-form__group_width_xxxsss"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "div.vehicle-form__group.vehicle-form__group_width_xxxsss a",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "div.vehicle-form__group.vehicle-form__group_width_xxxsss a.button-style_active"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.torque",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "onliner.drivetrain",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "label": "Привод",
+        "labels": ".vehicle-form__label"
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "within_target": "a.vehicle-form__button_choose"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": "a.button-style_active"
+      },
+      "open": false
+    },
+    {
+      "option_id": "onliner.transmission",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "label": "Коробка передач",
+        "labels": ".vehicle-form__label"
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "within_target": "a.vehicle-form__button_choose"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": "a.button-style_active"
+      },
+      "open": false
+    },
+    {
+      "option_id": "onliner.gas",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      },
+      "depends_on": [
+        "onliner.engineType"
+      ]
+    },
+    {
+      "option_id": "onliner.hybrid",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:last-of-type > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      },
+      "depends_on": [
+        "onliner.engineType"
+      ]
+    },
+    {
+      "option_id": "onliner.manualControl",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[placeholder=\"Например, GT, CL, LX, WRC\"]) > div:nth-of-type(1) > div:nth-of-type(9) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.images",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input.drop-style__upload-link-real"
+        ]
+      },
+      "action": "upload_files",
+      "events": [
+        "change"
+      ],
+      "timeout_ms": 60000,
+      "verify": {
+        "kind": "files_accepted",
+        "target": {
+          "selectors": [
+            "div.drop-style__upload-list"
+          ]
+        },
+        "items_selector": ".drop-style__upload-item_primary",
+        "image_selector": ".drop-style__upload-image",
+        "image_source": "background_image",
+        "accepted_src_prefix": "https://content.onliner.by/automarket/",
+        "require_loaded": true,
+        "counter_target": {
+          "selectors": [
+            ".drop-style__title"
+          ]
+        },
+        "counter": {
+          "mode": "remaining",
+          "capacity": 50,
+          "pattern": "^Осталось\\s+(\\d+)\\s+фото$",
+          "empty_pattern": "до\\s+50\\s+фотографий$"
+        }
+      }
+    },
+    {
+      "option_id": "onliner.color",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[type=\"file\"])"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "within_target": "input[name=\"bodyType\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "within_target": "input[name=\"bodyType\"]:checked"
+      },
+      "open": false
+    },
+    {
+      "option_id": "onliner.audioSystem",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"audio_system\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"audio_system\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"audio_system\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.navigationSystem",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.carplay",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.yandexAuto",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.androidAuto",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.bluetooth",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.aux",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.usb",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.outlet_12v",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.outlet_220v",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.multimediaForRearPassengers",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"audio_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.powerWindows",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"power_windows\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"power_windows\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"power_windows\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.wheelConfiguration",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"wheel_configuration\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"wheel_configuration\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"wheel_configuration\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.suspension",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"suspension\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"suspension\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"suspension\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"suspension\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.conditioner",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"conditioner\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"conditioner\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"conditioner\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.parktronic",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"parktronic\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"parktronic\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"parktronic\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"parktronic\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.camera",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"camera\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"camera\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"camera\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"camera\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.onboardComputer",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.auxiliaryHeater",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.keylessEntry",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.digitalDashboard",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.remoteEngineStart",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.multiwheel",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.decklidElectricdrive",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.parkAssist",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"power_windows\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.headlamps",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"headlamps\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"headlamps\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"headlamps\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.electricalHeating",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"electrical_heating\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"electrical_heating\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"electrical_heating\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"electrical_heating\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.fogLights",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"headlamps\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.lightWasher",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"headlamps\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.rainSensor",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"headlamps\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.lightSensor",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"headlamps\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.adaptiveLightingSystem",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"headlamps\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.automaticHighbeamsControl",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"headlamps\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.wheels",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"wheels\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"wheels\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"wheels\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.wheelsSize",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"wheels_size\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"wheels_size\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"wheels_size\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.drawbar",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"wheels\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.tonedGlasses",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"wheels\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.alarmSystem",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"alarm_system\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"alarm_system\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"alarm_system\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.centralLocking",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"alarm_system\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.numberOfSeats",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"number_of_seats\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"number_of_seats\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"number_of_seats\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.compartmentDecoration",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"compartment_decoration\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"compartment_decoration\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"compartment_decoration\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.compartmentColor",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"compartment_color\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"compartment_color\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"compartment_color\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.seatAdjustment",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"seat_adjustment\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"seat_adjustment\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"seat_adjustment\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"seat_adjustment\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.heatedSeats",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"heated_seats\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"heated_seats\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"heated_seats\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"heated_seats\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.seatsAeration",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"seats_aeration\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"seats_aeration\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"seats_aeration\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"seats_aeration\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.seatsMassage",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"seats_massage\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"seats_massage\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"seats_massage\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"seats_massage\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.seatPositionMemory",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(8) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.thirdSeatsRow",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.panoramicRoof",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.hatch",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.steeringWheelLeatherTrim",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.steeringWheelHeating",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(5) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.leatherTransmissionLever",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(6) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.blackCeiling",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(7) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.doorCloser",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(8) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.ceilingTrimInAlcantara",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.frontCenterArmrest",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(2) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.salonMirrorWithAutodarkening",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(3) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.electroFoldableRearviewMirrors",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(4) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.electroControlledRearviewMirrors",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(5) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.rearviewMirrorsWithAutomoAntidazzle",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(6) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.shiftPaddles",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"number_of_seats\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(7) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.cruiseControl",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"cruise_control\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"cruise_control\"]) .dropdown-style label:has(input)",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"cruise_control\"]) .input-style__faux"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.auxiliarySystem",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"auxiliary_system\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"auxiliary_system\"]) .dropdown-style label:has(input)",
+        "match": "exact_text",
+        "checkbox_selector": "input[type=\"checkbox\"]"
+      },
+      "verify": {
+        "kind": "selected_text_set_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"auxiliary_system\"]) .dropdown-style"
+          ]
+        },
+        "items_selector": "label:has(input:checked)",
+        "reopen": true
+      },
+      "selection_mode": "replace_set",
+      "commit": {
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"auxiliary_system\"]) > .input-style"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.childSeatMountingSystem",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__group:has(input[name=\"cruise_control\"]) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.state",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) a",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) a.button-style_active"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.vin",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "input.input-style.input-style_primary.input-style_base.vehicle-form__input.vehicle-form__input_width_ssx"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.state"
+      ]
+    },
+    {
+      "option_id": "onliner.odometer",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.state"
+      ]
+    },
+    {
+      "option_id": "onliner.odometerUnit",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "div.vehicle-form__group.vehicle-form__group_width_xxxsss"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": "div.vehicle-form__group.vehicle-form__group_width_xxxsss a",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "div.vehicle-form__group.vehicle-form__group_width_xxxsss a.button-style_active"
+          ]
+        }
+      },
+      "depends_on": [
+        "onliner.state"
+      ]
+    },
+    {
+      "option_id": "onliner.description",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          "textarea.input-style.input-style_primary.input-style_small.input-style_resize_vertical.vehicle-form__input.vehicle-form__input_width_xxllm.vehicle-form__input_min-height_xssm.vehicle-form__input_max-height_m"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "onliner.price",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    {
+      "option_id": "onliner.currency",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3)"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) a",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) a.button-style_active"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.warranty",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.notCustomsCleared",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.includeVat",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.exchange",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.country",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"country\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"country\"]) input[name=\"country\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"country\"]) input:checked"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.region",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"region\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"region\"]) input[name=\"region\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"region\"]) input:checked"
+          ]
+        }
+      },
+      "depends_on": [
+        "onliner.country"
+      ]
+    },
+    {
+      "option_id": "onliner.city",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".input-style__wrapper:has(input[name=\"city\"]) > .input-style"
+        ]
+      },
+      "action": "choose",
+      "match": "value",
+      "suggestions": {
+        "selector": ".input-style__wrapper:has(input[name=\"city\"]) input[name=\"city\"]"
+      },
+      "verify": {
+        "kind": "value_equals",
+        "target": {
+          "selectors": [
+            ".input-style__wrapper:has(input[name=\"city\"]) input:checked"
+          ]
+        }
+      },
+      "depends_on": [
+        "onliner.region"
+      ]
+    },
+    {
+      "option_id": "onliner.sellerType",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1)"
+        ]
+      },
+      "action": "choose",
+      "match": "text",
+      "suggestions": {
+        "selector": ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) a",
+        "match": "exact_text"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) a.button-style_active"
+          ]
+        }
+      }
+    },
+    {
+      "option_id": "onliner.onlyChat",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(5) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.callsAnytime",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(3) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)"
+        ]
+      },
+      "action": "set_checked",
+      "verify": {
+        "kind": "checked_equals"
+      }
+    },
+    {
+      "option_id": "onliner.phone",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__field > .vehicle-form__line_condensed-either:first-child input[type=tel].vehicle-form__input_width_xxssmm"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.onlyChat"
+      ]
+    },
+    {
+      "option_id": "onliner.callFrom",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > select:nth-of-type(1)"
+        ]
+      },
+      "action": "select_option",
+      "events": [
+        "input",
+        "change"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.onlyChat",
+        "onliner.callsAnytime"
+      ]
+    },
+    {
+      "option_id": "onliner.callTo",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form__step-item:has(input[name=country]) > div:nth-of-type(1) > div:nth-of-type(7) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(1) > select:nth-of-type(1)"
+        ]
+      },
+      "action": "select_option",
+      "events": [
+        "input",
+        "change"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.onlyChat",
+        "onliner.callsAnytime"
+      ]
+    }
+  ]
+}

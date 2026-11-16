@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {build,OUTPUT,ROOT} from './seed.mjs';
+const here=path.dirname(fileURLToPath(import.meta.url));
+const out=path.join(ROOT,'outputs/av-research-collector');
+fs.mkdirSync(out,{recursive:true});
+for(const name of fs.readdirSync(path.join(here,'extension')))fs.copyFileSync(path.join(here,'extension',name),path.join(out,name));
+fs.copyFileSync(path.join(here,'core.mjs'),path.join(out,'core.mjs'));
+fs.copyFileSync(path.join(here,'../shared/checkpoint.mjs'),path.join(out,'checkpoint.mjs'));
+const read=name=>JSON.parse(fs.readFileSync(path.join(OUTPUT,'evidence',name),'utf8'));
+const seed=build(read('av-historical-recovery.json'),read('av-video-observations.json'));
+fs.writeFileSync(path.join(out,'seed-schema.json'),JSON.stringify(seed.schema));
+fs.writeFileSync(path.join(out,'seed-binding.json'),JSON.stringify(seed.binding));
+fs.copyFileSync(path.join(here,'RUN.txt'),path.join(out,'RUN.txt'));
+console.log(out);

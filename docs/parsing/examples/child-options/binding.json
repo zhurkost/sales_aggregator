@@ -1,0 +1,27 @@
+{
+  "category_id": "example_category",
+  "platform": "example",
+  "fields": [
+    {
+      "option_id": "site.class",
+      "status": "needs_review",
+      "reason": "Учебная схема: реальная форма и выбор не исследовались."
+    },
+    {
+      "option_id": "site.subclass",
+      "status": "needs_review",
+      "reason": "Учебная схема: реальная форма и выбор не исследовались.",
+      "depends_on": [
+        "site.class"
+      ]
+    },
+    {
+      "option_id": "site.variant",
+      "status": "needs_review",
+      "reason": "Учебная схема: реальная форма и выбор не исследовались.",
+      "depends_on": [
+        "site.subclass"
+      ]
+    }
+  ]
+}

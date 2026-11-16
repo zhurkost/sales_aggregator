@@ -9,11 +9,12 @@
   const saleStarts = Object.freeze({ ...starts, onliner: "https://r.onliner.by/pk/apartments/create" });
   const houseStarts = Object.freeze({ ...starts, domovita: "https://domovita.by/new/add/cottages/rent" });
   const houseSaleStarts = Object.freeze({ ...saleStarts, domovita: "https://domovita.by/new/add/cottages/sale" });
+  const carStarts = Object.freeze({kufar: starts.kufar,onliner:"https://ab.onliner.by/create",av:"https://av.by/offer/draft/cars",abw:"https://abw.by/create/cars"});
   const object = (v) => v && typeof v === "object" && !Array.isArray(v);
   const id = (v) => typeof v === "string" && /^[a-zA-Z0-9_.:-]{1,120}$/.test(v);
-  function origin(platform, url) {
+  function origin(platform, url, categoryId) {
     try {
-      return new URL(url).origin === new URL(starts[platform]).origin;
+      return new URL(url).origin === new URL((categoryId === 'cars_used_sale' ? carStarts : starts)[platform]).origin;
     } catch {
       return false;
     }
@@ -35,13 +36,13 @@
       new Set(payload.jobs.map((j) => j.platform)).size !== payload.jobs.length
     )
       throw new Error("Выберите площадки.");
-    if (JSON.stringify(payload).length > 6000000)
+    if (JSON.stringify(payload).length > (payload.categoryId === 'cars_used_sale' ? 50_000_000 : 6000000))
       throw new Error("Слишком большой пакет фотографий.");
-    const allowedStarts = payload.categoryId === "houses_sale" ? houseSaleStarts : payload.categoryId === "apartments_sale" ? saleStarts : payload.categoryId === "houses_long_term_rent" ? houseStarts : starts;
+    const allowedStarts = payload.categoryId === 'cars_used_sale' ? carStarts : payload.categoryId === "houses_sale" ? houseSaleStarts : payload.categoryId === "apartments_sale" ? saleStarts : payload.categoryId === "houses_long_term_rent" ? houseStarts : starts;
     for (const job of payload.jobs) {
       if (
         !object(job) ||
-        !Object.hasOwn(starts, job.platform) ||
+        !Object.hasOwn(allowedStarts, job.platform) ||
         allowedStarts[job.platform] !== job.startUrl ||
         job.format !== 1 ||
         !Array.isArray(job.controls) ||
@@ -53,6 +54,8 @@
         )
       )
         throw new Error("Обновите правила площадки.");
+      if(payload.categoryId === 'cars_used_sale' && (job.contract !== 'cars-v1' || job.setup?.length || job.next?.length || job.submit?.length))
+        throw new Error('Автомобили: переходы и публикацию подтверждает пользователь.');
       for (const c of job.controls) {
         if (
           !object(c) ||
@@ -93,7 +96,7 @@
     const photos = payload.photos || [];
     if (
       !Array.isArray(photos) ||
-      photos.length > 12 ||
+      (payload.categoryId !== 'cars_used_sale' && photos.length > 12) ||
       photos.some(
         (p) =>
           !object(p) ||
@@ -105,7 +108,7 @@
           p.dataUrl.length > 400000,
       )
     )
-      throw new Error("Фотографии: до 12 файлов JPG, PNG, WebP.");
+      throw new Error(payload.categoryId === 'cars_used_sale' ? "Фотографии: проверьте формат JPG, PNG, WebP и размер файлов." : "Фотографии: до 12 файлов JPG, PNG, WebP.");
     return structuredClone(payload);
   }
   root.AutopostRentalCore = Object.freeze({ starts, origin, validate, id });

@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-16",
+  "mode": "Read-only user Chrome inspection, offline extension tests. No manual next-button clicks, reloads, publication or direct site requests.",
+  "abw": {
+    "selector": ".adverts-form > button[type=\"button\"]",
+    "text": "Продолжить",
+    "disabled": false,
+    "busyElements": 0,
+    "validationErrors": [],
+    "stepMarkers": [
+      "Марка",
+      "Модель",
+      "Год выпуска"
+    ],
+    "selectedFields": 12,
+    "change": "Wait for stability of the current step, not unrelated page activity; explicit Retry clears attempted-step state.",
+    "limitation": "The exact in-memory reason why the old loaded content script did not advance could not be read."
+  },
+  "onliner": {
+    "url": "https://ab.onliner.by/create/cost",
+    "buttonSelector": ".vehicle-form__step-item .vehicle-form__control a.vehicle-form__button",
+    "buttonText": "Далее",
+    "matchingButtons": 1,
+    "stepHasTextarea": true,
+    "change": "Extension-driven transitions for tech, exterior and cost only. No contacts/final confirmation; await accepted photos on exterior."
+  },
+  "kufar": {
+    "change": "Serialize shared popup selection, verify chosen value before another field, bound idle wait, prevent repeated opening and selection from another fields popup.",
+    "tests": [
+      "Delayed options",
+      "Missing option",
+      "Foreign shared popup",
+      "Nine-option multi-select"
+    ]
+  },
+  "av": {
+    "change": "Extension matches category-item__title exactly even when the quota hint is adjacent without whitespace.",
+    "evidence": "car-live-fill-review-2026-11-15.json"
+  },
+  "release": "0.9.35",
+  "liveExecutionVerified": false
+}

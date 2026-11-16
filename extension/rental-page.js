@@ -10,7 +10,7 @@
     return;
   }
   if (!task) return;
-  const api = globalThis.AutopostRentalForm,
+  const api = task.recipe.contract === 'cars-v1' ? globalThis.AutopostCarForm : globalThis.AutopostRentalForm,
     form = new api.Form(
       task.recipe,
       task.photos,
@@ -25,6 +25,7 @@
     ":host{position:fixed;right:16px;bottom:16px;z-index:2147483647;max-width:340px;font:14px/1.4 system-ui;color:#172236;background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:16px;box-shadow:0 4px 24px #0002}button{padding:8px;margin:8px 8px 0 0;cursor:pointer}p{margin:8px 0}";
   const title = document.createElement("strong");
   title.textContent = task.categoryId === "houses_sale" ? "Автопост · продажа дома" : task.categoryId === "houses_long_term_rent" ? "Автопост · аренда дома" : task.categoryId === "apartments_sale" ? "Автопост · продажа квартиры" : "Автопост · аренда квартиры";
+  if(task.categoryId === 'cars_used_sale') title.textContent='Автопост · легковой автомобиль';
   const status = document.createElement("p"),
     detail = document.createElement("p"),
     retry = document.createElement("button"),
@@ -49,6 +50,9 @@
     true,
   );
   document.addEventListener("click", e => {
+    if(task.categoryId === 'cars_used_sale' && e.isTrusted && !e.composedPath().includes(host)) {
+      paused=false;resumeWhenVisible=false;idle=cycles=0;
+    }
     if (e.isTrusted && e.target.closest?.('[data-cy^="vas-"]')) form.promotionHandled = true;
     if (task.recipe.platform === "onliner" && resumeWhenVisible && e.isTrusted &&
         e.target.closest?.('a[href$="#progress"]')?.textContent.trim() === "Продолжить") {
@@ -104,12 +108,14 @@
         const loginRequired = task.recipe.platform === "kufar"
           && [...document.querySelectorAll('button')].some(e => api.visible(e)
             && e.textContent.replace(/\s+/g, " ").trim() === "Войти или зарегистрироваться");
-        const wrongDeal = !["apartments_sale", "houses_sale"].includes(task.categoryId) && task.recipe.platform === "kufar"
+        const wrongDeal = !["apartments_sale", "houses_sale", "cars_used_sale"].includes(task.categoryId) && task.recipe.platform === "kufar"
           && [...document.querySelectorAll('[data-name="re_auction_sale"]')].some(api.visible);
         await report(loginRequired || wrongDeal ? "needs_action" : "running", loginRequired
           ? "Войдите в аккаунт Kufar в открытой вкладке. После входа заполнение продолжится."
           : wrongDeal
           ? "Открыта продажа. Выберите долгосрочную аренду на Kufar; заполнение продолжится автоматически."
+          : task.categoryId === 'cars_used_sale' && task.recipe.platform === 'kufar'
+          ? "Выберите «Авто и запчасти» → «Легковые авто» на Kufar. Заполнение продолжится в форме автомобиля."
           : "Ожидаем открытия формы площадки.");
         return;
       }
@@ -153,8 +159,7 @@
     resumeWhenVisible = false;
     idle = 0;
     cycles = 0;
-    form.tried.clear();
-    form.resumeQueries();
+    if(form.retry)form.retry();else {form.tried.clear();form.resumeQueries();}
     void tick();
   };
   stop.onclick = () => {

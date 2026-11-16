@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-11-13",
+  "source": "Существующая вкладка пользовательского Chrome, DevTools Network, вкладка Payload в исходном виде",
+  "mode": "Чтение уже записанного журнала. Страница не обновлялась, форма не изменялась, сетевые запросы агентом не выполнялись и не повторялись.",
+  "request": {
+    "url": "https://web-api.av.by/offer-types/cars/offer-form/update",
+    "method": "POST",
+    "context": "Изменение марки на Kia",
+    "payload": {
+      "properties": [
+        {"name": "condition_promotion", "value": 2},
+        {"name": "brand", "value": 545, "modified": true, "previousValue": null},
+        {"name": "mileage_unit", "value": 1},
+        {"name": "price_currency", "value": 2},
+        {"name": "exchange_options", "value": 1},
+        {"name": "photo", "value": {"files": []}},
+        {"name": "photo360", "value": {"files": []}},
+        {"modified": false, "name": "phones", "property": 41, "value": [[{"name": "phone_country", "value": 1}]]},
+        {"name": "number_masking", "value": true}
+      ]
+    },
+    "note": "Это образец фактически отправленного сайтом тела, а не разрешение его повторять. Не доказано, что каждый параметр обязателен. Значения номера, имени и файлов отсутствуют; заголовки авторизации не читались и не сохранены."
+  },
+  "observed_endpoints": [
+    "https://web-api.av.by/offer-types/cars/offer-form",
+    "https://web-api.av.by/offer-types/cars/offer-form/update",
+    "https://web-api.av.by/offer-types/cars/offer-form/check",
+    "https://web-api.av.by/offer-types/cars/offer-form/draft"
+  ],
+  "dom_selector_corrections": {
+    "video_url": "#p-29-video_url",
+    "name": "#p-38-name",
+    "place_region": "#p-36-place_region",
+    "mileage": "#p-20-mileage",
+    "engine_type": "#p-12-engine_type",
+    "drive_type": "#p-15-drive_type",
+    "modification": "#p-7-modification",
+    "number_masking": "#p-44-number_masking"
+  },
+  "pending": "Полные сохранённые Response и другие Payload. Запрошен локальный экспорт существующего журнала HAR; это не новый сетевой сбор."
+}

@@ -1,0 +1,252 @@
+{
+  "step": "cost-emergency-final",
+  "url": "https://ab.onliner.by/create/cost",
+  "observed_at": "2026-11-12T13:32:07.060Z",
+  "groups": [
+    {
+      "label": "Состояние",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "inputs": [],
+      "links": [
+        {
+          "label": "Новый",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": false
+        },
+        {
+          "label": "С пробегом",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        },
+        {
+          "label": "Аварийный",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(3)",
+          "selected": true
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Состояние",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "На гарантии"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "VIN-номер",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "input.input-style.input-style_primary.input-style_base.vehicle-form__input.vehicle-form__input_width_ssx",
+          "tag": "INPUT",
+          "name": "",
+          "type": "text",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "17",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Пробег",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(2)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "tel",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "8",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Пробег",
+      "selector": "div.vehicle-form__group.vehicle-form__group_width_xxxsss",
+      "inputs": [],
+      "links": [
+        {
+          "label": "км",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "миль",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "Пробег",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(4)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(4) > div:nth-of-type(4) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Не растаможен"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Комментарий (необязательно)",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(6) > div:nth-of-type(1) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": "textarea.input-style.input-style_primary.input-style_small.input-style_resize_vertical.vehicle-form__input.vehicle-form__input_width_xxllm.vehicle-form__input_min-height_xssm.vehicle-form__input_max-height_m",
+          "tag": "TEXTAREA",
+          "name": "",
+          "type": "textarea",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "10000",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Цена",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "tel",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": "8",
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": ""
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "Цена",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3)",
+      "inputs": [],
+      "links": [
+        {
+          "label": "BYN",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(1)",
+          "selected": true
+        },
+        {
+          "label": "USD",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(2)",
+          "selected": false
+        },
+        {
+          "label": "EUR",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(3)",
+          "selected": false
+        },
+        {
+          "label": "RUB",
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(3) > div:nth-of-type(1) > div:nth-of-type(1) > a:nth-of-type(4)",
+          "selected": false
+        }
+      ],
+      "years_omitted": false
+    },
+    {
+      "label": "",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(2) > div:nth-of-type(1)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Цена с НДС"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    },
+    {
+      "label": "",
+      "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(2) > div:nth-of-type(2)",
+      "inputs": [
+        {
+          "selector": ".vehicle-form__step-item:has(textarea) > div:nth-of-type(1) > div:nth-of-type(8) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1) > ul:nth-of-type(1) > li:nth-of-type(1) > label:nth-of-type(1) > div:nth-of-type(1) > input:nth-of-type(1)",
+          "tag": "INPUT",
+          "name": "",
+          "type": "checkbox",
+          "placeholder": null,
+          "disabled": false,
+          "required": false,
+          "maxlength": null,
+          "min": null,
+          "max": null,
+          "accept": null,
+          "label": "Возможен обмен"
+        }
+      ],
+      "links": [],
+      "years_omitted": false
+    }
+  ]
+}

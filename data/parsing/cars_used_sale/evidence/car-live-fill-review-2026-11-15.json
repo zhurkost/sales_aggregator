@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-15",
+  "method": "Existing user Chrome forms and pure DOM expressions in DevTools eager preview. No form-field actions, navigation, reloads or request replay. Local fixes have not been injected into these pages.",
+  "onliner": {
+    "page": "https://ab.onliner.by/create",
+    "observed": {
+      "manufacturer": "BMW",
+      "model": "7 серия",
+      "transferred": 3,
+      "oldEngineSelectorChoices": [
+        "Передний",
+        "Задний",
+        "Полный"
+      ],
+      "oldCapacitySelectorMatches": 0,
+      "oldTransmissionChoices": []
+    },
+    "changes": [
+      "Resolve engine, drivetrain and transmission by visible field labels; choices and readback scoped to that field.",
+      "Do not click static choice-group wrappers when a value is unavailable; later controls must still run.",
+      "Resolve engine capacity using observed text input maxlength=5 in the technical step.",
+      "Separate body and color radio groups by their steps: both use name=bodyType."
+    ],
+    "verification": "Offline DOM regression tests; filling on the live page is pending."
+  },
+  "av": {
+    "page": "https://av.by/offer/draft/cars",
+    "entryText": "Автомобиль с пробегом1 бесплатное объявление и до 5 платных",
+    "titleSelector": ".category-item__title",
+    "title": "Автомобиль с пробегом",
+    "change": "Read the separate title instead of requiring whitespace before the quota hint.",
+    "verification": "Offline entry-click regression test. Live link was not clicked; subsequent form is not yet inspected in this run."
+  },
+  "abw": {
+    "page": "https://abw.by/create/cars",
+    "observedStep": "Vehicle characteristics",
+    "remainingStepFields": [
+      "description",
+      "price",
+      "currency",
+      "photos"
+    ],
+    "change": "Use displayLabels consistently for both currency choice and readback: Br, $, €, ₽.",
+    "verification": "Offline tests for all four currencies. Later step was not opened."
+  },
+  "kufar": {
+    "page": "https://www.kufar.by/ain/create",
+    "observed": {
+      "transferred": 17,
+      "brand": "BMW",
+      "model": "7 Серии",
+      "generation": "VI (G11/G12)",
+      "engineCapacity": "3.0 л",
+      "year": "2019",
+      "photoCounter": "Загружено 6 из 30"
+    },
+    "change": "Match the actual accepted-photo counter prefix instead of interpreting photos as untransferred.",
+    "verification": "Offline counter/loaded-preview tests; existing live counter read only."
+  },
+  "currency": "Current job reports RUB unsupported for Kufar and AV; price remains unfilled. No currency conversion or new mapping was invented.",
+  "published": false,
+  "deployed": false
+}

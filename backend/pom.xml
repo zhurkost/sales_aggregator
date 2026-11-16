@@ -17,6 +17,7 @@
     <finalName>autopost-api</finalName>
     <resources>
       <resource><directory>src/main/resources</directory></resource>
+      <resource><directory>../data/automotive</directory><targetPath>automotive</targetPath><includes><include>cars_used_sale/runtime.json</include></includes></resource>
     </resources>
     <plugins><plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin></plugins>
   </build>

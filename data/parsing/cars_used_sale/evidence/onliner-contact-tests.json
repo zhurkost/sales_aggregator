@@ -1,0 +1,16 @@
+{
+  "results": [
+    {
+      "label": "Круглосуточно",
+      "changed": true,
+      "telephonePresent": true,
+      "restored": true
+    },
+    {
+      "label": "Хочу общаться только в чатах",
+      "changed": true,
+      "telephonePresent": true,
+      "restored": true
+    }
+  ]
+}

@@ -1,0 +1,552 @@
+{
+  "source_file": "av-research-result.json",
+  "sha256": "76ee5f16396dc13178a4296ad636d31d356b9d07aa62a88c6e928fc61ea66662",
+  "bytes": 54438993,
+  "imported_at": "2026-11-14T21:44:02.556Z",
+  "source_status": "complete",
+  "scope": "without_modifications",
+  "stats": {
+    "fields": 37,
+    "brands": 221,
+    "models": 2872,
+    "generations": 6961,
+    "regions": 6,
+    "cities": 142,
+    "completedModels": 2872,
+    "phase": "done",
+    "requests": 59331,
+    "status": "complete",
+    "current": {
+      "brand": "Эксклюзив",
+      "model": "Спорт",
+      "stage": "Сбор завершён"
+    }
+  },
+  "validation": {
+    "fields": 37,
+    "choices": 10689,
+    "needs_review": 35,
+    "unsupported": 2
+  },
+  "retained_existing_ids": 573,
+  "unfinished_models": 0,
+  "empty_generation_models": [
+    {
+      "brand": "ARO",
+      "model": "320",
+      "brandValue": 5324,
+      "modelValue": 10136,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "BMW",
+      "model": "340 Baumaster",
+      "brandValue": 8,
+      "modelValue": 5974,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Citroen",
+      "model": "C15",
+      "brandValue": 43,
+      "modelValue": 5963,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Ford",
+      "model": "V8",
+      "brandValue": 330,
+      "modelValue": 5847,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "FSO",
+      "model": "Syrena",
+      "brandValue": 5526,
+      "modelValue": 5850,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Hafei",
+      "model": "Lobo",
+      "brandValue": 2215,
+      "modelValue": 5966,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Honda",
+      "model": "Ballade",
+      "brandValue": 383,
+      "modelValue": 5826,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Hyundai",
+      "model": "Centennial",
+      "brandValue": 433,
+      "modelValue": 5816,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Lexus",
+      "model": "LC",
+      "brandValue": 589,
+      "modelValue": 5976,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Mahindra",
+      "model": "Pik-Up",
+      "brandValue": 5957,
+      "modelValue": 5958,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Morgan",
+      "model": "Aero 8",
+      "brandValue": 5937,
+      "modelValue": 5938,
+      "emptyGenerationResponses": 2,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Nissan",
+      "model": "NV1500",
+      "brandValue": 892,
+      "modelValue": 5827,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Opel",
+      "model": "Arena",
+      "brandValue": 966,
+      "modelValue": 967,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Opel",
+      "model": "Kapitan",
+      "brandValue": 966,
+      "modelValue": 5830,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Shanghai Maple",
+      "model": "C81",
+      "brandValue": 5822,
+      "modelValue": 5823,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ZTOT",
+      "model": "Z7",
+      "brandValue": 11122,
+      "modelValue": 11124,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ZTOT",
+      "model": "Z7L",
+      "brandValue": 11122,
+      "modelValue": 11123,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ZTOT",
+      "model": "Z7PRO",
+      "brandValue": 11122,
+      "modelValue": 11126,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ZTOT",
+      "model": "Z8",
+      "brandValue": 11122,
+      "modelValue": 11125,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "12 (ЗИМ)",
+      "brandValue": 1310,
+      "modelValue": 5329,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "13 \"Чайка\"",
+      "brandValue": 1310,
+      "modelValue": 5741,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "14 \"Чайка\"",
+      "brandValue": 1310,
+      "modelValue": 1456,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "21",
+      "brandValue": 1310,
+      "modelValue": 1458,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "22",
+      "brandValue": 1310,
+      "modelValue": 1459,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "67",
+      "brandValue": 1310,
+      "modelValue": 2206,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "M-20 Победа",
+      "brandValue": 1310,
+      "modelValue": 1457,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ГАЗ",
+      "model": "Тигр",
+      "brandValue": 1310,
+      "modelValue": 5933,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "1102 Таврия",
+      "brandValue": 1551,
+      "modelValue": 1552,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "1103 Slavuta",
+      "brandValue": 1551,
+      "modelValue": 5251,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "1105 Дана",
+      "brandValue": 1551,
+      "modelValue": 1556,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "966",
+      "brandValue": 1551,
+      "modelValue": 1554,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "Forza",
+      "brandValue": 1551,
+      "modelValue": 2393,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "Lanos",
+      "brandValue": 1551,
+      "modelValue": 2394,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЗАЗ",
+      "model": "Pick-Up",
+      "brandValue": 1551,
+      "modelValue": 2395,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ИЖ",
+      "model": "2715",
+      "brandValue": 2894,
+      "modelValue": 5048,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЛуАЗ",
+      "model": "1302",
+      "brandValue": 2345,
+      "modelValue": 5742,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЛуАЗ",
+      "model": "967",
+      "brandValue": 2345,
+      "modelValue": 5794,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "ЛуАЗ",
+      "model": "969",
+      "brandValue": 2345,
+      "modelValue": 2346,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "2335",
+      "brandValue": 2051,
+      "modelValue": 5743,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "406",
+      "brandValue": 2051,
+      "modelValue": 2061,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "410",
+      "brandValue": 2051,
+      "modelValue": 5744,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "412",
+      "brandValue": 2051,
+      "modelValue": 2064,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "426",
+      "brandValue": 2051,
+      "modelValue": 2066,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "434",
+      "brandValue": 2051,
+      "modelValue": 2068,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Москвич",
+      "model": "Юрий Долгорукий",
+      "brandValue": 2051,
+      "modelValue": 2071,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "РАФ",
+      "model": "2203",
+      "brandValue": 5252,
+      "modelValue": 5253,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "УАЗ",
+      "model": "2363 Пикап",
+      "brandValue": 1464,
+      "modelValue": 1466,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "УАЗ",
+      "model": "31",
+      "brandValue": 1464,
+      "modelValue": 1467,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "УАЗ",
+      "model": "451",
+      "brandValue": 1464,
+      "modelValue": 5746,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Багги",
+      "brandValue": 5019,
+      "modelValue": 5541,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Вездеход",
+      "brandValue": 5019,
+      "modelValue": 5416,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Военная техника",
+      "brandValue": 5019,
+      "modelValue": 5415,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Карт",
+      "brandValue": 5019,
+      "modelValue": 5417,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Редкая модель",
+      "brandValue": 5019,
+      "modelValue": 5023,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Ретро",
+      "brandValue": 5019,
+      "modelValue": 5024,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Самодельный",
+      "brandValue": 5019,
+      "modelValue": 5025,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    },
+    {
+      "brand": "Эксклюзив",
+      "model": "Спорт",
+      "brandValue": 5019,
+      "modelValue": 5026,
+      "emptyGenerationResponses": 1,
+      "yearFiltered": true,
+      "visibleInAnyResponse": false
+    }
+  ],
+  "historical_issues": 15,
+  "historical_modifications": 291,
+  "network_requests_during_import": 0,
+  "browser_binding_executed": false
+}

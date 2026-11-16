@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-15",
+  "source": "User Chrome, read-only DOM preview in DevTools; no publication",
+  "page": "https://ab.onliner.by/create",
+  "headers": [
+    "BMW Выберите модель",
+    "Внешний вид и комплектация",
+    "Состояние и цена",
+    "Контакты"
+  ],
+  "formCount": 1,
+  "checkedManufacturerCount": 0,
+  "modelInputCount": 40,
+  "selectedModelExample": {
+    "name": "7 серия",
+    "value": "3077",
+    "type": "radio",
+    "label": "7 серия"
+  },
+  "fix": "Verify an exact matching selected identity header despite other step headings; manufacturer radio group is removed after choosing."
+}

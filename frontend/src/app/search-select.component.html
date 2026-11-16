@@ -1,0 +1,19 @@
+<div class="select" [class.expanded]="open">
+ <input [id]="controlId" type="text" role="combobox" autocomplete="off" aria-autocomplete="list"
+  [attr.aria-label]="label" [attr.aria-expanded]="open" [attr.aria-controls]="controlId+'-list'"
+  [attr.aria-activedescendant]="open && active>=0 ? controlId+'-option-'+active : null"
+  [disabled]="disabled" [value]="text" placeholder="Не указано"
+  (focus)="show(); $any($event.target).select()" (click)="show()" (input)="search($any($event.target).value)"
+  (keydown)="key($event)" (blur)="close()">
+ <span class="chevron" aria-hidden="true"></span>
+ @if(open){
+  <div #menu class="options" role="listbox" [id]="controlId+'-list'" [attr.aria-label]="label" [attr.aria-busy]="loading" (scroll)="scroll($event)">
+   <div role="option" [id]="controlId+'-option-0'" [attr.aria-selected]="!value" [class.active]="active===0" class="empty" (mousedown)="$event.preventDefault()" (click)="clear()">Не указано</div>
+   @for(option of options;track option.id;let i=$index){
+    <div role="option" [id]="controlId+'-option-'+(i+1)" [attr.aria-selected]="value===option.id" [class.active]="active===i+1" (mousedown)="$event.preventDefault()" (click)="choose(option.id,option.name)">{{option.name}}@if(value===option.id){<span aria-hidden="true">✓</span>}</div>
+   }
+   @if(loading){<p role="status">Загружаем…</p>}
+   @else if(!options.length){<p role="status">Ничего не найдено</p>}
+  </div>
+ }
+</div>

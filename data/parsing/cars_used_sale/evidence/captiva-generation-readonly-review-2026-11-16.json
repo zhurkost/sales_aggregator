@@ -1,0 +1,223 @@
+{
+  "checkedDate": "2026-11-16",
+  "vehicle": "Chevrolet Captiva",
+  "choice": "I Рестайлинг 3",
+  "method": "Read existing Chrome accessibility trees and local collector evidence only. No website requests, refreshes, form changes or navigation after the no-requests instruction.",
+  "sourceEvidence": {
+    "kufar": {
+      "file": "kufar-catalog-source.json",
+      "observation": {
+        "value": "category_2010.mark_chevrolet.model_captiva.generation_captiva_i3jrestajling",
+        "labels": {
+          "ru": "I 3-й Рестайлинг",
+          "by": "I 3-й Рестайлинг"
+        },
+        "params": {
+          "endYears": "2018",
+          "name": "cars_gen_v2",
+          "node_type": "generation",
+          "startYears": "2015",
+          "url_name": "cgen2"
+        }
+      }
+    },
+    "av": {
+      "file": "av-catalog-source.json",
+      "observations": [
+        {
+          "context": {
+            "brand": 41,
+            "condition_promotion": 2,
+            "model": 2008
+          },
+          "property": {
+            "constraints": [],
+            "disabled": false,
+            "fallbackType": "select",
+            "id": 6,
+            "label": "Поколение",
+            "name": "generation",
+            "options": [
+              {
+                "disabled": false,
+                "id": 11897,
+                "name": "II",
+                "value": 11897
+              },
+              {
+                "disabled": false,
+                "id": 3262,
+                "name": "I · 3-й рестайлинг",
+                "value": 3262
+              }
+            ],
+            "required": true,
+            "valueFormat": "value",
+            "visible": true
+          },
+          "year_filtered": true
+        },
+        {
+          "context": {
+            "brand": 41,
+            "condition_promotion": 2,
+            "model": 2008
+          },
+          "property": {
+            "constraints": [],
+            "disabled": false,
+            "fallbackType": "select",
+            "id": 6,
+            "label": "Поколение",
+            "name": "generation",
+            "options": [
+              {
+                "disabled": false,
+                "id": 3262,
+                "name": "I · 3-й рестайлинг",
+                "value": 3262
+              }
+            ],
+            "required": true,
+            "valueFormat": "value",
+            "visible": true
+          },
+          "year_filtered": true
+        },
+        {
+          "context": {
+            "brand": 41,
+            "condition_promotion": 2,
+            "model": 2008
+          },
+          "property": {
+            "constraints": [],
+            "disabled": false,
+            "fallbackType": "select",
+            "id": 6,
+            "label": "Поколение",
+            "name": "generation",
+            "options": [
+              {
+                "disabled": false,
+                "id": 3262,
+                "name": "I · 3-й рестайлинг",
+                "value": 3262
+              },
+              {
+                "disabled": false,
+                "id": 370,
+                "name": "I · 2-й рестайлинг",
+                "value": 370
+              }
+            ],
+            "required": true,
+            "valueFormat": "value",
+            "visible": true
+          },
+          "year_filtered": true
+        }
+      ]
+    },
+    "abw": {
+      "file": "abw-catalog-source.json",
+      "observations": [
+        {
+          "context": {
+            "brand": 184,
+            "model": 777
+          },
+          "field": "generation",
+          "options": [
+            {
+              "disabled": false,
+              "name": "II",
+              "value": 175169
+            },
+            {
+              "disabled": false,
+              "name": "I Рестайлинг 3",
+              "value": 175170
+            }
+          ],
+          "year_filtered": true
+        },
+        {
+          "context": {
+            "brand": 184,
+            "model": 777
+          },
+          "field": "generation",
+          "options": [
+            {
+              "disabled": false,
+              "name": "I Рестайлинг 3",
+              "value": 175170
+            }
+          ],
+          "year_filtered": true
+        },
+        {
+          "context": {
+            "brand": 184,
+            "model": 777
+          },
+          "field": "generation",
+          "options": [
+            {
+              "disabled": false,
+              "name": "I Рестайлинг 3",
+              "value": 175170
+            },
+            {
+              "disabled": false,
+              "name": "I Рестайлинг 2",
+              "value": 4198
+            }
+          ],
+          "year_filtered": true
+        }
+      ]
+    }
+  },
+  "browserObservations": [
+    {
+      "platform": "av",
+      "url": "https://cars.av.by/acura/mdx",
+      "selectedBrand": "Chevrolet",
+      "selectedModel": "Captiva",
+      "surface": "search filter; URL still Acura MDX after user changed filter",
+      "generationIds": [
+        11897,
+        370,
+        371,
+        372
+      ],
+      "thirdRestylingVisible": false
+    },
+    {
+      "platform": "kufar",
+      "url": "https://auto.kufar.by/l/cars/chevrolet-captiva",
+      "surface": "search filter",
+      "thirdRestylingVisible": false
+    },
+    {
+      "platform": "onliner",
+      "url": "https://ab.onliner.by/chevrolet/captiva",
+      "surface": "search filter",
+      "labels": [
+        "I Рестайлинг 2",
+        "I Рестайлинг",
+        "I"
+      ],
+      "thirdRestylingVisible": false
+    }
+  ],
+  "conclusion": "The disputed choice is present in collected source observations under the correct brand/model. It was not invented by common-catalog normalization. Existing search filters omit it; this alone does not establish a scraping error or current posting-form availability.",
+  "limitations": [
+    "Posting form was not requested or changed.",
+    "Original year values were intentionally omitted from AV/ABW evidence; only year_filtered survives.",
+    "Search filters may differ from posting dictionaries; the reason for this discrepancy is not verified."
+  ],
+  "catalogChanged": false
+}

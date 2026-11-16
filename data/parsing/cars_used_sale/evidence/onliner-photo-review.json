@@ -1,0 +1,82 @@
+{
+  "at": "2026-11-12T13:50:51.168Z",
+  "verified": true,
+  "formats": [
+    "image/png",
+    "image/jpeg"
+  ],
+  "snapshots": [
+    {
+      "label": "empty",
+      "expected": 0,
+      "count": 0,
+      "uniqueContainer": true,
+      "inputCount": 1,
+      "placeholders": 3,
+      "images": [],
+      "counterText": "Перетащите сюда до 50 фотографий",
+      "counterVerified": true
+    },
+    {
+      "label": "png-jpeg",
+      "expected": 2,
+      "count": 2,
+      "uniqueContainer": true,
+      "inputCount": 1,
+      "placeholders": 0,
+      "images": [
+        {
+          "host": "content.onliner.by",
+          "loaded": true,
+          "width": 1200,
+          "height": 900
+        },
+        {
+          "host": "content.onliner.by",
+          "loaded": true,
+          "width": 1200,
+          "height": 900
+        }
+      ],
+      "counterText": "Осталось 48 фото",
+      "counterVerified": true
+    },
+    {
+      "label": "append-png",
+      "expected": 3,
+      "count": 3,
+      "uniqueContainer": true,
+      "inputCount": 1,
+      "placeholders": 0,
+      "images": [
+        {
+          "host": "content.onliner.by",
+          "loaded": true,
+          "width": 1200,
+          "height": 900
+        },
+        {
+          "host": "content.onliner.by",
+          "loaded": true,
+          "width": 1200,
+          "height": 900
+        },
+        {
+          "host": "content.onliner.by",
+          "loaded": true,
+          "width": 1200,
+          "height": 900
+        }
+      ],
+      "counterText": "Осталось 47 фото",
+      "counterVerified": true
+    }
+  ],
+  "selectors": {
+    "input": "input.drop-style__upload-link-real",
+    "container": "div.drop-style__upload-list",
+    "items": ".drop-style__upload-item_primary",
+    "image": ".drop-style__upload-image",
+    "counter": ".drop-style__title"
+  }
+}

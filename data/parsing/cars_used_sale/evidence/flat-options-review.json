@@ -1,0 +1,626 @@
+{
+  "rules": "scripts/cars-flat-options.mjs",
+  "fields": [
+    {
+      "field": "car.body",
+      "count": 20
+    },
+    {
+      "field": "car.engine",
+      "count": 9
+    },
+    {
+      "field": "car.drive",
+      "count": 5
+    },
+    {
+      "field": "car.transmission",
+      "count": 4
+    },
+    {
+      "field": "car.color",
+      "count": 16
+    },
+    {
+      "field": "car.seats",
+      "count": 8
+    },
+    {
+      "field": "car.interior_material",
+      "count": 6
+    },
+    {
+      "field": "car.interior_color",
+      "count": 3
+    },
+    {
+      "field": "car.currency",
+      "count": 4
+    },
+    {
+      "field": "car.region",
+      "count": 7
+    },
+    {
+      "field": "car.city",
+      "count": 205
+    }
+  ],
+  "mappings": [
+    {
+      "field": "color",
+      "name": "Серебристый",
+      "platform": "kufar",
+      "native": "Серый / серебристый",
+      "match": "broader",
+      "commonId": "car.option.e83c57a2-c7d3-44c0-b25b-f08e538a2c97",
+      "sourceId": "kufar.cars_color.2",
+      "assignments": []
+    },
+    {
+      "field": "color",
+      "name": "Оранжевый",
+      "platform": "kufar",
+      "native": "Красный / оранжевый",
+      "match": "broader",
+      "commonId": "car.option.a4344844-29df-4f41-af63-f942f7181bc9",
+      "sourceId": "kufar.cars_color.4",
+      "assignments": []
+    },
+    {
+      "field": "color",
+      "name": "Фиолетовый",
+      "platform": "kufar",
+      "native": "Синий / фиолетовый",
+      "match": "broader",
+      "commonId": "car.option.b886a423-2a3a-4364-8f0d-04bdfe9669cf",
+      "sourceId": "kufar.cars_color.5",
+      "assignments": []
+    },
+    {
+      "field": "color",
+      "name": "Золотистый",
+      "platform": "kufar",
+      "native": "Желтый / золотистый",
+      "match": "broader",
+      "commonId": "car.option.081e1eda-be61-4598-ad0c-f99f66116591",
+      "sourceId": "kufar.cars_color.7",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Хэтчбек 3 дв.",
+      "platform": "kufar",
+      "native": "Хэтчбек",
+      "match": "broader",
+      "commonId": "car.option.0b13b3c6-af26-4b01-8762-030855a58923",
+      "sourceId": "kufar.cars_type.3",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Хэтчбек 3 дв.",
+      "platform": "onliner",
+      "native": "хетчбэк",
+      "match": "broader",
+      "commonId": "car.option.0b13b3c6-af26-4b01-8762-030855a58923",
+      "sourceId": "onliner.bodyType.hatchback",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Хэтчбек 5 дв.",
+      "platform": "kufar",
+      "native": "Хэтчбек",
+      "match": "broader",
+      "commonId": "car.option.b47b8483-a38f-4509-aa0b-a58e17e1a6f2",
+      "sourceId": "kufar.cars_type.3",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Хэтчбек 5 дв.",
+      "platform": "onliner",
+      "native": "хетчбэк",
+      "match": "broader",
+      "commonId": "car.option.b47b8483-a38f-4509-aa0b-a58e17e1a6f2",
+      "sourceId": "onliner.bodyType.hatchback",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Внедорожник 3 дв.",
+      "platform": "kufar",
+      "native": "Внедорожник",
+      "match": "broader",
+      "commonId": "car.option.6e4829fc-b2a5-42a4-a5f7-0bc12e101b6a",
+      "sourceId": "kufar.cars_type.5",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Внедорожник 3 дв.",
+      "platform": "onliner",
+      "native": "Внедорожник",
+      "match": "broader",
+      "commonId": "car.option.6e4829fc-b2a5-42a4-a5f7-0bc12e101b6a",
+      "sourceId": "onliner.bodyType.suv",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Внедорожник 5 дв.",
+      "platform": "kufar",
+      "native": "Внедорожник",
+      "match": "broader",
+      "commonId": "car.option.6872856e-e511-414e-9919-9582e5dfd12d",
+      "sourceId": "kufar.cars_type.5",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Внедорожник 5 дв.",
+      "platform": "onliner",
+      "native": "Внедорожник",
+      "match": "broader",
+      "commonId": "car.option.6872856e-e511-414e-9919-9582e5dfd12d",
+      "sourceId": "onliner.bodyType.suv",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Микроавтобус грузопассажирский",
+      "platform": "kufar",
+      "native": "Микроавтобус",
+      "match": "broader",
+      "commonId": "car.option.473f5d3e-53ee-4580-9bdc-33114b1d7dcb",
+      "sourceId": "kufar.cars_type.8",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Микроавтобус грузопассажирский",
+      "platform": "onliner",
+      "native": "Микроавтобус",
+      "match": "broader",
+      "commonId": "car.option.473f5d3e-53ee-4580-9bdc-33114b1d7dcb",
+      "sourceId": "onliner.bodyType.minibus",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Микроавтобус пассажирский",
+      "platform": "kufar",
+      "native": "Микроавтобус",
+      "match": "broader",
+      "commonId": "car.option.e4b47328-cfef-4746-b60a-21413f1cc2c7",
+      "sourceId": "kufar.cars_type.8",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Микроавтобус пассажирский",
+      "platform": "onliner",
+      "native": "Микроавтобус",
+      "match": "broader",
+      "commonId": "car.option.e4b47328-cfef-4746-b60a-21413f1cc2c7",
+      "sourceId": "onliner.bodyType.minibus",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Родстер",
+      "platform": "kufar",
+      "native": "Кабриолет",
+      "match": "broader",
+      "commonId": "car.option.7bbd8f6a-c376-4bed-a4d4-e01fc82f6bb7",
+      "sourceId": "kufar.cars_type.7",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Родстер",
+      "platform": "onliner",
+      "native": "Кабриолет",
+      "match": "broader",
+      "commonId": "car.option.7bbd8f6a-c376-4bed-a4d4-e01fc82f6bb7",
+      "sourceId": "onliner.bodyType.cabriolet",
+      "assignments": []
+    },
+    {
+      "field": "body",
+      "name": "Родстер",
+      "platform": "abw",
+      "native": "кабриолет",
+      "match": "broader",
+      "commonId": "car.option.7bbd8f6a-c376-4bed-a4d4-e01fc82f6bb7",
+      "sourceId": "abw.body.number%3A3405",
+      "assignments": []
+    },
+    {
+      "field": "drive",
+      "name": "Подключаемый полный привод",
+      "platform": "kufar",
+      "native": "полный",
+      "match": "broader",
+      "commonId": "car.option.859f3654-409c-46d0-80c6-2b78c982824d",
+      "sourceId": "kufar.cars_drive.3",
+      "assignments": []
+    },
+    {
+      "field": "drive",
+      "name": "Подключаемый полный привод",
+      "platform": "onliner",
+      "native": "полный",
+      "match": "broader",
+      "commonId": "car.option.859f3654-409c-46d0-80c6-2b78c982824d",
+      "sourceId": "onliner.drivetrain.all",
+      "assignments": []
+    },
+    {
+      "field": "drive",
+      "name": "Подключаемый полный привод",
+      "platform": "abw",
+      "native": "полный",
+      "match": "broader",
+      "commonId": "car.option.859f3654-409c-46d0-80c6-2b78c982824d",
+      "sourceId": "abw.gear.number%3A18350",
+      "assignments": []
+    },
+    {
+      "field": "drive",
+      "name": "Постоянный полный привод",
+      "platform": "kufar",
+      "native": "полный",
+      "match": "broader",
+      "commonId": "car.option.1b8819bc-8f92-4af4-893b-9bc3e9c35be3",
+      "sourceId": "kufar.cars_drive.3",
+      "assignments": []
+    },
+    {
+      "field": "drive",
+      "name": "Постоянный полный привод",
+      "platform": "onliner",
+      "native": "полный",
+      "match": "broader",
+      "commonId": "car.option.1b8819bc-8f92-4af4-893b-9bc3e9c35be3",
+      "sourceId": "onliner.drivetrain.all",
+      "assignments": []
+    },
+    {
+      "field": "drive",
+      "name": "Постоянный полный привод",
+      "platform": "abw",
+      "native": "полный",
+      "match": "broader",
+      "commonId": "car.option.1b8819bc-8f92-4af4-893b-9bc3e9c35be3",
+      "sourceId": "abw.gear.number%3A18350",
+      "assignments": []
+    },
+    {
+      "field": "transmission",
+      "name": "Робот",
+      "platform": "kufar",
+      "native": "Автоматическая",
+      "match": "compound",
+      "assignments": [
+        {
+          "field": "kufar.cars_autogearbox",
+          "id": "kufar.cars_autogearbox.5",
+          "value": "5",
+          "name": "Робот"
+        }
+      ],
+      "commonId": "car.option.594c7da1-9fd3-4ad0-84fe-91a89a1bedd9",
+      "sourceId": "kufar.cars_gearbox.1"
+    },
+    {
+      "field": "transmission",
+      "name": "Робот",
+      "platform": "onliner",
+      "native": "автоматическая",
+      "match": "broader",
+      "commonId": "car.option.594c7da1-9fd3-4ad0-84fe-91a89a1bedd9",
+      "sourceId": "onliner.transmission.automatic",
+      "assignments": []
+    },
+    {
+      "field": "transmission",
+      "name": "Вариатор",
+      "platform": "kufar",
+      "native": "Автоматическая",
+      "match": "compound",
+      "assignments": [
+        {
+          "field": "kufar.cars_autogearbox",
+          "id": "kufar.cars_autogearbox.10",
+          "value": "10",
+          "name": "Вариатор"
+        }
+      ],
+      "commonId": "car.option.aef87bbf-5537-4de3-982e-6f77b68f87c8",
+      "sourceId": "kufar.cars_gearbox.1"
+    },
+    {
+      "field": "transmission",
+      "name": "Вариатор",
+      "platform": "onliner",
+      "native": "автоматическая",
+      "match": "broader",
+      "commonId": "car.option.aef87bbf-5537-4de3-982e-6f77b68f87c8",
+      "sourceId": "onliner.transmission.automatic",
+      "assignments": []
+    },
+    {
+      "field": "engine",
+      "name": "Бензин (пропан-бутан)",
+      "platform": "onliner",
+      "native": "бензин",
+      "match": "compound",
+      "assignments": [
+        {
+          "field": "onliner.gas",
+          "value": true,
+          "name": "Да"
+        }
+      ],
+      "commonId": "car.option.c50902fb-fccb-4867-856f-94205f7c0e2b",
+      "sourceId": "onliner.engineType.gasoline"
+    },
+    {
+      "field": "engine",
+      "name": "Бензин (пропан-бутан)",
+      "platform": "abw",
+      "native": "газ",
+      "match": "broader",
+      "commonId": "car.option.c50902fb-fccb-4867-856f-94205f7c0e2b",
+      "sourceId": "abw.engine.number%3A18346",
+      "assignments": []
+    },
+    {
+      "field": "engine",
+      "name": "Бензин (метан)",
+      "platform": "onliner",
+      "native": "бензин",
+      "match": "compound",
+      "assignments": [
+        {
+          "field": "onliner.gas",
+          "value": true,
+          "name": "Да"
+        }
+      ],
+      "commonId": "car.option.cd0d3d23-68e7-4141-add5-2316addb9da5",
+      "sourceId": "onliner.engineType.gasoline"
+    },
+    {
+      "field": "engine",
+      "name": "Бензин (метан)",
+      "platform": "abw",
+      "native": "газ",
+      "match": "broader",
+      "commonId": "car.option.cd0d3d23-68e7-4141-add5-2316addb9da5",
+      "sourceId": "abw.engine.number%3A18346",
+      "assignments": []
+    },
+    {
+      "field": "engine",
+      "name": "Бензин (гибрид)",
+      "platform": "onliner",
+      "native": "бензин",
+      "match": "compound",
+      "assignments": [
+        {
+          "field": "onliner.hybrid",
+          "value": true,
+          "name": "Да"
+        }
+      ],
+      "commonId": "car.option.9f6147c9-630c-40e0-b86c-d315872c651b",
+      "sourceId": "onliner.engineType.gasoline"
+    },
+    {
+      "field": "engine",
+      "name": "Бензин (гибрид)",
+      "platform": "abw",
+      "native": "гибрид",
+      "match": "broader",
+      "commonId": "car.option.9f6147c9-630c-40e0-b86c-d315872c651b",
+      "sourceId": "abw.engine.number%3A18345",
+      "assignments": []
+    },
+    {
+      "field": "engine",
+      "name": "Дизель (гибрид)",
+      "platform": "onliner",
+      "native": "дизель",
+      "match": "compound",
+      "assignments": [
+        {
+          "field": "onliner.hybrid",
+          "value": true,
+          "name": "Да"
+        }
+      ],
+      "commonId": "car.option.89b7b6f1-be2a-470a-8a7e-33c0c009af59",
+      "sourceId": "onliner.engineType.diesel"
+    },
+    {
+      "field": "engine",
+      "name": "Дизель (гибрид)",
+      "platform": "abw",
+      "native": "гибрид",
+      "match": "broader",
+      "commonId": "car.option.89b7b6f1-be2a-470a-8a7e-33c0c009af59",
+      "sourceId": "abw.engine.number%3A18345",
+      "assignments": []
+    }
+  ],
+  "additionalDropdowns": [
+    {
+      "field": "kufar.cars_autogearbox",
+      "count": 3
+    },
+    {
+      "field": "kufar.cars_lights",
+      "count": 6
+    },
+    {
+      "field": "kufar.cars_features",
+      "count": 9
+    },
+    {
+      "field": "kufar.condition",
+      "count": 1
+    },
+    {
+      "field": "kufar.price_mode",
+      "count": 2
+    },
+    {
+      "field": "kufar.auction",
+      "count": 2
+    },
+    {
+      "field": "kufar.phone_hidden",
+      "count": 2
+    },
+    {
+      "field": "onliner.powerUnit",
+      "count": 2
+    },
+    {
+      "field": "onliner.audioSystem",
+      "count": 2
+    },
+    {
+      "field": "onliner.powerWindows",
+      "count": 2
+    },
+    {
+      "field": "onliner.wheelConfiguration",
+      "count": 2
+    },
+    {
+      "field": "onliner.suspension",
+      "count": 5
+    },
+    {
+      "field": "onliner.conditioner",
+      "count": 5
+    },
+    {
+      "field": "onliner.parktronic",
+      "count": 2
+    },
+    {
+      "field": "onliner.camera",
+      "count": 2
+    },
+    {
+      "field": "onliner.headlamps",
+      "count": 5
+    },
+    {
+      "field": "onliner.electricalHeating",
+      "count": 3
+    },
+    {
+      "field": "onliner.wheels",
+      "count": 2
+    },
+    {
+      "field": "onliner.wheelsSize",
+      "count": 17
+    },
+    {
+      "field": "onliner.alarmSystem",
+      "count": 2
+    },
+    {
+      "field": "onliner.seatAdjustment",
+      "count": 6
+    },
+    {
+      "field": "onliner.heatedSeats",
+      "count": 2
+    },
+    {
+      "field": "onliner.seatsAeration",
+      "count": 2
+    },
+    {
+      "field": "onliner.seatsMassage",
+      "count": 2
+    },
+    {
+      "field": "onliner.cruiseControl",
+      "count": 2
+    },
+    {
+      "field": "onliner.auxiliarySystem",
+      "count": 5
+    },
+    {
+      "field": "onliner.state",
+      "count": 2
+    },
+    {
+      "field": "onliner.odometerUnit",
+      "count": 2
+    },
+    {
+      "field": "onliner.sellerType",
+      "count": 1
+    },
+    {
+      "field": "onliner.callFrom",
+      "count": 24
+    },
+    {
+      "field": "onliner.callTo",
+      "count": 24
+    },
+    {
+      "field": "av.condition_promotion",
+      "count": 1
+    },
+    {
+      "field": "av.condition",
+      "count": 3
+    },
+    {
+      "field": "av.mileage_unit",
+      "count": 2
+    },
+    {
+      "field": "av.options",
+      "count": 87
+    },
+    {
+      "field": "av.registration_country",
+      "count": 3
+    },
+    {
+      "field": "av.registration_status",
+      "count": 2
+    },
+    {
+      "field": "av.exchange_options",
+      "count": 4
+    },
+    {
+      "field": "av.phone_country",
+      "count": 33
+    },
+    {
+      "field": "abw.condition",
+      "count": 3
+    },
+    {
+      "field": "abw.availability",
+      "count": 3
+    }
+  ],
+  "policy": "Merge lexical duplicates; keep distinct technical characteristics. Map precise common choices to broader site choices or explicit compound controls. Never invent a finer subtype, change currency, or cross a city parent."
+}

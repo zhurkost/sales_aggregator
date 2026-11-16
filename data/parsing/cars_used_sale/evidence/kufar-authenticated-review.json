@@ -1,0 +1,41 @@
+{
+  "observed_date": "2026-11-12",
+  "url": "https://www.kufar.by/ain/create",
+  "browser": "User's existing Google Chrome window",
+  "account_state": "authenticated",
+  "method": "Windows accessibility tree; no DOM inspection or network capture in this review",
+  "sample": ["Kia", "Rio", "IV Рестайлинг"],
+  "scope": "Read-only review of the existing private passenger-car creation form",
+  "observations": {
+    "images": {
+      "counter": "Загружено 0 из 30",
+      "max_items": 30,
+      "button": "Выбрать фотографии",
+      "formats_text": "Форматы JPEG, JPG или PNG до 10 МБ каждый",
+      "upload_tested": false,
+      "server_acceptance_tested": false,
+      "exact_bytes_known": false
+    },
+    "name": {"visible": true, "disabled": true, "source": "profile", "value_recorded": false},
+    "phone": {"visible": true, "disabled": true, "source": "profile", "value_recorded": false},
+    "email": {"visible": false, "scope": "current authenticated form only"},
+    "phone_hidden": {
+      "control": "radio",
+      "labels": ["Звонки и сообщения", "Только сообщения"],
+      "interaction_tested": false
+    },
+    "possible_exchange": {"control": "checkbox", "label": "Возможен обмен", "interaction_tested": false},
+    "auction": {"control": "buttons", "labels": ["Без торга", "Торг уместен"], "interaction_tested": false},
+    "vehicle_vin": {"control": "editable text", "placeholder": "Введите 17-значный номер", "value_entered": false},
+    "cars_lights": {"visible": true, "displayed_value": "Выберите", "full_replacement_tested": false},
+    "cars_features": {"visible": true, "displayed_value": "Выберите", "full_replacement_tested": false},
+    "promotion": {"payment_amount_visible": true, "selection_changed": false}
+  },
+  "blocker": "Accessibility reading succeeded. Clicking the lights control failed with unavailable coordinate geometry; screenshot capture timed out, including after window reactivation. No successful form interaction occurred.",
+  "remaining": ["VIN validation", "multi-select replacement and persisted-set readback", "file upload and server acceptance", "contact-method radio binding", "exchange and bargaining control bindings"],
+  "profile_changed": false,
+  "personal_values_saved": false,
+  "uploaded_files": false,
+  "published": false,
+  "promotions_selected": false
+}

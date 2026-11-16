@@ -22,6 +22,12 @@ export class WorkspaceGateway {
   }
   clearContext() { setWorkspaceContext(""); }
   pingExtension() { return extension("PING"); }
+  activeSection(profileId:string):'property'|'cars' {
+    try{return sessionStorage.getItem('autopost.active-section.'+profileId)==='cars'?'cars':'property';}catch{return 'property';}
+  }
+  rememberSection(profileId:string,section:'property'|'cars') {
+    try{sessionStorage.setItem('autopost.active-section.'+profileId,section);}catch{/* In-memory selection remains available. */}
+  }
   activeDeal(profileId: string): ListingTabId {
     try {
       const saved = sessionStorage.getItem("autopost.active-deal." + profileId);

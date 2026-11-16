@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-13",
+  "source_video": "Новое объявление - Google Chrome 2026-11-13 10-28-42.mp4",
+  "source_headers_screenshot": "codex-clipboard-3bc96a3b-b375-4b4f-9b87-2a3e13038e7f.png",
+  "request": {
+    "url": "https://web-api.av.by/offer-types/cars/offer-form/update",
+    "method": "POST",
+    "observed_status": 200,
+    "payload": null,
+    "authentication_requirements": "Не установлены. Credentials и заголовки авторизации не собирались."
+  },
+  "response_shape": {
+    "root_array": "properties",
+    "property_attributes_observed": ["id", "name", "label", "fallbackType", "valueFormat", "required", "visible", "disabled", "metadata", "options"],
+    "option_attributes_observed": ["id", "name", "label", "intValue", "disabled", "metadata"],
+    "note": "Частичная визуальная расшифровка Preview. Не исходный JSON. Ответы содержат разные наборы properties в зависимости от состояния формы; считать их неизменно полной схемой нельзя."
+  },
+  "observed_native_values": [
+    {"field": "model", "parents": {"brand": "Kia"}, "label": "Rio", "id": 563, "intValue": 563, "timestamp_seconds": 110},
+    {"field": "generation", "parents": {"brand": "Kia", "model": "Rio"}, "label": "IV · Рестайлинг", "id": 11765, "intValue": 11765, "timestamp_seconds": 150},
+    {"field": "generation", "parents": {"brand": "Kia", "model": "Rio"}, "label": "IV", "id": 3815, "intValue": null, "timestamp_seconds": 150},
+    {"field": "place_city", "parents": {"place_region": "Брестская обл."}, "label": "Береза", "id": 117, "intValue": 117, "timestamp_seconds": 168}
+  ],
+  "city_option_ids_observed": {
+    "region": "Брестская обл.",
+    "timestamp_seconds": 168,
+    "options": [[8,"Брест"],[116,"Барановичи"],[796,"Белоозёрск"],[117,"Береза"],[797,"Высокое"],[118,"Ганцевичи"],[790,"Давид-Городок"],[119,"Дрогичин"],[120,"Жабинка"],[121,"Иваново"],[122,"Ивацевичи"],[123,"Каменец"],[124,"Кобрин"],[798,"Коссово"],[125,"Лунинец"],[126,"Ляховичи"],[127,"Малорита"],[789,"Микашевичи"],[128,"Пинск"],[129,"Пружаны"],[130,"Столин"]],
+    "note": "21 видимая строка options. ID не подменяет непрочитанный intValue. Полнота справочника области пока не проверена исходным ответом."
+  },
+  "next_required": [
+    "Payload update после выбора марки Kia вместе с исходным JSON Response",
+    "Payload update при получении поколений Rio вместе с исходным JSON Response",
+    "Payload update после выбора области вместе с исходным JSON Response",
+    "Начальная схема offer-form: точный URL, метод и JSON Response"
+  ],
+  "limitations": [
+    "Запрос из среды агента не выполнялся; рабочий доступ подтверждён только записью пользователя.",
+    "Отсутствие Payload не позволяет воспроизвести запрос без угадывания.",
+    "Семантика update (расчёт схемы или изменение серверного черновика) пока не установлена. Массовый повтор не запускается до проверки.",
+    "Поколения на видео соответствуют одному состоянию формы; источник всех поколений модели ещё не подтверждён.",
+    "Сырые тела ответов/запросов, аккаунт, cookies, токены и выбранный год не сохранены."
+  ]
+}

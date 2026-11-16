@@ -1,0 +1,61 @@
+{
+  "category_id": "cars_used_sale",
+  "platform": "kufar",
+  "complete": true,
+  "source_nodes": 11846,
+  "normalized_nodes": 11846,
+  "exact_native_value_label_parent_match": true,
+  "empty_generation_lists": [],
+  "unvisited_lists": [],
+  "ambiguous_sibling_names": [
+    {
+      "parent": "category_2010.mark_ford.model_v8",
+      "name": "v8",
+      "values": [
+        "category_2010.mark_ford.model_v8.generation_v822430221",
+        "category_2010.mark_ford.model_v8.generation_v821021631"
+      ]
+    },
+    {
+      "parent": "category_2010.mark_jac",
+      "name": "iev7l",
+      "values": [
+        "category_2010.mark_jac.model_iev7l",
+        "category_2010.mark_jac.model_iEV7L"
+      ]
+    },
+    {
+      "parent": "category_2010.mark_jac",
+      "name": "iev7s",
+      "values": [
+        "category_2010.mark_jac.model_iev7s",
+        "category_2010.mark_jac.model_iEV7S"
+      ]
+    },
+    {
+      "parent": "category_2010.mark_mitsubishi",
+      "name": "i-miev",
+      "values": [
+        "category_2010.mark_mitsubishi.model_i_miev",
+        "category_2010.mark_mitsubishi.model_i"
+      ]
+    },
+    {
+      "parent": "category_2010.mark_ssangyong.model_tivoli",
+      "name": "tivoli",
+      "values": [
+        "category_2010.mark_ssangyong.model_tivoli.generation_tivoli22566008",
+        "category_2010.mark_ssangyong.model_tivoli.generation_tivoli20496580"
+      ]
+    }
+  ],
+  "source_type_anomalies": [
+    {
+      "value": "category_2010.mark_kia.model_riox.generation_riox_i_2020",
+      "expected": "generation",
+      "actual": "model",
+      "reason": "Native field name cars_gen_v2 and parent-scoped generation code identify the level; original node_type is retained in source evidence."
+    }
+  ],
+  "policy": "Do not merge or pick the first equal name. Keep native codes and parent context; ambiguous future mappings remain needs_review."
+}

@@ -242,13 +242,17 @@
         b.jobs.some(
           (j) =>
             j.tabId === sender.tab.id &&
-            core.origin(j.recipe.platform, sender.url || sender.tab.url),
+            core.origin(j.recipe.platform, sender.url || sender.tab.url, b.categoryId),
         ),
       ),
       j = b?.jobs.find((j) => j.tabId === sender.tab.id);
     if (!b || !j || j.status === "stopped") return { task: null };
     if (message.type === "GET") {
       const allowed = root.AutopostCore.claimFill(j, sender, payload.navigation, [new URL(j.recipe.startUrl).origin]);
+      if(!allowed&&j.fillBlocked){
+        j.status="needs_action";
+        j.message="После обновления страницы автозаполнение отключено. Нажмите «Открыть» в Автопосте, чтобы начать заполнение в новой вкладке.";
+      }
       await save(rows);
       if (!allowed) return { task: null };
       return payload.metadataOnly

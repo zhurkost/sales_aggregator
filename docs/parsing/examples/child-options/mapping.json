@@ -1,0 +1,56 @@
+{
+  "category_id": "example_category",
+  "platform": "example",
+  "fields": [
+    {
+      "common_option_id": "item.class",
+      "platform_option_id": "site.class",
+      "conversion": {
+        "kind": "node_lookup",
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "item.subclass",
+      "platform_option_id": "site.subclass",
+      "conversion": {
+        "kind": "node_lookup",
+        "on_unmapped": "needs_review"
+      }
+    },
+    {
+      "common_option_id": "item.variant",
+      "platform_option_id": "site.variant",
+      "conversion": {
+        "kind": "node_lookup",
+        "on_unmapped": "needs_review"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "common_option_id": "item.class.a",
+      "platform_option_id": "site.class.a"
+    },
+    {
+      "common_option_id": "item.subclass.a",
+      "platform_option_id": "site.subclass.a"
+    },
+    {
+      "common_option_id": "item.variant.a.standard",
+      "platform_option_id": "site.variant.a.standard"
+    },
+    {
+      "common_option_id": "item.class.b",
+      "platform_option_id": "site.class.b"
+    },
+    {
+      "common_option_id": "item.subclass.b",
+      "platform_option_id": "site.subclass.b"
+    },
+    {
+      "common_option_id": "item.variant.b.standard",
+      "platform_option_id": "site.variant.b.standard"
+    }
+  ]
+}

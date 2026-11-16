@@ -1,0 +1,107 @@
+[
+  {
+    "id": "example_category",
+    "name": "Условная категория",
+    "description": "Только пример контракта 2.2",
+    "categories": [],
+    "options": [
+      {
+        "id": "site.class",
+        "name": "Класс",
+        "description": "Уровень учебного дерева",
+        "type": "enum",
+        "options_complete": true,
+        "options": [
+          {
+            "id": "site.class.a",
+            "name": "Группа А",
+            "description": "Условный пример, не данные площадки",
+            "type": "choice",
+            "options": [],
+            "level": "site.class",
+            "value": "A",
+            "childOptions": [
+              {
+                "id": "site.subclass.a",
+                "name": "Раздел 1",
+                "description": "Условный пример, не данные площадки",
+                "type": "choice",
+                "options": [],
+                "level": "site.subclass",
+                "value": "A1",
+                "childOptions": [
+                  {
+                    "id": "site.variant.a.standard",
+                    "name": "Стандарт",
+                    "description": "Условный пример, не данные площадки",
+                    "type": "choice",
+                    "options": [],
+                    "level": "site.variant",
+                    "value": "01",
+                    "childOptions": [],
+                    "options_complete": true
+                  }
+                ],
+                "options_complete": true
+              }
+            ],
+            "options_complete": true
+          },
+          {
+            "id": "site.class.b",
+            "name": "Группа Б",
+            "description": "Условный пример, не данные площадки",
+            "type": "choice",
+            "options": [],
+            "level": "site.class",
+            "value": "B",
+            "childOptions": [
+              {
+                "id": "site.subclass.b",
+                "name": "Раздел 2",
+                "description": "Условный пример, не данные площадки",
+                "type": "choice",
+                "options": [],
+                "level": "site.subclass",
+                "value": "B1",
+                "childOptions": [
+                  {
+                    "id": "site.variant.b.standard",
+                    "name": "Стандарт",
+                    "description": "Условный пример, не данные площадки",
+                    "type": "choice",
+                    "options": [],
+                    "level": "site.variant",
+                    "value": "01",
+                    "childOptions": [],
+                    "options_complete": true
+                  }
+                ],
+                "options_complete": true
+              }
+            ],
+            "options_complete": true
+          }
+        ]
+      },
+      {
+        "id": "site.subclass",
+        "name": "Подкласс",
+        "description": "Уровень учебного дерева",
+        "type": "enum",
+        "options_complete": true,
+        "parent_option_id": "site.class",
+        "options": []
+      },
+      {
+        "id": "site.variant",
+        "name": "Исполнение",
+        "description": "Уровень учебного дерева",
+        "type": "enum",
+        "options_complete": true,
+        "parent_option_id": "site.subclass",
+        "options": []
+      }
+    ]
+  }
+]

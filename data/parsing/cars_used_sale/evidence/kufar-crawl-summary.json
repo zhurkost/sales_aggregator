@@ -1,0 +1,46 @@
+{
+  "complete": true,
+  "brands": 322,
+  "models": 3783,
+  "models_with_generations_collected": 3783,
+  "generations": 7741,
+  "fields": 45,
+  "ready": 42,
+  "needs_review": 0,
+  "unsupported": 3,
+  "startedAt": "2026-11-12T11:08:10.080Z",
+  "updatedAt": "2026-11-12T11:43:15.534Z",
+  "failures": [],
+  "runHistory": [
+    {
+      "startedAt": "2026-11-12T09:34:29.088Z",
+      "updatedAt": "2026-11-12T10:04:56.367Z",
+      "requests": 1407,
+      "complete": false,
+      "failures": [
+        {
+          "at": "2026-11-12T10:04:56.367Z",
+          "message": "The operation was aborted due to timeout"
+        }
+      ]
+    },
+    {
+      "startedAt": "2026-11-12T10:11:41.961Z",
+      "updatedAt": "2026-11-12T10:26:37.639Z",
+      "requests": 804,
+      "complete": false,
+      "failures": [
+        {
+          "at": "2026-11-12T10:26:37.639Z",
+          "url": "https://api.kufar.by/catalog/v1/nodes?tag=category_2010.mark_kia.model_riox&view=taxonomy",
+          "message": "Unexpected/duplicate catalog node: category_2010.mark_kia.model_riox"
+        }
+      ]
+    }
+  ],
+  "sha256": {
+    "schema": "dbe30a771dda2b5f70276ce1dfb3accc297b98978b5f148ca23663a26d9ba56d",
+    "binding": "aae0bce6fe5f8f21782b3d0489f12a2fc8fae8c4ee35eaa7958ab9b7c0634eea",
+    "catalog": "43292aa7ff6d7103826241a167a44fe403d7963922a645975b24a839138d976a"
+  }
+}

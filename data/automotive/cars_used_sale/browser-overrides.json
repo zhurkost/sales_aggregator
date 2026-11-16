@@ -1,0 +1,260 @@
+{
+  "abw": {
+    "abw.brand": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Марка",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_brand .card_brand, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "searchSelector": "input[placeholder=\"Марка\"]",
+      "expandSelector": ".card_more-brand"
+    },
+    "abw.model": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Модель",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_model .card_model, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "searchSelector": "input[placeholder=\"Модель\"]",
+      "expandSelector": ".card_more-model"
+    },
+    "abw.year": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Год выпуска",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_year .card_year, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-year"
+    },
+    "abw.generation": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Поколение",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_generation .card_generation, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-generation"
+    },
+    "abw.body": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Кузов",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_body .card_body, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-body"
+    },
+    "abw.engine": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Двигатель",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_engine .card_engine, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-engine"
+    },
+    "abw.gear": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Привод",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_gear .card_gear, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-gear"
+    },
+    "abw.transmission": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Коробка передач",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_transmission .card_transmission, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-transmission"
+    },
+    "abw.color": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Цвет кузова",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_color .card_color, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-color"
+    },
+    "abw.condition": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Состояние",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_state .card_state, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-state"
+    },
+    "abw.availability": {
+      "status": "needs_review",
+      "reason": "Рецепт выведен из сохранённого клиента FormItem/FormItemBrandOrModel; проверен на локальной форме, не на живом ABW.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "label": "Наличие",
+        "labels": ".item-title",
+        "container": ".adverts-form-item",
+        "selector": ".item-header"
+      },
+      "suggestions": {
+        "selector": ".list_availability .card_availability, .popup__item"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".item-selected"
+      },
+      "expandSelector": ".card_more-availability"
+    },
+    "abw.currency": {
+      "status": "needs_review",
+      "reason": "Коды и символы из FormPrice в клиенте ABW, сохранённом в HAR. Чтение и установка в живой форме ещё не проверены.",
+      "action": "choose",
+      "match": "text",
+      "target": {
+        "selectors": [
+          ".form__currency"
+        ]
+      },
+      "suggestions": {
+        "selector": ".form__currency-list-item"
+      },
+      "displayLabels": {
+        "byn": "Br",
+        "usd": "$",
+        "eur": "€",
+        "rub": "₽"
+      },
+      "verify": {
+        "kind": "selected_text_equals"
+      }
+    },
+    "abw.price": {
+      "status": "needs_review",
+      "reason": "Ввод цены по точной подписи из FormPrice; валюта выбирается первой.",
+      "action": "set_value",
+      "depends_on": [
+        "abw.currency"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "observed_at": "2026-11-13",
+  "source": "Existing Chrome accessibility tree, https://abw.by/create/cars; no reload or form interactions",
+  "category_id": "cars_used_sale",
+  "platform": "abw",
+  "scope": "Продажа легковых автомобилей с пробегом в Беларуси; задание пользователя в чате, этап A",
+  "selected_catalog_context": {"brand": "Kia", "model": "Rio", "generation": "IV Рестайлинг (Global market)", "body": "Седан"},
+  "observed_query_codes": {"brand": "254", "model": "1691", "generation": "277306", "body": "3402"},
+  "field_labels": {
+    "brand": "Марка", "model": "Модель", "year": "Год выпуска", "generation": "Поколение", "body": "Кузов",
+    "engine": "Двигатель", "gear": "Привод", "transmission": "Коробка передач", "modification": "Модификация",
+    "mileage": "Пробег, км", "color": "Цвет кузова", "condition": "Состояние", "availability": "Наличие",
+    "photo": "Фото", "video": "Ссылка на видео", "description": "Описание", "vin": "VIN", "price": "Цена",
+    "seller_name": "Имя", "email": "E-mail", "phone": "Номер телефона", "city": "Город"
+  },
+  "required_in_observed_state": ["brand", "model", "year", "generation", "body", "engine", "gear", "transmission", "modification", "mileage", "color", "condition", "availability", "price", "seller_name", "phone", "city"],
+  "flat_labels": {
+    "color": ["Белый", "Черный", "Серый", "Серебристый", "Красный", "Желтый", "Зеленый", "Коричневый", "Оранжевый"],
+    "condition": ["Новый", "С повреждениями", "С пробегом"],
+    "availability": ["В наличии", "В пути"]
+  },
+  "photo": {"recommended_batch_size": 5, "displayed_per_file_limit": "15 мб", "max_file_size_bytes": null, "max_items": null, "mime_types": null},
+  "notes": [
+    "Ключи brand/model/year/generation/body подтверждены именами параметров suggest; engine/gear/transmission/modification — ключами JSON HAR. Имена остальных внутренних параметров пока не проверены.",
+    "У поля телефона disabled; значения контактов, VIN, имени, цены и фотографии объявления не сохранены.",
+    "Пять фотографий — рекомендация одновременной загрузки, не максимальный размер коллекции.",
+    "Есть главное фото и возможность загрузить фото позже; загрузчик и чтение принятой коллекции не проверены.",
+    "Видео: ссылка YouTube, публикация после модерации.",
+    "Цена будет опубликована в BYN по курсу НБРБ на дату подачи/редактирования. Сам переключатель валюты ещё не считан.",
+    "Регион в текущем состоянии не виден; способ выбора города и связь регион-город требуют исследования.",
+    "Пакеты TOP/ALL/TURBO и кнопка размещения не относятся к автозаполнению и сборщиком не выбираются."
+  ]
+}

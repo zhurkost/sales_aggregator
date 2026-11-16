@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-15",
+  "source": "User Chrome, existing page DOM read only",
+  "page": "https://abw.by/create/cars",
+  "selector": ".adverts-form > button[type=\"button\"]",
+  "text": "Продолжить",
+  "stepMarkers": [
+    "Марка",
+    "Модель",
+    "Год выпуска"
+  ],
+  "observedType": "button",
+  "observedParentClass": "adverts-form",
+  "liveClicked": false,
+  "permission": "User requested script-driven Continue on ABW; current live inspection must not send requests or reload ABW/AV."
+}

@@ -7,11 +7,12 @@ import { RentalEditorComponent } from "./rental/rental-editor.component";
 import type { RentalProfile } from "./rental/rental-profile-defaults";
 import { EXTENSION_VERSION, extensionVersionOK, type Profile } from "../../../lib/workspace";
 import { WorkspaceGateway } from "./workspace.gateway";
+import { CarEditorComponent } from "./automotive/car-editor.component";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [FormsModule, IconComponent, RentalEditorComponent, RetainedPanelDirective],
+  imports: [FormsModule, IconComponent, RentalEditorComponent, RetainedPanelDirective, CarEditorComponent],
   templateUrl: "./app.component.html",
   changeDetection: ChangeDetectionStrategy.Default,
 })
@@ -19,6 +20,11 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private workspace: WorkspaceGateway = new WorkspaceGateway()) {}
   readonly deals = LISTING_TABS;
   deal: ListingTabId = "rent";
+  section: 'property' | 'cars' = 'property';
+  selectSection(section: 'property' | 'cars') {
+    this.section = section;
+    if(this.profile) this.workspace.rememberSection(this.profile.id,section);
+  }
   selectDeal(deal: ListingTabId) {
     this.deal = deal;
     if (this.profile) this.workspace.rememberDeal(this.profile.id, deal);
@@ -102,6 +108,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (!this.alive) return;
     this.settings = settings;
     this.deal = this.workspace.activeDeal(profile.id);
+    this.section = this.workspace.activeSection(profile.id);
     this.profile = profile;
     void this.checkExtension();
   }

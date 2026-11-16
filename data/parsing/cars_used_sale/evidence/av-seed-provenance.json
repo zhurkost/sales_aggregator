@@ -1,0 +1,187 @@
+{
+  "av.condition_promotion": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.brand": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.model": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.year": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.generation": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.body_type": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-9-body_type"
+  },
+  "av.number_of_seats": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.transmission_type": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-11-transmission_type"
+  },
+  "av.engine_type": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.engine_capacity": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.engine_endurance": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.drive_type": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.modification": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.vin": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-26-vin"
+  },
+  "av.condition": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-16-condition"
+  },
+  "av.mileage": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.mileage_unit": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-21-mileage_unit"
+  },
+  "av.color": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-23-color"
+  },
+  "av.interior_material": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-24-interior_material"
+  },
+  "av.interior_color": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-25-interior_color"
+  },
+  "av.options": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": ".form-checklist--chips .chips__item"
+  },
+  "av.registration_country": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-17-registration_country"
+  },
+  "av.registration_status": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.description": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-30-description"
+  },
+  "av.price_amount": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-32-price_amount"
+  },
+  "av.price_currency": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-31-price_currency"
+  },
+  "av.exchange_options": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.exchange_comment": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.photo": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-27-photo"
+  },
+  "av.photo360": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.video_url": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-38-video_url"
+  },
+  "av.place_region": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.place_city": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-37-place_city"
+  },
+  "av.name": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  },
+  "av.phone_country": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-41-0-39-phone_country"
+  },
+  "av.phone_number": {
+    "historical_required": true,
+    "source": "av-historical-recovery.json",
+    "video_candidate": "#p-41-0-40-phone_number"
+  },
+  "av.number_masking": {
+    "historical_required": false,
+    "source": "av-historical-recovery.json",
+    "video_candidate": null
+  }
+}

@@ -1,0 +1,2338 @@
+{
+  "url": "https://ab.onliner.by/sdapi/ab.api/dictionaries",
+  "observedAt": "2026-11-12T12:58:52.448Z",
+  "sha256": "a63288bd43598683bea0e88956abf881231839e2e5c1ae2996f9b385b6dced92",
+  "data": {
+    "body_type": [
+      {
+        "id": "sedan",
+        "name": "седан"
+      },
+      {
+        "id": "suv",
+        "name": "внедорожник"
+      },
+      {
+        "id": "universal",
+        "name": "универсал"
+      },
+      {
+        "id": "hatchback",
+        "name": "хетчбэк"
+      },
+      {
+        "id": "liftback",
+        "name": "лифтбэк"
+      },
+      {
+        "id": "minivan",
+        "name": "минивэн"
+      },
+      {
+        "id": "minibus",
+        "name": "микроавтобус"
+      },
+      {
+        "id": "coupe",
+        "name": "купе"
+      },
+      {
+        "id": "van",
+        "name": "фургон"
+      },
+      {
+        "id": "pickup",
+        "name": "пикап"
+      },
+      {
+        "id": "cabriolet",
+        "name": "кабриолет"
+      },
+      {
+        "id": "limousine",
+        "name": "лимузин"
+      }
+    ],
+    "color": [
+      {
+        "id": "black",
+        "name": "черный"
+      },
+      {
+        "id": "white",
+        "name": "белый"
+      },
+      {
+        "id": "silver",
+        "name": "серебристый"
+      },
+      {
+        "id": "grey",
+        "name": "серый"
+      },
+      {
+        "id": "red",
+        "name": "красный"
+      },
+      {
+        "id": "orange",
+        "name": "оранжевый"
+      },
+      {
+        "id": "yellow",
+        "name": "желтый"
+      },
+      {
+        "id": "green",
+        "name": "зеленый"
+      },
+      {
+        "id": "skyblue",
+        "name": "голубой"
+      },
+      {
+        "id": "blue",
+        "name": "синий"
+      },
+      {
+        "id": "violet",
+        "name": "фиолетовый"
+      },
+      {
+        "id": "brown",
+        "name": "коричневый"
+      },
+      {
+        "id": "beige",
+        "name": "бежевый"
+      },
+      {
+        "id": "maroon",
+        "name": "бордовый"
+      },
+      {
+        "id": "golden",
+        "name": "золотой"
+      },
+      {
+        "id": "other",
+        "name": "другой"
+      }
+    ],
+    "country": [
+      {
+        "id": 248,
+        "name": "Беларусь",
+        "slug": "belarus"
+      },
+      {
+        "id": 3159,
+        "name": "Россия",
+        "slug": "rossiya"
+      },
+      {
+        "id": 63,
+        "name": "Австрия",
+        "slug": "avstriya"
+      },
+      {
+        "id": 404,
+        "name": "Бельгия",
+        "slug": "belgiya"
+      },
+      {
+        "id": 1012,
+        "name": "Германия",
+        "slug": "germaniya"
+      },
+      {
+        "id": 1206,
+        "name": "Нидерланды",
+        "slug": "niderlandy"
+      },
+      {
+        "id": 1786,
+        "name": "Италия",
+        "slug": "italiya"
+      },
+      {
+        "id": 2172,
+        "name": "Канада",
+        "slug": "kanada"
+      },
+      {
+        "id": 2448,
+        "name": "Латвия",
+        "slug": "latviya"
+      },
+      {
+        "id": 2514,
+        "name": "Литва",
+        "slug": "litva"
+      },
+      {
+        "id": 2888,
+        "name": "ОАЭ",
+        "slug": "oae"
+      },
+      {
+        "id": 2897,
+        "name": "Польша",
+        "slug": "polsha"
+      },
+      {
+        "id": 5681,
+        "name": "США",
+        "slug": "ssha"
+      },
+      {
+        "id": 9908,
+        "name": "Украина",
+        "slug": "ukraina"
+      },
+      {
+        "id": 10668,
+        "name": "Франция",
+        "slug": "frantsiya"
+      },
+      {
+        "id": 10904,
+        "name": "Швейцария",
+        "slug": "shveytsariya"
+      },
+      {
+        "id": 10968,
+        "name": "Эстония",
+        "slug": "estoniya"
+      },
+      {
+        "id": 11014,
+        "name": "Южная Корея",
+        "slug": "yuzhnaya-koreya"
+      },
+      {
+        "id": 2374,
+        "name": "Китай",
+        "slug": "kitay"
+      },
+      {
+        "id": 5666,
+        "name": "Словакия",
+        "slug": "slovakiya"
+      },
+      {
+        "id": 10874,
+        "name": "Чехия",
+        "slug": "chekhiya"
+      },
+      {
+        "id": 924,
+        "name": "Венгрия",
+        "slug": "vengriya"
+      },
+      {
+        "id": 1366,
+        "name": "Дания",
+        "slug": "daniya"
+      },
+      {
+        "id": 1707,
+        "name": "Испания",
+        "slug": "ispaniya"
+      },
+      {
+        "id": 3141,
+        "name": "Португалия",
+        "slug": "portugaliya"
+      },
+      {
+        "id": 5673,
+        "name": "Словения",
+        "slug": "sloveniya"
+      }
+    ],
+    "drivetrain": [
+      {
+        "id": "front",
+        "name": "передний"
+      },
+      {
+        "id": "rear",
+        "name": "задний"
+      },
+      {
+        "id": "all",
+        "name": "полный"
+      }
+    ],
+    "engine_type": [
+      {
+        "id": "gasoline",
+        "name": "бензин"
+      },
+      {
+        "id": "diesel",
+        "name": "дизель"
+      },
+      {
+        "id": "electric",
+        "name": "электро"
+      }
+    ],
+    "manufacturer": [
+      {
+        "id": 1,
+        "name": "Acura",
+        "slug": "acura"
+      },
+      {
+        "id": 139,
+        "name": "Adler",
+        "slug": "adler"
+      },
+      {
+        "id": 197,
+        "name": "Adria",
+        "slug": "adria"
+      },
+      {
+        "id": 264,
+        "name": "Aeolus",
+        "slug": "aeolus"
+      },
+      {
+        "id": 226,
+        "name": "AION",
+        "slug": "aion"
+      },
+      {
+        "id": 278,
+        "name": "AITO",
+        "slug": "aito"
+      },
+      {
+        "id": 3,
+        "name": "Alfa Romeo",
+        "slug": "alfa-romeo"
+      },
+      {
+        "id": 166,
+        "name": "Alpina",
+        "slug": "alpina"
+      },
+      {
+        "id": 257,
+        "name": "Alpine",
+        "slug": "alpine"
+      },
+      {
+        "id": 168,
+        "name": "Aro",
+        "slug": "aro"
+      },
+      {
+        "id": 98,
+        "name": "Asia",
+        "slug": "asia"
+      },
+      {
+        "id": 94,
+        "name": "Aston Martin",
+        "slug": "aston-martin"
+      },
+      {
+        "id": 2,
+        "name": "Audi",
+        "slug": "audi"
+      },
+      {
+        "id": 110,
+        "name": "Austin",
+        "slug": "austin"
+      },
+      {
+        "id": 271,
+        "name": "Avatr",
+        "slug": "avatr"
+      },
+      {
+        "id": 88,
+        "name": "Avia",
+        "slug": "avia"
+      },
+      {
+        "id": 223,
+        "name": "BAIC",
+        "slug": "baic"
+      },
+      {
+        "id": 290,
+        "name": "Baojun",
+        "slug": "baojun"
+      },
+      {
+        "id": 76,
+        "name": "Barkas",
+        "slug": "barkas"
+      },
+      {
+        "id": 93,
+        "name": "BAW",
+        "slug": "baw"
+      },
+      {
+        "id": 256,
+        "name": "BelGee",
+        "slug": "belgee"
+      },
+      {
+        "id": 4,
+        "name": "Bentley",
+        "slug": "bentley"
+      },
+      {
+        "id": 191,
+        "name": "Bertone",
+        "slug": "bertone"
+      },
+      {
+        "id": 265,
+        "name": "Bestune",
+        "slug": "bestune"
+      },
+      {
+        "id": 5,
+        "name": "BMW",
+        "slug": "bmw"
+      },
+      {
+        "id": 175,
+        "name": "Bremach",
+        "slug": "bremach"
+      },
+      {
+        "id": 6,
+        "name": "Brilliance",
+        "slug": "brilliance"
+      },
+      {
+        "id": 130,
+        "name": "Bugatti",
+        "slug": "bugatti"
+      },
+      {
+        "id": 7,
+        "name": "Buick",
+        "slug": "buick"
+      },
+      {
+        "id": 115,
+        "name": "BYD",
+        "slug": "byd"
+      },
+      {
+        "id": 8,
+        "name": "Cadillac",
+        "slug": "cadillac"
+      },
+      {
+        "id": 153,
+        "name": "Changan",
+        "slug": "changan"
+      },
+      {
+        "id": 9,
+        "name": "Chery",
+        "slug": "chery"
+      },
+      {
+        "id": 10,
+        "name": "Chevrolet",
+        "slug": "chevrolet"
+      },
+      {
+        "id": 11,
+        "name": "Chrysler",
+        "slug": "chrysler"
+      },
+      {
+        "id": 12,
+        "name": "Citroen",
+        "slug": "citroen"
+      },
+      {
+        "id": 237,
+        "name": "Cupra",
+        "slug": "cupra"
+      },
+      {
+        "id": 13,
+        "name": "Dacia",
+        "slug": "dacia"
+      },
+      {
+        "id": 14,
+        "name": "Daewoo",
+        "slug": "daewoo"
+      },
+      {
+        "id": 91,
+        "name": "DAF",
+        "slug": "daf"
+      },
+      {
+        "id": 15,
+        "name": "Daihatsu",
+        "slug": "daihatsu"
+      },
+      {
+        "id": 151,
+        "name": "Datsun",
+        "slug": "datsun"
+      },
+      {
+        "id": 285,
+        "name": "Deepal",
+        "slug": "deepal"
+      },
+      {
+        "id": 173,
+        "name": "DeLorean",
+        "slug": "delorean"
+      },
+      {
+        "id": 269,
+        "name": "Denza",
+        "slug": "denza"
+      },
+      {
+        "id": 148,
+        "name": "Derways",
+        "slug": "derways"
+      },
+      {
+        "id": 300,
+        "name": "DFSK",
+        "slug": "dfsk"
+      },
+      {
+        "id": 16,
+        "name": "Dodge",
+        "slug": "dodge"
+      },
+      {
+        "id": 170,
+        "name": "DongFeng",
+        "slug": "dongfeng"
+      },
+      {
+        "id": 239,
+        "name": "Dongfeng Honda",
+        "slug": "dongfeng-honda"
+      },
+      {
+        "id": 222,
+        "name": "DS",
+        "slug": "ds"
+      },
+      {
+        "id": 101,
+        "name": "Eagle",
+        "slug": "eagle"
+      },
+      {
+        "id": 186,
+        "name": "Excalibur",
+        "slug": "excalibur"
+      },
+      {
+        "id": 236,
+        "name": "Exeed",
+        "slug": "exeed"
+      },
+      {
+        "id": 183,
+        "name": "Factory Five",
+        "slug": "factory-five"
+      },
+      {
+        "id": 294,
+        "name": "FangChengBao",
+        "slug": "fangchengbao"
+      },
+      {
+        "id": 291,
+        "name": "Farizon",
+        "slug": "farizon"
+      },
+      {
+        "id": 87,
+        "name": "FAW",
+        "slug": "faw"
+      },
+      {
+        "id": 17,
+        "name": "Ferrari",
+        "slug": "ferrari"
+      },
+      {
+        "id": 18,
+        "name": "Fiat",
+        "slug": "fiat"
+      },
+      {
+        "id": 187,
+        "name": "Fisker",
+        "slug": "fisker"
+      },
+      {
+        "id": 19,
+        "name": "Ford",
+        "slug": "ford"
+      },
+      {
+        "id": 141,
+        "name": "Foton",
+        "slug": "foton"
+      },
+      {
+        "id": 122,
+        "name": "FSO",
+        "slug": "fso"
+      },
+      {
+        "id": 235,
+        "name": "GAC",
+        "slug": "gac"
+      },
+      {
+        "id": 20,
+        "name": "Geely",
+        "slug": "geely"
+      },
+      {
+        "id": 188,
+        "name": "Genesis",
+        "slug": "genesis"
+      },
+      {
+        "id": 21,
+        "name": "GMC",
+        "slug": "gmc"
+      },
+      {
+        "id": 22,
+        "name": "Great Wall",
+        "slug": "great-wall"
+      },
+      {
+        "id": 77,
+        "name": "Hafei",
+        "slug": "hafei"
+      },
+      {
+        "id": 156,
+        "name": "Haima",
+        "slug": "haima"
+      },
+      {
+        "id": 204,
+        "name": "Hanjiang",
+        "slug": "hanjiang"
+      },
+      {
+        "id": 189,
+        "name": "Hanomag",
+        "slug": "hanomag"
+      },
+      {
+        "id": 190,
+        "name": "Haval",
+        "slug": "haval"
+      },
+      {
+        "id": 224,
+        "name": "Hawtai",
+        "slug": "hawtai"
+      },
+      {
+        "id": 299,
+        "name": "Hedmos",
+        "slug": "hedmos"
+      },
+      {
+        "id": 259,
+        "name": "HiPhi",
+        "slug": "hiphi"
+      },
+      {
+        "id": 234,
+        "name": "Hispano-Suiza",
+        "slug": "hispano-suiza"
+      },
+      {
+        "id": 23,
+        "name": "Honda",
+        "slug": "honda"
+      },
+      {
+        "id": 240,
+        "name": "Honda Everus",
+        "slug": "honda-everus"
+      },
+      {
+        "id": 253,
+        "name": "Hongqi",
+        "slug": "hongqi"
+      },
+      {
+        "id": 184,
+        "name": "Hongxing",
+        "slug": "hongxing"
+      },
+      {
+        "id": 255,
+        "name": "Hozon",
+        "slug": "hozon"
+      },
+      {
+        "id": 180,
+        "name": "HuangHai",
+        "slug": "huanghai"
+      },
+      {
+        "id": 24,
+        "name": "Hummer",
+        "slug": "hummer"
+      },
+      {
+        "id": 176,
+        "name": "Hunta",
+        "slug": "hunta"
+      },
+      {
+        "id": 254,
+        "name": "Hycan",
+        "slug": "hycan"
+      },
+      {
+        "id": 25,
+        "name": "Hyundai",
+        "slug": "hyundai"
+      },
+      {
+        "id": 26,
+        "name": "Infiniti",
+        "slug": "infiniti"
+      },
+      {
+        "id": 100,
+        "name": "Intrall",
+        "slug": "intrall"
+      },
+      {
+        "id": 27,
+        "name": "Iran Khodro",
+        "slug": "iran-khodro"
+      },
+      {
+        "id": 28,
+        "name": "Isuzu",
+        "slug": "isuzu"
+      },
+      {
+        "id": 71,
+        "name": "IVECO",
+        "slug": "iveco"
+      },
+      {
+        "id": 29,
+        "name": "JAC",
+        "slug": "jac"
+      },
+      {
+        "id": 282,
+        "name": "Jaecoo",
+        "slug": "jaecoo"
+      },
+      {
+        "id": 30,
+        "name": "Jaguar",
+        "slug": "jaguar"
+      },
+      {
+        "id": 31,
+        "name": "Jeep",
+        "slug": "jeep"
+      },
+      {
+        "id": 246,
+        "name": "Jetour",
+        "slug": "jetour"
+      },
+      {
+        "id": 248,
+        "name": "Jetta",
+        "slug": "jetta"
+      },
+      {
+        "id": 163,
+        "name": "Jiangling",
+        "slug": "jiangling"
+      },
+      {
+        "id": 260,
+        "name": "Jinbei",
+        "slug": "jinbei"
+      },
+      {
+        "id": 277,
+        "name": "Jiyue",
+        "slug": "jiyue"
+      },
+      {
+        "id": 284,
+        "name": "JMEV",
+        "slug": "jmev"
+      },
+      {
+        "id": 266,
+        "name": "Kaiyi",
+        "slug": "kaiyi"
+      },
+      {
+        "id": 293,
+        "name": "Kama",
+        "slug": "kama"
+      },
+      {
+        "id": 301,
+        "name": "KGM",
+        "slug": "kgm"
+      },
+      {
+        "id": 32,
+        "name": "Kia",
+        "slug": "kia"
+      },
+      {
+        "id": 181,
+        "name": "Koenigsegg",
+        "slug": "koenigsegg"
+      },
+      {
+        "id": 203,
+        "name": "LADA",
+        "slug": "lada"
+      },
+      {
+        "id": 79,
+        "name": "Lamborghini",
+        "slug": "lamborghini"
+      },
+      {
+        "id": 33,
+        "name": "Lancia",
+        "slug": "lancia"
+      },
+      {
+        "id": 34,
+        "name": "Land Rover",
+        "slug": "land-rover"
+      },
+      {
+        "id": 158,
+        "name": "LDV",
+        "slug": "ldv"
+      },
+      {
+        "id": 251,
+        "name": "Leapmotor",
+        "slug": "leapmotor"
+      },
+      {
+        "id": 35,
+        "name": "Lexus",
+        "slug": "lexus"
+      },
+      {
+        "id": 99,
+        "name": "Lifan",
+        "slug": "lifan"
+      },
+      {
+        "id": 36,
+        "name": "Lincoln",
+        "slug": "lincoln"
+      },
+      {
+        "id": 245,
+        "name": "Livan",
+        "slug": "livan"
+      },
+      {
+        "id": 241,
+        "name": "LiXiang",
+        "slug": "li"
+      },
+      {
+        "id": 194,
+        "name": "Lotus",
+        "slug": "lotus"
+      },
+      {
+        "id": 238,
+        "name": "Lucid",
+        "slug": "lucid"
+      },
+      {
+        "id": 273,
+        "name": "Luxeed",
+        "slug": "luxeed"
+      },
+      {
+        "id": 263,
+        "name": "Lynk & Co",
+        "slug": "lynkco"
+      },
+      {
+        "id": 275,
+        "name": "M-Hero",
+        "slug": "m-hero"
+      },
+      {
+        "id": 199,
+        "name": "Mahindra",
+        "slug": "mahindra"
+      },
+      {
+        "id": 233,
+        "name": "MAN",
+        "slug": "man"
+      },
+      {
+        "id": 37,
+        "name": "Maserati",
+        "slug": "maserati"
+      },
+      {
+        "id": 288,
+        "name": "Maxus",
+        "slug": "maxus"
+      },
+      {
+        "id": 38,
+        "name": "Maybach",
+        "slug": "maybach"
+      },
+      {
+        "id": 39,
+        "name": "Mazda",
+        "slug": "mazda"
+      },
+      {
+        "id": 200,
+        "name": "McLaren",
+        "slug": "mclaren"
+      },
+      {
+        "id": 270,
+        "name": "Mengshi",
+        "slug": "mengshi"
+      },
+      {
+        "id": 41,
+        "name": "Mercedes-Benz",
+        "slug": "mercedes-benz"
+      },
+      {
+        "id": 42,
+        "name": "Mercury",
+        "slug": "mercury"
+      },
+      {
+        "id": 78,
+        "name": "MG",
+        "slug": "mg"
+      },
+      {
+        "id": 177,
+        "name": "Microcar",
+        "slug": "microcar"
+      },
+      {
+        "id": 43,
+        "name": "Mini",
+        "slug": "mini"
+      },
+      {
+        "id": 44,
+        "name": "Mitsubishi",
+        "slug": "mitsubishi"
+      },
+      {
+        "id": 196,
+        "name": "Morris",
+        "slug": "morris"
+      },
+      {
+        "id": 195,
+        "name": "MPM",
+        "slug": "mpm"
+      },
+      {
+        "id": 118,
+        "name": "Mudan",
+        "slug": "mudan"
+      },
+      {
+        "id": 227,
+        "name": "Neta",
+        "slug": "neta"
+      },
+      {
+        "id": 261,
+        "name": "Nio",
+        "slug": "nio"
+      },
+      {
+        "id": 45,
+        "name": "Nissan",
+        "slug": "nissan"
+      },
+      {
+        "id": 133,
+        "name": "Nysa",
+        "slug": "nysa"
+      },
+      {
+        "id": 46,
+        "name": "Oldsmobile",
+        "slug": "oldsmobile"
+      },
+      {
+        "id": 144,
+        "name": "Oltcit",
+        "slug": "oltcit"
+      },
+      {
+        "id": 283,
+        "name": "OMODA",
+        "slug": "omoda"
+      },
+      {
+        "id": 47,
+        "name": "Opel",
+        "slug": "opel"
+      },
+      {
+        "id": 274,
+        "name": "Ora",
+        "slug": "ora"
+      },
+      {
+        "id": 289,
+        "name": "Oting",
+        "slug": "oting"
+      },
+      {
+        "id": 48,
+        "name": "Peugeot",
+        "slug": "peugeot"
+      },
+      {
+        "id": 182,
+        "name": "Piaggio",
+        "slug": "piaggio"
+      },
+      {
+        "id": 146,
+        "name": "Pinzgauer",
+        "slug": "pinzgauer"
+      },
+      {
+        "id": 75,
+        "name": "Plymouth",
+        "slug": "plymouth"
+      },
+      {
+        "id": 276,
+        "name": "Polar",
+        "slug": "polar"
+      },
+      {
+        "id": 232,
+        "name": "Polestar",
+        "slug": "polestar"
+      },
+      {
+        "id": 49,
+        "name": "Pontiac",
+        "slug": "pontiac"
+      },
+      {
+        "id": 50,
+        "name": "Porsche",
+        "slug": "porsche"
+      },
+      {
+        "id": 51,
+        "name": "Proton",
+        "slug": "proton"
+      },
+      {
+        "id": 286,
+        "name": "Ram",
+        "slug": "ram"
+      },
+      {
+        "id": 185,
+        "name": "Ravon",
+        "slug": "ravon"
+      },
+      {
+        "id": 52,
+        "name": "Renault",
+        "slug": "renault"
+      },
+      {
+        "id": 230,
+        "name": "Renault Samsung",
+        "slug": "renault-samsung"
+      },
+      {
+        "id": 280,
+        "name": "Rising",
+        "slug": "rising"
+      },
+      {
+        "id": 249,
+        "name": "Rivian",
+        "slug": "rivian"
+      },
+      {
+        "id": 193,
+        "name": "Roewe",
+        "slug": "roewe"
+      },
+      {
+        "id": 108,
+        "name": "Rolls-Royce",
+        "slug": "rolls-royce"
+      },
+      {
+        "id": 53,
+        "name": "Rover",
+        "slug": "rover"
+      },
+      {
+        "id": 297,
+        "name": "Ruichi",
+        "slug": "ruichi"
+      },
+      {
+        "id": 54,
+        "name": "Saab",
+        "slug": "saab"
+      },
+      {
+        "id": 161,
+        "name": "Saipa",
+        "slug": "saipa"
+      },
+      {
+        "id": 97,
+        "name": "Santana",
+        "slug": "santana"
+      },
+      {
+        "id": 55,
+        "name": "Saturn",
+        "slug": "saturn"
+      },
+      {
+        "id": 80,
+        "name": "Scion",
+        "slug": "scion"
+      },
+      {
+        "id": 56,
+        "name": "Seat",
+        "slug": "seat"
+      },
+      {
+        "id": 252,
+        "name": "Seres",
+        "slug": "seres"
+      },
+      {
+        "id": 287,
+        "name": "Shenlan",
+        "slug": "shenlan"
+      },
+      {
+        "id": 136,
+        "name": "ShuangHuan",
+        "slug": "shuanghuan"
+      },
+      {
+        "id": 72,
+        "name": "Simca",
+        "slug": "simca"
+      },
+      {
+        "id": 57,
+        "name": "Skoda",
+        "slug": "skoda"
+      },
+      {
+        "id": 250,
+        "name": "Skywell",
+        "slug": "skywell"
+      },
+      {
+        "id": 40,
+        "name": "Smart",
+        "slug": "smart"
+      },
+      {
+        "id": 109,
+        "name": "Spyker",
+        "slug": "spyker"
+      },
+      {
+        "id": 262,
+        "name": "SRM",
+        "slug": "srm"
+      },
+      {
+        "id": 58,
+        "name": "SsangYong",
+        "slug": "ssangyong"
+      },
+      {
+        "id": 292,
+        "name": "Stelato",
+        "slug": "stelato"
+      },
+      {
+        "id": 172,
+        "name": "Steyr",
+        "slug": "steyr"
+      },
+      {
+        "id": 225,
+        "name": "StreetScooter",
+        "slug": "streetscooter"
+      },
+      {
+        "id": 59,
+        "name": "Subaru",
+        "slug": "subaru"
+      },
+      {
+        "id": 60,
+        "name": "Suzuki",
+        "slug": "suzuki"
+      },
+      {
+        "id": 95,
+        "name": "Talbot",
+        "slug": "talbot"
+      },
+      {
+        "id": 247,
+        "name": "Tank",
+        "slug": "tank"
+      },
+      {
+        "id": 128,
+        "name": "Tata",
+        "slug": "tata"
+      },
+      {
+        "id": 174,
+        "name": "Tatra",
+        "slug": "tatra"
+      },
+      {
+        "id": 112,
+        "name": "Tesla",
+        "slug": "tesla"
+      },
+      {
+        "id": 178,
+        "name": "Tianma",
+        "slug": "tianma"
+      },
+      {
+        "id": 61,
+        "name": "Toyota",
+        "slug": "toyota"
+      },
+      {
+        "id": 96,
+        "name": "Trabant",
+        "slug": "trabant"
+      },
+      {
+        "id": 201,
+        "name": "Triumph",
+        "slug": "triumph"
+      },
+      {
+        "id": 169,
+        "name": "Vauxhall",
+        "slug": "vauxhall"
+      },
+      {
+        "id": 258,
+        "name": "VGV",
+        "slug": "vgv"
+      },
+      {
+        "id": 62,
+        "name": "Volkswagen",
+        "slug": "volkswagen"
+      },
+      {
+        "id": 63,
+        "name": "Volvo",
+        "slug": "volvo"
+      },
+      {
+        "id": 167,
+        "name": "Vortex",
+        "slug": "vortex"
+      },
+      {
+        "id": 243,
+        "name": "Voyah",
+        "slug": "voyah"
+      },
+      {
+        "id": 81,
+        "name": "Wartburg",
+        "slug": "wartburg"
+      },
+      {
+        "id": 228,
+        "name": "Weltmeister",
+        "slug": "weltmeister"
+      },
+      {
+        "id": 281,
+        "name": "WEY",
+        "slug": "wey"
+      },
+      {
+        "id": 267,
+        "name": "Wuling",
+        "slug": "wuling"
+      },
+      {
+        "id": 272,
+        "name": "Xiaomi",
+        "slug": "xiaomi"
+      },
+      {
+        "id": 192,
+        "name": "Xin Kai",
+        "slug": "xin-kai"
+      },
+      {
+        "id": 229,
+        "name": "Xpeng",
+        "slug": "xpeng"
+      },
+      {
+        "id": 279,
+        "name": "Yangwang",
+        "slug": "yangwang"
+      },
+      {
+        "id": 105,
+        "name": "Zastava",
+        "slug": "zastava"
+      },
+      {
+        "id": 244,
+        "name": "Zeekr",
+        "slug": "zeekr"
+      },
+      {
+        "id": 111,
+        "name": "Zotye",
+        "slug": "zotye"
+      },
+      {
+        "id": 125,
+        "name": "Zuk",
+        "slug": "zuk"
+      },
+      {
+        "id": 119,
+        "name": "ZX",
+        "slug": "zx"
+      },
+      {
+        "id": 65,
+        "name": "ВАЗ",
+        "slug": "vaz"
+      },
+      {
+        "id": 66,
+        "name": "ГАЗ",
+        "slug": "gaz"
+      },
+      {
+        "id": 242,
+        "name": "Ё-мобиль",
+        "slug": "yo-mobil"
+      },
+      {
+        "id": 137,
+        "name": "ЕрАЗ",
+        "slug": "eraz"
+      },
+      {
+        "id": 67,
+        "name": "ЗАЗ",
+        "slug": "zaz"
+      },
+      {
+        "id": 198,
+        "name": "ЗиС",
+        "slug": "zis"
+      },
+      {
+        "id": 73,
+        "name": "ИЖ",
+        "slug": "izh"
+      },
+      {
+        "id": 74,
+        "name": "ЛуАЗ",
+        "slug": "luaz"
+      },
+      {
+        "id": 68,
+        "name": "Москвич",
+        "slug": "moskvich"
+      },
+      {
+        "id": 92,
+        "name": "РАФ",
+        "slug": "raf"
+      },
+      {
+        "id": 202,
+        "name": "СеАЗ",
+        "slug": "seaz"
+      },
+      {
+        "id": 102,
+        "name": "СМЗ",
+        "slug": "smz"
+      },
+      {
+        "id": 142,
+        "name": "ТагАЗ",
+        "slug": "tagaz"
+      },
+      {
+        "id": 70,
+        "name": "УАЗ",
+        "slug": "uaz"
+      }
+    ],
+    "top_manufacturer": [
+      {
+        "id": 2,
+        "name": "Audi"
+      },
+      {
+        "id": 5,
+        "name": "BMW"
+      },
+      {
+        "id": 10,
+        "name": "Chevrolet"
+      },
+      {
+        "id": 11,
+        "name": "Chrysler"
+      },
+      {
+        "id": 12,
+        "name": "Citroen"
+      },
+      {
+        "id": 16,
+        "name": "Dodge"
+      },
+      {
+        "id": 18,
+        "name": "Fiat"
+      },
+      {
+        "id": 19,
+        "name": "Ford"
+      },
+      {
+        "id": 23,
+        "name": "Honda"
+      },
+      {
+        "id": 25,
+        "name": "Hyundai"
+      },
+      {
+        "id": 32,
+        "name": "Kia"
+      },
+      {
+        "id": 35,
+        "name": "Lexus"
+      },
+      {
+        "id": 39,
+        "name": "Mazda"
+      },
+      {
+        "id": 41,
+        "name": "Mercedes-Benz"
+      },
+      {
+        "id": 44,
+        "name": "Mitsubishi"
+      },
+      {
+        "id": 45,
+        "name": "Nissan"
+      },
+      {
+        "id": 47,
+        "name": "Opel"
+      },
+      {
+        "id": 48,
+        "name": "Peugeot"
+      },
+      {
+        "id": 52,
+        "name": "Renault"
+      },
+      {
+        "id": 57,
+        "name": "Skoda"
+      },
+      {
+        "id": 59,
+        "name": "Subaru"
+      },
+      {
+        "id": 61,
+        "name": "Toyota"
+      },
+      {
+        "id": 62,
+        "name": "Volkswagen"
+      },
+      {
+        "id": 63,
+        "name": "Volvo"
+      },
+      {
+        "id": 65,
+        "name": "ВАЗ (Lada)"
+      }
+    ],
+    "popular_manufacturer": [
+      {
+        "id": 62,
+        "name": "Volkswagen"
+      },
+      {
+        "id": 5,
+        "name": "BMW"
+      },
+      {
+        "id": 47,
+        "name": "Opel"
+      },
+      {
+        "id": 19,
+        "name": "Ford"
+      },
+      {
+        "id": 52,
+        "name": "Renault"
+      },
+      {
+        "id": 2,
+        "name": "Audi"
+      },
+      {
+        "id": 41,
+        "name": "Mercedes-Benz"
+      },
+      {
+        "id": 48,
+        "name": "Peugeot"
+      },
+      {
+        "id": 12,
+        "name": "Citroen"
+      },
+      {
+        "id": 45,
+        "name": "Nissan"
+      },
+      {
+        "id": 39,
+        "name": "Mazda"
+      },
+      {
+        "id": 61,
+        "name": "Toyota"
+      }
+    ],
+    "seller_type": [
+      {
+        "id": "individual",
+        "name": "частное лицо"
+      },
+      {
+        "id": "autohaus",
+        "name": "автохаус"
+      },
+      {
+        "id": "dealer",
+        "name": "автодилер"
+      }
+    ],
+    "state": [
+      {
+        "id": "new",
+        "name": "новый"
+      },
+      {
+        "id": "owned",
+        "name": "с пробегом"
+      },
+      {
+        "id": "emergency",
+        "name": "аварийный"
+      }
+    ],
+    "transmission": [
+      {
+        "id": "automatic",
+        "name": "автоматическая"
+      },
+      {
+        "id": "mechanical",
+        "name": "механическая"
+      }
+    ],
+    "closure_reason": [
+      {
+        "id": 1,
+        "name": "В объявлении указана завышенная / заниженная цена (нарушение п. 1 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 2,
+        "name": "Неверно указана марка или модель автомобиля (нарушение п. 1 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 3,
+        "name": "В объявлении указана недостоверная информация: неверно заполнено поле «Местоположение» (нарушение п. 1 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 4,
+        "name": "Объявление не о продаже автомобиля. https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 5,
+        "name": "Объявления о продаже / покупке запчастей, автомобилей на запчасти / по запчастям, машин-доноров и машин без документов размещайте в «Барахолке» (п. 3 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 6,
+        "name": "Объявления о продаже грузовых автомобилей, прицепов, спецтехники размещайте в «Барахолке»: http://baraholka.onliner.by/viewforum.php?f=281 (п. 4 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 7,
+        "name": "Не допускается размещение фотографий с водяными знаками (п. 5 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 8,
+        "name": "В объявление добавлены малоинформативные фото (п. 6 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 9,
+        "name": "В объявлении указана недостоверная информация:  загружены фотографии другого автомобиля  (нарушение п. 6 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 10,
+        "name": "Дублирование и пересоздание объявлений запрещено (п. 7 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 11,
+        "name": "Недопустимо размещение объявлений о покупке в «Автобарахолке». Объявления о покупке автомобилей размещайте в «Барахолке» (п. 9 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 12,
+        "name": "Объявления о продаже мототехники размещайте в «Мотобарахолке»: http://mb.onliner.by (п.10 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 13,
+        "name": "Автомобиль не растаможен. https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 14,
+        "name": "Автомобиль не новый. https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 15,
+        "name": "Объявление неактуально. https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 16,
+        "name": "В объявлении указана недостоверная информация: Занижен пробег  (нарушение п. 1 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 17,
+        "name": "Дублирование и пересоздание объявлений запрещено. При следующем аналогичном нарушении правил Ваш аккаунт будет заблокирован. https://blog.onliner.by/avtobaraholka_rules"
+      },
+      {
+        "id": 18,
+        "name": "В объявлении указана недостоверная информация: Указан неверный год выпуска  (нарушение п. 1 Правил). https://blog.onliner.by/avtobaraholka_rules"
+      }
+    ],
+    "engine_capacity": [
+      {
+        "id": "0.6",
+        "name": "0.6"
+      },
+      {
+        "id": "0.7",
+        "name": "0.7"
+      },
+      {
+        "id": "0.8",
+        "name": "0.8"
+      },
+      {
+        "id": "0.9",
+        "name": "0.9"
+      },
+      {
+        "id": "1",
+        "name": "1"
+      },
+      {
+        "id": "1.1",
+        "name": "1.1"
+      },
+      {
+        "id": "1.2",
+        "name": "1.2"
+      },
+      {
+        "id": "1.3",
+        "name": "1.3"
+      },
+      {
+        "id": "1.4",
+        "name": "1.4"
+      },
+      {
+        "id": "1.5",
+        "name": "1.5"
+      },
+      {
+        "id": "1.6",
+        "name": "1.6"
+      },
+      {
+        "id": "1.7",
+        "name": "1.7"
+      },
+      {
+        "id": "1.8",
+        "name": "1.8"
+      },
+      {
+        "id": "1.9",
+        "name": "1.9"
+      },
+      {
+        "id": "2",
+        "name": "2"
+      },
+      {
+        "id": "2.1",
+        "name": "2.1"
+      },
+      {
+        "id": "2.2",
+        "name": "2.2"
+      },
+      {
+        "id": "2.3",
+        "name": "2.3"
+      },
+      {
+        "id": "2.4",
+        "name": "2.4"
+      },
+      {
+        "id": "2.5",
+        "name": "2.5"
+      },
+      {
+        "id": "2.6",
+        "name": "2.6"
+      },
+      {
+        "id": "2.7",
+        "name": "2.7"
+      },
+      {
+        "id": "2.8",
+        "name": "2.8"
+      },
+      {
+        "id": "2.9",
+        "name": "2.9"
+      },
+      {
+        "id": "3",
+        "name": "3"
+      },
+      {
+        "id": "3.2",
+        "name": "3.2"
+      },
+      {
+        "id": "3.5",
+        "name": "3.5"
+      },
+      {
+        "id": "3.6",
+        "name": "3.6"
+      },
+      {
+        "id": "4",
+        "name": "4"
+      },
+      {
+        "id": "4.5",
+        "name": "4.5"
+      },
+      {
+        "id": "5",
+        "name": "5"
+      },
+      {
+        "id": "5.5",
+        "name": "5.5"
+      },
+      {
+        "id": "6",
+        "name": "6"
+      },
+      {
+        "id": "7",
+        "name": "7"
+      },
+      {
+        "id": "8",
+        "name": "8"
+      }
+    ],
+    "premium_stickers": [
+      {
+        "id": "fast_trade",
+        "name": "Срочная продажа"
+      },
+      {
+        "id": "two_tires",
+        "name": "Два комплекта резины"
+      },
+      {
+        "id": "on_warranty",
+        "name": "На гарантии"
+      },
+      {
+        "id": "dealer_service",
+        "name": "Обслуживался у дилера"
+      },
+      {
+        "id": "trade_possible",
+        "name": "Возможен торг"
+      },
+      {
+        "id": "perfect_state",
+        "name": "Идеальное состояние"
+      },
+      {
+        "id": "one_owner",
+        "name": "Один владелец"
+      },
+      {
+        "id": "no_run_by",
+        "name": "Без пробега по РБ"
+      }
+    ],
+    "equipment_sections": [
+      {
+        "id": "multimedia",
+        "name": "Мультимедиа"
+      },
+      {
+        "id": "comfort",
+        "name": "Комфорт"
+      },
+      {
+        "id": "sight",
+        "name": "Обзор"
+      },
+      {
+        "id": "exterior",
+        "name": "Экстерьер"
+      },
+      {
+        "id": "security",
+        "name": "Защита от угона"
+      },
+      {
+        "id": "interior",
+        "name": "Салон"
+      },
+      {
+        "id": "safety",
+        "name": "Безопасность"
+      }
+    ],
+    "primary_marks": [
+      {
+        "id": "driving_performance",
+        "name": "Ходовые качества"
+      },
+      {
+        "id": "comfort",
+        "name": "Комфорт"
+      },
+      {
+        "id": "reliability",
+        "name": "Надежность"
+      },
+      {
+        "id": "service_cost",
+        "name": "Стоимость обслуживания"
+      },
+      {
+        "id": "price_quality",
+        "name": "Цена — качество"
+      }
+    ],
+    "tenure": [
+      {
+        "id": "lt_one_year",
+        "name": "Менее года"
+      },
+      {
+        "id": "one_two_years",
+        "name": "1-2 года"
+      },
+      {
+        "id": "three_five_years",
+        "name": "3-5 лет"
+      },
+      {
+        "id": "gt_five_years",
+        "name": "Более 5 лет"
+      }
+    ],
+    "audio_system": [
+      {
+        "id": "standard",
+        "name": "Штатная аудиосистема"
+      },
+      {
+        "id": "premium",
+        "name": "Премиальная аудиосистема"
+      }
+    ],
+    "power_windows": [
+      {
+        "id": "front",
+        "name": "Электростеклоподъемники передние"
+      },
+      {
+        "id": "all",
+        "name": "Электростеклоподъемники все"
+      }
+    ],
+    "wheel_configuration": [
+      {
+        "id": "out",
+        "name": "Регулировка руля по вылету"
+      },
+      {
+        "id": "electro",
+        "name": "Электрорегулировка руля"
+      }
+    ],
+    "suspension": [
+      {
+        "id": "springloaded",
+        "name": "Пружинная подвеска"
+      },
+      {
+        "id": "pneumatic",
+        "name": "Пневматическая подвеска"
+      },
+      {
+        "id": "hydraulic",
+        "name": "Гидравлическая подвеска"
+      },
+      {
+        "id": "adaptive",
+        "name": "Адаптивная подвеска (с изменяемой жесткостью)"
+      },
+      {
+        "id": "active",
+        "name": "Активный стабилизатор поперечной устойчивости"
+      }
+    ],
+    "conditioner": [
+      {
+        "id": "basic",
+        "name": "Кондиционер"
+      },
+      {
+        "id": "climate_control",
+        "name": "Климат-контроль"
+      },
+      {
+        "id": "one_zone_climate_control",
+        "name": "Климат-контроль 1-зонный"
+      },
+      {
+        "id": "two_zone_climate_control",
+        "name": "Климат-контроль 2-зонный"
+      },
+      {
+        "id": "multi_zone_climate_control",
+        "name": "Многозонный климат-контроль"
+      }
+    ],
+    "parktronic": [
+      {
+        "id": "rear",
+        "name": "Парктроник задний"
+      },
+      {
+        "id": "front",
+        "name": "Парктроник передний"
+      }
+    ],
+    "camera": [
+      {
+        "id": "backview",
+        "name": "Камера заднего вида"
+      },
+      {
+        "id": "wholeview",
+        "name": "Камера 360°"
+      }
+    ],
+    "headlamps": [
+      {
+        "id": "halogen",
+        "name": "Галогенные фары"
+      },
+      {
+        "id": "xenon",
+        "name": "Ксеноновые / Биксеноновые фары"
+      },
+      {
+        "id": "led",
+        "name": "Светодиодные фары"
+      },
+      {
+        "id": "matrix",
+        "name": "Матричные фары"
+      },
+      {
+        "id": "laser",
+        "name": "Лазерные фары"
+      }
+    ],
+    "electrical_heating": [
+      {
+        "id": "side_mirrors",
+        "name": "Электрообогрев боковых зеркал"
+      },
+      {
+        "id": "wiper",
+        "name": "Электрообогрев зоны стеклоочистителей"
+      },
+      {
+        "id": "windshield",
+        "name": "Электрообогрев лобового стекла"
+      }
+    ],
+    "wheels": [
+      {
+        "id": "steel",
+        "name": "Стальные диски"
+      },
+      {
+        "id": "alloy",
+        "name": "Литые диски"
+      }
+    ],
+    "wheels_size": [
+      {
+        "id": "R12",
+        "name": "R12"
+      },
+      {
+        "id": "R13",
+        "name": "R13"
+      },
+      {
+        "id": "R14",
+        "name": "R14"
+      },
+      {
+        "id": "R15",
+        "name": "R15"
+      },
+      {
+        "id": "R16",
+        "name": "R16"
+      },
+      {
+        "id": "R17",
+        "name": "R17"
+      },
+      {
+        "id": "R18",
+        "name": "R18"
+      },
+      {
+        "id": "R19",
+        "name": "R19"
+      },
+      {
+        "id": "R20",
+        "name": "R20"
+      },
+      {
+        "id": "R21",
+        "name": "R21"
+      },
+      {
+        "id": "R22",
+        "name": "R22"
+      },
+      {
+        "id": "R23",
+        "name": "R23"
+      },
+      {
+        "id": "R24",
+        "name": "R24"
+      },
+      {
+        "id": "R25",
+        "name": "R25"
+      },
+      {
+        "id": "R26",
+        "name": "R26"
+      },
+      {
+        "id": "R27",
+        "name": "R27"
+      },
+      {
+        "id": "R28",
+        "name": "R28"
+      }
+    ],
+    "alarm_system": [
+      {
+        "id": "standard",
+        "name": "Сигнализация"
+      },
+      {
+        "id": "with_reaction",
+        "name": "Сигнализация с обратной связью"
+      }
+    ],
+    "number_of_seats": [
+      {
+        "id": "2",
+        "name": "2 места"
+      },
+      {
+        "id": "3",
+        "name": "3 места"
+      },
+      {
+        "id": "4",
+        "name": "4 места"
+      },
+      {
+        "id": "5",
+        "name": "5 мест"
+      },
+      {
+        "id": "6",
+        "name": "6 мест"
+      },
+      {
+        "id": "7",
+        "name": "7 мест"
+      },
+      {
+        "id": "8",
+        "name": "8 мест"
+      },
+      {
+        "id": "9",
+        "name": "9 мест"
+      }
+    ],
+    "compartment_decoration": [
+      {
+        "id": "textile",
+        "name": "Ткань"
+      },
+      {
+        "id": "velour",
+        "name": "Велюр"
+      },
+      {
+        "id": "skin",
+        "name": "Кожа"
+      },
+      {
+        "id": "leatherette",
+        "name": "Искусственная кожа"
+      },
+      {
+        "id": "alcantara",
+        "name": "Алькантара"
+      },
+      {
+        "id": "combined",
+        "name": "Комбинированный"
+      }
+    ],
+    "compartment_color": [
+      {
+        "id": "light",
+        "name": "Светлый салон"
+      },
+      {
+        "id": "dark",
+        "name": "Темный салон"
+      }
+    ],
+    "seat_adjustment": [
+      {
+        "id": "mechanical_driver",
+        "name": "Механическая регулировка сиденья водителя"
+      },
+      {
+        "id": "mechanical_front",
+        "name": "Механическая регулировка сиденья переднего пассажира"
+      },
+      {
+        "id": "mechanical_all",
+        "name": "Механическая регулировка всех сидений"
+      },
+      {
+        "id": "electro_driver",
+        "name": "Электрорегулировка сиденья водителя"
+      },
+      {
+        "id": "electro_front",
+        "name": "Электрорегулировка сиденья переднего пассажира"
+      },
+      {
+        "id": "electro_all",
+        "name": "Электрорегулировка всех сидений"
+      }
+    ],
+    "heated_seats": [
+      {
+        "id": "front",
+        "name": "Подогрев передних сидений"
+      },
+      {
+        "id": "back",
+        "name": "Подогрев задних сидений"
+      }
+    ],
+    "seats_aeration": [
+      {
+        "id": "front",
+        "name": "Вентиляция передних сидений"
+      },
+      {
+        "id": "back",
+        "name": "Вентиляция задних сидений"
+      }
+    ],
+    "seats_massage": [
+      {
+        "id": "front",
+        "name": "Передние сиденья с массажем"
+      },
+      {
+        "id": "back",
+        "name": "Задние сиденья с массажем"
+      }
+    ],
+    "cruise_control": [
+      {
+        "id": "basic",
+        "name": "Круиз-контроль"
+      },
+      {
+        "id": "adaptive",
+        "name": "Адаптивный круиз-контроль"
+      }
+    ],
+    "auxiliary_system": [
+      {
+        "id": "abs",
+        "name": "Антиблокировочная система (ABS)"
+      },
+      {
+        "id": "stabilization_system",
+        "name": "Система стабилизации"
+      },
+      {
+        "id": "driver_assistance",
+        "name": "Системы помощи водителю"
+      },
+      {
+        "id": "night_vision_system",
+        "name": "Система ночного видения"
+      },
+      {
+        "id": "autopilot",
+        "name": "Автопилот"
+      }
+    ]
+  }
+}

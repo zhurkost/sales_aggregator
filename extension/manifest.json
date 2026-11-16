@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Автопост • помощник заполнения (beta)",
-  "description": "Автопост: заполнение объявлений о недвижимости на Kufar, Onliner, Realt и Domovita. Публикацию подтверждает пользователь.",
-  "version": "0.9.30",
+  "description": "Автопост: подготовка и заполнение объявлений о недвижимости и автомобилях. Публикацию подтверждает пользователь.",
+  "version": "0.9.35",
   "minimum_chrome_version": "112",
   "permissions": [
     "storage",
@@ -15,8 +15,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://r.onliner.by/*"],
-      "js": ["onliner-photo-state.js"],
+      "matches": [
+        "https://r.onliner.by/*"
+      ],
+      "js": [
+        "onliner-photo-state.js"
+      ],
       "world": "MAIN",
       "run_at": "document_start",
       "all_frames": false
@@ -40,13 +44,17 @@
         "https://www.kufar.by/*",
         "https://r.onliner.by/*",
         "https://realt.by/*",
-        "https://domovita.by/*"
+        "https://domovita.by/*",
+        "https://ab.onliner.by/*",
+        "https://av.by/*",
+        "https://abw.by/*"
       ],
       "js": [
         "core.js",
         "rental-autocomplete.js",
         "rental-onliner-photos.js",
         "rental-form.js",
+        "car-form.js",
         "rental-page.js"
       ],
       "run_at": "document_idle",

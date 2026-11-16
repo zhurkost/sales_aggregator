@@ -1,0 +1,69 @@
+{
+  "observed_date": "2026-11-12",
+  "url": "https://www.kufar.by/ain/create?isUnauthorized=1",
+  "account_state": "anonymous",
+  "sample": ["Kia", "Rio", "IV Рестайлинг"],
+  "category_path": ["Авто и запчасти", "Легковые авто"],
+  "condition": {"label": "С пробегом", "value": "1"},
+  "generation_labels": ["IV Рестайлинг", "IV", "III Рестайлинг", "III", "II Рестайлинг", "II", "I Рестайлинг", "I"],
+  "year_filter": false,
+  "single_select": {
+    "opener": "[data-name=FIELD] [data-testid=base-dropdown-ui]",
+    "items": "[data-testid=popup-body] [class*=_item_with-check]",
+    "method": "Exact unique text within the open popup, not the first match in the page",
+    "tested": {
+      "cars_brand_v2": "Kia",
+      "cars_model_v2": "Rio",
+      "cars_gen_v2": "IV Рестайлинг",
+      "cars_type": "Седан",
+      "cars_seats": "5",
+      "cars_capacity": "1.6 л",
+      "regdate": "2021",
+      "cars_color": "Белый",
+      "cars_interior_color": "Тёмный",
+      "cars_interior_material": "Ткань",
+      "region": "Брестская область",
+      "area": "Брест"
+    }
+  },
+  "chips": {
+    "options": "[data-name=FIELD] [role=button]",
+    "selected": "[data-name=FIELD] [role=button][class*=_filled-green]",
+    "tested": {"cars_engine": "Бензин", "cars_drive": "Передний", "cars_gearbox": "Автоматическая", "cars_autogearbox": "Автомат", "condition": "С пробегом"}
+  },
+  "conditional_checks": [
+    {"set": {"cars_gearbox": "1"}, "appeared": "cars_autogearbox", "options": ["Автомат", "Робот", "Вариатор"]},
+    {"set": {"cars_engine": "5"}, "appeared": "cars_battery_capacity", "cars_capacity_required": false},
+    {"set": {"cars_engine": "1"}, "disappeared": "cars_battery_capacity", "cars_capacity_required": true},
+    {"set": {"condition": "1"}, "appeared": "repair_needed"},
+    {"set": {"region_label": "Брестская область"}, "area_required": true, "selected_area": "Брест"}
+  ],
+  "multi_select": {
+    "options": "[data-testid=popup-body] label",
+    "checkbox": "[role=checkbox][aria-label]",
+    "commit": "[data-testid=popup-body] button[class*=--green-accent]",
+    "commit_text": "Применить",
+    "tested": {"cars_lights": ["Светодиодные"], "cars_features": ["Обогрев руля", "Бесключевой доступ"]},
+    "verification": "Selected labels appeared in the dropdown value after Apply. Full replacement/uncheck semantics were not tested."
+  },
+  "checkboxes": {
+    "input": "[data-name=FIELD] input[type=checkbox]",
+    "click": "[data-name=FIELD] label",
+    "unchecked": {"checked": false, "aria-checked": "false"},
+    "checked": {"checked": true, "aria-checked": "1"},
+    "tested": ["cars_climate", "cars_seatwarmer", "cars_abs", "cars_navigation", "cars_alloy_wheels", "cars_parktronic", "cars_sunroof", "cars_alarm", "cars_cruise_control", "cars_aux", "repair_needed"],
+    "caveat": "Playwright check on role=checkbox reported failure despite input.checked=true; hidden input has no clickable bounding box. Read input.checked, not aria-checked.",
+    "programmatic_check": "Native input.click() was tested for all 11 fields: set false, set true, repeat true without extra click. State persisted after React rerender; repair_needed was also separately set false and read in a later call."
+  },
+  "currency": {
+    "opener": "[data-name=price] [data-testid=base-dropdown-ui]",
+    "options": [{"ui": "руб.", "metadata_label": "р.", "value": "BYR"}, {"ui": "$", "value": "USD"}, {"ui": "€", "value": "EUR"}],
+    "selected": "руб."
+  },
+  "battery_input": {"name": "cars_battery_capacity", "value": "60", "min": "0", "step": "0.1", "condition": "cars_engine=5", "tested": true},
+  "price_mode": {"selector": "[data-name=price] [role=radio]", "selected_selector": "[data-name=price] [role=radio][aria-checked=true]", "tested_sequence": ["common", "contact", "common"], "result": "Price input disappears for contact and returns EMPTY for common. Fill amount after mode."},
+  "uploads": "Login required. JPEG/JPG/PNG up to 10 MB displayed; exact bytes, file count and server acceptance not verified.",
+  "contacts": "Login required; no personal contacts entered.",
+  "published": false,
+  "promotions_selected": false
+}

@@ -1,0 +1,50 @@
+{
+  "source_file": "abw-cities.har",
+  "source_sha256": "dbe9586f33affdd8adf584b9221c4c396f2031af00a0993f4e84ad49850cd2c4",
+  "source_endpoint": "https://b.abw.by/api/v2/create/options",
+  "imported_at": "2026-11-15T07:16:10.231Z",
+  "matching_recorded_responses": 5,
+  "city_dictionary_sha256": "b5e972c3737e295c2d7928067ef2c37346e0a4f61961b3085ddc6330963f2778",
+  "regions": [
+    {
+      "name": "Минская область",
+      "native_id": null,
+      "cities": 29
+    },
+    {
+      "name": "Гомельская область",
+      "native_id": null,
+      "cities": 24
+    },
+    {
+      "name": "Могилевская область",
+      "native_id": null,
+      "cities": 21
+    },
+    {
+      "name": "Витебская область",
+      "native_id": null,
+      "cities": 26
+    },
+    {
+      "name": "Гродненская область",
+      "native_id": null,
+      "cities": 19
+    },
+    {
+      "name": "Брестская область",
+      "native_id": null,
+      "cities": 22
+    }
+  ],
+  "unique_cities": 141,
+  "popular_duplicates_excluded": 6,
+  "completeness": "Complete grouped city menu returned by create/options, not all geographical settlements in Belarus",
+  "native_region_ids_available": false,
+  "network_requests_during_import": 0,
+  "browser_fill_verified": false,
+  "validation": {
+    "fields": 23,
+    "choices": 14322
+  }
+}
