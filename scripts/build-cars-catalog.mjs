@@ -51,7 +51,7 @@ const definitions=[
  ['region','Область','enum','region','region','place_region','region'],
  ['city','Город','enum','area','city','place_city','city'],
  ['phone','Телефон','text','phone','phone','phone_number','phone'],
- ['seller_name','Имя продавца','text','name',null,'name','seller_name'],
+ ['seller_name','Имя продавца','text','name','sellerName','name','seller_name'],
  ['video','Видео','text',null,null,'video_url','video'],
 ];
 const parents={model:'brand',generation:'model',city:'region'},roots={brand:'brand',model:'brand',generation:'brand',region:'region',city:'region'};
@@ -214,6 +214,15 @@ const runtimeMappings={};for(const p of platforms){runtimeMappings[p]={fields:{}
    runtimeMappings[p].paths[n.common_option_id]=path;
   }}
 }
+// Kufar models Minsk as a region with districts, whereas the other sites use a city.
+// Resolve that explicit cross-level path without inventing a district or merging identities.
+const minskRegion=Object.values(nodes).find(n=>n.field==='car.region'&&n.name==='Минская область');
+const minskCity=Object.values(nodes).find(n=>n.field==='car.city'&&n.parentId===minskRegion?.id&&n.name==='Минск');
+const nativeMinsk=source.kufar.find(f=>f.id==='kufar.region')?.options.find(n=>n.name==='Минск');
+if(!minskCity||!nativeMinsk)throw Error('Reviewed Minsk mapping is missing from source catalogs');
+runtimeMappings.kufar.paths[minskCity.id]=[{common_option_id:minskCity.id,field:'kufar.region',id:nativeMinsk.id,value:nativeMinsk.value,name:nativeMinsk.name}];
+runtimeMappings.kufar.pathIssues={[minskCity.id]:['Выберите район Минска в форме Kufar.']};
+mappings.kufar.pathIssues=runtimeMappings.kufar.pathIssues;
 const sourceFields={};for(const p of platforms)for(const f of source[p])sourceFields[f.id]={...f,options:f.parent_option_id?[]:f.options.filter(o=>!o.childOptions)};
 for(const p of platforms)mappings[p].paths=runtimeMappings[p].paths;
 const identityAliases=Object.fromEntries(Object.keys(merges).map(old=>[old,migrated(old)]));

@@ -1,5 +1,12 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 async function fixture(t,html,controls){const {Window}=await import('happy-dom');const w=new Window();t.after(()=>w.close());w.document.body.innerHTML=html;w.eval(fs.readFileSync(path.join(__dirname,'../car-form.js'),'utf8'));return {w,form:new w.AutopostCarForm.Form({platform:'abw',controls},[],async()=>true)};}
+test('Onliner seller name fills its contact input without touching phone or submitting',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/parsing/cars_used_sale/binding_cars_used_sale_onliner.json'))).fields;
+ const binding=bindings.find(b=>b.option_id==='onliner.sellerName');assert(binding);
+ const {w,form}=await fixture(t,'<div class="vehicle-form"><input type="text" maxlength="50" class="vehicle-form__input_width_xs"><input type="tel" maxlength="55" value="+375291234567"><button>Разместить объявление</button></div>',[{field:'onliner.sellerName',value:'Илья',name:'Илья',binding}]);
+ form.recipe.platform='onliner';form.done.add('onliner.sellerType');w.document.querySelector('button').onclick=()=>assert.fail('Never publish');
+ await form.tick();await form.tick();assert.equal(w.document.querySelector('input[type=text]').value,'Илья');assert.equal(w.document.querySelector('input[type=tel]').value,'+375291234567');
+});
 test('cars preserve existing values and trusted edits and do not submit',async t=>{
  const controls=[{field:'abw.mileage',label:'Пробег',value:12345,name:'12345'},{field:'abw.description',label:'Описание',value:'new',name:'new'}];
  const {w,form}=await fixture(t,'<input placeholder="Пробег"><textarea placeholder="Описание">existing</textarea><button type="submit">Опубликовать</button>',controls);

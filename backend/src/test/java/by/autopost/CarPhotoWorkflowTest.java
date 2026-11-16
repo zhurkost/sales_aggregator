@@ -28,6 +28,15 @@ class CarPhotoWorkflowTest {
     public String model(){return "test";}
     public ObjectNode serverJson(String identity,String prompt,String source){throw new AssertionError("Expected image request");}
   }
+  @Test void finalPassReadsOdometerFreshInsteadOfCopyingAnOverviewGuess()throws Exception{
+    int[] calls={0};AiGateway ai=new Vision(){public ObjectNode serverJson(String i,String p,String s,List<String> a){
+      if(++calls[0]==1)return object("text","BMW. Пробег 101905 км.","observations",List.of("Кожаный салон","Пробег: 101905 km"),"detailRequests",object("single",List.of(1),"groups",array()));
+      assertFalse(s.contains("101905"));assertTrue(s.contains("Кожаный салон"));assertTrue(p.contains("закрыт"));
+      return object("text","Продаётся BMW с кожаным салоном.","warnings",List.of("Пробег не читается: панель закрыта рулём."));
+    }};
+    var result=new CarPhotoRecognitionService(new JpegCarPhotoComposer(),catalog,ai).recognize("test",object("images",List.of(image(Color.BLUE))));
+    assertFalse(text(result,"text").contains("101905"));assertEquals(2,calls[0]);
+  }
   @Test void overviewThenRequestedWholeFramesAndGroupsReachOneFinalCall()throws Exception{
     var images=array(Collections.nCopies(8,image(Color.RED)));images.set(7,MAPPER.valueToTree(image(Color.BLUE)));int[] calls={0};
     AiGateway ai=new Vision(){public ObjectNode serverJson(String id,String prompt,String source,List<String> attachments){

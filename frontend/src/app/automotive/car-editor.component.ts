@@ -68,7 +68,7 @@ export class CarEditorComponent implements OnInit,OnDestroy {
   for(const id of affected){const f=this.schema?.fields.find(f=>f.id===id);if(f){
    this.queries[id]='';await this.loadOptions(f);if(!this.alive||revision!==this.candidateRevision)return;
    const ids=this.candidateFilters[id],current=this.card.values[id];
-   if(selectSingle&&ids?.length===1&&(current==null||current===''||(current!==ids[0]&&current===this.aiAssigned[id]))&&this.options[id]?.some(o=>o.id===ids[0])){
+   if(selectSingle&&ids?.length===1&&(current==null||current===''||(current!==this.inputValue(f,ids[0])&&current===this.aiAssigned[id]))&&this.options[id]?.some(o=>o.id===ids[0])){
     const value=this.inputValue(f,ids[0]);this.card.values[id]=value;this.picks[id]=ids[0];this.candidateAssigned[id]=value;this.aiAssigned[id]=value;this.evidence[id]=this.candidateReasons[id]||'Единственный вариант ИИ';this.change();
    }
   }}

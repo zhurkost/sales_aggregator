@@ -3,6 +3,14 @@ import {CarEditorComponent} from './car-editor.component';
 import {CarGateway} from './car.gateway';
 import {WorkspaceGateway} from '../workspace.gateway';
 describe('cars editor',()=>{
+ it('keeps a confirmed numeric year when generation changes and photo filters are cleared',async()=>{
+  const year={id:'car.year',key:'year',name:'Год выпуска',type:'integer',control:'select' as const};
+  const generation={id:'car.generation',key:'generation',name:'Поколение',type:'enum',root:'car.brand',parent_option_id:'car.model'};
+  const c=new CarEditorComponent({options:vi.fn(async()=>({items:[{id:'2020',name:'2020'}],total:1})),analyze:vi.fn(async()=>({values:{'car.year':2020},evidence:{'car.year':'2020 года'},candidates:{'car.year':['2020']},warnings:[]}))} as unknown as CarGateway);
+  c.schema={categoryId:'cars_used_sale',fields:[year,generation],extras:[],platforms:[]};
+  await c.analyze();await c.select(generation,'generation');
+  expect(c.card.values['car.year']).toBe(2020);expect(c.picks['car.year']).toBe('2020');c.ngOnDestroy();
+ });
  it('uses year choices and restrictions while sending a numeric year and preserving manual selection',async()=>{
   const year={id:'car.year',key:'year',name:'Год выпуска',type:'integer',control:'select' as const};
   const items=[2026,2025,2024,2023,2022,2021,2020,2019].map(y=>({id:String(y),name:String(y)}));

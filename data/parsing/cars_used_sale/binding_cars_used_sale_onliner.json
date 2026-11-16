@@ -2386,6 +2386,32 @@
         "onliner.onlyChat",
         "onliner.callsAnytime"
       ]
+    },
+    {
+      "option_id": "onliner.sellerName",
+      "status": "ready",
+      "overwrite": "if_empty",
+      "wait_for": [
+        "visible",
+        "enabled"
+      ],
+      "target": {
+        "selectors": [
+          ".vehicle-form input[type=\"text\"][maxlength=\"50\"].vehicle-form__input_width_xs"
+        ]
+      },
+      "action": "set_value",
+      "events": [
+        "input",
+        "change",
+        "blur"
+      ],
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "onliner.sellerType"
+      ]
     }
   ]
 }

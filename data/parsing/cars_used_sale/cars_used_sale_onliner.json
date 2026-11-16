@@ -112577,6 +112577,22 @@
         "options_complete": true
       },
       {
+        "id": "onliner.sellerName",
+        "name": "Имя продавца",
+        "description": "Проверено в авторизованной форме 2026-11-16. Появляется после выбора «Частное лицо».",
+        "type": "text",
+        "options": [],
+        "required": null,
+        "when": {
+          "option_id": "onliner.sellerType",
+          "operator": "equals",
+          "value": "individual"
+        },
+        "validation": {
+          "max_length": 50
+        }
+      },
+      {
         "id": "onliner.onlyChat",
         "name": "Хочу общаться только в чатах",
         "description": "",

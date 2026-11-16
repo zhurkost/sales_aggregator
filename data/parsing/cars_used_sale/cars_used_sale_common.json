@@ -349278,6 +349278,7 @@
         "description": "Имя продавца",
         "platforms": [
           "kufar",
+          "onliner",
           "av",
           "abw"
         ]

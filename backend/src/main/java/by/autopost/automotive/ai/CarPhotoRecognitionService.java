@@ -38,6 +38,11 @@ public class CarPhotoRecognitionService {
       Если после уточнения цифры или назначение счётчика неразборчивы,
       пробег не угадывай. Чётко прочитанный общий пробег включи в observations с номером фото
       и единицами измерения, а также в текст объявления.
+      Наличие приборной панели само по себе не означает, что виден одометр. Если низ панели закрыт
+      рулём, цифры слишком мелкие, размыты или видна только часть числа — пробег отсутствует в ответе.
+      Нужно уверенно прочитать каждую цифру и единицу измерения. Не восстанавливай скрытые цифры,
+      не используй типичный пробег этой модели и не повторяй число из предварительного описания.
+      На обзорном этапе не читай числовой пробег даже в observations: отметь только кадр для проверки.
       В text напиши связный текст объявления о продаже автомобиля, готовый для редактирования пользователем,
       из распознанных марки, модели, поколения и видимых признаков. Пиши по-русски короткими абзацами,
       прямо и по делу, без слов «предположительно», «вероятно», «возможно», «скорее всего», «похоже».
@@ -131,7 +136,9 @@ public class CarPhotoRecognitionService {
         Новые уточнения не запрашивай: detailRequests должен быть {single:[],groups:[]}.
         Если деталей недостаточно, пропусти неподтверждённые факты и ограничения, поясни это в warnings.
         """+options;
-      ObjectNode context=object("overview",object("text",clean(overview,"text",15000),"generationHint",clean(overview,"generationHint",1500),"observations",observations(overview),"candidates",overview.path("candidates"),"candidateEvidence",overview.path("candidateEvidence"),"warnings",overview.path("warnings")),"attachments",manifest,"planWarnings",planWarnings);
+      ArrayNode preliminary=array();for(JsonNode observation:observations(overview))if(!mentionsDistance(observation.asText()))preliminary.add(observation);
+      String preliminaryText=Arrays.stream(clean(overview,"text",15000).split("(?<=[.!?])\\s+|\\n+")).filter(sentence->!mentionsDistance(sentence)).collect(java.util.stream.Collectors.joining(" "));
+      ObjectNode context=object("overview",object("text",preliminaryText,"generationHint",clean(overview,"generationHint",1500),"observations",preliminary,"candidates",overview.path("candidates"),"candidateEvidence",overview.path("candidateEvidence"),"warnings",overview.path("warnings")),"attachments",manifest,"planWarnings",planWarnings);
       reply=ai.serverJson(identity,finalPrompt,context.toString(),details);
     }
     reply=codes.decode(reply);
@@ -140,6 +147,7 @@ public class CarPhotoRecognitionService {
     ObjectNode filtered=candidates.validate(reply,warnings);
     return object("text",recognized,"generationHint",clean(reply,"generationHint",1500),"observations",observations(reply),"candidates",filtered.path("candidates"),"candidateEvidence",filtered.path("candidateEvidence"),"warnings",warnings,"model",ai.visionModel(),"recognitionPasses",repaired?3:2,"detailImages",manifest,"collage",object("photoCount",collage.photoCount(),"bytes",collage.byteSize(),"width",collage.width(),"height",collage.height()));
   }
+  private boolean mentionsDistance(String text){return java.util.regex.Pattern.compile("(?iu)пробег|одометр|\\b(?:odo|odometer|mileage|km|км|mi)\\b").matcher(text).find();}
   private ArrayNode observations(JsonNode reply){ArrayNode result=array();for(JsonNode item:list(reply.path("observations"))){if(result.size()==40)break;if(item.isTextual())result.add(clean(item,1000));}return result;}
   private ArrayNode detailRequests(JsonNode plan,int count,ArrayNode warnings){
     ArrayNode singles=array(),groups=array();Set<Integer> used=new HashSet<>();

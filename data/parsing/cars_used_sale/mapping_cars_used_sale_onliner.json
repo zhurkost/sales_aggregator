@@ -177,6 +177,14 @@
         "kind": "identity",
         "on_unmapped": "needs_review"
       }
+    },
+    {
+      "common_option_id": "car.seller_name",
+      "platform_option_id": "onliner.sellerName",
+      "conversion": {
+        "kind": "identity",
+        "on_unmapped": "needs_review"
+      }
     }
   ],
   "nodes": [

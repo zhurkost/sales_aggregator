@@ -51032,6 +51032,11 @@
       ]
     }
   ],
+  "pathIssues": {
+    "car.option.98f4ce85-5318-465c-a573-5de3dc8ac76e": [
+      "Выберите район Минска в форме Kufar."
+    ]
+  },
   "paths": {
     "car.option.1f0297fc-e5ed-4759-bd6e-025c3aa27ecf": [
       {
@@ -296358,6 +296363,15 @@
         "id": "kufar.catalog.category_2010.mark_skoda.model_kamiq.generation_kamiq_i21669121",
         "value": "category_2010.mark_skoda.model_kamiq.generation_kamiq_i21669121",
         "name": "I"
+      }
+    ],
+    "car.option.98f4ce85-5318-465c-a573-5de3dc8ac76e": [
+      {
+        "common_option_id": "car.option.98f4ce85-5318-465c-a573-5de3dc8ac76e",
+        "field": "kufar.region",
+        "id": "kufar.region.7",
+        "value": "7",
+        "name": "Минск"
       }
     ]
   }

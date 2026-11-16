@@ -26,6 +26,7 @@ public class CarPreparationService {
           JsonNode nativePath=mapping.path("paths").path(e.getValue().asText());
           if(nativePath.isArray()&&!nativePath.isEmpty()){
             for(JsonNode mapped:nativePath)target.set(text(mapped,"field"),object("value",mapped.get("value"),"name",text(mapped,"name"),"sourceId",text(mapped,"id")));
+            pending.addAll(array(list(mapping.path("pathIssues").path(e.getValue().asText()))));
             return;
           }
           for(JsonNode n:catalog.path(e.getValue().asText())){
@@ -67,6 +68,8 @@ public class CarPreparationService {
       // Explicit scope and units, never inferred from a photograph.
       if(p.equals("kufar"))target.set("kufar.condition",object("value","1","name","С пробегом"));
       if(p.equals("onliner"))target.set("onliner.state",object("value","owned","name","с пробегом"));
+      // This researched flow supports private sellers; reveal their name input before filling it.
+      if(p.equals("onliner")&&values.has("car.seller_name")&&!target.has("onliner.sellerType"))target.set("onliner.sellerType",object("value","individual","name","частное лицо"));
       if(p.equals("kufar")&&values.has("car.price"))target.set("kufar.price_mode",object("value","common","name","Цена"));
       if(p.equals("onliner")&&values.has("car.region"))target.set("onliner.country",object("value",mapping.path("context").get("value"),"name","Беларусь"));
       if(values.has("car.phone")){

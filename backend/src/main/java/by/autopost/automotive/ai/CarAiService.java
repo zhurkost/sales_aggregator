@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 public class CarAiService {
   public static final String AD_STYLE="""
     Пользовательский текст (text или car.description) — готовое объявление о продаже от лица продавца.
-    Пиши связно, короткими абзацами: «Продаётся BMW 7 серии. Серый седан с коричневым кожаным салоном,
-    легкосплавными дисками и солнцезащитными шторками на задних окнах».
+    Пиши связно, короткими абзацами от лица продавца, без перечня технических параметров.
+    Например, если подтверждены один владелец и сервисная книжка: «Продаю BMW 7 серии.
+    Один владелец, есть сервисная книжка. Свяжитесь со мной, чтобы узнать подробности».
     Не описывай процесс распознавания: не используй «виден», «видна», «видно», «заметен», «наблюдается»,
     «на фото», «на снимках», «по изображению», «судя по», «можно разглядеть», «что видно по значку»
     и аналогичные обороты. Вместо «На фото виден кожаный салон» пиши «Кожаный салон».
@@ -103,11 +104,15 @@ public class CarAiService {
       Сохраняй эти ограничения, если текст не уточнил характеристику или не сменил автомобиль.
       Если описание пользователя относится к другому автомобилю, верни discardPhotoCandidates:true.
       Явно названная характеристика имеет приоритет перед более широким набором вариантов.
+      В этом случае верни факт с точной цитатой пользователя, а candidates этого поля сузь до одного
+      подтверждённого значения. Не оставляй диапазон годов или несколько приводов вопреки явному тексту.
       Обязательно верни car.description отдельным фактом: это готовое объявление для привлечения покупателя,
       а не повторение технической карточки. Из двух исходных текстов составь короткие естественные абзацы
       от лица продавца: представь автомобиль, выдели подтверждённые преимущества, особенности эксплуатации,
       обслуживания и условия продажи, если они указаны. Заверши спокойным приглашением связаться.
       Технические параметры извлекай полностью в отдельные facts, но не перечисляй их повторно в описании.
+      Не дублируй в car.description год, пробег, цену, объём, мощность и списки коробок/приводов:
+      они уже отображаются в технических полях объявления.
       Марку и модель можно назвать для представления автомобиля; отдельную характеристику упомяни только
       если она важна для смысла объявления, а не чтобы заполнить текст перечнем полей.
       Не добавляй отсутствующие в источниках достоинства, исправность, отсутствие ДТП, торг, срочность,
@@ -124,6 +129,17 @@ public class CarAiService {
     ObjectNode reply=codes.decode(normalizeFacts(ai.serverJson(identity,prompt,source)));
     ObjectNode values=object(),evidence=object();
     accept(reply,values,evidence,warnings);
+    if(values.has("car.description")){
+      String copy=values.path("car.description").asText();
+      // A selling tone must not turn visible equipment into a claim about condition.
+      var condition=java.util.regex.Pattern.compile("(?iu)\\bв (?:хорошем|отличном|идеальном|безупречном) состоянии\\b");
+      var matcher=condition.matcher(copy);boolean unsupported=false;
+      while(matcher.find())if(!CarCatalogService.normalize(original).contains(CarCatalogService.normalize(matcher.group())))unsupported=true;
+      if(unsupported){
+        copy=Arrays.stream(copy.split("(?<=[.!?])\\s+|\\n+")).filter(sentence->{var m=condition.matcher(sentence);while(m.find())if(!CarCatalogService.normalize(original).contains(CarCatalogService.normalize(m.group())))return false;return true;}).collect(java.util.stream.Collectors.joining(" "));
+        values.put("car.description",copy);warnings.add("Из описания убрана неподтверждённая оценка состояния автомобиля. Проверьте текст.");
+      }
+    }
     if(!values.has("car.description")){
       String combined=String.join("\n\n",java.util.stream.Stream.of(original,recognized).filter(s->!s.isBlank()).toList());
       if(combined.length()>15000){combined=combined.substring(0,15000);warnings.add("Описание сокращено до 15000 символов; исходные тексты сохранены.");}
@@ -140,7 +156,7 @@ public class CarAiService {
       }
     });
     for(JsonNode f:policy.fields()){
-      String field=text(f,"id");if(values.has(field)&&!candidateResult.path("candidates").has(field)){
+      String field=text(f,"id");if(values.has(field)&&(!candidateResult.path("candidates").has(field)||explicitOwnerFact(field,values.path(field),evidence.path(field).asText(),original))){
         ((ObjectNode)candidateResult.path("candidates")).set(field,array(List.of(values.path(field).asText())));
         ((ObjectNode)candidateResult.path("candidateEvidence")).set(field,evidence.path(field));
       }
@@ -167,6 +183,16 @@ public class CarAiService {
     result.set("values",values);result.set("evidence",evidence);result.set("vehicle",vehicle);result.set("location",location);return result;
   }
   private void resolveTree(JsonNode reply,String section,String root,List<String> fields,ObjectNode values,ObjectNode evidence,ArrayNode warnings){
+    if(root.equals("car.region")&&clean(reply.path(section),"region",200).isBlank()){
+      String city=clean(reply.path(section),"city",200),why=clean(reply.path("evidence"),"car.city",1500);
+      if(!city.isBlank()&&!why.isBlank()){
+        List<JsonNode> matches=new ArrayList<>();
+        catalog.data().path("nodes").forEach(n->{if(text(n,"field").equals("car.city")&&matchesName("car.city",n,nameKey("car.city",city)))matches.add(n);});
+        if(matches.size()==1){JsonNode n=matches.get(0);values.put(root,text(n,"id"));evidence.put("car.city",why);evidence.put("car.region","Область из справочника для города "+text(n,"name"));}
+        else warnings.add("Уточните область для города «"+city+"»: нет однозначного соответствия в справочнике.");
+      }
+      return;
+    }
     String parent="";
     for(String field:fields){
       String name=clean(reply.path(section),field.substring(4),200),why=clean(reply.path("evidence"),field,1500);
@@ -189,11 +215,12 @@ public class CarAiService {
         }
       }
       boolean inferred=field.equals("car.generation")&&reply.path("generationInferred").asBoolean(false);
-      if(matches.isEmpty()&&field.equals("car.generation")&&expectedName.matches("(?=.*[a-z])(?=.*[0-9])[a-z0-9]{2,8}")){
+      String code=expectedName.replaceFirst(" рестайлинг(?: [0-9]+)?$","");
+      if(matches.isEmpty()&&field.equals("car.generation")&&code.matches("(?=.*[a-z])(?=.*[0-9])[a-z0-9]{2,8}")){
         int best=0;
         for(JsonNode n:catalog.data().path("nodes")){
-          if(!text(n,"field").equals(field)||!text(n,"parentId").equals(expectedParent)||!catalog.selectable(n)||nameKey(field,text(n,"name")).contains("рестайлинг"))continue;
-          int score=generationCodeScore(n,expectedName);if(score>best){matches.clear();best=score;}if(score>0&&score==best)matches.add(n);
+          if(!text(n,"field").equals(field)||!text(n,"parentId").equals(expectedParent)||!catalog.selectable(n)||!restylingPhase(nameKey(field,text(n,"name"))).equals(restylingPhase(expectedName)))continue;
+          int score=generationCodeScore(n,code);if(score>best){matches.clear();best=score;}if(score>0&&score==best)matches.add(n);
         }
         inferred=true;
       }
@@ -201,6 +228,17 @@ public class CarAiService {
       if(inferred){why="Проверьте поколение: выбор по косвенным признакам. "+why;warnings.add("Проверьте предложенное поколение: "+text(matches.get(0),"name"));}
       parent=text(matches.get(0),"id");values.put(root,parent);evidence.put(field,why);
     }
+  }
+  private boolean matchesName(String field,JsonNode n,String expected){return nameKey(field,text(n,"name")).equals(expected)||list(n.path("aliases")).stream().anyMatch(a->nameKey(field,a.asText()).equals(expected));}
+  private String restylingPhase(String name){var match=java.util.regex.Pattern.compile("рестайлинг(?: [0-9]+)?").matcher(name);return match.find()?match.group():"";}
+  /** Only an actual quote containing the selected value may override photo hypotheses. */
+  private boolean explicitOwnerFact(String field,JsonNode value,String why,String original){
+    String quote=CarCatalogService.normalize(why),source=CarCatalogService.normalize(original);
+    if(quote.isBlank()||!source.contains(quote)||java.util.regex.Pattern.compile("(?U)\\b(гипотеза|возможно|вероятно|предположительно|или)\\b").matcher(quote).find())return false;
+    List<String> names=new ArrayList<>();
+    if(field.equals("car.year"))names.add(value.asText());
+    else {JsonNode node=catalog.node(value.asText());names.add(text(node,"name"));for(JsonNode alias:list(node.path("aliases")))names.add(alias.asText());}
+    return names.stream().map(CarCatalogService::normalize).filter(n->!n.isBlank()).anyMatch(n->java.util.regex.Pattern.compile("(?U)(?<![\\p{L}\\p{N}])"+java.util.regex.Pattern.quote(n)+"(?![\\p{L}\\p{N}])").matcher(quote).find());
   }
   private int generationCodeScore(JsonNode node,String code){
     var token=java.util.regex.Pattern.compile("(?<![a-z0-9])"+java.util.regex.Pattern.quote(code)+"(?![a-z0-9])");
@@ -219,15 +257,16 @@ public class CarAiService {
   }
   private String nameKey(String field,String value){
     String name=CarCatalogService.normalize(java.text.Normalizer.normalize(value,java.text.Normalizer.Form.NFKC)).replace('·',' ');
-    if(field.equals("car.generation"))name=name.replaceAll("[()]", "").replaceAll("([0-9]+)-й рестайлинг", "рестайлинг $1");
+    if(field.equals("car.generation"))name=name.replaceAll("[(),]", " ").replaceAll("(?U)\\b(lci|facelift|restyling)\\b","рестайлинг").replaceAll("(?U)\\b(поколение|генерация)\\b", " ").replaceAll("([0-9]+)-й рестайлинг", "рестайлинг $1").replaceAll("\\s*/\\s*","/");
     return name.replaceAll("\\s+"," ").trim();
   }
   private ArrayNode candidates(String field,String parent){ArrayNode a=array();catalog.data().path("nodes").forEach(n->{if(text(n,"field").equals(field)&&text(n,"parentId").equals(parent))a.add(object("id",text(n,"id"),"name",text(n,"name"),"aliases",n.path("aliases")));});return a;}
   private void accept(JsonNode reply,ObjectNode values,ObjectNode evidence,ArrayNode warnings){
     if(!reply.path("values").isObject())throw new ApiException(502,"ИИ вернул некорректные поля.");
     reply.path("values").fields().forEachRemaining(e->{
-      if(reply.path("evidence").path(e.getKey()).asText("").isBlank()){warnings.add("ИИ не указал основание для поля «"+text(catalog.field(e.getKey()),"name")+"».");return;}
-      try{JsonNode field=catalog.field(e.getKey());if(field!=null&&field.has("root"))throw new ApiException(400,"Для дерева нужны проверяемые имена.");if(field!=null&&text(field,"type").equals("enum")&&!text(catalog.node(e.getValue().asText()),"field").equals(e.getKey()))throw new ApiException(400,"Вариант не был предложен на этом шаге.");ObjectNode one=object();one.set(e.getKey(),e.getValue());ObjectNode valid=catalog.validateValues(one);values.setAll(valid);evidence.set(e.getKey(),reply.path("evidence").path(e.getKey()));}
+      if(reply.path("evidence").path(e.getKey()).asText("").isBlank()&&!e.getKey().equals("car.description")){warnings.add("ИИ не указал основание для поля «"+text(catalog.field(e.getKey()),"name")+"».");return;}
+      try{JsonNode field=catalog.field(e.getKey());if(field!=null&&field.has("root"))throw new ApiException(400,"Для дерева нужны проверяемые имена.");if(field!=null&&text(field,"type").equals("enum")&&!text(catalog.node(e.getValue().asText()),"field").equals(e.getKey()))throw new ApiException(400,"Вариант не был предложен на этом шаге.");ObjectNode one=object();one.set(e.getKey(),e.getValue());ObjectNode valid=catalog.validateValues(one);values.setAll(valid);
+        String why=reply.path("evidence").path(e.getKey()).asText("");evidence.put(e.getKey(),why.isBlank()?"Объявление составлено из исходных сведений; проверьте текст":why);}
       catch(ApiException invalid){warnings.add("Не принято предложение ИИ: "+e.getKey());}
     });
   }

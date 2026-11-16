@@ -6336,6 +6336,7 @@
       "description": "Имя продавца",
       "platforms": [
         "kufar",
+        "onliner",
         "av",
         "abw"
       ],
@@ -588850,6 +588851,15 @@
             "value": "category_2010.mark_skoda.model_kamiq.generation_kamiq_i21669121",
             "name": "I"
           }
+        ],
+        "car.option.98f4ce85-5318-465c-a573-5de3dc8ac76e": [
+          {
+            "common_option_id": "car.option.98f4ce85-5318-465c-a573-5de3dc8ac76e",
+            "field": "kufar.region",
+            "id": "kufar.region.7",
+            "value": "7",
+            "name": "Минск"
+          }
         ]
       },
       "extras": [
@@ -588874,7 +588884,12 @@
         "kufar.possible_exchange",
         "kufar.auction",
         "kufar.phone_hidden"
-      ]
+      ],
+      "pathIssues": {
+        "car.option.98f4ce85-5318-465c-a573-5de3dc8ac76e": [
+          "Выберите район Минска в форме Kufar."
+        ]
+      }
     },
     "onliner": {
       "fields": {
@@ -588899,7 +588914,8 @@
         "car.photos": "onliner.images",
         "car.region": "onliner.region",
         "car.city": "onliner.city",
-        "car.phone": "onliner.phone"
+        "car.phone": "onliner.phone",
+        "car.seller_name": "onliner.sellerName"
       },
       "nodes": {
         "car.option.2c918065-58f7-43ba-a33a-c04feeed530b": {
@@ -1457302,6 +1457318,22 @@
       "required": null,
       "options_complete": true
     },
+    "onliner.sellerName": {
+      "id": "onliner.sellerName",
+      "name": "Имя продавца",
+      "description": "Проверено в авторизованной форме 2026-11-16. Появляется после выбора «Частное лицо».",
+      "type": "text",
+      "options": [],
+      "required": null,
+      "when": {
+        "option_id": "onliner.sellerType",
+        "operator": "equals",
+        "value": "individual"
+      },
+      "validation": {
+        "max_length": 50
+      }
+    },
     "onliner.onlyChat": {
       "id": "onliner.onlyChat",
       "name": "Хочу общаться только в чатах",
@@ -1466051,6 +1466083,32 @@
         "depends_on": [
           "onliner.onlyChat",
           "onliner.callsAnytime"
+        ]
+      },
+      {
+        "option_id": "onliner.sellerName",
+        "status": "ready",
+        "overwrite": "if_empty",
+        "wait_for": [
+          "visible",
+          "enabled"
+        ],
+        "target": {
+          "selectors": [
+            ".vehicle-form input[type=\"text\"][maxlength=\"50\"].vehicle-form__input_width_xs"
+          ]
+        },
+        "action": "set_value",
+        "events": [
+          "input",
+          "change",
+          "blur"
+        ],
+        "verify": {
+          "kind": "value_equals"
+        },
+        "depends_on": [
+          "onliner.sellerType"
         ]
       }
     ],
