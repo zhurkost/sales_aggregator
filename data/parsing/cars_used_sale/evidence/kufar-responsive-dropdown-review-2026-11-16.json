@@ -1,0 +1,18 @@
+{
+  "observed_date": "2026-11-16",
+  "url": "https://www.kufar.by/ain/create",
+  "method": "Read-only DOM diagnostics in the user's authenticated Chrome. DevTools was opened and closed without reloading or selecting form values by the agent.",
+  "observations": {
+    "before_devtools": "The helper reported 6 transferred fields; dropdown values were missing.",
+    "after_devtools": "The helper reported 20 transferred fields. Kia, Rio, IV Рестайлинг, Седан, 2021, 1.6 л, 5 seats, Черный, Тёмный and Ткань were present.",
+    "narrow_width": 150,
+    "wide_width": 929,
+    "wide_brand_menu": "[data-name=\"cars_brand_v2\"] [data-testid=\"dropdown-popup-ui\"] [class*=\"_item_with-check\"]",
+    "narrow_selected_control": "[data-name=\"cars_brand_v2\"] [data-testid=\"base-dropdown-ui\"]"
+  },
+  "cause": "The car runner only looked inside popup-body and did not search the field-local dropdown-popup-ui rendered in the wider layout.",
+  "fix": "Resolve a visible field-local popup first, otherwise use the existing shared popup. Retain sequential ownership and exact option matching.",
+  "validation": "Local DOM tests cover dependent fields, sibling isolation, narrow modal selection and layout transitions. Updated extension has not been exercised in the live page.",
+  "published": false,
+  "promotion_selected_by_agent": false
+}

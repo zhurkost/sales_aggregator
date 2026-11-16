@@ -332,6 +332,39 @@ test('Kufar shared dropdown waits for its own options and never oscillates betwe
 test('Kufar never takes an identically named choice from another fields popup',async t=>{
  const {w,form}=await fixture(t,'<div data-name="cars_brand_v2"></div><button id="body">Выберите</button><div data-testid="popup-body"><button class="choice">Седан</button></div>',[{field:'kufar.body',value:1,name:'Седан',binding:{action:'choose',target:{selectors:['#body']},suggestions:{selector:'[data-testid="popup-body"] .choice'}}}]);form.recipe.platform='kufar';let opens=0;w.document.querySelector('.choice').onclick=()=>assert.fail('Unowned popup');w.document.querySelector('#body').onclick=()=>{opens++;w.document.querySelector('[data-testid]').remove();};await form.tick();assert.equal(opens,1);
 });
+
+test('Kufar desktop dropdowns use the current field and preserve dependent selection order',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/parsing/cars_used_sale/binding_cars_used_sale_kufar.json'))).fields;
+ const specs=[['cars_brand_v2','Kia'],['cars_model_v2','Rio'],['cars_gen_v2','IV Рестайлинг'],['cars_type','Седан'],['cars_seats','5'],['cars_capacity','1.6 л'],['regdate','2021'],['cars_color','Черный'],['cars_interior_color','Тёмный'],['cars_interior_material','Ткань']];
+ const controls=specs.map(([id,name])=>({field:'kufar.'+id,fieldType:'enum',value:name,name,binding:bindings.find(b=>b.option_id==='kufar.'+id)}));
+ const html=specs.map(([id,name])=>'<div data-name="'+id+'"><div data-testid="base-dropdown-ui">Выберите</div><div data-testid="dropdown-popup-ui" hidden><div class="mnb1la_item_with-check">'+name+'</div></div></div>').join('');
+ const {w,form}=await fixture(t,html+'<div data-name="foreign"><div data-testid="dropdown-popup-ui"><div class="mnb1la_item_with-check">Седан</div></div></div><button>Подать объявление</button>',controls);form.recipe.platform='kufar';
+ const opened=[],selected=[];
+ for(const [id,name] of specs){const box=w.document.querySelector('[data-name="'+id+'"]'),trigger=box.querySelector('[data-testid="base-dropdown-ui"]'),popup=box.querySelector('[data-testid="dropdown-popup-ui"]');trigger.onclick=()=>{opened.push(id);popup.hidden=false;};popup.firstElementChild.onclick=()=>{selected.push(id);trigger.textContent=name;popup.hidden=true;};}
+ w.document.querySelector('[data-name="foreign"] .mnb1la_item_with-check').onclick=()=>assert.fail('Do not select a neighboring field');
+ w.document.querySelector('button').onclick=()=>assert.fail('Do not publish');
+ for(let i=0;i<32;i++)await form.tick();
+ assert.deepEqual(selected,specs.map(([id])=>id));assert.deepEqual(opened,selected);assert.equal(form.done.size,specs.length);
+});
+
+test('Kufar follows a dropdown moving from a desktop field into a modal',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/parsing/cars_used_sale/binding_cars_used_sale_kufar.json'))).fields.find(b=>b.option_id==='kufar.cars_type');
+ const {w,form}=await fixture(t,'<div data-name="cars_brand_v2"></div><div data-name="cars_type"><div data-testid="base-dropdown-ui">Выберите</div><div data-testid="dropdown-popup-ui" hidden></div></div>',[{field:'kufar.cars_type',value:1,name:'Седан',binding}]);form.recipe.platform='kufar';
+ let opens=0;const trigger=w.document.querySelector('[data-testid="base-dropdown-ui"]');trigger.onclick=()=>{opens++;w.document.querySelector('[data-testid="dropdown-popup-ui"]').hidden=false;};
+ await form.tick();w.document.querySelector('[data-testid="dropdown-popup-ui"]').remove();w.document.body.insertAdjacentHTML('beforeend','<div data-testid="popup-body"><div class="mnb1la_item_with-check">Седан</div></div>');
+ w.document.querySelector('.mnb1la_item_with-check').onclick=()=>{trigger.textContent='Седан';w.document.querySelector('[data-testid="popup-body"]').remove();};
+ await form.tick();await form.tick();assert(form.done.has('kufar.cars_type'));assert.equal(opens,1);
+});
+
+test('Kufar desktop multi-select applies only the current fields selection',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/parsing/cars_used_sale/binding_cars_used_sale_kufar.json'))).fields.find(b=>b.option_id==='kufar.cars_features');
+ const {w,form}=await fixture(t,'<div data-name="cars_brand_v2"></div><div data-name="cars_features"><div data-testid="base-dropdown-ui">Выберите</div><div data-testid="dropdown-popup-ui" hidden><label><input type="checkbox">Обогрев руля</label><button class="button--green-accent">Применить</button></div></div><div data-name="other"><div data-testid="dropdown-popup-ui"><label><input type="checkbox">Обогрев руля</label><button class="button--green-accent">Применить</button></div></div>',[{field:'kufar.cars_features',value:[{value:'heated',name:'Обогрев руля'}],binding}]);form.recipe.platform='kufar';
+ const box=w.document.querySelector('[data-name="cars_features"]'),popup=box.querySelector('[data-testid="dropdown-popup-ui"]');let accepted=0;
+ box.querySelector('[data-testid="base-dropdown-ui"]').onclick=()=>popup.hidden=false;
+ popup.querySelector('button').onclick=()=>{assert(popup.querySelector('input').checked);accepted++;popup.hidden=true;};
+ w.document.querySelector('[data-name="other"]').onclick=()=>assert.fail('Do not touch a sibling popup');
+ for(let i=0;i<5;i++)await form.tick();assert.equal(accepted,1);assert(form.done.has('kufar.cars_features'));
+});
 test('Onliner automatically advances only reviewed intermediate steps, once per unchanged state',async t=>{
  for(const marker of ['<input placeholder="Например, GT, CL, LX, WRC">','<input type="file">','<textarea></textarea>']){
   const {w,form}=await fixture(t,'<div class="vehicle-form__step-item">'+marker+'<div class="vehicle-form__step-helper"><div class="vehicle-form__control"><a class="vehicle-form__button">Далее</a><a class="vehicle-form__button">Подтвердить</a></div></div></div>',[]);form.recipe.platform='onliner';let next=0;w.document.querySelector('a').onclick=()=>next++;w.document.querySelectorAll('a')[1].onclick=()=>assert.fail('Never confirm publication');

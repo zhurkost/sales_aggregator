@@ -52,6 +52,20 @@
     if(this.activeDropdown||this.tried.has(e))return false;
     this.tried.add(e);this.activeDropdown=c.field;this.dropdownTicks=0;this.click(e);return true;
   }
+  popupQuery(target,selector){
+    const prefix=/^\[data-testid=["']popup-body["']\]/;
+    if(this.recipe.platform==='kufar'&&prefix.test(selector)){
+      // Desktop options live beside their control; narrow layouts use a shared modal.
+      const field=target.closest('[data-name]');
+      const local=[...field?.querySelectorAll('[data-testid="dropdown-popup-ui"]')||[]].filter(visible);
+      if(local.length){
+        if(local.length!==1)return [];
+        const suffix=selector.replace(prefix,'').trim();
+        return suffix?[...local[0].querySelectorAll(suffix)]:local;
+      }
+    }
+    return query(selector);
+  }
   openCarCategory(){
     if(this.recipe.platform!=='kufar'||this.ready())return false;
     const popup=query('[data-testid="kufar-chose-category-popup"]').filter(visible);
@@ -255,19 +269,19 @@
         const b=c.binding||{},s=b.suggestions;
         if(!s?.checkbox_selector||!s.selector)continue;
         const shared=this.recipe.platform==='kufar'&&s.selector.includes('popup-body');
-        const choices=shared&&this.activeDropdown!==c.field?[]:query(s.selector).filter(visible),wanted=c.value.map(x=>norm(x.name));
+        const choices=shared&&this.activeDropdown!==c.field?[]:this.popupQuery(e,s.selector).filter(visible),wanted=c.value.map(x=>norm(x.name));
         if(!choices.length){if(this.pending.get(c.field)==='complete'){this.done.add(c.field);if(this.activeDropdown===c.field)this.resumeQueries();continue;}if(this.openDropdown(c,e)){changed=true;break;}continue;}
         const selected=choices.filter(x=>x.querySelector(s.checkbox_selector)?.checked);
         // Existing selections not in this card belong to the user; never clear them.
         if(selected.some(x=>!wanted.includes(norm(content(x)))))continue;
         const missing=c.value.find(v=>!selected.some(x=>norm(content(x))===norm(v.name)));
         if(missing){const match=choices.filter(x=>norm(content(x))===norm(missing.name));if(match.length===1){const input=match[0].querySelector(s.checkbox_selector);if(input&&enabled(input)&&!this.tried.has(input)){this.tried.add(input);this.click(match[0]);this.dropdownTicks=0;changed=true;break;}}continue;}
-        if(selected.length===wanted.length){this.done.add(c.field);this.pending.set(c.field,'complete');const commit=(b.commit?.target?.selectors||[]).flatMap(query).filter(visible);if(commit.length===1){this.click(commit[0]);this.activeDropdown=null;changed=true;break;}}
+        if(selected.length===wanted.length){this.done.add(c.field);this.pending.set(c.field,'complete');const commit=(b.commit?.target?.selectors||[]).flatMap(s=>this.popupQuery(e,s)).filter(visible);if(commit.length===1){this.click(commit[0]);this.activeDropdown=null;changed=true;break;}}
         continue;
       }
       const isSelect=e.tagName==='SELECT';
       if(c.binding?.searchSelector){const search=query(c.binding.searchSelector).filter(visible);if(search.length===1&&!search[0].value&&!this.protected.has(search[0])){setValue(search[0],c.name);this.dropdownTicks=0;changed=true;break;}}
-      let candidates=isSelect?[...e.options]:(c.binding?.suggestions?.within_target?[...e.querySelectorAll(c.binding.suggestions.within_target)]:c.binding?.suggestions?.selector?query(c.binding.suggestions.selector):query('[role=option],.dropdown-list__item,.select__option'));
+      let candidates=isSelect?[...e.options]:(c.binding?.suggestions?.within_target?[...e.querySelectorAll(c.binding.suggestions.within_target)]:c.binding?.suggestions?.selector?this.popupQuery(e,c.binding.suggestions.selector):query('[role=option],.dropdown-list__item,.select__option'));
       if(this.recipe.platform==='kufar'&&c.binding?.suggestions?.selector?.includes('popup-body')&&this.activeDropdown!==c.field)candidates=[];
       candidates=candidates.filter(x=>enabled(x)&&rendered(x)&&(c.binding?.match==='element_id'?x.id===c.binding.id_prefix+String(c.value):c.binding?.match==='value'?equal(x.value,c.value):c.binding?.match==='engine_transmission'?modificationMatches(content(x),c.name):norm(content(x))===norm(c.binding?.optionLabels?.[c.value]??c.binding?.displayLabels?.[c.value]??c.name)));
       if(c.binding?.match==='engine_transmission')candidates=candidates.slice(0,1);
