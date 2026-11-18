@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-17",
+  "source": "User Chrome, read-only DOM command executed by user in Console",
+  "network_requests_sent_by_agent": false,
+  "live_next_clicked_by_agent": false,
+  "input": "input#p-27-photo[type=file]",
+  "container": "#file-uploader",
+  "items": ".uploader__thumbs > .uploader__thumb",
+  "image": ".uploader__thumb-wrap img",
+  "observed_image": {"source_prefix": "blob:https://av.by/", "complete": true, "naturalWidth": 801},
+  "item_actions": ["button.uploader__thumb-rotate", "button.uploader__thumb-delete"],
+  "counter": {"selector": ".form-inputfile__hint small", "text": "можно еще 29 фото", "capacity": 30},
+  "video": "input#p-29-video_url",
+  "next": {"selector": ".newad__step-next > button[type=button]", "text": "Далее"},
+  "verification_scope": "Local form readiness only. A decoded blob preview does not prove remote persistence. Automatic transition tested locally."
+}

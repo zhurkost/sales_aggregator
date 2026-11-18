@@ -16,6 +16,37 @@ class CarCatalogTest {
   static JsonNode read(){try{return MAPPER.readTree(Files.readString(Path.of("../data/automotive/cars_used_sale/runtime.json")));}catch(Exception e){throw new RuntimeException(e);}}
   final CarCatalogService catalog=new CarCatalogService(()->DATA);
   final CarPreparationService service=new CarPreparationService(catalog);
+  @Test void avPhotoRecipeUsesObservedLocalPreviewsAndCounter(){
+    var job=service.configuration(object("id","av-photo","revision",1,"card",object("values",object(),"extras",object(),"platforms",List.of("av")))).path("jobs").get(0);
+    var binding=job.path("photoBinding");assertEquals("av.photo",text(binding,"option_id"));
+    assertEquals("local_previews_ready",text(binding.path("verify"),"kind"));assertEquals("blob:https://av.by/",text(binding.path("verify"),"accepted_src_prefix"));
+    assertEquals(30,binding.path("verify").path("counter").path("capacity").asInt());assertEquals(2,binding.path("verify").path("ready_controls").size());
+  }
+  @Test void registrationFactsBecomeNativeExtrasInTheSameRecognitionRequest(){
+    for(String status:List.of("на учёте в ГАИ","снят с учёта")){
+      String source="Автомобиль зарегистрирован в Беларуси, "+status+".";
+      int[] calls={0};
+      AiGateway gateway=new AiGateway(){public String model(){return "test";}public ObjectNode serverJson(String identity,String prompt,String input){
+        calls[0]++;assertTrue(prompt.contains("av.registration_country:Беларусь"));assertTrue(prompt.contains("av.registration_status:"+status));
+        return object("facts",List.of(object("field","av.registration_country","value","av.registration_country:Беларусь","evidence",source),object("field","av.registration_status","value","av.registration_status:"+status,"evidence",source)));
+      }};
+      var result=new CarAiService(catalog,gateway).analyze("test",object("description",source));assertEquals(1,calls[0]);
+      assertFalse(result.path("values").has("av.registration_country"));
+      var prepared=service.prepare(object("values",result.path("values"),"extras",result.path("extras"),"platforms",List.of("av"))).path("platforms").get(0).path("values");
+      assertEquals(2,prepared.path("av.registration_country").path("value").asInt());
+      assertEquals(status.equals("снят с учёта")?2:1,prepared.path("av.registration_status").path("value").asInt());
+    }
+  }
+  @Test void registrationRequiresKnownChoicesAndAnActualUserQuote(){
+    for(String scenario:List.of("unknown","missing-evidence","invented-quote","photo-only","absent")){
+      AiGateway gateway=new AiGateway(){public String model(){return "test";}public ObjectNode serverJson(String identity,String prompt,String input){
+        if(scenario.equals("absent"))return object("facts",List.of());
+        return object("facts",List.of(object("field","av.registration_country","value",scenario.equals("unknown")?"av.registration_country:Unknown":"av.registration_country:Беларусь","evidence",scenario.equals("missing-evidence")?"":"зарегистрирован в Беларуси")));
+      }};
+      var input=object("description",scenario.equals("unknown")||scenario.equals("missing-evidence")?"зарегистрирован в Беларуси":"Продаю Kia Rio в Пинске.","recognizedText",scenario.equals("photo-only")?"зарегистрирован в Беларуси":"");
+      assertTrue(new CarAiService(catalog,gateway).analyze("test",input).path("extras").isEmpty(),scenario);
+    }
+  }
   String option(String field,String parent,String name){return list(catalog.options(field,parent,name,0).path("items")).stream().filter(o->text(o,"name").equalsIgnoreCase(name)).findFirst().orElseThrow().path("id").asText();}
   @Test void onlinerUsedCarStateIsAlwaysIncludedRegardlessOfOptionalExtras(){
     for(JsonNode extras:List.of(object(),object("onliner",object("onliner.state","onliner.state.emergency")))){
@@ -25,6 +56,24 @@ class CarCatalogTest {
       assertEquals("owned",text(state,"value"));assertEquals("с пробегом",text(state,"name"));
       assertEquals("choose",state.path("binding").path("action").asText());assertFalse(state.path("binding").path("suggestions").path("selector").asText().isBlank());
     }
+  }
+  @Test void avDefaultsToUsedConditionButPreservesExplicitDamageOrParts(){
+    for(int value:List.of(2,3,4)){
+      var extras=value==2?object():object("av",object("av.condition","av.condition.string-"+value));
+      var card=object("values",object(),"platforms",List.of("av"),"extras",extras);
+      var job=service.configuration(object("id","av-condition","revision",1,"card",card)).path("jobs").get(0);
+      var state=list(job.path("controls")).stream().filter(c->text(c,"field").equals("av.condition")).findFirst().orElseThrow();
+      assertEquals(value,state.path("value").asInt());assertEquals("choose",state.path("binding").path("action").asText());
+    }
+  }
+  @Test void avEquipmentRecipePreservesEveryRequestedNativeOption(){
+      var selected=list(DATA.path("sourceFields").path("av.options").path("options"));
+    var ids=selected.stream().map(o->text(o,"id")).toList();
+    var card=object("values",object(),"platforms",List.of("av"),"extras",object("av",object("av.options",ids)));
+    var job=service.configuration(object("id","av-equipment","revision",1,"card",card)).path("jobs").get(0);
+    var options=list(job.path("controls")).stream().filter(c->text(c,"field").equals("av.options")).findFirst().orElseThrow();
+      assertFalse(selected.isEmpty());assertEquals(selected.size(),options.path("value").size());assertEquals("select_toggles",text(options.path("binding"),"action"));
+      for(int i=0;i<selected.size();i++)assertEquals(selected.get(i).path("value"),options.path("value").get(i).path("value"));
   }
   @Test void editorDoesNotOfferOverridesForAutomaticConditionOrMileageUnits(){
     var ids=list(catalog.editor().path("extras")).stream().map(f->text(f,"id")).toList();
@@ -111,7 +160,9 @@ class CarCatalogTest {
       var control=list(jobs.get(0).path("controls")).stream().filter(c->text(c,"field").equals("abw.modification")).findFirst().orElseThrow();
       assertEquals("1.6 "+sample.get(1),text(control,"name"));assertEquals("engine_transmission",text(control.path("binding"),"match"));
       assertTrue(has(control.path("binding").path("depends_on"),"abw.transmission"));
-      assertFalse(list(jobs.get(1).path("controls")).stream().anyMatch(c->text(c,"field").equals("abw.modification")));
+      var av=list(jobs.get(1).path("controls")).stream().filter(c->text(c,"field").equals("av.modification")).findFirst().orElseThrow();
+      assertEquals("1.6 "+sample.get(1),text(av,"name"));assertTrue(has(av.path("binding").path("depends_on"),"av.drive_type"));
+      assertEquals("button#p-7-modification",av.path("binding").path("target").path("selectors").get(0).asText());
       ((ObjectNode)card.path("values")).remove("car.engine_capacity");
       assertFalse(service.configuration(object("id","no-capacity","revision",1,"card",card)).path("jobs").get(0).path("controls").toString().contains("abw.modification"));
     }

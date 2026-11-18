@@ -1,61 +1,826 @@
 {
   "av": {
+    "av.photo": {
+      "status": "needs_review",
+      "reason": "DOM прочитан в Chrome 2026-11-17: загруженное локальное blob-превью, поворот/удаление и счётчик можно еще 29 фото. Проверяется готовность формы к Далее, не сохранение фото сервером. Автоматический переход проверен локально.",
+      "action": "upload_files",
+      "target": {"selectors": ["main input#p-27-photo[type=file]"]},
+      "verify": {
+        "kind": "local_previews_ready",
+        "target": {"selectors": ["main #file-uploader"]},
+        "items_selector": ".uploader__thumbs > .uploader__thumb",
+        "image_selector": ".uploader__thumb-wrap img",
+        "accepted_src_prefix": "blob:https://av.by/",
+        "ready_controls": ["button.uploader__thumb-rotate", "button.uploader__thumb-delete"],
+        "counter_selector": ".form-inputfile__hint small",
+        "counter": {"mode": "remaining", "capacity": 30, "pattern": "^можно ещ[её] (\\d+) фото$"}
+      }
+    },
+    "av.options": {
+      "status": "needs_review",
+      "reason": "DOM ABS-1, button.chips__item и aria-pressed прочитаны в Chrome 2026-11-17. Выбор по нативному коду, подтверждение и переход проверяются локально без запросов к AV.by.",
+      "action": "select_toggles",
+      "target": {"label": "Комплектация", "labels": "main .newad__step h2, main .newad__step h3", "container": ".newad__step"},
+      "suggestions": {"within_target": "button.chips__item[aria-pressed]"}
+    },
+    "av.drive_type": {
+      "status": "needs_review",
+      "reason": "ID p-15-drive_type и выбранный текст передний привод прочитаны в Chrome 2026-11-17. Список использует шаблон dropdown; живой автоматический выбор ещё не подтверждён.",
+      "action": "choose",
+      "target": {
+        "selectors": [
+          "button#p-15-drive_type"
+        ]
+      },
+      "suggestions": {
+        "selector": "#p-15-drive_type + .dropdown-list .dropdown__listbutton"
+      },
+      "depends_on": [
+        "av.engine_type"
+      ],
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".dropdown-button__value"
+      }
+    },
+    "av.engine_type": {
+      "status": "needs_review",
+      "reason": "ID p-12-engine_type прочитан в Chrome 2026-11-17. Список привязан по шаблону ранее проверенного dropdown кузова; выбор проверен локально, живое заполнение ещё не подтверждено.",
+      "action": "choose",
+      "target": {
+        "selectors": [
+          "button#p-12-engine_type"
+        ]
+      },
+      "suggestions": {
+        "selector": "#p-12-engine_type + .dropdown-list .dropdown__listbutton"
+      },
+      "depends_on": [
+        "av.body_type",
+        "av.transmission_type"
+      ],
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".dropdown-button__value"
+      }
+    },
+    "av.transmission_type": {
+      "status": "needs_review",
+      "reason": "ID переключателей p-11-transmission_type_1 (автомат) и _2 (механика) прочитаны в Chrome 2026-11-17. Выбор проверен локально без запросов к AV.by.",
+      "action": "choose",
+      "open": false,
+      "match": "element_id",
+      "id_prefix": "p-11-transmission_type_",
+      "target": {
+        "selectors": [
+          "main"
+        ]
+      },
+      "suggestions": {
+        "selector": "main input[id^=\"p-11-transmission_type_\"]"
+      },
+      "preserve_selected": "main input[id^=\"p-11-transmission_type_\"]:checked",
+      "depends_on": [
+        "av.body_type"
+      ],
+      "verify": {
+        "kind": "element_id_equals",
+        "target": {
+          "selectors": [
+            "main input[id^=\"p-11-transmission_type_\"]:checked"
+          ]
+        }
+      }
+    },
+    "av.body_type": {
+      "status": "needs_review",
+      "reason": "DOM p-9-body_type, соседний dropdown-list и кнопки dropdown__listbutton прочитаны в Chrome 2026-11-17. Выбор проверяется локально без запросов к AV.by.",
+      "action": "choose",
+      "target": {
+        "selectors": [
+          "button#p-9-body_type"
+        ]
+      },
+      "suggestions": {
+        "selector": "#p-9-body_type + .dropdown-list .dropdown__listbutton"
+      },
+      "depends_on": [
+        "av.model",
+        "av.generation"
+      ],
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ".dropdown-button__value"
+      }
+    },
+    "av.generation": {
+      "status": "needs_review",
+      "reason": "ID радиокнопок generationItem-generation_11765 и generationItem-generation_3815 прочитаны в Chrome 2026-11-17. Переход проверяется локально без запросов к AV.by.",
+      "action": "choose",
+      "open": false,
+      "match": "element_id",
+      "id_prefix": "generationItem-generation_",
+      "target": {
+        "selectors": [
+          "main"
+        ]
+      },
+      "suggestions": {
+        "selector": "main input[id^=\"generationItem-generation_\"]"
+      },
+      "preserve_selected": "main input[id^=\"generationItem-generation_\"]:checked",
+      "depends_on": [
+        "av.brand",
+        "av.model",
+        "av.year"
+      ],
+      "verify": {
+        "kind": "element_id_equals",
+        "target": {
+          "selectors": [
+            "main input[id^=\"generationItem-generation_\"]:checked"
+          ]
+        },
+        "fallbackTextSelectors": [
+          "main .newad__breadcrumb-button"
+        ],
+        "fallbackTextTransform": "av_generation"
+      }
+    },
+    "av.year": {
+      "status": "needs_review",
+      "reason": "Радиокнопки catalogItem-year_<год> прочитаны в Chrome 2026-11-17. Выбор проверяется локально без запросов к AV.by.",
+      "action": "choose",
+      "open": false,
+      "match": "element_id",
+      "id_prefix": "catalogItem-year_",
+      "target": {
+        "selectors": [
+          "main"
+        ]
+      },
+      "suggestions": {
+        "selector": "main input[id^=\"catalogItem-year_\"]"
+      },
+      "preserve_selected": "main input[id^=\"catalogItem-year_\"]:checked",
+      "depends_on": [
+        "av.brand",
+        "av.model"
+      ],
+      "verify": {
+        "kind": "element_id_equals",
+        "target": {
+          "selectors": [
+            "main input[id^=\"catalogItem-year_\"]:checked"
+          ]
+        },
+        "fallbackTextSelectors": [
+          "main .newad__breadcrumb-button"
+        ]
+      }
+    },
+    "av.model": {
+      "status": "needs_review",
+      "reason": "Привязка модели к catalogItem-model_<native ID> по структуре каталога марки. Проверена локально, без запросов к AV.by; требуется подтверждение в живой форме.",
+      "action": "choose",
+      "open": false,
+      "match": "element_id",
+      "id_prefix": "catalogItem-model_",
+      "target": {
+        "selectors": [
+          "main"
+        ]
+      },
+      "suggestions": {
+        "selector": "main input.catalog__control[id^=\"catalogItem-model_\"]"
+      },
+      "preserve_selected": "main input.catalog__control[id^=\"catalogItem-model_\"]:checked",
+      "depends_on": [
+        "av.brand"
+      ],
+      "verify": {
+        "kind": "element_id_equals",
+        "target": {
+          "selectors": [
+            "main input.catalog__control[id^=\"catalogItem-model_\"]:checked"
+          ]
+        },
+        "fallbackTextSelectors": [
+          "main .newad__breadcrumb-button"
+        ]
+      }
+    },
     "av.brand": {
       "status": "needs_review",
       "reason": "Карточки марки и их DOM ID прочитаны в Chrome 2026-11-16. Выбор проверен локально; переход на следующий шаг в браузере ещё не подтверждён.",
-      "action": "choose", "open": false, "match": "element_id", "id_prefix": "catalogItem-brand_",
-      "target": {"selectors": ["main"]},
-      "suggestions": {"selector": "main input.catalog__control[id^=\"catalogItem-brand_\"]"},
+      "action": "choose",
+      "open": false,
+      "match": "element_id",
+      "id_prefix": "catalogItem-brand_",
+      "target": {
+        "selectors": [
+          "main"
+        ]
+      },
+      "suggestions": {
+        "selector": "main input.catalog__control[id^=\"catalogItem-brand_\"]"
+      },
       "preserve_selected": "main input.catalog__control[id^=\"catalogItem-brand_\"]:checked",
       "verify": {
         "kind": "element_id_equals",
-        "target": {"selectors": ["main input.catalog__control[id^=\"catalogItem-brand_\"]:checked"]},
-        "fallbackTextSelectors": ["main .newad__breadcrumb-button"]
+        "target": {
+          "selectors": [
+            "main input.catalog__control[id^=\"catalogItem-brand_\"]:checked"
+          ]
+        },
+        "fallbackTextSelectors": [
+          "main .newad__breadcrumb-button"
+        ]
       }
+    },
+    "av.number_of_seats": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-number_of_seats\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-number_of_seats\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-number_of_seats\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-number_of_seats\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-number_of_seats\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-number_of_seats\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-number_of_seats\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-number_of_seats\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-number_of_seats\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-number_of_seats\"] input[type=\"radio\"]:checked"
+    },
+    "av.condition": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-condition\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-condition\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-condition\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-condition\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-condition\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-condition\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-condition\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-condition\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-condition\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-condition\"] input[type=\"radio\"]:checked"
+    },
+    "av.mileage_unit": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-mileage_unit\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-mileage_unit\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-mileage_unit\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-mileage_unit\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-mileage_unit\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-mileage_unit\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-mileage_unit\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-mileage_unit\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      }
+    },
+    "av.color": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-color\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-color\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-color\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-color\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-color\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-color\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-color\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-color\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-color\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-color\"] input[type=\"radio\"]:checked"
+    },
+    "av.interior_material": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-interior_material\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-interior_material\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-interior_material\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-interior_material\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-interior_material\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-interior_material\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-interior_material\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-interior_material\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-interior_material\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-interior_material\"] input[type=\"radio\"]:checked"
+    },
+    "av.interior_color": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-interior_color\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-interior_color\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-interior_color\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-interior_color\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-interior_color\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-interior_color\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-interior_color\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-interior_color\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-interior_color\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-interior_color\"] input[type=\"radio\"]:checked"
+    },
+    "av.registration_country": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-registration_country\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-registration_country\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-registration_country\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-registration_country\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-registration_country\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-registration_country\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-registration_country\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-registration_country\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-registration_country\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-registration_country\"] input[type=\"radio\"]:checked"
+    },
+    "av.registration_status": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-registration_status\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-registration_status\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-registration_status\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-registration_status\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-registration_status\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-registration_status\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-registration_status\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-registration_status\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-registration_status\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-registration_status\"] input[type=\"radio\"]:checked"
+    },
+    "av.price_currency": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-price_currency\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-price_currency\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-price_currency\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-price_currency\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-price_currency\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-price_currency\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-price_currency\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-price_currency\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      }
+    },
+    "av.exchange_options": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-exchange_options\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-exchange_options\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-exchange_options\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-exchange_options\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-exchange_options\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-exchange_options\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-exchange_options\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-exchange_options\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-exchange_options\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-exchange_options\"] input[type=\"radio\"]:checked"
+    },
+    "av.place_region": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-place_region\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-place_region\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-place_region\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-place_region\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-place_region\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-place_region\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-place_region\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-place_region\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-place_region\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-place_region\"] input[type=\"radio\"]:checked"
+    },
+    "av.place_city": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-place_city\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-place_city\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-place_city\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-place_city\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-place_city\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-place_city\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-place_city\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-place_city\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-place_city\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-place_city\"] input[type=\"radio\"]:checked",
+      "depends_on": [
+        "av.place_region"
+      ]
+    },
+    "av.phone_country": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-phone_country\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-phone_country\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-phone_country\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-phone_country\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-phone_country\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-phone_country\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-phone_country\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-phone_country\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      }
+    },
+    "av.modification": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "choose",
+      "match": "av_native_option",
+      "target": {
+        "selectors": [
+          "main [id^=\"p-\"][id$=\"-modification\"].dropdown__control",
+          "main [id^=\"p-\"][id$=\"-modification\"].button-group"
+        ]
+      },
+      "suggestions": {
+        "selector": "main [id^=\"p-\"][id$=\"-modification\"] + .dropdown-list .dropdown__listbutton, main [id^=\"p-\"][id$=\"-modification\"] input[type=\"radio\"]"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "target": {
+          "selectors": [
+            "main [id^=\"p-\"][id$=\"-modification\"] .dropdown-button__value, main [id^=\"p-\"][id$=\"-modification\"] .dropdown-link__value, main [id^=\"p-\"][id$=\"-modification\"] .dropdown-floatlabel__text, main [id^=\"p-\"][id$=\"-modification\"] input[type=\"radio\"]:checked"
+          ]
+        }
+      },
+      "preserve_selected": "main [id^=\"p-\"][id$=\"-modification\"].dropdown__control--active, main [id^=\"p-\"][id$=\"-modification\"] input[type=\"radio\"]:checked",
+      "depends_on": [
+        "av.engine_type",
+        "av.drive_type",
+        "av.transmission_type"
+      ]
+    },
+    "av.engine_capacity": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-engine_capacity\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-engine_capacity\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.engine_endurance": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-engine_endurance\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-engine_endurance\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.vin": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-vin\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-vin\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.mileage": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-mileage\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-mileage\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "av.mileage_unit"
+      ]
+    },
+    "av.description": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-description\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-description\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.price_amount": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-price_amount\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-price_amount\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      },
+      "depends_on": [
+        "av.price_currency"
+      ]
+    },
+    "av.exchange_comment": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-exchange_comment\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-exchange_comment\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.video_url": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-video_url\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-video_url\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.name": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-name\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-name\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
+    },
+    "av.phone_number": {
+      "status": "needs_review",
+      "reason": "Привязка по сохранённой структуре AV.by (docs/avby-form-research.md, commit a34e353): UID p[-parent][-row]-id-name, dropdown/button-group. Проверяется локально; текущий живой шаг ещё не просмотрен.",
+      "action": "set_value",
+      "target": {
+        "selectors": [
+          "main input[id^=\"p-\"][id$=\"-phone_number\"]:not([type=\"radio\"]):not([type=\"checkbox\"]):not([type=\"file\"]), main textarea[id^=\"p-\"][id$=\"-phone_number\"]"
+        ]
+      },
+      "verify": {
+        "kind": "phone_digits_equals"
+      },
+      "depends_on": [
+        "av.phone_country"
+      ]
     }
   },
   "abw": {
+    "abw.city": {
+      "status": "needs_review",
+      "reason": "DOM списка и варианта Пинск прочитан в Chrome 2026-11-17. Выбор проверен локально; живой переход без запросов к бэку не проверялся.",
+      "action": "choose",
+      "target": {
+        "label": "Город",
+        "labels": "button.form__select > span[class*=\"_selectValuePlaceholder_\"], button.form__select > span[class*=\"_selectPlaceholder_\"]",
+        "container": "button.form__select"
+      },
+      "searchSelector": "button.form__select input[placeholder=\"Город\"]",
+      "suggestions": {
+        "within_target": ".selectOptions label.UiRadio"
+      },
+      "verify": {
+        "kind": "selected_text_equals",
+        "within_target": ":scope > span[class*=\"_selectValue_\"]"
+      }
+    },
     "abw.seller_name": {
       "status": "needs_review",
       "reason": "Поле Имя прочитано в форме контактов ABW; перенос из объявления проверяется локально.",
-      "action": "set_value", "replace_existing": true,
-      "target": {"selectors": ["input[placeholder=\"Имя\"]"]},
-      "verify": {"kind": "value_equals"}
+      "action": "set_value",
+      "replace_existing": true,
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Имя\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
     },
     "abw.email": {
       "status": "needs_review",
       "reason": "Поле E-mail прочитано в форме контактов ABW; переносится только указанное в объявлении значение.",
-      "action": "set_value", "replace_existing": true,
-      "target": {"selectors": ["input[placeholder=\"E-mail\"]"]},
-      "verify": {"kind": "value_equals"}
+      "action": "set_value",
+      "replace_existing": true,
+      "target": {
+        "selectors": [
+          "input[placeholder=\"E-mail\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
     },
     "abw.phone": {
       "status": "needs_review",
       "reason": "Телефон аккаунта может быть disabled. Разрешено только чтение заблокированного поля; доступное поле заполняется из объявления.",
-      "action": "set_value", "replace_existing": true, "read_disabled": true,
-      "target": {"selectors": ["input[placeholder=\"Номер телефона\"]"]},
-      "verify": {"kind": "phone_digits_equals"}
+      "action": "set_value",
+      "replace_existing": true,
+      "read_disabled": true,
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Номер телефона\"]"
+        ]
+      },
+      "verify": {
+        "kind": "phone_digits_equals"
+      }
     },
     "abw.vin": {
       "status": "needs_review",
       "reason": "Поле VIN прочитано в открытой форме ABW 2026-11-16; заполнение и переход проверены локальными DOM-тестами.",
       "action": "set_value",
-      "target": {"selectors": ["input[placeholder=\"VIN\"]"]},
-      "verify": {"kind": "value_equals"}
+      "target": {
+        "selectors": [
+          "input[placeholder=\"VIN\"], input[placeholder=\"VIN номер\"], input[placeholder=\"VIN-номер\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
     },
     "abw.description": {
       "status": "needs_review",
       "reason": "Подпись поля подтверждена в Chrome 2026-11-16; перенос и переход проверяются локальными DOM-тестами.",
       "action": "set_value",
-      "target": {"selectors": ["textarea[placeholder=\"Честно опишите достоинства и недостатки своего автомобиля\"]"]},
-      "verify": {"kind": "value_equals"}
+      "target": {
+        "selectors": [
+          "textarea[placeholder=\"Честно опишите достоинства и недостатки своего автомобиля\"]"
+        ]
+      },
+      "verify": {
+        "kind": "value_equals"
+      }
     },
     "abw.photo": {
       "status": "needs_review",
       "reason": "DOM и девять серверных превью прочитаны в Chrome 2026-11-16. Переход после фото проверен пользователем; автоматическая проверка приёма покрыта локальными тестами.",
-      "target": {"selectors": ["input[type=\"file\"].uploader-field"]},
+      "target": {
+        "selectors": [
+          "input[type=\"file\"].uploader-field"
+        ]
+      },
       "verify": {
-        "target": {"selectors": [".form__photos"]},
+        "target": {
+          "selectors": [
+            ".form__photos"
+          ]
+        },
         "items_selector": ".form__image-wrapper",
         "image_selector": ".form__image",
         "image_source": "background_image",
@@ -303,7 +1068,12 @@
         "eur": "€",
         "rub": "₽"
       },
-      "optionLabels": {"byn": "BYN", "usd": "USD", "eur": "EUR", "rub": "RUB"},
+      "optionLabels": {
+        "byn": "BYN",
+        "usd": "USD",
+        "eur": "EUR",
+        "rub": "RUB"
+      },
       "verify": {
         "kind": "selected_text_equals"
       }
@@ -312,7 +1082,11 @@
       "status": "needs_review",
       "reason": "Ввод цены по точной подписи из FormPrice; валюта выбирается первой.",
       "action": "set_value",
-      "target": {"selectors": ["input[placeholder=\"Цена\"]"]},
+      "target": {
+        "selectors": [
+          "input[placeholder=\"Цена\"]"
+        ]
+      },
       "depends_on": [
         "abw.currency"
       ],

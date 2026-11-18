@@ -54,6 +54,7 @@ public class CarPreparationService {
         if(!has(mapping.path("extras"),e.getKey()))throw new ApiException(400,"Неизвестное дополнительное поле.");
         JsonNode sf=catalog.data().path("sourceFields").path(e.getKey()),v=e.getValue();String type=text(sf,"type");
         if(v.isNull()||v.asText().isBlank()&&!v.isBoolean()&&!v.isArray())return;
+        v=CarExtraFields.validate(sf,v);
         if(type.equals("enum")||type.equals("multi_enum")){
           ArrayNode selected=array();for(JsonNode key:type.equals("enum")?List.of(v):list(v)){
             JsonNode option=list(sf.path("options")).stream().filter(o->text(o,"id").equals(key.asText())).findFirst().orElseThrow(()->new ApiException(400,"Неизвестный вариант дополнительного поля."));
@@ -68,6 +69,8 @@ public class CarPreparationService {
       // Explicit scope and units, never inferred from a photograph.
       if(p.equals("kufar"))target.set("kufar.condition",object("value","1","name","С пробегом"));
       if(p.equals("onliner"))target.set("onliner.state",object("value","owned","name","с пробегом"));
+      // Used-car scope supplies the default; explicit damaged/parts choices remain intact.
+      if(p.equals("av")&&!target.has("av.condition"))target.set("av.condition",object("value",2,"name","с пробегом"));
       // This researched flow supports private sellers; reveal their name input before filling it.
       if(p.equals("onliner")&&values.has("car.seller_name")&&!target.has("onliner.sellerType"))target.set("onliner.sellerType",object("value","individual","name","частное лицо"));
       if(p.equals("kufar")&&values.has("car.price"))target.set("kufar.price_mode",object("value","common","name","Цена"));
@@ -126,19 +129,25 @@ public class CarPreparationService {
         controls.add(object("field",e.getKey(),"label",text(field,"name"),"fieldType",text(field,"type"),"selector","body","action","text","value",e.getValue().path("value"),"name",e.getValue().path("name"),"binding",binding));
       });
       String photoField=catalog.data().path("mappings").path(text(p,"platform")).path("fields").path("car.photos").asText();
-      if(text(p,"platform").equals("abw")&&prepared.path("values").has("car.engine_capacity")){
-        String gearbox=switch(CarCatalogService.normalize(text(p.path("values").path("abw.transmission"),"name"))){
+      String platform=text(p,"platform");
+      if(Set.of("abw","av").contains(platform)&&prepared.path("values").has("car.engine_capacity")&&!p.path("values").has(platform+".modification")){
+        String gearbox=switch(CarCatalogService.normalize(text(p.path("values").path(platform.equals("abw")?"abw.transmission":"av.transmission_type"),"name"))){
           case "механика"->"MT";case "автомат"->"AT";case "вариатор"->"CVT";case "робот"->"AMT";default->"";
         };
         if(!gearbox.isBlank()){
           String selection=prepared.path("values").path("car.engine_capacity").decimalValue().stripTrailingZeros().toPlainString()+" "+gearbox;
-          // ABW exposes modifications only for the selected car. Match the live choices,
+          // Modifications depend on the selected car. Match the live choices,
           // without adding model-specific modifications to the shared catalog.
-          controls.add(object("field","abw.modification","label","Модификация","fieldType","enum","selector","body","action","text","value",selection,"name",selection,
-            "binding",object("action","choose","match","engine_transmission","depends_on",List.of("abw.brand","abw.model","abw.year","abw.generation","abw.body","abw.engine","abw.gear","abw.transmission"),
+          ObjectNode binding=platform.equals("av")?object("action","choose","match","engine_transmission",
+            "depends_on",List.of("av.brand","av.model","av.year","av.generation","av.body_type","av.engine_type","av.drive_type","av.transmission_type"),
+            "target",object("selectors",List.of("button#p-7-modification")),
+            "suggestions",object("selector","#p-7-modification + .dropdown-list .dropdown__listbutton"),
+            "verify",object("kind","selected_text_equals","within_target",".dropdown-button__value")):
+            object("action","choose","match","engine_transmission","depends_on",List.of("abw.brand","abw.model","abw.year","abw.generation","abw.body","abw.engine","abw.gear","abw.transmission"),
               "target",object("label","Модификация","labels",".item-title","container",".adverts-form-item","selector",".item-header"),
               "suggestions",object("selector",".list_modification .card_modification"),"expandSelector",".card_more-modification",
-              "verify",object("kind","selected_text_equals","within_target",".item-selected"))));
+              "verify",object("kind","selected_text_equals","within_target",".item-selected"));
+          controls.add(object("field",platform+".modification","label","Модификация","fieldType","enum","selector","body","action","text","value",selection,"name",selection,"binding",binding));
         }
       }
       JsonNode photoBinding=list(catalog.data().path("bindings").path(text(p,"platform"))).stream().filter(b->text(b,"option_id").equals(photoField)).findFirst().orElse(object());

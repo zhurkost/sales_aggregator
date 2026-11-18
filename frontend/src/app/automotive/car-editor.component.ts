@@ -18,6 +18,7 @@ export class CarEditorComponent implements OnInit,OnDestroy {
  private flatCache:Record<string,CarOption[]>={};private lastPhotoText='';
  private photoAnalysis:CarCandidates={warnings:[]};
  private aiAssigned:Record<string,unknown>={};
+ private aiAssignedExtras:Record<string,string>={};
  private candidateAssigned:Record<string,unknown>={};private candidateRevision=0;
  prepared?:CarPrepared;jobs:CarJob[]=[];ready=false;version=EXTENSION_VERSION;
  connectionMessage='';private connecting?:Promise<void>;
@@ -92,6 +93,8 @@ export class CarEditorComponent implements OnInit,OnDestroy {
  }
  togglePlatform(id:string,checked:boolean){this.card.platforms=checked?[...new Set([...this.card.platforms,id])]:this.card.platforms.filter(p=>p!==id);this.change();}
  extra(f:CarField,value:unknown){
+  delete this.aiAssignedExtras[f.id];
+  delete this.evidence[f.id];
   const fields=this.card.extras[f.platform!]??={};
   const normalized=f.type==='multi_enum'&&Array.isArray(value)?value.filter(v=>v!==''):this.inputValue(f,value);
   if(normalized==null||normalized===''||Array.isArray(normalized)&&!normalized.length)delete fields[f.id];
@@ -114,8 +117,18 @@ export class CarEditorComponent implements OnInit,OnDestroy {
  },'Распознаём фотографии…');}
  async analyze(){await this.run(()=>this.analyzeFields(),'Заполняем поля…');}
  private async analyzeFields(){
-   const before=JSON.stringify(this.card.values),texts=[this.description,this.recognizedText].join('\n');const result=await this.gateway.analyze(this.description,this.recognizedText,this.photoAnalysis);
-   if(!this.alive||before!==JSON.stringify(this.card.values)||texts!==[this.description,this.recognizedText].join('\n'))throw Error('Поля изменились во время распознавания. Повторите запрос.');
+   const before=JSON.stringify([this.card.values,this.card.extras]),texts=[this.description,this.recognizedText].join('\n');const result=await this.gateway.analyze(this.description,this.recognizedText,this.photoAnalysis);
+   if(!this.alive||before!==JSON.stringify([this.card.values,this.card.extras])||texts!==[this.description,this.recognizedText].join('\n'))throw Error('Поля изменились во время распознавания. Повторите запрос.');
+   for(const f of this.schema!.extras){
+    const platform=f.platform;if(!platform)continue;
+    const proposed=result.extras?.[platform]?.[f.id],current=this.card.extras[platform]?.[f.id],old=this.aiAssignedExtras[f.id];
+    if(proposed===undefined){if(old!==undefined&&JSON.stringify(current)===old){delete this.card.extras[platform][f.id];delete this.evidence[f.id];}delete this.aiAssignedExtras[f.id];continue;}
+    const valid=f.type==='enum'?f.options?.some(o=>o.id===proposed):f.type==='multi_enum'?Array.isArray(proposed)&&proposed.every(id=>f.options?.some(o=>o.id===id)):f.type==='boolean'?typeof proposed==='boolean':f.type==='integer'?typeof proposed==='number'&&Number.isInteger(proposed):f.type==='number'?typeof proposed==='number'&&Number.isFinite(proposed):f.type==='text'&&typeof proposed==='string';
+    if(!valid)continue;
+    if(current!=null&&current!==''&&!(Array.isArray(current)&&!current.length)&&!(old!==undefined&&JSON.stringify(current)===old))continue;
+    (this.card.extras[platform]??={})[f.id]=structuredClone(proposed);this.aiAssignedExtras[f.id]=JSON.stringify(proposed);
+    this.evidence[f.id]=result.evidence[f.id]||'Предложение ИИ — проверьте';
+   }
    for(const [key,old] of Object.entries(this.aiAssigned))if(!(key in result.values)&&this.card.values[key]===old){delete this.card.values[key];delete this.aiAssigned[key];this.clearTree(key);delete this.evidence[key];}
    for(const [key,value]of Object.entries(result.values)){
     const current=this.card.values[key],f=this.schema!.fields.find(f=>f.id===key);let path:CarOption[]|undefined;let refinedManual=false;

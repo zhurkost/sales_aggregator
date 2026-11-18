@@ -49,6 +49,7 @@
     @else if(f.type==='enum'){<select [id]="'car-extra-'+f.id" [ngModel]="extraValue(f)" (ngModelChange)="extra(f,$event)" [disabled]="!!busy"><option value="">Не указано</option>@for(o of f.options || [];track o.id){<option [value]="o.id">{{o.name}}</option>}</select>}
     @else if(f.type==='boolean'){<select [id]="'car-extra-'+f.id" [ngModel]="extraValue(f)" (ngModelChange)="extra(f,$event)" [disabled]="!!busy"><option value="">Не указано</option><option [ngValue]="true">Да</option><option [ngValue]="false">Нет</option></select>}
     @else{<input [id]="'car-extra-'+f.id" [type]="f.type==='integer' || f.type==='number' ? 'number' : 'text'" [ngModel]="extraValue(f)" (ngModelChange)="extra(f,$event)" [disabled]="!!busy">}
+     @if(evidence[f.id]){<small class="muted">ИИ: {{evidence[f.id]}}</small>}
    </div>}
   </div></details>
  }}</section>

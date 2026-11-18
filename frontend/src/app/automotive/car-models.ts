@@ -1,6 +1,7 @@
 export type CarOption={id:string;name:string;parentId?:string;field?:string;platforms?:string[];aliases?:string[]};
 export type CarCandidates={candidates?:Record<string,string[]>;candidateEvidence?:Record<string,string>;generationHint?:string;observations?:string[];warnings:string[]};
-export type CarAnalysis=CarCandidates&{values:Record<string,unknown>;evidence:Record<string,string>};
+export type CarExtraValue=string|number|boolean|string[];
+export type CarAnalysis=CarCandidates&{values:Record<string,unknown>;extras?:Record<string,Record<string,CarExtraValue>>;evidence:Record<string,string>};
 export type CarPhotoRecognition=CarCandidates&{text:string;recognitionPasses?:number;detailImages?:{attachment:number;kind:'single'|'group';photos:number[];bytes:number;width:number;height:number}[];collage:{photoCount:number;bytes:number;width:number;height:number}};
 export type CarField={id:string;key:string;name:string;type:string;control?:'select';root?:string;parent_option_id?:string;platform?:string;platforms?:string[];options?:CarOption[]};
 export type CarSchema={categoryId:string;fields:CarField[];extras:CarField[];platforms:{id:string;name:string;url:string}[]};

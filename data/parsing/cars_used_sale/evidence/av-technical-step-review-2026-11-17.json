@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-17",
+  "source": "User Chrome, read-only DOM command executed by user in Console",
+  "network_requests_sent_by_agent": false,
+  "live_next_clicked_by_agent": false,
+  "fields": {
+    "body_type": "button#p-9-body_type",
+    "transmission_type": "#p-11-transmission_type input[type=radio]",
+    "engine_type": "button#p-12-engine_type",
+    "drive_type": "button#p-15-drive_type",
+    "modification": "button#p-7-modification"
+  },
+  "dropdown_options": "Adjacent .dropdown-list .dropdown__listbutton",
+  "dropdown_selected_text": ".dropdown-button__value",
+  "observed_modifications": ["1,4 MT (100 л.с.)", "1,6 MT (123 л.с.)"],
+  "next": {"selector": ".newad__step-next > button[type=button]", "text": "Далее"},
+  "validation": "Local DOM tests: MT/AT selection, matching volume, accepted values, one intermediate transition, conflicts, missing/unknown fields, errors, disabled/duplicate/submit/final buttons. Backend recipe tests for AV and ABW.",
+  "later_fields": "Bindings recovered from documented native UID and widget structure (docs/avby-form-research.md, a34e353). Current live steps not yet inspected. Photos, equipment and subsequent transitions remain unverified."
+}

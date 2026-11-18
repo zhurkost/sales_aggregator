@@ -3,6 +3,39 @@ import {CarEditorComponent} from './car-editor.component';
 import {CarGateway} from './car.gateway';
 import {WorkspaceGateway} from '../workspace.gateway';
 describe('cars editor',()=>{
+ it('applies boolean, multi-choice, numeric and text extras while preserving manual false and arrays',async()=>{
+  const fields=[{id:'kufar.possible_exchange',key:'exchange',name:'Обмен',type:'boolean',platform:'kufar'},
+   {id:'av.options',key:'options',name:'Комплектация',type:'multi_enum',platform:'av',options:[{id:'abs',name:'ABS'},{id:'usb',name:'USB'}]},
+   {id:'onliner.power',key:'power',name:'Мощность',type:'number',platform:'onliner'},
+   {id:'abw.email',key:'email',name:'Email',type:'text',platform:'abw'}];
+  let extras:any={kufar:{'kufar.possible_exchange':false},av:{'av.options':['abs','usb']},onliner:{'onliner.power':123},abw:{'abw.email':'seller@example.com'}};
+  const c=new CarEditorComponent({analyze:vi.fn(async()=>({values:{},evidence:{'av.options':'ABS и USB'},extras,warnings:[]}))} as unknown as CarGateway);
+  c.schema={categoryId:'cars_used_sale',fields:[],extras:fields,platforms:[]};
+  await c.analyze();expect(c.card.extras).toEqual(extras);expect(c.evidence['av.options']).toBe('ABS и USB');
+  extras={kufar:{'kufar.possible_exchange':true},av:{'av.options':['usb']},onliner:{'onliner.power':150}};
+  await c.analyze();expect(c.card.extras.av['av.options']).toEqual(['usb']);expect(c.card.extras.abw['abw.email']).toBeUndefined();
+  c.extra(fields[0],false);c.extra(fields[1],['abs']);extras={kufar:{'kufar.possible_exchange':true},av:{'av.options':['usb']}};
+  await c.analyze();expect(c.card.extras.kufar['kufar.possible_exchange']).toBe(false);expect(c.card.extras.av['av.options']).toEqual(['abs']);expect(c.evidence['av.options']).toBeUndefined();
+  extras={};await c.analyze();expect(c.card.extras.av['av.options']).toEqual(['abs']);expect(c.card.extras.onliner['onliner.power']).toBeUndefined();c.ngOnDestroy();
+ });
+ it('rejects a late AI response after a manual extra edit',async()=>{
+  let finish:(r:any)=>void=()=>{};const c=new CarEditorComponent({analyze:()=>new Promise(r=>finish=r)} as unknown as CarGateway);
+  const f={id:'av.options',key:'options',name:'Комплектация',type:'multi_enum',platform:'av',options:[{id:'abs',name:'ABS'}]};c.schema={categoryId:'cars_used_sale',fields:[],extras:[f],platforms:[]};
+  const task=c.analyze();c.extra(f,['abs']);finish({values:{},extras:{av:{'av.options':[]}},evidence:{},warnings:[]});await task;
+  expect(c.card.extras.av['av.options']).toEqual(['abs']);expect(c.error).toContain('Поля изменились');c.ngOnDestroy();
+ });
+ it('applies recognized registration extras, updates AI values and preserves manual selections',async()=>{
+  const field={id:'av.registration_country',key:'av.registration_country',name:'Страна регистрации',type:'enum',platform:'av',options:[{id:'belarus',name:'Беларусь'},{id:'russia',name:'Россия'}]};
+  let extras:Record<string,Record<string,string>>={av:{[field.id]:'belarus'}};
+  const c=new CarEditorComponent({analyze:vi.fn(async()=>({values:{},evidence:{},extras,warnings:[]}))} as unknown as CarGateway);
+  c.schema={categoryId:'cars_used_sale',fields:[],extras:[field],platforms:[]};
+  await c.analyze();expect(c.card.extras.av[field.id]).toBe('belarus');
+  extras={av:{[field.id]:'russia'}};await c.analyze();expect(c.card.extras.av[field.id]).toBe('russia');
+  extras={};await c.analyze();expect(c.card.extras.av[field.id]).toBeUndefined();
+  c.extra(field,'belarus');extras={av:{[field.id]:'russia'}};await c.analyze();expect(c.card.extras.av[field.id]).toBe('belarus');
+  extras={};await c.analyze();expect(c.card.extras.av[field.id]).toBe('belarus');
+  c.extra(field,'');extras={av:{[field.id]:'unknown'}};await c.analyze();expect(c.card.extras.av[field.id]).toBeUndefined();c.ngOnDestroy();
+ });
  it('keeps a confirmed numeric year when generation changes and photo filters are cleared',async()=>{
   const year={id:'car.year',key:'year',name:'Год выпуска',type:'integer',control:'select' as const};
   const generation={id:'car.generation',key:'generation',name:'Поколение',type:'enum',root:'car.brand',parent_option_id:'car.model'};

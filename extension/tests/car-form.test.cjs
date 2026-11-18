@@ -100,6 +100,191 @@ test('AV preserves an existing brand and rejects absent or duplicate native IDs'
   await form.tick();await form.tick();assert(!form.done.has('av.brand'));
  }
 });
+
+test('AV chooses the native model after brand catalog is replaced and retains its prerequisite',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av;
+ const controls=[{field:'av.brand',value:545,name:'Kia',binding:bindings['av.brand']},{field:'av.model',value:563,name:'Rio',binding:bindings['av.model']}];
+ const {w,form}=await fixture(t,'<main><button class="newad__breadcrumb-button">Kia</button><label><input type="radio" class="catalog__control" id="catalogItem-model_563" style="display:none">Rio</label><label><input type="radio" class="catalog__control" id="catalogItem-model_564">Rio X</label></main>',controls);
+ form.recipe.platform='av';w.document.querySelector('button').onclick=()=>assert.fail('Never reset brand');
+ await form.tick();await form.tick();assert(w.document.getElementById('catalogItem-model_563').checked);assert(form.done.has('av.model'));assert(!w.document.getElementById('catalogItem-model_564').checked);
+ for(const label of w.document.querySelectorAll('label'))label.remove();w.document.querySelector('main').insertAdjacentHTML('beforeend','<button class="newad__breadcrumb-button">Rio</button><input placeholder="Год">');
+ await form.tick();assert(form.done.has('av.brand'));assert(form.done.has('av.model'));
+});
+test('AV model never selects a similarly named, duplicate or already replaced choice',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.model'];
+ for(const scenario of ['wrong-brand','existing','missing','duplicate']){
+  const controls=[{field:'av.model',value:563,name:'Rio',binding}];
+  if(scenario==='wrong-brand')controls.unshift({field:'av.brand',value:545,name:'Kia',binding:{target:{selectors:['#absent']}}});
+  const {w,form}=await fixture(t,'<main><label><input type="radio" class="catalog__control" id="catalogItem-model_563">Rio</label><label><input type="radio" class="catalog__control" id="catalogItem-model_564">Rio</label></main>',controls);form.recipe.platform='av';
+  if(scenario==='existing')w.document.getElementById('catalogItem-model_564').checked=true;
+  if(scenario==='missing')w.document.getElementById('catalogItem-model_563').remove();
+  if(scenario==='duplicate')w.document.querySelector('main').insertAdjacentHTML('beforeend','<label><input type="radio" class="catalog__control" id="catalogItem-model_563">Rio</label>');
+  for(const input of w.document.querySelectorAll('input'))input.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<3;i++)await form.tick();assert(!form.done.has('av.model'));
+ }
+});
+
+test('AV selects the supplied year after model and retains it after the year list disappears',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av;
+ const controls=[['brand',545,'Kia'],['model',563,'Rio'],['year',2021,'2021']].map(([id,value,name])=>({field:'av.'+id,value,name,binding:bindings['av.'+id]}));
+ const {w,form}=await fixture(t,'<main><button class="newad__breadcrumb-button">Kia</button><button class="newad__breadcrumb-button">Rio</button><label><input type="radio" name="year" id="catalogItem-year_2020">2020</label><label><input type="radio" name="year" id="catalogItem-year_2021" style="display:none">2021</label></main>',controls);form.recipe.platform='av';
+ for(const b of w.document.querySelectorAll('button'))b.onclick=()=>assert.fail('Do not reset preceding selections');
+ await form.tick();await form.tick();assert(w.document.getElementById('catalogItem-year_2021').checked);assert(form.done.has('av.year'));
+ for(const label of w.document.querySelectorAll('label'))label.remove();w.document.querySelector('main').insertAdjacentHTML('beforeend','<button class="newad__breadcrumb-button">2021</button><input placeholder="Поколение">');
+ await form.tick();assert(form.done.has('av.year'));
+});
+test('AV year preserves existing choices and waits for an exact unique year and model',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.year'];
+ for(const scenario of ['existing','missing','duplicate','model-pending']){
+  const controls=[{field:'av.year',value:2021,name:'2021',binding}];
+  if(scenario==='model-pending')controls.unshift({field:'av.model',value:563,name:'Rio',binding:{target:{selectors:['#absent']}}});
+  const {w,form}=await fixture(t,'<main><label><input type="radio" name="year" id="catalogItem-year_2020">2020</label><label><input type="radio" name="year" id="catalogItem-year_2021">2021</label></main>',controls);form.recipe.platform='av';
+  if(scenario==='existing')w.document.getElementById('catalogItem-year_2020').checked=true;
+  if(scenario==='missing')w.document.getElementById('catalogItem-year_2021').remove();
+  if(scenario==='duplicate')w.document.querySelector('main').insertAdjacentHTML('beforeend','<label><input type="radio" id="catalogItem-year_2021">2021</label>');
+  for(const e of w.document.querySelectorAll('input'))e.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<3;i++)await form.tick();assert(!form.done.has('av.year'));
+ }
+});
+test('AV generation uses native IDs despite dates and restyling text in the labels',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av;
+ for(const generation of [3815,11765]){
+  const controls=[['brand',545,'Kia'],['model',563,'Rio'],['year',2020,'2020'],['generation',generation,generation===3815?'IV':'IV Рестайлинг']].map(([id,value,name])=>({field:'av.'+id,value,name,binding:bindings['av.'+id]}));
+  const {w,form}=await fixture(t,'<main><button class="newad__breadcrumb-button">Kia</button><button class="newad__breadcrumb-button">Rio</button><button class="newad__breadcrumb-button">2020</button><label><input name="generation" type="radio" id="generationItem-generation_11765" style="display:none">IV · Рестайлинг, 2020…</label><label><input name="generation" type="radio" id="generationItem-generation_3815">IV, 2017…2020</label></main>',controls);form.recipe.platform='av';
+  for(const b of w.document.querySelectorAll('button'))b.onclick=()=>assert.fail('Do not reset identity');
+  await form.tick();await form.tick();assert.equal(w.document.querySelector('input:checked').id,'generationItem-generation_'+generation);assert(form.done.has('av.generation'));
+ }
+});
+test('AV generation does not substitute a different generation when unavailable for the year',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.generation'];
+ for(const scenario of ['missing','duplicate','existing','year-pending']){
+  const controls=[{field:'av.generation',value:3815,name:'IV',binding}];
+  if(scenario==='year-pending')controls.unshift({field:'av.year',value:2020,name:'2020',binding:{target:{selectors:['#absent']}}});
+  const {w,form}=await fixture(t,'<main><label><input type="radio" name="generation" id="generationItem-generation_3815">IV</label><label><input type="radio" name="generation" id="generationItem-generation_11765">IV Рестайлинг</label></main>',controls);form.recipe.platform='av';
+  if(scenario==='missing')w.document.getElementById('generationItem-generation_3815').remove();
+  if(scenario==='duplicate')w.document.querySelector('main').insertAdjacentHTML('beforeend','<label><input type="radio" id="generationItem-generation_3815">IV</label>');
+  if(scenario==='existing')w.document.getElementById('generationItem-generation_11765').checked=true;
+  for(const input of w.document.querySelectorAll('input'))input.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<3;i++)await form.tick();assert(!form.done.has('av.generation'));
+ }
+});
+test('AV body dropdown selects its own exact option after the decorated generation breadcrumb',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av;
+ const controls=[['brand',545,'Kia'],['model',563,'Rio'],['year',2025,'2025'],['generation',11765,'IV Рестайлинг'],['body_type',1,'седан']].map(([id,value,name])=>({field:'av.'+id,value,name,binding:b['av.'+id]}));
+ const {w,form}=await fixture(t,'<main><button class="newad__breadcrumb-button">Kia</button><button class="newad__breadcrumb-button">Rio</button><button class="newad__breadcrumb-button">2025</button><button class="newad__breadcrumb-button">IV · Рестайлинг , 2020…</button><div class="dropdown__box"><button id="p-9-body_type" class="dropdown__control dropdown-button"><span class="dropdown-button__value"></span></button><div class="dropdown-list" hidden><button class="dropdown__listbutton">седан</button><button class="dropdown__listbutton">хэтчбек 5 дв.</button></div></div><div class="dropdown-list"><button class="dropdown__listbutton">седан</button></div><button id="next">Далее</button></main>',controls);form.recipe.platform='av';
+ const trigger=w.document.getElementById('p-9-body_type'),list=trigger.nextElementSibling;let opened=0,selected=0;
+ trigger.onclick=()=>{opened++;list.hidden=false;};list.querySelector('button').onclick=()=>{selected++;trigger.firstElementChild.textContent='седан';list.hidden=true;};
+ w.document.querySelector('main > .dropdown-list button').onclick=()=>assert.fail('Do not choose another fields option');w.document.getElementById('next').onclick=()=>assert.fail('Unreviewed next step');
+ for(const button of w.document.querySelectorAll('.newad__breadcrumb-button'))button.onclick=()=>assert.fail('Do not reset identity');
+ for(let i=0;i<6;i++)await form.tick();assert.equal(opened,1);assert.equal(selected,1);assert(form.done.has('av.body_type'));assert(form.done.has('av.generation'));assert(form.done.has('av.year'));
+});
+test('AV generation breadcrumb normalization keeps different restylings distinct',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.generation'];
+ for(const label of ['IV, 2017…2020','IV · Рестайлинг 2, 2023…','V · Рестайлинг, 2020…','IV (Global market) · Рестайлинг, 2020…']){
+  const {form}=await fixture(t,'<main><button class="newad__breadcrumb-button">'+label+'</button><input></main>',[{field:'av.generation',value:11765,name:'IV Рестайлинг',binding}]);form.recipe.platform='av';await form.tick();assert(!form.done.has('av.generation'),label);
+ }
+});
+test('AV selects automatic or manual transmission by native ID after accepted body without clicking Next',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av;
+ for(const value of [1,2]){
+  const controls=[{field:'av.body_type',value:1,name:'седан',binding:b['av.body_type']},{field:'av.transmission_type',value,name:value===1?'автомат':'механика',binding:b['av.transmission_type']}];
+  const {w,form}=await fixture(t,'<main><button id="p-9-body_type" class="dropdown__control"><span class="dropdown-button__value">седан</span></button><label><input type="radio" name="transmission" id="p-11-transmission_type_1">автомат</label><label><input type="radio" name="transmission" id="p-11-transmission_type_2">механика</label><button id="next">Далее</button></main>',controls);form.recipe.platform='av';
+  w.document.getElementById('next').onclick=()=>assert.fail('Do not submit the page');
+  await form.tick();await form.tick();assert.equal(w.document.querySelector('input:checked').id,'p-11-transmission_type_'+value);assert(form.done.has('av.transmission_type'));
+  form.controls[1].value=value===1?2:1;form.retry();await form.tick();assert.equal(w.document.querySelector('input:checked').id,'p-11-transmission_type_'+value,'Preserve an existing different selection');
+ }
+});
+
+test('AV engine dropdown waits for transmission and selects only its own fuel option',async t=>{
+ const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av;
+ const controls=[{field:'av.transmission_type',value:1,name:'автомат',binding:b['av.transmission_type']},{field:'av.engine_type',value:1,name:'бензин',binding:b['av.engine_type']}];
+ const {w,form}=await fixture(t,'<main><label><input type="radio" id="p-11-transmission_type_1">автомат</label><button id="p-12-engine_type" class="dropdown__control"><span class="dropdown-button__value"></span></button><div class="dropdown-list" hidden><button class="dropdown__listbutton">дизель</button><button class="dropdown__listbutton">бензин</button></div><div class="dropdown-list"><button class="dropdown__listbutton">бензин</button></div></main>',controls);form.recipe.platform='av';
+ const trigger=w.document.getElementById('p-12-engine_type'),list=trigger.nextElementSibling;let selected=0;
+ trigger.onclick=()=>{assert(form.done.has('av.transmission_type'));list.hidden=false;};
+ list.children[0].onclick=()=>assert.fail('Wrong engine');list.children[1].onclick=()=>{selected++;trigger.firstElementChild.textContent='бензин';list.hidden=true;};
+ w.document.querySelector('main > .dropdown-list:last-child button').onclick=()=>assert.fail('Wrong dropdown');
+ for(let i=0;i<6;i++)await form.tick();assert.equal(selected,1);assert(form.done.has('av.engine_type'));
+});
+
+test('AV verifies the drive dropdown and keeps a conflicting drive unaccepted',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.drive_type'];
+ for(const name of ['передний привод','задний привод']){
+  const {form}=await fixture(t,'<main><button id="p-15-drive_type" class="dropdown__control"><span class="dropdown-button__value">передний привод</span></button></main>',[{field:'av.drive_type',name,value:1,binding}]);form.recipe.platform='av';
+  await form.tick();assert.equal(form.done.has('av.drive_type'),name==='передний привод');
+ }
+});
+
+test('AV body dropdown never accepts a search-like partial or ambiguous option',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).av['av.body_type'];
+ for(const scenario of ['partial','duplicate','protected']){
+  const labels=scenario==='partial'?['седан 4 дв.']:scenario==='duplicate'?['седан','седан']:['седан'];
+  const {w,form}=await fixture(t,'<main><div><button id="p-9-body_type" class="dropdown__control dropdown-button"><span class="dropdown-button__value"></span></button><div class="dropdown-list">'+labels.map(x=>'<button class="dropdown__listbutton">'+x+'</button>').join('')+'</div></div></main>',[{field:'av.body_type',value:1,name:'седан',binding}]);form.recipe.platform='av';
+  if(scenario==='protected')form.protect(w.document.getElementById('p-9-body_type'));
+  for(const button of w.document.querySelectorAll('.dropdown__listbutton'))button.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<3;i++)await form.tick();assert(!form.done.has('av.body_type'));
+ }
+});
+test('car text choices ignore punctuation without accepting extra words or numbers',async t=>{
+ for(const [wanted,display] of [['Хэтчбек 5 дв','«Хэтчбек» (5 дв.)'],['IV Рестайлинг','IV — (Рестайлинг)'],['F74 78','F74–78']]){
+  const {w,form}=await fixture(t,'<input><button id="choice"></button><button class="option">'+display+'</button><button class="option">'+display+' 2</button>',[{field:'test.choice',name:wanted,value:1,binding:{action:'choose',target:{selectors:['#choice']},suggestions:{selector:'.option'},verify:{kind:'selected_text_equals'}}}]);
+  w.document.querySelector('.option').onclick=()=>w.document.getElementById('choice').textContent=display;
+  w.document.querySelectorAll('.option')[1].onclick=()=>assert.fail('Do not merge different numbered variants');
+  await form.tick();await form.tick();assert(form.done.has('test.choice'));
+ }
+});
+test('car text normalization keeps symbol-only currencies and native IDs distinct',async t=>{
+ const {w,form}=await fixture(t,'<input><button id="currency"></button><button class="option">$</button><button class="option">€</button><button class="option">₽</button>',[{field:'test.currency',value:'EUR',name:'€',binding:{action:'choose',target:{selectors:['#currency']},suggestions:{selector:'.option'}}}]);
+ for(const b of w.document.querySelectorAll('.option'))b.onclick=()=>{assert.equal(b.textContent,'€');w.document.getElementById('currency').textContent=b.textContent;};
+ await form.tick();await form.tick();assert(form.done.has('test.currency'));
+ const other=await fixture(t,'<div id="radios"><label><input name="code" type="radio" value="A-B">Same</label><label><input name="code" type="radio" value="A B">Same</label></div>',[{field:'test.id',value:'A-B',name:'Same',binding:{action:'choose',match:'value',target:{selectors:['#radios']},suggestions:{selector:'input[name=code]'},verify:{kind:'value_equals',target:{selectors:['input:checked']}}}}]);
+ await other.form.tick();await other.form.tick();assert.equal(other.w.document.querySelector('input:checked').value,'A-B');
+});
+test('ABW confirms the returned VIN vehicle once without repeating lookup or publishing',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.vin'];
+ const {w,form}=await fixture(t,'<main><input placeholder="VIN номер"><button id="lookup">Далее</button><button>Заполнить вручную</button><button id="publish">Опубликовать</button></main>',[{field:'abw.vin',value:'1HGCM82633A004352',binding}]);
+ let lookup=0,confirmed=0;w.document.getElementById('publish').onclick=()=>assert.fail('Never publish');
+ w.document.getElementById('lookup').onclick=()=>{lookup++;w.document.querySelector('main').insertAdjacentHTML('beforeend','<section>Hummer H2 2005<button id="confirm">Это мой автомобиль</button></section>');w.document.getElementById('confirm').onclick=()=>confirmed++;};
+ for(let i=0;i<10;i++)await form.tick();assert.equal(lookup,1);assert.equal(confirmed,1);
+});
+test('ABW VIN confirmation waits for valid matching VIN and an available unique button',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.vin'];
+ for(const scenario of ['disabled','duplicate','protected','different-vin','busy']){
+  const {w,form}=await fixture(t,'<main><input placeholder="VIN номер"><button>Далее</button><button>Заполнить вручную</button><button id="confirm">Это мой автомобиль</button></main>',[{field:'abw.vin',value:'1HGCM82633A004352',binding}]);
+  const confirm=w.document.getElementById('confirm');
+  if(scenario==='disabled')confirm.disabled=true;
+  if(scenario==='duplicate')confirm.parentElement.insertAdjacentHTML('beforeend','<button>Это мой автомобиль</button>');
+  if(scenario==='protected')form.protect(confirm);
+  if(scenario==='different-vin')w.document.querySelector('input').value='1HGCM82633A004353';
+  if(scenario==='busy')confirm.setAttribute('aria-busy','true');
+  for(const b of w.document.querySelectorAll('button'))b.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<5;i++)await form.tick();
+ }
+});
+test('ABW fills supplied VIN on the initial lookup and continues once without manual entry',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.vin'];
+ for(const placeholder of ['VIN','VIN номер','VIN-номер']){
+  const value='1HGCM82633A004352';
+  const {w,form}=await fixture(t,`<div class="adverts-form"><input placeholder="${placeholder}" maxlength="17"><button type="button">Далее</button><button>Заполнить вручную</button></div>`,[{field:'abw.vin',value,binding}]);
+  let next=0;w.document.querySelector('button').onclick=()=>next++;w.document.querySelectorAll('button')[1].onclick=()=>assert.fail('VIN supplied');
+  for(let i=0;i<5;i++)await form.tick();assert.equal(w.document.querySelector('input').value,value);assert.equal(next,1);
+ }
+});
+test('ABW initial VIN lookup waits for acceptance and never clicks final submission',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.vin'];
+ for(const scenario of ['invalid','rejected','manual','disabled','busy','duplicate','final']){
+  const value='1HGCM82633A004352';const {w,form}=await fixture(t,'<div class="adverts-form"><input placeholder="VIN номер"><button type="button">Продолжить</button><button>Заполнить вручную</button></div>',[{field:'abw.vin',value,binding}]);
+  const input=w.document.querySelector('input'),button=w.document.querySelector('button');
+  if(scenario==='invalid')input.setCustomValidity('VIN не принят');
+  if(scenario==='rejected')input.oninput=()=>{input.value='';};
+  if(scenario==='manual')input.value='1HGCM82633A004353';
+  if(scenario==='disabled')button.disabled=true;
+  if(scenario==='busy')input.setAttribute('aria-busy','true');
+  if(scenario==='duplicate')input.parentElement.insertAdjacentHTML('beforeend','<input placeholder="VIN">');
+  if(scenario==='final')button.textContent='Опубликовать';
+  for(const b of w.document.querySelectorAll('button'))b.onclick=()=>assert.fail(scenario);
+  for(let i=0;i<5;i++)await form.tick();
+ }
+});
 test('Kufar enters only an empty car category and waits for each dependent choice',async t=>{
  const {w,form}=await fixture(t,'<button data-testid="ain-show-all-categories">Выбрать категорию</button><button>Опубликовать</button>',[]);form.recipe.platform='kufar';
  const clicked=[];w.document.querySelector('button').onclick=()=>{clicked.push('open');w.document.body.insertAdjacentHTML('beforeend','<ul data-testid="kufar-chose-category-popup"><li>Авто и запчасти</li><li>Недвижимость</li></ul>');w.document.querySelector('li').onclick=()=>{clicked.push('parent');w.document.querySelector('ul').innerHTML='<li><div data-testid="sub-category-2010">Легковые авто</div></li><li>Мотоциклы</li>';w.document.querySelector('[data-testid="sub-category-2010"]').onclick=()=>{clicked.push('cars');w.document.body.insertAdjacentHTML('beforeend','<div data-name="cars_brand_v2"></div>');};};};
@@ -166,7 +351,8 @@ test('ABW does not confirm price with absent currency, pending validation, forei
 });
 const abwItem=(label,selected='',choices='')=>`<div class="adverts-form-item"><div class="item-header"><p class="item-title item-title_required">${label}</p><p class="item-selected">${selected}</p></div>${choices}</div>`;
 const abwDetails=()=>abwItem('Марка','Kia')+abwItem('Модель','Rio')+abwItem('Год выпуска','2023');
-const abwContacts=()=>'<div class="adverts-form"><input placeholder="Имя" value="Account"><input placeholder="E-mail"><input placeholder="Номер телефона" disabled value="+375 29 111 22 33"><button type="button">Минск Город *</button><button type="button">Продолжить</button></div>';
+const abwCitySelected=name=>`<span class="_selectValue_modoe_17">${name}</span><span class="_selectValuePlaceholder_modoe_54">Город</span>`;
+const abwContacts=()=>'<div class="adverts-form"><input placeholder="Имя" value="Account"><input placeholder="E-mail"><input placeholder="Номер телефона" disabled value="+375 29 111 22 33"><button class="form__select" type="button">'+abwCitySelected('Минск')+'</button><button type="button">Продолжить</button></div>';
 test('ABW sets supplied contacts over account defaults, reads locked matching phone and continues once',async t=>{
  const b=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
  for(const locked of [true,false]){
@@ -177,6 +363,48 @@ test('ABW sets supplied contacts over account defaults, reads locked matching ph
   for(let i=0;i<5;i++)await form.tick();
   assert.equal(w.document.querySelector('[placeholder="Имя"]').value,'Продавец');assert.equal(w.document.querySelector('[placeholder="E-mail"]').value,'seller@example.test');
   assert.equal(phone.value,locked?'+375 29 111 22 33':'+375291112233');assert.equal(next,1);assert(form.done.has('abw.phone'));assert.equal(form.blockedReason(),null);
+ }
+});
+test('ABW verifies the selected city label and continues contacts only for the supplied city',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.city'];
+ for(const scenario of ['matching','spaced','protected','empty','duplicate']){
+  const {w,form}=await fixture(t,abwContacts(),[{field:'abw.city',value:123,name:'Минск',binding}]);
+  const city=w.document.querySelector('button');city.onclick=()=>assert.fail('City verification must not open its picker');
+  if(scenario==='spaced')city.innerHTML=abwCitySelected(' Минск ');
+  if(scenario==='protected'){city.innerHTML=abwCitySelected('Брест');form.protect(city);}
+  if(scenario==='empty')city.textContent='Город *';
+  if(scenario==='duplicate')city.parentElement.appendChild(city.cloneNode(true));
+  let next=0;w.document.querySelectorAll('button')[1].onclick=()=>next++;
+  const accepted=['matching','spaced'].includes(scenario);
+  for(let i=0;i<5;i++)await form.tick();assert.equal(next,accepted?1:0,scenario);assert.equal(form.done.has('abw.city'),accepted,scenario);
+ }
+});
+test('ABW selects a different city through search and confirms the closed selection before Continue',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.city'];
+ for(const alreadyOpen of [false,true]){
+  const {w,form}=await fixture(t,abwContacts(),[{field:'abw.city',value:1044,name:'Пинск',binding}]);
+  const city=w.document.querySelector('button'),next=w.document.querySelectorAll('button')[1];let opened=0,selected=0,continued=0;
+  const show=()=>{
+   city.innerHTML='<input placeholder="Город"><div class="selectOptions"><div class="selectOptionsContent"><div>Брестская область</div></div></div><span class="_selectPlaceholder_modoe_186">Город</span>';
+   const search=city.querySelector('input');search.oninput=()=>{
+    assert.equal(search.value,'Пинск');city.querySelector('.selectOptionsContent').innerHTML='<div>Брестская область</div><label class="UiRadio"><input hidden type="radio" value="Пинск"><div class="UiRadioContent">Пинск</div></label><label class="UiRadio"><input hidden type="radio" value="Пинский район"><div class="UiRadioContent">Пинский район</div></label>';
+    city.querySelector('label').onclick=e=>{e.stopPropagation();if(e.target.tagName==='INPUT')return;selected++;city.innerHTML=abwCitySelected('Пинск');};
+    city.querySelectorAll('label')[1].onclick=()=>assert.fail('Do not accept partial city match');
+   };
+  };
+  city.onclick=()=>{opened++;show();};if(alreadyOpen)show();
+  next.onclick=()=>{assert.equal(city.querySelector('span').textContent,'Пинск');assert.equal(selected,1);continued++;};
+  for(let i=0;i<9;i++)await form.tick();
+  assert.equal(opened,alreadyOpen?0:1);assert.equal(selected,1);assert.equal(continued,1);assert(form.done.has('abw.city'));
+ }
+});
+test('ABW city search text and duplicate choices never count as an accepted selection',async t=>{
+ const binding=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw['abw.city'];
+ for(const duplicate of [false,true]){
+  const {w,form}=await fixture(t,abwContacts(),[{field:'abw.city',value:1044,name:'Пинск',binding}]);const city=w.document.querySelector('button');
+  city.innerHTML='<input placeholder="Город" value="Пинск"><div class="selectOptions">'+(duplicate?'<label class="UiRadio">Пинск</label><label class="UiRadio">Пинск</label>':'<label class="UiRadio">Пинский район</label>')+'</div><span class="_selectPlaceholder_modoe_186">Город</span>';
+  city.onclick=()=>{};for(const label of city.querySelectorAll('label'))label.onclick=()=>assert.fail('No unique exact match');w.document.querySelectorAll('button')[1].onclick=()=>assert.fail('Search is not a selected city');
+  for(let i=0;i<5;i++)await form.tick();assert(!form.done.has('abw.city'));
  }
 });
 test('ABW cannot continue with mismatched locked phone, incomplete contacts, rejected email or manual edits',async t=>{
@@ -218,6 +446,22 @@ test('ABW selects volume and gearbox, verifies acceptance and only then continue
  for(let i=0;i<3;i++)await form.tick();assert(form.done.has('abw.modification'));assert.equal(next,1);
  await form.tick();assert.equal(next,1);
 });
+test('ABW automatic modification waits for matching drive, then selects first matching AT option',async t=>{
+ const bindings=JSON.parse(fs.readFileSync(path.join(__dirname,'../../data/automotive/cars_used_sale/browser-overrides.json'))).abw;
+ const drive={field:'abw.gear',name:'задний',value:18351,binding:bindings['abw.gear']};
+ const transmission={field:'abw.transmission',name:'автомат',value:1,binding:bindings['abw.transmission']};
+ const modification=structuredClone(abwModification);modification.name=modification.value='1.6 AT';modification.binding.depends_on=['abw.gear','abw.transmission'];
+ const options=['1.4 AT 100 л.с.','1.4 AT 109 л.с.','1.6 MT 123 л.с.','1.6 AMT 123 л.с.','1.6 AT 123 л.с.','1.6 AT 140 л.с.'];
+ const html='<input>'+abwItem('Привод','Передний','<div class="list_gear"><div class="card_gear">Передний</div></div>')+abwItem('Коробка передач','Автомат')+abwItem('Модификация','','<div class="list_modification">'+options.map(s=>'<div class="card_modification">'+s+'</div>').join('')+'</div>');
+ const {w,form}=await fixture(t,html,[drive,transmission,modification]);let selected='';
+ for(const option of w.document.querySelectorAll('.card_modification'))option.onclick=()=>{selected=option.textContent;w.document.querySelectorAll('.item-selected')[2].textContent=selected;};
+ for(let i=0;i<9;i++)await form.tick();
+ assert.equal(selected,'','A conflicting drive must not be bypassed');assert(!form.done.has('abw.gear'));assert(!form.done.has('abw.modification'));
+ drive.name='передний';drive.value=18349;form.retry();
+ for(let i=0;i<4;i++)await form.tick();
+ assert.equal(selected,'1.6 AT 123 л.с.');assert(form.done.has('abw.modification'));
+});
+
 test('ABW waits for every required selection and mileage, and does not consume Continue early',async t=>{
  const {w,form}=await fixture(t,'<div class="adverts-form">'+abwDetails()+abwItem('Модификация')+'<input placeholder="Пробег, км"><button type="button">Продолжить</button></div>',[]);let next=0;
  w.document.querySelector('button').onclick=()=>next++;

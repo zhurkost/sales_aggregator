@@ -25,7 +25,11 @@ public final class CarPromptOptions {
   public ObjectNode decode(JsonNode reply){
     ObjectNode result=reply.isObject()?reply.deepCopy():object();
     if(result.path("values").isObject())for(String field:enumFields)if(result.path("values").has(field))
-      ((ObjectNode)result.path("values")).put(field,resolve(result.path("values").path(field).asText()));
+      {
+        JsonNode value=result.path("values").path(field);
+        if(value.isArray()){ArrayNode decoded=array();value.forEach(v->decoded.add(resolve(v.asText())));((ObjectNode)result.path("values")).set(field,decoded);}
+        else ((ObjectNode)result.path("values")).put(field,resolve(value.asText()));
+      }
     if(result.path("candidates").isObject())result.path("candidates").fields().forEachRemaining(e->{
       if(e.getValue().isArray()){ArrayNode decoded=array();e.getValue().forEach(v->decoded.add(e.getKey().equals("car.year")?v.asText():resolve(v.asText())));((ObjectNode)result.path("candidates")).set(e.getKey(),decoded);}
     });

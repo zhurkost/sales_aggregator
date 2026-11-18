@@ -89,8 +89,9 @@ public class CarAiService {
       if(text(f,"id").equals("car.year"))item.put("min",CarCatalogService.MIN_YEAR).put("max",CarCatalogService.maxYear());
       if(text(f,"type").equals("enum"))item.set("options",candidates(text(f,"id"),""));fields.add(item);
     }
+    CarExtraRecognition extraRecognition=new CarExtraRecognition(catalog);fields.addAll(extraRecognition.promptFields());
     CarPromptOptions codes=new CarPromptOptions();
-    String prompt=RULES+AD_STYLE+CarCandidatePolicy.RULES+CarPromptOptions.FORMAT+"""
+    String prompt=RULES+AD_STYLE+CarCandidatePolicy.RULES+CarExtraRecognition.RULES+CarPromptOptions.FORMAT+"""
       Кроме перечисленных ниже полей доступны факты car.brand (название марки), car.model (название модели),
       car.generation (поколение или код кузова), car.region (название области), car.city (населённый пункт).
       Для них тоже обязательны value и evidence. Например: {"field":"car.brand","value":"Honda","evidence":"Honda Accord"}.
@@ -98,6 +99,11 @@ public class CarAiService {
       и номером рестайлинга, если они известны. Для догадки о поколении укажи inferred:true.
       Справочник моделей/поколений не передаётся: имена проверит сервер локально внутри выбранной марки.
       Явные сведения пользователя приоритетнее гипотез из блока Распознано ИИ.
+      Для av.registration_country и av.registration_status используй только прямые сведения из описания
+      пользователя с точной цитатой в evidence. «Зарегистрирован в Беларуси, стоит на учёте» означает
+      Беларусь и на учёте в ГАИ. «Снят с учёта» означает снят с учёта. Город продажи, номера на фото,
+      гражданство продавца и фраза «готов к постановке на учёт» не подтверждают регистрацию.
+      При отсутствии или противоречии сведений пропускай эти поля. Не выбирай Беларусь по умолчанию.
       Однозначно описанные видимые признаки из результата фото (кузов, цвет, салон) возвращай как facts с evidence.
       Не считай весь результат фото недостоверным: различай описанные факты и явно обозначенные варианты.
       Служебные candidates из фото — ограничения вариантов, не готовые значения полей и не текст объявления.
@@ -128,6 +134,7 @@ public class CarAiService {
     source+="\n\nПодсказка поколения из фото (догадка, не включать в описание; учитывай только для того же автомобиля): "+clean(input.path("photoAnalysis"),"generationHint",1500);
     ObjectNode reply=codes.decode(normalizeFacts(ai.serverJson(identity,prompt,source)));
     ObjectNode values=object(),evidence=object();
+    ObjectNode extras=extraRecognition.accept(reply,original,evidence,warnings);
     accept(reply,values,evidence,warnings);
     if(values.has("car.description")){
       String copy=values.path("car.description").asText();
@@ -167,7 +174,7 @@ public class CarAiService {
         ((ObjectNode)candidateResult.path("candidateEvidence")).remove(e.getKey());warnings.add("Противоречивое предложение ИИ: "+text(catalog.field(e.getKey()),"name"));
       }else if(e.getValue().size()>1){values.remove(e.getKey());evidence.remove(e.getKey());}
     });
-    return object("values",catalog.validateValues(values),"evidence",evidence,"warnings",warnings,"model",ai.model(),"candidates",candidateResult.path("candidates"),"candidateEvidence",candidateResult.path("candidateEvidence"));
+    return object("values",catalog.validateValues(values),"extras",extras,"evidence",evidence,"warnings",warnings,"model",ai.model(),"candidates",candidateResult.path("candidates"),"candidateEvidence",candidateResult.path("candidateEvidence"));
   }
   private ObjectNode normalizeFacts(ObjectNode response){
     if(!response.path("facts").isArray())return response;
